@@ -1,0 +1,18 @@
+<use name=FWCore/Framework>
+#<use name=Foundation/PluginManager>
+<use name=FWCore/ParameterSet>
+<use name=root>
+<use name=rootrflx>
+<use name=hepmc>
+<use name=PhysicsTools/UtilAlgos>
+<use name=PhysicsTools/CandUtils>
+<use name=DataFormats/PatCandidates>
+<flags EDM_PLUGIN=1>
+<Flags CXXFLAGS="-g">
+<flags GENREFLEX_ARGS="--">
+
+
+<export>
+   <lib name=TopQuarkAnalysisSingleTop>
+</export>
+
