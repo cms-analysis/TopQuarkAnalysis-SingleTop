@@ -68,7 +68,7 @@ process.hltFilter = HLTrigger.HLTfilters.hltHighLevel_cfi.hltHighLevel.clone()
 process.hltFilter.HLTPaths = ['HLT_IsoMu15', 'HLT_Ele15_SW_EleId_L1R']
 
 #TFile for histograms production
-process.TFileService = cms.Service("TFileService", fileName = cms.string('SingleTopHistograms_Data.root') )
+process.TFileService = cms.Service("TFileService", fileName = cms.string('SingleTopHistograms_MC.root') )
 
 #Production step: all collections are created
 process.singleTopCollectionsProduction = cms.Sequence(
@@ -193,7 +193,7 @@ process.skim = cms.OutputModule("PoolOutputModule",
 )
 
 process.ntuples = cms.OutputModule("PoolOutputModule",
-        fileName = cms.untracked.string('NtuplesData.root'),
+        fileName = cms.untracked.string('SingleTopNtuples_MC.root'),
      outputCommands = cms.untracked.vstring(
     'drop *',
 
