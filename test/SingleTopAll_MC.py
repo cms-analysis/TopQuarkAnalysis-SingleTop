@@ -153,15 +153,6 @@ process.skim = cms.OutputModule("PoolOutputModule",
      outputCommands = cms.untracked.vstring(
     'drop *',
 
-#Ntuples
-
-    'keep *_singleTopBJets_*_*',
-    'keep *_singleTopForwardJets_*_*',
-    'keep *_singleTopPreJetsCutsElectrons_*_*',
-    'keep *_singleTopPreJetsCutsMuons_*_*',
-
-    'keep *_singleTopFinalTops_*_*',
-    'keep *_singleTopFinalElectrons_*_*',
     
 #Skimmed collections
 
