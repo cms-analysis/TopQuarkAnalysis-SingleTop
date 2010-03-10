@@ -156,13 +156,8 @@ process.skim = cms.OutputModule("PoolOutputModule",
     
 #Skimmed collections
 
-    'keep *_preselectedMuons_*_*',
-    'keep *_preselectedElectrons_*_*',
-
     'keep *_topMuons_*_*',
     'keep *_topElectrons_*_*',
-
-    'keep *_preselectedJets_*_*',
 
     'keep *_topJets_*_*',
     'keep *_bJets_*_*',
@@ -172,11 +167,9 @@ process.skim = cms.OutputModule("PoolOutputModule",
     'keep *_preselectedMETs_*_*',
 
     'keep *_recoTops__*',
-    
+
 #MC Info
     'keep *_generator_*_*',  
-#    'keep *_genEventWeight_*_*',  
-#    'keep GenEventInfoProduct_*_*_*',  
     'keep *_MCTruthParticles_*_*',
 
     )
