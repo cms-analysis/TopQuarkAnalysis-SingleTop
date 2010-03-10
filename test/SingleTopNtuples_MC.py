@@ -92,10 +92,14 @@ process.singleTopCollectionsProduction = cms.Sequence(
 #Selection step: counting the events that survive the cuts
 process.Selection = cms.Sequence(
 
+#Jets Ntuples:
+    process.singleTopPreLeptonsCutsJets * 
+
 #Counting leptons that survive the cuts, imposing there is just 1 Lepton
     process.countLeptons *
 
 #Ntuples after those cuts
+    process.singleTopJets * 
     process.singleTopBJets *
     process.singleTopForwardJets *
     process.singleTopPreJetsCutsElectrons *
@@ -131,66 +135,19 @@ run35xOn31xMC( process,
                jetIdTag = "antikt5")
 
 
-## Output module configuration
-process.skim = cms.OutputModule("PoolOutputModule",
-   fileName = cms.untracked.string('testVeryTightSkim.root'),
-   
-   # save only events passing the full path
-   SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('overallPath') ),
-     outputCommands = cms.untracked.vstring(
-    'drop *',
-
-#Ntuples
-
-    'keep *_singleTopBJets_*_*',
-    'keep *_singleTopForwardJets_*_*',
-    'keep *_singleTopPreJetsCutsElectrons_*_*',
-    'keep *_singleTopPreJetsCutsMuons_*_*',
-
-    'keep *_singleTopFinalTops_*_*',
-    'keep *_singleTopFinalElectrons_*_*',
-    
-#Skimmed collections
-
-    'keep *_preselectedMuons_*_*',
-    'keep *_preselectedElectrons_*_*',
-
-    'keep *_topMuons_*_*',
-    'keep *_topElectrons_*_*',
-
-    'keep *_preselectedJets_*_*',
-
-    'keep *_topJets_*_*',
-    'keep *_bJets_*_*',
-    'keep *_antiBJets_*_*',
-    'keep *_forwardJets_*_*',
-
-    'keep *_preselectedMETs_*_*',
-
-    'keep *_recoTops__*',
-    
-#MC Info
-    'keep *_generator_*_*',  
-#    'keep *_genEventWeight_*_*',  
-#    'keep GenEventInfoProduct_*_*_*',  
-    'keep *_MCTruthParticles_*_*',
-
-    )
-
-)
-
+#Output modules
 process.ntuples = cms.OutputModule("PoolOutputModule",
         fileName = cms.untracked.string('NtuplesMC.root'),
      outputCommands = cms.untracked.vstring(
     'drop *',
-
 
 #MC info
     'keep *_generator_*_*',  
 
 #Ntuples
 
-
+    'keep *_singleTopPreLeptonsCutsJets_*_*',
+    'keep *_singleTopJets_*_*',
     'keep *_singleTopBJets_*_*',
     'keep *_singleTopForwardJets_*_*',
     'keep *_singleTopPreJetsCutsElectrons_*_*',
@@ -200,12 +157,13 @@ process.ntuples = cms.OutputModule("PoolOutputModule",
     'keep *_singleTopFinalTops_*_*',
     'keep *_singleTopFinalElectrons_*_*',
     'keep *_singleTopFinalMuons_*_*',
-
+    
 )
 
+#outputCommands =     process.ntuplesToSave                         
 )
 
 
 #Save the skims
-process.outpath = cms.EndPath(process.ntuples + process.skim)
+process.outpath = cms.EndPath(process.ntuples)
 
