@@ -44,11 +44,11 @@ removeMCMatching(process,
                  ['All'])
 
 
-#Apply correction factors for jets
-process.patJetCorrFactors.corrSample = 'Summer09_7TeV'
-#Apply MET correction factors
-process.load("JetMETCorrections.Configuration.L2L3Corrections_Summer09_7TeV_cff")
 
+#Apply correction factors for jets
+process.patJetCorrFactors.corrSample = '2360GeV'
+#Apply MET correction factors
+process.load("JetMETCorrections.Configuration.L2L3Corrections_2360GeV_cff")
 
 # Reduce verbosity
 #process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(10)

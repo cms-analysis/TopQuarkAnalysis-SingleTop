@@ -47,9 +47,9 @@ removeMCMatching(process,
 
 
 #Apply correction factors for jets
-process.patJetCorrFactors.corrSample = 'Summer09_7TeV'
+process.patJetCorrFactors.corrSample = '2360GeV'
 #Apply MET correction factors
-process.load("JetMETCorrections.Configuration.L2L3Corrections_Summer09_7TeV_cff")
+process.load("JetMETCorrections.Configuration.L2L3Corrections_2360GeV_cff")
 
 
 # Reduce verbosity
