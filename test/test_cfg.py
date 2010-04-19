@@ -30,20 +30,20 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 
 
 # to run on old MC
-from PhysicsTools.PatAlgos.tools.jetTools import *
+#from PhysicsTools.PatAlgos.tools.jetTools import *
 
-addJetID( process, "antikt5CaloJets", "antikt5" )
+#addJetID( process, "antikt5CaloJets", "antikt5" )
 
-switchJetCollection(process,
-cms.InputTag('antikt5CaloJets'),
-doJTA            = True,
-doBTagging       = True,
-jetCorrLabel     = ('AK5','Calo'),
-doType1MET       = True,
-genJetCollection = cms.InputTag("antikt5GenJets"),
-doJetID = True,
-jetIdLabel = "antikt5"
-)
+#switchJetCollection(process,
+#cms.InputTag('antikt5CaloJets'),
+#doJTA            = True,
+#doBTagging       = True,
+#jetCorrLabel     = ('AK5','Calo'),
+#doType1MET       = True,
+#genJetCollection = cms.InputTag("antikt5GenJets"),
+#doJetID = True,
+#jetIdLabel = "antikt5"
+#)
 
 # SingleTop preselection
 process.STPreselection = cms.EDAnalyzer("Preselection",
@@ -109,8 +109,8 @@ process.p = cms.Path(
     process.STPreselection
     )
 
-#from PhysicsTools.PatAlgos.tools.cmsswVersionTools import *
-#run33xOn31xMC( process,
-#               jetSrc = cms.InputTag("antikt5CaloJets"),
-#               jetIdTag = "antikt5")
+from PhysicsTools.PatAlgos.tools.cmsswVersionTools import *
+run33xOn31xMC( process,
+               jetSrc = cms.InputTag("antikt5CaloJets"),
+               jetIdTag = "antikt5")
 
