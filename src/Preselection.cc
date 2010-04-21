@@ -765,13 +765,14 @@ void Preselection::analyze(const Event& iEvent, const EventSetup& iSetup)
   // =================================
   //   --- accept / reject event (OPTIONAL) ---
   // =================================
-  if (doPresel && countGoodElectrons==0 && countGoodMuons==0) return;
 
   
   // fill "Total" cut flow table:
   int JetN = cev->jetVec.size();
   mycft->addEvent();
   mycft->add("cut","Total",JetN);
+  
+  if (doPresel && countGoodElectrons==0 && countGoodMuons==0) return;
  
   // fill "Preselected" cft:
   if(countGoodElectrons>0 || countGoodMuons>0)
