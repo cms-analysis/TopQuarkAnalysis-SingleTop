@@ -789,7 +789,9 @@ void Preselection::analyze(const Event& iEvent, const EventSetup& iSetup)
   else
     return;
   */
-  if (doPresel && no0jets && (cev->jetVec.size()==0 || cev->looseJetVec.size()==0)) return;
+  //if (doPresel && no0jets && (cev->jetVec.size()==0 || cev->looseJetVec.size()==0)) return;
+  //if (doPresel && no0jets && (cev->jetVec.size()+cev->looseJetVec.size()==0)) return;
+  if (doPresel && no0jets && cev->jetVec.size()==0 && cev->looseJetVec.size()==0) return;
 
   cev->nJets = cev->jetVec.size(); 
   cev->nLooseJets = cev->looseJetVec.size();
