@@ -5,8 +5,8 @@
 // for top analysis. It is filled after the preselection step.
 //
 // CVS revision record:
-// $Author: weinelt $
-// $Date: 2010/01/14 16:38:31 $
+// $Author: sroecker $
+// $Date: 2010/04/19 12:40:14 $
 // $Revision: 1.1 $
 // 
 //-------------------------------------------------------------------------------
@@ -48,6 +48,7 @@ namespace CatoCMS
     Point3       primV;             // Primary vertex.
 
     // ---- Monte Carlo information
+    // currently unused, used for WJets and VQQ as flavorHistory path
     int    procId;
     Point3 mcPrimV;           // Monte Carlo primary vertex.
       
@@ -83,19 +84,3 @@ namespace CatoCMS
 }
 #endif
 
-
-// old stuff: --------------------------------------------------------------
-
-//Double_t sumEtJet;  // Include also soft jets.
-//Double_t sumEtJetRaw; //use uncorrected JetEt for mistag matrix
-//Double_t Delta12;   // Delta 12 from Kt algorithm
-//Double_t Delta23;   // Delta 23 from Kt algorithm
-//Double_t Delta34;   // Delta 34 from Kt algorithm
-//  TVector2 misEtraw;          // missing Et vector
-//  TVector2 misEtl4;           // missing Et vector with L4 jet corrections
-//  TVector2 misEtl6;           // missing Et vector with L6 jet corrections
-//    float lepQ;
-//    float lepIso;
-//    float muonCalEnergy; 
-
-// --------------------------------------------------------------------------
