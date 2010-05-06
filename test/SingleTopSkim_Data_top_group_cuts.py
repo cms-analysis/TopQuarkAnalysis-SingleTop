@@ -124,8 +124,8 @@ readFiles = cms.untracked.vstring()
 secFiles = cms.untracked.vstring()
 
 readFiles.extend( [
-#    'rfio:/castor/cern.ch/cms/store/data/Commissioning10/MinimumBias/RECO/Apr15Skim_356_PreProduction_SD_Mu-v2/0011/90ACEF66-2E49-DF11-8B3C-00261894396B.root',
-'file:/tmp/oiorio/90ACEF66-2E49-DF11-8B3C-00261894396B.root',
+    'rfio:/castor/cern.ch/cms/store/data/Commissioning10/MinimumBias/RECO/Apr15Skim_356_PreProduction_SD_Mu-v2/0011/90ACEF66-2E49-DF11-8B3C-00261894396B.root',
+#'file:/tmp/oiorio/90ACEF66-2E49-DF11-8B3C-00261894396B.root',
     #'rfio:/castor/cern.ch/user/o/oiorio/SingleTop/SingleTop_tChan/Events_35_1.root',
 #Production step: all collections are created
         ] );
@@ -185,9 +185,9 @@ process.countElectrons.src = cms.InputTag("preselectedElectrons")
 
 process.PathAllMuons = cms.Path(
     process.baseSequence *
-    process.countMuons 
+    process.countMuons #*
 #    process.countJets *
-#    process.countBTags  
+#    process.countBTags *
 #    process.countAntiBTags 
 #    process.positiveMuons 
     )
