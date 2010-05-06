@@ -255,8 +255,6 @@ void Preselection::analyze(const Event& iEvent, const EventSetup& iSetup)
   cout << "EventNumber: " << info->TotalEvents+1 << endl;
 #endif
 
-  cev->Reset();
-
   CatoCMSPDFInfo cpdfinfo;
   if(EventType.label() != string("NoMCInfo")) {
     
@@ -293,15 +291,6 @@ void Preselection::analyze(const Event& iEvent, const EventSetup& iSetup)
       iEvent.getByLabel( "genEventWeight", genEventWeight );
       weight = *genEventWeight; 
     } catch (...) {;}
-
-    // save flavorHistory for WJets and Vqq as procId
-    Handle<unsigned int> path;
-    try {
-	    iEvent.getByLabel("flavorHistoryFilter", path);
-	    cev->procId = *path;
-    } catch (...) {
-	    cout << "flavorHistory failed!" << endl;
-	    }
   
     if(EventType.label() == string("SingleTopT")){  
       //    stp->printList(genParticles,3);
@@ -380,10 +369,14 @@ void Preselection::analyze(const Event& iEvent, const EventSetup& iSetup)
   CatoCMSCutFlowTable *mycft = NULL;    // cft for this event ...
   mycft=cft;
   
+  cev->Reset();
   
   //// TO BE ADDED ASAP: run/event/lumisection numbers in the Event block
   
   cev->eventWeight = 1;
+  
+  
+  
   
   // vertices:
   Handle<VertexCollection> vertices;
@@ -773,6 +766,7 @@ void Preselection::analyze(const Event& iEvent, const EventSetup& iSetup)
   //   --- accept / reject event (OPTIONAL) ---
   // =================================
 
+  
   // fill "Total" cut flow table:
   int JetN = cev->jetVec.size();
   mycft->addEvent();
