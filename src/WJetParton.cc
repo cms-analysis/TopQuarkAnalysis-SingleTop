@@ -91,8 +91,8 @@ void WJetParton::GetWJetTruth(edm::Handle<std::vector<reco::GenParticle> > genPa
   mcWJ->Reset();
   int partons=0;
   LorentzVector v;
-  PrintList(genParticles,3);
-	//HepMC::GenParticle* pa;
+  //PrintList(genParticles,3);
+  //HepMC::GenParticle* pa;
   //std::vector<HepMC::GenParticle*> children;
   //std::vector<HepMC::GenParticle*> childrenQQ;
   //std::vector<HepMC::GenParticle*> parents;
