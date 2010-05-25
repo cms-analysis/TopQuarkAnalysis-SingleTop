@@ -381,7 +381,9 @@ void Preselection::analyze(const Event& iEvent, const EventSetup& iSetup)
   mycft=cft;
   
   
-  //// TO BE ADDED ASAP: run/event/lumisection numbers in the Event block
+  //// TODO: TO BE ADDED ASAP: run/event/lumisection numbers in the Event block
+  cev->eventId = iEvent.id().run();
+  cev->runId = iEvent.id().event();
   
   cev->eventWeight = 1;
   
@@ -391,7 +393,7 @@ void Preselection::analyze(const Event& iEvent, const EventSetup& iSetup)
   
   cev->nZvtx = vertices->size();
 
-  //// TO BE ADDED ASAP: a Vertex block, with all the variables being used in 900 GeV analyses to select the event
+  //// TODO: TO BE ADDED ASAP: a Vertex block, with all the variables being used in 900 GeV analyses to select the event
 
 
   // -------------------------
