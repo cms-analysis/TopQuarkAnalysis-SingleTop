@@ -364,13 +364,13 @@ void Preselection::analyze(const Event& iEvent, const EventSetup& iSetup)
       qcdp->GetQCDTruth(genParticles, weight,mcQCD);
     } 
     
-#if MC_DEBUG
     if(AnaType.label() == string("MCTruth")){
       miniTree->Fill();
+#if MC_DEBUG
       cout << "this is MCTruth !!" << endl;
+#endif
       return;
     }
-#endif
   } // end of IF for MC events
 
 #if DEBUG
