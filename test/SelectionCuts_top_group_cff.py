@@ -19,7 +19,7 @@ eleLooseCuts = cms.string("et > 15 & abs(eta) < 2.5 & (dr04TkSumPt + dr04EcalRec
 jetCuts = cms.string('pt >  20 & abs(eta) < 5.0')
 
 #Cuts on the isolation of the leptons
-eleTightCut = cms.string("et>30 & abs(eta)<2.5  & electronID('eidRobustTight') > 0 & (dr04TkSumPt + dr04EcalRecHitSumEt + dr04HcalTowerSumEt)/et < 0.1 & dB/edB < 3")
+eleTightCut = cms.string("et>20 & abs(eta)<2.5  & electronID('eidRobustTight') > 0 & (dr04TkSumPt + dr04EcalRecHitSumEt + dr04HcalTowerSumEt)/et < 0.1 & dB/edB < 3")
 
 muTightCut = cms.string("pt > 20 & abs(eta) < 2.1 & muonID('GlobalMuonPromptTight') > 0 & pt > 20 & (isolationR03.sumPt + isolationR03.emEt + isolationR03.hadEt)/pt < 0.05 & dB/edB < 3") 
 
