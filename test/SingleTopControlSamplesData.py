@@ -145,6 +145,8 @@ process.source.fileNames = readFiles
 #process.source.lumisToProcess = cms.untracked.VLuminosityBlockRange()
 
 
+process.hltFilter.HLTPaths = ['HLT_Mu9', 'HLT_Photon10_L1R']
+
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 
 
