@@ -10,7 +10,7 @@
 #include "TopQuarkAnalysis/SingleTop/interface/Preselection.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
-#include "FWCore/Framework/interface/TriggerNames.h"
+#include "FWCore/Common/interface/TriggerNames.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 
 Preselection::Preselection(const edm::ParameterSet& iConfig)
@@ -576,7 +576,7 @@ void Preselection::analyze(const Event& iEvent, const EventSetup& iSetup)
     iEvent.getByLabel(edm::InputTag("TriggerResults", "", "HLT"), h_trigRes); // Claudio
     if ( h_trigRes.failedToGet() ) throw cms::Exception("fail", "failed to get trigRes");
     edm::TriggerNames trgNames;
-    trgNames.init(*h_trigRes);
+    //trgNames.init(*h_trigRes);
     MuTrigIdx = trgNames.triggerIndex(triggernames[0]);
     EleTrigIdx = trgNames.triggerIndex(triggernames[1]);
     
