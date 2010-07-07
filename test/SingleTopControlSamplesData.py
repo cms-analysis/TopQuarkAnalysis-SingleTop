@@ -40,6 +40,7 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 #Loading Pat Sequences + various stuff
 process.load("TopQuarkAnalysis.SingleTop.SingleTopSequences_cff") 
 
+process.load("SelectionCuts_top_group_control_samples_v2_cff")
 
 #process.patElectrons.pfElectronSource= cms.InputTag("particleFlow","electrons")
 #process.patMuons.pfMuonSource = cms.InputTag("particleFlow","muons")
@@ -344,7 +345,7 @@ process.allControlSamples = cms.OutputModule("PoolOutputModule",
 
 )
 
-process.qcdIsoControlSamples = cms.OutputModule('PoolOutputModule',
+process.isoControlSamples = cms.OutputModule('PoolOutputModule',
  SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
 #    'PathAllNonTTBarSampleMuon',
 #    'PathAllNonTTBarAntiIsoSampleMuon',
@@ -387,8 +388,38 @@ fileName = cms.untracked.string('DataIsoControlSamples.root'),
 
  )
 
-process.outpath = cms.EndPath(
-    process.allControlSamples
-    +
-    process.qcdIsoControlSamples
+process.tSample =  process.allControlSamples.clone(
+    fileName = cms.untracked.string('DataTChanSample_New.root'),
+    
+    SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
+    'PathTSampleMuon',
+    'PathTSampleElectron',
     )
+))
+
+process.wSample =  process.allControlSamples.clone(
+    fileName = cms.untracked.string('DataWSample_New.root'),
+    
+    SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
+    'PathWSampleMuon',
+    'PathWSampleElectron',
+    )
+))
+
+process.ttbarSample =  process.allControlSamples.clone(
+    fileName = cms.untracked.string('DataTTBarSample_New.root'),
+    
+    SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
+    'PathTTBarSampleMuon',
+    'PathTTBarSampleElectron',
+    )
+))
+
+process.outpath = cms.EndPath(
+    process.tSample +
+    process.wSample +
+    process.ttbarSample +
+    process.isoControlSamples
+    )
+
+

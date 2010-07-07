@@ -1,11 +1,12 @@
 import FWCore.ParameterSet.Config as cms
+
 from TopQuarkAnalysis.SingleTop.SingleTopProducers_cff import *
 from TopQuarkAnalysis.SingleTop.SingleTopSelectors_cff import *
 
 from TopQuarkAnalysis.SingleTop.SingleTopHistogrammers_cff import *
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import *
 
-
+from TopQuarkAnalysis.SingleTop.SingleTopControlSamplesProducers_cff import *
 
 
 #### Set the cuts values ####
@@ -13,15 +14,16 @@ from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import *
 ### Cuts for the kinematic variables, and ID and b-tagging###
 
 #Muons, electrons and jets kinematic and ID cuts
-muLooseCuts = cms.string("isGlobalMuon & pt > 10 & abs(eta) < 2.5 & (isolationR03.sumPt + isolationR03.emEt + isolationR03.hadEt)/pt < 0.2")
-eleLooseCuts = cms.string("et > 15 & abs(eta) < 2.5 & (dr04TkSumPt + dr04EcalRecHitSumEt + dr04HcalTowerSumEt)/et < 0.2 ")
+muLooseCut = cms.string("isGlobalMuon & pt > 10 & abs(eta) < 2.5 & (isolationR03.sumPt + isolationR03.emEt + isolationR03.hadEt)/pt < 0.2")
+eleLooseCut = cms.string("et > 15 & abs(eta) < 2.5 & (dr03TkSumPt + dr03EcalRecHitSumEt + dr03HcalTowerSumEt)/et < 0.2 ")
 
-jetCuts = cms.string('pt >  20 & abs(eta) < 5.0')
+jetCut = cms.string('pt >  20 & abs(eta) < 5.0')
 
 #Cuts on the isolation of the leptons
-eleTightCut = cms.string("et>20 & abs(eta)<2.5  & electronID('eidRobustTight') > 0 & (dr04TkSumPt + dr04EcalRecHitSumEt + dr04HcalTowerSumEt)/et < 0.1 & dB/edB < 3")
+eleTightCut = cms.string("et>20 & abs(eta)<2.5  & gsfTrack().trackerExpectedHitsInner.numberOfHits == 0 & (dr03TkSumPt + dr03EcalRecHitSumEt + dr03HcalTowerSumEt)/et < 0.1 & dB < 0.02")
 
-muTightCut = cms.string("pt > 20 & abs(eta) < 2.1 & muonID('GlobalMuonPromptTight') > 0 & pt > 20 & (isolationR03.sumPt + isolationR03.emEt + isolationR03.hadEt)/pt < 0.05 & dB/edB < 3") 
+muTightCut = cms.string("pt > 20 & isGlobalMuon & isTrackerMuon & abs(eta) < 2.1 & muonID('GlobalMuonPromptTight') > 0 & (isolationR03.sumPt + isolationR03.emEt + isolationR03.hadEt)/pt < 0.1 & dB < 0.02 && !hasOverlaps('myJets')") 
+
 
 
 #Jets cleaning part: very tight cut requiring no overlaps with electrons and muons!
@@ -50,7 +52,7 @@ maxLeptons = cms.int32(1)
 
 #Number of jets that survive kinematic cuts ( kin )
 minJets = cms.uint32(2)
-maxJets = cms.uint32(2)
+maxJets = cms.uint32(3)
 
 #Number of b-tagged jets ( kin + b-tag algo )
 minBTags = cms.uint32(1)
@@ -78,6 +80,9 @@ maxElectrons = cms.uint32(1)
 
 
 
+
+
+
 #Check to see if it is signal channel ( MC only )
 #isMCSingleTopTChannel = cms.untracked.bool(True)
 isMCSingleTopTChannel = cms.untracked.bool(False)
@@ -98,16 +103,15 @@ looseElectrons = cms.EDFilter("PATElectronSelector",
   cut = cms.string('et >  15 & abs(eta) < 2.5'),
   filter = cms.bool(False)                                
 )
-
 #### Put the cuts in the modules ####
 
 #Preselection
-preselectedMuons.cut = muLooseCuts
-preselectedElectrons.cut = eleLooseCuts
-preselectedJets.cut = jetCuts
+preselectedMuons.cut = muLooseCut
+preselectedElectrons.cut = eleLooseCut
+preselectedJets.cut = jetCut
 
-looseMuons.cut = muLooseCuts
-looseElectrons.cut = eleLooseCuts
+looseMuons.cut = muLooseCut
+looseElectrons.cut = eleLooseCut
 
 #selection: Leptons 
 topElectrons.finalCut =  eleTightCut
@@ -116,8 +120,7 @@ topMuons.finalCut = muTightCut
 topMuons.checkOverlaps = cms.PSet(
     myJets = cms.PSet(
     src = cms.InputTag("preselectedJets"),
-    preselection = cms.string('pt > 30'),
-    #   algorithm = cms.string('bySuperClusterSeed'),
+    preselection = cms.string('pt > 30 && emEnergyFraction > 0.01 & jetID().n90Hits > 1 & jetID().fHPD < 0.98 '), #   algorithm = cms.string('bySuperClusterSeed'),
     algorithm = cms.string('byDeltaR'),
     deltaR = cms.double(0.3), 
     checkRecoComponents = cms.bool(False),
@@ -209,3 +212,80 @@ topJets.checkOverlaps = cms.PSet(
 
 #Cuts on the transverse mass of the W from top decay
 #transverseWMassCut = cms.untracked.double(50)
+
+
+
+############Control samples part
+
+#Control samples anti-iso cuts:
+
+#Muons, electrons loose:
+muLooseAntiIsoCut = cms.string("isGlobalMuon & pt > 10 & abs(eta) < 2.5 & (isolationR03.sumPt + isolationR03.emEt + isolationR03.hadEt)/pt > 0.1")
+eleLooseAntiIsoCut = cms.string("et > 15 & abs(eta) < 2.5 & (dr03TkSumPt + dr03EcalRecHitSumEt + dr03HcalTowerSumEt)/et > 0.1 ")
+
+#Muons, electrons tight:
+eleTightAntiIsoCut = cms.string("et>30 & abs(eta)<2.5  & (dr03TkSumPt + dr03EcalRecHitSumEt + dr03HcalTowerSumEt)/et > 0.2 & gsfTrack().trackerExpectedHitsInner().numberOfHits == 0 & dB < 0.02")
+
+muTightAntiIsoCut = cms.string("pt > 20 & abs(eta) < 2.1 & muonID('GlobalMuonPromptTight') > 0 & isGlobalMuon & isTrackerMuon & (isolationR03.sumPt + isolationR03.emEt + isolationR03.hadEt)/pt > 0.2 & dB < 0.02") 
+
+
+#Jet Part
+jetAntiIsoTightCut = cms.string('pt > 30 && !hasOverlaps("myElectronsAntiIso") && !hasOverlaps("myElectronsIso") && emEnergyFraction > 0.01 & jetID().n90Hits > 1 & jetID().fHPD < 0.98 ')
+
+bJetsAntiIso.cut = bJetsCut
+forwardJetsAntiIso.cut = forwardJetsCut
+
+#Check that the jet does not overlap with the high pt Anti-Isolated electrons
+topJetsAntiIso.checkOverlaps = cms.PSet(
+    myElectronsAntiIso = cms.PSet(
+    src = cms.InputTag('topElectronsAntiIso'),
+    preselection = cms.string(""),
+    algorithm = cms.string('byDeltaR'),
+    deltaR = cms .double(0.3),
+    checkRecoComponents = cms.bool(False),
+    pairCut =cms.string(""),
+    requireNoOverlaps = cms.bool(False),
+    ),
+
+    myElectronsIso = cms.PSet(
+    src = cms.InputTag('preselectedElectrons'),
+    preselection = eleTightCut,
+    algorithm = cms.string('byDeltaR'),
+    deltaR = cms .double(0.3),
+    checkRecoComponents = cms.bool(False),
+    pairCut =cms.string(""),
+    requireNoOverlaps = cms.bool(False),
+    ),
+)
+
+preselectedMuonsAntiIso.cut = muLooseAntiIsoCut
+preselectedElectronsAntiIso.cut = eleLooseAntiIsoCut
+
+topMuonsAntiIso.finalCut = muTightAntiIsoCut
+topElectronsAntiIso.finalCut = eleTightAntiIsoCut
+
+topJetsAntiIso.finalCut = jetAntiIsoTightCut
+
+countLeptonsAntiIso.minNumber = cms.int32(1) 
+countLeptonsAntiIso.maxNumber = cms.int32(1) 
+
+vetoLeptonsIso.minNumber = cms.int32(0) 
+vetoLeptonsIso.maxNumber = cms.int32(0) 
+
+
+countJetsAntiIso.minNumber = cms.uint32(2)
+countJetsAntiIso.maxNumber = cms.uint32(3) 
+
+countJetsTTBar.minNumber = cms.uint32(3)
+countJetsTTBar.maxNumber = cms.uint32(3) 
+
+countJetsNonTTBar.minNumber = cms.uint32(2)
+countJetsNonTTBar.maxNumber = cms.uint32(2) 
+
+countJetsNonTTBarAntiIso.minNumber = cms.uint32(2)
+countJetsNonTTBarAntiIso.maxNumber = cms.uint32(2) 
+
+
+countJetsTTBarAntiIso.minNumber = cms.uint32(3)
+countJetsTTBarAntiIso.maxNumber = cms.uint32(3) 
+#
