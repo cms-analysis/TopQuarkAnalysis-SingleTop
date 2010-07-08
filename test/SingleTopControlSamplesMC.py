@@ -2,26 +2,11 @@ import FWCore.ParameterSet.Config as cms
 
 process = cms.Process("SingleTop")
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
-process.source = cms.Source ("PoolSource",
-                             fileNames = cms.untracked.vstring (
-    'rfio:/castor/cern.ch/user/g/giamman/test/D817160F-BAEB-DE11-BE9F-00E0814896BE.root'#signal file, from /SingleTop_tChannel-madgraph/Summer09-MC_31X_V3_7TeV-v2/GEN-SIM-RECO
-),
-duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
-)
-
-
-
 
 ## Load additional RECO config
 process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-
-
 process.GlobalTag.globaltag = cms.string('START36_V9::All') #TAG FOR  Data 27May
-
-
 #process.GlobalTag.globaltag = cms.string('GR_R_37X_V5A::All') #TAG FOR  Data 27May
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
@@ -32,14 +17,11 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 #Loading Pat Sequences
 
-#Loading Pat Sequences + various stuff
+#Loading SingleTop Sequences + other functions
 process.load("TopQuarkAnalysis.SingleTop.SingleTopSequences_cff") 
 
 
 process.load("SelectionCuts_top_group_control_samples_v2_cff")
-
-print "loadedcuts"
-
 
 from PhysicsTools.PatAlgos.tools.coreTools import *
 
@@ -63,17 +45,11 @@ run36xOn35xInput(process)
 process.patJets.jetSource = cms.InputTag("ak5CaloJets")
 
 postfix = "PFlow"
-#usePF2PAT(process,runPF2PAT=True,jetAlgo='AK5',runOnMC=True,postfix=postfix)
-
-print "test1"
-
-#getattr(process, "patElectrons" + postfix).embedGenMatch=False
-#getattr(process, "patMuons" + postfix).embedGenMatch=False
+usePF2PAT(process,runPF2PAT=True,jetAlgo='AK5',runOnMC=True,postfix=postfix)
 
 
-process.patPFMETs = process.patMETs.clone(metSource = cms.InputTag("pfMET"))
-process.patPFElectrons = process.patElectrons.clone(pfElectronSource = cms.InputTag("particleFlow","electrons"), useParticleFlow = cms.bool(True))
-process.patPFMuons = process.patMuons.clone(pfMuonSource = cms.InputTag("particleFlow","muons"),useParticleFlow = cms.bool(False))
+getattr(process, "patElectrons" + postfix).embedGenMatch=False
+getattr(process, "patMuons" + postfix).embedGenMatch=False
 
 #Path for the module that produces the tree for analysis 
 
@@ -81,35 +57,23 @@ process.pathPreselection = cms.Path(
    process.patElectronIDs +
    process.patDefaultSequence +
    process.PF2PAT +
-   process.pfMET +
-   process.patPFMETs +#+ +
-#   getattr(process,"patPF2PATSequence"+postfix) 
-#   process.makeNewPatElectrons
-      process.patPFElectrons +
-   #   process.patJetsPFlow +
-#   process.patPFBJets +
-#      process.patPFElectrons +
-      process.patPFMuons)
+   getattr(process,"patPF2PATSequence"+postfix)
+
+   )
 
 
-readFiles = cms.untracked.vstring()
-secFiles = cms.untracked.vstring()
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.source = cms.Source ("PoolSource",
+                             fileNames = cms.untracked.vstring (
 
-readFiles.extend( [
     'rfio:/castor/cern.ch/user/o/oiorio/SingleTop/SubSkims/MC/Loose/Events_1_1.root',
-    #    'file:/tmp/oiorio/Events_1_1.root',
-    #Production step: all collections are created
-        ] );
 
-#from getLFNsForSite_cff import *
+#    'rfio:/castor/cern.ch/user/g/giamman/test/D817160F-BAEB-DE11-BE9F-00E0814896BE.root'#signal file, from /SingleTop_tChannel-madgraph/Summer09-MC_31X_V3_7TeV-v2/GEN-SIM-RECO
 
-
-process.source.fileNames = readFiles
-#process.source.lumisToProcess = cms.untracked.VLuminosityBlockRange()
-
-
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
-
+),
+duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
+)
 
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
 
@@ -208,7 +172,6 @@ process.allControlSamples = cms.OutputModule("PoolOutputModule",
 
 
     'keep *_patMETsPFlow_*_*',
-    'keep *_pfJets_*_*',
     'keep *_patJetsPFlow_*_*',
     'keep *_patElectronsPFlow_*_*',
     'keep *_patMuonsPFlow_*_*',
@@ -216,28 +179,16 @@ process.allControlSamples = cms.OutputModule("PoolOutputModule",
 
     'keep *_TriggerResults_*_*',
 
-    'keep *_patPFMETs_*_*',
-    'keep *_pfJets_*_*',
-    'keep *_patPFElectrons_*_*',
-    'keep *_patPFMuons_*_*',
-#    'keep *_pfPhotons_*_*',
-
 #Skimmed collections
 
-#    'keep *_preselectedMuons_*_*',
-#    'keep *_preselectedElectrons_*_*',
+    'keep *_topMuons_*_*',
+    'keep *_topElectrons_*_*',
 
 
 
 #FIXME JUST TO KEEP REASONABLE SIZE
-#    'Keep *_topMuons_*_*',
-#    'keep *_topElectrons_*_*',
 
-#    'keep *_preselectedJets_*_*',
-
-#    'keep *_topJets_*_*',
     'keep *_bJets_*_*',
-#    'keep *_antiBJets_*_*',
     'keep *_forwardJets_*_*',
 
     'keep *_preselectedMETs_*_*',
@@ -304,11 +255,6 @@ process.isoControlSamples = cms.OutputModule('PoolOutputModule',
      outputCommands = cms.untracked.vstring(
     'drop *',
 
-    'keep *_patMETs_*_*',
-    'keep *_patJets_*_*',
-
-#    'keep *_patMETs_*_*',
-#    'keep *_patMETs_*_*',
 
     'keep *_topMuonsAntiIso_*_*',
     'keep *_topElectronsAntiIso_*_*',
@@ -318,16 +264,15 @@ process.isoControlSamples = cms.OutputModule('PoolOutputModule',
 
     'keep *_topJets_*_*',
     'keep *_topJetsAntiIso_*_*',
+
     'keep *_patJetsPFlow_*_*',
+    'keep *_patElectronsPFlow_*_*',
+    'keep *_patMuonsPFlow_*_*',
 
 
     'keep *_preselectedMETs_*_*',
     'keep *_patMETsPFlow_*_*',
 
-    'keep *_patPFMETs_*_*',
-    'keep *_pfJets_*_*',
-    'keep *_patPFElectrons_*_*',
-    'keep *_patPFMuons_*_*',
 
 
     )
