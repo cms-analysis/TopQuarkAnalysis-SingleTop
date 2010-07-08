@@ -6,12 +6,7 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
-
-#    'rfio:/castor/cern.ch/cms/store/data/Commissioning10/MinimumBias/RECO/Apr15Skim_356_PreProduction_SD_Mu-v2/0011/90ACEF66-2E49-DF11-8B3C-00261894396B.root',
-    #'rfio:/castor/cern.ch/user/o/oiorio/SingleTop/SingleTop_tChan/Events_35_1.root',
-'file:/tmp/oiorio/Events_1_1.root'
-    
-
+    'rfio:/castor/cern.ch/user/g/giamman/test/D817160F-BAEB-DE11-BE9F-00E0814896BE.root'#signal file, from /SingleTop_tChannel-madgraph/Summer09-MC_31X_V3_7TeV-v2/GEN-SIM-RECO
 ),
 duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 )
