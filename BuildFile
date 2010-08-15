@@ -9,6 +9,8 @@
 <use name=CommonTools/UtilAlgos>
 <use name=PhysicsTools/CandUtils>
 <use name=DataFormats/PatCandidates>
+<use name=TrackingTools/IPTools>
+<use name=TrackingTools/TransientTrack>
 <flags EDM_PLUGIN=1>
 <Flags CXXFLAGS="-g">
 #<flags CXXFLAGS="-O0 -g -DDEBUG">
