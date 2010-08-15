@@ -11,6 +11,7 @@
 <use name=DataFormats/PatCandidates>
 <use name=TrackingTools/IPTools>
 <use name=TrackingTools/TransientTrack>
+<use name=DataFormats/METReco>
 <flags EDM_PLUGIN=1>
 <Flags CXXFLAGS="-g">
 #<flags CXXFLAGS="-O0 -g -DDEBUG">
