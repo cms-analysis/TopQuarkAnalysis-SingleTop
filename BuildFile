@@ -4,6 +4,7 @@
 <use name=FWCore/ParameterSet>
 <use name=root>
 <use name=rootrflx>
+<use name=rootminuit>
 <use name=hepmc>
 <use name=PhysicsTools/UtilAlgos>
 <use name=CommonTools/UtilAlgos>
