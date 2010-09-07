@@ -93,7 +93,7 @@ process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
 
 #    'file:/tmp/oiorio/94659715-5F91-DF11-BBCD-001D09F2AF96.root'
-'/castor/cern.ch/cms/store/data/Run2010A/Mu/RECO/v4/000/140/331/94659715-5F91-DF11-BBCD-001D09F2AF96.root'
+'rfio:/castor/cern.ch/cms/store/data/Run2010A/Mu/RECO/v4/000/140/331/94659715-5F91-DF11-BBCD-001D09F2AF96.root'
 
 #'rfio:/castor/cern.ch/user/g/giamman/singletop/sync/F81B1889-AF4B-DF11-85D3-001A64789DF4.root',
 
