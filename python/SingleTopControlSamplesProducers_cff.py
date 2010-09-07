@@ -18,7 +18,7 @@ recoTopsWSamplePseudoBTags = recoTops.clone(jetsSource = cms.InputTag('pseudoBJe
 boostedTopsWSamplePseudoBTagsTops = boostedTops.clone(
     src = cms.InputTag('recoTopsWSamplePseudoBTags'),
     boostSrc = cms.InputTag('recoTopsWSamplePseudoBTags'),
-    )
+)
 
 boostedForwardJetsWSamplePseudoBTagsTops = boostedForwardJets.clone(
     boostSrc = cms.InputTag('recoTopsWSamplePseudoBTags'),
@@ -102,8 +102,8 @@ SingleTopWtransverseMassFilterTTBarSample = SingleTopWtransverseMassFilter.clone
 
 
 
-
-pseudoBJets = topJets.clone(
+pseudoBJets = preselectedJets.clone(
+    src= cms.InputTag("topJets"),
     checkOverlaps = cms.PSet(
     myForwardJets = cms.PSet(
     src = cms.InputTag('forwardJets'),

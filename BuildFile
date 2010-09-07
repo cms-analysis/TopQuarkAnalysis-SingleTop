@@ -2,6 +2,9 @@
 <use name=FWCore/Utilities>
 #<use name=Foundation/PluginManager>
 <use name=FWCore/ParameterSet>
+<use name=RecoEgamma/EgammaTools>
+<use name=MagneticField/Engine>
+<use name=MagneticField/Records>
 <use name=root>
 <use name=rootrflx>
 <use name=rootminuit>
@@ -9,6 +12,7 @@
 <use name=PhysicsTools/UtilAlgos>
 <use name=CommonTools/UtilAlgos>
 <use name=PhysicsTools/CandUtils>
+<use name=PhysicsTools/SelectorUtils>
 <use name=DataFormats/PatCandidates>
 <use name=TrackingTools/IPTools>
 <use name=TrackingTools/TransientTrack>
