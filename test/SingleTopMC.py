@@ -98,9 +98,9 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(300) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
 
-    'file:/tmp/oiorio/F81B1889-AF4B-DF11-85D3-001A64789DF4.root'
+#    'file:/tmp/oiorio/F81B1889-AF4B-DF11-85D3-001A64789DF4.root'
 
-#'rfio:/castor/cern.ch/user/g/giamman/singletop/sync/F81B1889-AF4B-DF11-85D3-001A64789DF4.root',
+'rfio:/castor/cern.ch/user/g/giamman/singletop/sync/F81B1889-AF4B-DF11-85D3-001A64789DF4.root',
 
 
 ),
