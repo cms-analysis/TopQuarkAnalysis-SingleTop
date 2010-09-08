@@ -3,72 +3,69 @@ import FWCore.ParameterSet.Config as cms
 process = cms.Process("SingleTop")
 
 ## Load additional RECO config
+process.load("Configuration.StandardSequences.MixingNoPileUp_cff")
+process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff") ### real data
 process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-#process.GlobalTag.globaltag = cms.string('START36_V9::All') #TAG FOR  Data 27May
-process.GlobalTag.globaltag = cms.string('START36_V9::All') #TAG FOR  Data 27May
-#process.GlobalTag.globaltag = cms.string('GR_R_37X_V5A::All') #TAG FOR  Data 27May
-process.load("Configuration.StandardSequences.MagneticField_cff")
+process.GlobalTag.globaltag = cms.string('GR_R_38X_V11::All') #TAG FOR 382
 
-
-
-from PhysicsTools.PatAlgos.patTemplate_cfg import *
-
-
-#Loading Pat Sequences
-
-
-#Loading SingleTop Sequences + other functions
 process.load("TopQuarkAnalysis.SingleTop.SingleTopSequences_cff") 
-
-
 process.load("SelectionCuts_top_group_control_samples_v3_cff")
 
-
-from PhysicsTools.PatAlgos.tools.coreTools import *
+from PhysicsTools.PatAlgos.recoLayer0.jetCorrFactors_cfi import *
+from PhysicsTools.PatAlgos.tools.jetTools import *
 from PhysicsTools.PatAlgos.tools.metTools import *
-
-#Loading Pf Algorythms
-process.load("PhysicsTools.PFCandProducer.PF2PAT_cff")
-
-from PhysicsTools.PatAlgos.patTemplate_cfg import *
-from PhysicsTools.PatAlgos.tools.pfTools import *
-
-
-removeMCMatching(process,
-                 ['All'])
-
-
-from PhysicsTools.PatAlgos.tools.cmsswVersionTools import *
-
-
-run36xOn35xInput(process)
-
-
-process.load('JetMETCorrections.Configuration.DefaultJEC_cff')
-process.load("RecoJets.Configuration.RecoJPTJets_cff")
-
+from PhysicsTools.PatAlgos.tools.coreTools import *
 
 #Path for the module that produces the tree for analysis 
+
+# turn off MC matching for the process
+removeMCMatching(process, ['All'])
+
+# add PF
+
+addJetCollection(process,
+                   cms.InputTag('ak5PFJets'),
+                   'AK5',
+                   'PF',
+                   doJTA=True,
+                   doBTagging=True,
+                   jetCorrLabel=('AK5','PF'),
+                   doType1MET=True,
+                   doJetID      = True,
+                   jetIdLabel   = "ak5"
+                  )
+
+# add JPT
+process.load('JetMETCorrections.Configuration.DefaultJEC_cff')
+process.load('RecoJets.Configuration.RecoJPTJets_cff')
+
+
+addJetCollection(process,cms.InputTag('JetPlusTrackZSPCorJetAntiKt5'),
+                                  'AK5', 'JPT',
+                                  doJTA        = True,
+                                  doBTagging   = True,
+                                  jetCorrLabel = ('AK5','JPT'),
+                                  doType1MET   = False,
+                                  doL1Cleaning = False,
+                                  doL1Counters = True,
+                                  genJetCollection = cms.InputTag("ak5GenJets"),
+                                  doJetID      = True,
+                                  jetIdLabel   = "ak5"
+                                  )
+
+# corrections:
+patJetCorrFactors.corrSample = cms.string("Spring10") 
+switchJECSet( process, "Spring10")
+
 
 addTcMET(process, 'TC')
 addPfMET(process, 'PF')
 
-postfix = "PFlow"
-usePF2PAT(process,runPF2PAT=True,jetAlgo='AK5',runOnMC=True,postfix=postfix)
 
-
-getattr(process, "patElectrons" + postfix).embedGenMatch=False
-getattr(process, "patMuons" + postfix).embedGenMatch=False
-
-                                     
 process.pathPreselection = cms.Path(
-#    process.recoJPTJets +
-#    process.ak5JPTJetsL2L3 +
-#    process.patElectronIDs +
-    process.patDefaultSequence +
-    process.PF2PAT +
-    getattr(process,"patPF2PATSequence"+postfix)
+    process.recoJPTJets +
+    process.patDefaultSequence 
     )
 
 
@@ -77,8 +74,9 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
 
- #   'file:/tmp/oiorio/94659715-5F91-DF11-BBCD-001D09F2AF96.root'
+#    'file:/tmp/oiorio/94659715-5F91-DF11-BBCD-001D09F2AF96.root'
 'rfio:/castor/cern.ch/cms/store/data/Run2010A/Mu/RECO/v4/000/140/331/94659715-5F91-DF11-BBCD-001D09F2AF96.root'
+
 #'rfio:/castor/cern.ch/user/g/giamman/singletop/sync/F81B1889-AF4B-DF11-85D3-001A64789DF4.root',
 
 
@@ -97,26 +95,54 @@ process.options = cms.untracked.PSet(
 process.electronIDIso.isData = cms.untracked.bool(False)
 process.electronIDAntiIso.isData = cms.untracked.bool(False)
 
+process.topJetsPF.src = cms.InputTag("patJetsAK5PF")
+
+# good vertices
+process.PVFilter.cut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.Rho <= 2")
+
+process.demo = cms.EDAnalyzer('SimpleEventDumper',
+                              verticesSource = cms.InputTag("PVFilter"),
+                              electronSource = cms.InputTag("cleanPatElectrons"),
+                              muonSource     = cms.InputTag("patMuons"),
+                              patmetSource = cms.InputTag("patMETs"),
+                              calometSource = cms.InputTag("met"), #uncorrected
+                              pfmetSource = cms.InputTag("pfMet"),
+                              tcmetSource = cms.InputTag("tcMet"),
+                              patjetSource = cms.InputTag("patJets"),
+                              pfjetSource = cms.InputTag("ak5PFJets"), #uncorrected
+                              pfpatjetSource = cms.InputTag("patJetsAK5PF"), #corrected, and possibility to access b-tagging for it
+                              jptjetSource = cms.InputTag("patJetsAK5JPT"),
+                              lep_pt_min = cms.double(10),
+                              mt_min = cms.double(20),
+                              jet_pt_min = cms.double(20),
+                              useL5corr = cms.bool(False),
+                              useL5corr_including_gluons = cms.bool(False),#
+
+                              imgSolStrategy = cms.int32(1), #0: ignore Img part; 1: adjust MT to MW (as TOP-09-005)
+                             )
+
 process.baseLeptonSequence = cms.Path(
-    process.basePath
+    process.basePath 
     )
 
 #Muon control samples
 
 process.PathTSampleMuonPF = cms.Path(
-    process.TSampleMuonPF
+    process.TSampleMuonPF *
+    process.demo
     )
 
 ###Electron control samples
 process.PathTSampleElectronPF = cms.Path(
-    process.TSampleElectronPF
+    process.TSampleElectronPF *
+    process.demo
     )
 
 
 ## Output module configuration
 process.allControlSamples = cms.OutputModule("PoolOutputModule",
 #                                fileName = cms.untracked.string('rfio:/CST/cern.ch/user/o/oiorio/SingleTop/SubSkims/WControlSamples1.root'),
-                   fileName = cms.untracked.string('test_New.root'),
+                   fileName = cms.untracked.string('test.root'),
                                            
 
   

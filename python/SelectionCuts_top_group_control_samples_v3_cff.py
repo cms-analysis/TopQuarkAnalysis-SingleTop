@@ -3,8 +3,8 @@ import FWCore.ParameterSet.Config as cms
 from TopQuarkAnalysis.SingleTop.SingleTopProducers_cff import *
 from TopQuarkAnalysis.SingleTop.SingleTopSelectors_cff import *
 
-from TopQuarkAnalysis.SingleTop.SingleTopHistogrammers_cff import *
-from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import *
+#from TopQuarkAnalysis.SingleTop.SingleTopHistogrammers_cff import *
+#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import *
 
 from TopQuarkAnalysis.SingleTop.SingleTopControlSamplesProducers_cff import *
 
@@ -30,7 +30,9 @@ jetCut = cms.string('pt >  30 & abs(eta) < 5.0')# & jetID().fHPD < 0.98 & jetID(
 photonsCut = cms.string('pt/(pt+ caloIso) > 0.9')
 
 #Apply  selection to clean jets from electrons
-jetTightCut = cms.string("pt > 30 && abs(eta)<5 &&!hasOverlaps('myElectrons') && !hasOverlaps('myMuons')  ")
+jetTightCut = cms.string('pt > 30 && abs(eta)<5 &&!hasOverlaps("myElectrons") && !hasOverlaps("myMuons") & emEnergyFraction > 0.01 & (abs(eta) > 2.4 || ( jetID().n90Hits > 1 & jetID().fHPD < 0.98)) ')
+
+jetTightCutPF = cms.string("pt > 30 && abs(eta)<5 &&!hasOverlaps('myElectrons') && !hasOverlaps('myMuons') && numberOfDaughters > 1 && neutralHadronEnergyFraction < 1 & neutralEmEnergyFraction < 1 & (abs(eta)> 2.4 || ( chargedHadronEnergyFraction > 0 & chargedMultiplicity > 0) )")
 #jetTightCut = cms.string('pt > 30')
 
 #Cut to define forward jets 
@@ -77,7 +79,7 @@ maxElectrons = cms.uint32(1)
 
 
 
-preselectedJets.checkOverlaps = cms.PSet(
+topJets.checkOverlaps = cms.PSet(
     myElectrons = cms.PSet(
     src = cms.InputTag('topElectrons'),
 #    #   algorithm = cms.string('bySuperClusterSeed'),
@@ -170,6 +172,7 @@ topMuons.cut = muTightCut
 
 #Selection : Jets
 topJets.cut = jetTightCut
+topJetsPF.cut = jetTightCutPF
 
 #selection: jets peculiar collections
 forwardJets.cut = forwardJetsCut
@@ -264,7 +267,7 @@ countJetsPF.maxNumber = cms.uint32(2)
 #    ),
 #)
 
-topJetsPF.cut = cms.string('numberOfDaughters > 1 && neutralHadronEnergyFraction < 1 && neutralEmEnergyFraction < 1 && ( (abs(eta)>2.4) || (abs(eta)<2.4 && chargedMultiplicity > 0 && chargedHadronEnergyFraction > 0)) && pt > 30')
+#topJetsPF.cut = cms.string('numberOfDaughters > 1 && neutralHadronEnergyFraction < 1 && neutralEmEnergyFraction < 1 && ( (abs(eta)>2.4) || (abs(eta)<2.4 && chargedMultiplicity > 0 && chargedHadronEnergyFraction > 0)) && pt > 30')
 
 #    myPhotons = cms.PSet(
 #    src = cms.InputTag('cleanLayer1Photons'),
@@ -299,10 +302,10 @@ muTightAntiIsoCut = cms.string("pt > 20 & abs(eta) < 2.1 & muonID('GlobalMuonPro
 
 
 #Jet Part
-jetAntiIsoTightCut = cms.string('pt > 30 && !hasOverlaps("myElectronsAntiIso") && !hasOverlaps("myElectronsIso") && emEnergyFraction > 0.01 & jetID().n90Hits > 1 & jetID().fHPD < 0.98 ')
-
-bJetsAntiIso.cut = bJetsCut
+jetAntiIsoTightCut = cms.string('pt > 30 && !hasOverlaps("myElectronsAntiIso") && !hasOverlaps("myElectronsIso") && emEnergyFraction > 0.01 & jetID().n90Hits > 1 & jetID().fHPD < 0.98 ') 
+bJetsAntiIso.cut = bJetsCut  
 forwardJetsAntiIso.cut = forwardJetsCut
+
 
 #Check that the jet does not overlap with the high pt Anti-Isolated electrons
 topJetsAntiIso.checkOverlaps = cms.PSet(

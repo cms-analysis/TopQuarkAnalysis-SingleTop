@@ -3,82 +3,64 @@ import FWCore.ParameterSet.Config as cms
 process = cms.Process("SingleTop")
 
 ## Load additional RECO config
+process.load("Configuration.StandardSequences.MixingNoPileUp_cff")
+process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff") ### real data
 process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-#process.GlobalTag.globaltag = cms.string('START36_V9::All') #TAG FOR  Data 27May
-process.GlobalTag.globaltag = cms.string('START36_V9::All') #TAG FOR  Data 27May
-#process.GlobalTag.globaltag = cms.string('GR_R_37X_V5A::All') #TAG FOR  Data 27May
-process.load("Configuration.StandardSequences.MagneticField_cff")
+process.GlobalTag.globaltag = cms.string('GR_R_38X_V11::All') #TAG FOR 382
 
-
-
-from PhysicsTools.PatAlgos.patTemplate_cfg import *
-
-
-#Loading Pat Sequences
-
-
-#Loading SingleTop Sequences + other functions
 process.load("TopQuarkAnalysis.SingleTop.SingleTopSequences_cff") 
-
-
 process.load("SelectionCuts_top_group_control_samples_v3_cff")
 
-
-from PhysicsTools.PatAlgos.tools.coreTools import *
+from PhysicsTools.PatAlgos.recoLayer0.jetCorrFactors_cfi import *
+from PhysicsTools.PatAlgos.tools.jetTools import *
 from PhysicsTools.PatAlgos.tools.metTools import *
-
-#Loading Pf Algorythms
-process.load("PhysicsTools.PFCandProducer.PF2PAT_cff")
-
-from PhysicsTools.PatAlgos.patTemplate_cfg import *
-from PhysicsTools.PatAlgos.tools.pfTools import *
-
-
-removeMCMatching(process,
-                 ['All'])
-
-
-from PhysicsTools.PatAlgos.tools.cmsswVersionTools import *
-
-
-run36xOn35xInput(process)
-
-
-process.load('JetMETCorrections.Configuration.DefaultJEC_cff')
-process.load("RecoJets.Configuration.RecoJPTJets_cff")
-
+from PhysicsTools.PatAlgos.tools.coreTools import *
 
 #Path for the module that produces the tree for analysis 
 
+# turn off MC matching for the process
+removeMCMatching(process, ['All'])
+
+# add PF
+
+addJetCollection(process,
+                   cms.InputTag('ak5PFJets'),
+                   'AK5',
+                   'PF',
+                   doJTA=True,
+                   doBTagging=True,
+                   jetCorrLabel=('AK5','PF'),
+                   doType1MET=True,
+                   doJetID      = True,
+                   jetIdLabel   = "ak5"
+                  )
+
+# add JPT
+process.load('JetMETCorrections.Configuration.DefaultJEC_cff')
+process.load('RecoJets.Configuration.RecoJPTJets_cff')
+
+
+addJetCollection(process,cms.InputTag('JetPlusTrackZSPCorJetAntiKt5'),
+                                  'AK5', 'JPT',
+                                  doJTA        = True,
+                                  doBTagging   = True,
+                                  jetCorrLabel = ('AK5','JPT'),
+                                  doType1MET   = False,
+                                  doL1Cleaning = False,
+                                  doL1Counters = True,
+                                  genJetCollection = cms.InputTag("ak5GenJets"),
+                                  doJetID      = True,
+                                  jetIdLabel   = "ak5"
+                                  )
+
+# corrections:
+patJetCorrFactors.corrSample = cms.string("Spring10") 
+switchJECSet( process, "Spring10")
+
+
 addTcMET(process, 'TC')
 addPfMET(process, 'PF')
-
-                                   
-addJetCollection(process,cms.InputTag("JetPlusTrackZSPCorJetAntiKt5"),
-                 'AK5', 'JPT',
-                 doJTA = True,
-                 doBTagging = True,
-                 jetCorrLabel = ('AK5','JPT'),
-                 doType1MET = False ,
-                 doL1Cleaning = False,
-                 doL1Counters = True,
-                 genJetCollection = cms.InputTag("ak5GenJets"),
-                 doJetID = True,
-                 jetIdLabel = "ak5"             
-                 )
-
-switchJetCollection(process,
-                    cms.InputTag("JetPlusTrackZSPCorJetAntiKt5"),
-                    jetIdLabel = "ak5",
-                    doJTA = True,
-                    doBTagging = True,
-                    jetCorrLabel = ('AK5','JPT'),
-                    doType1MET = False,
-                    genJetCollection = cms.InputTag("ak5GenJets"),
-                    doJetID = True,
-                    )
-
 
 
 process.pathPreselection = cms.Path(
@@ -99,7 +81,8 @@ process.source = cms.Source ("PoolSource",
 
 
 ),
-duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
+duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
+#eventsToProcess = cms.untracked.VEventRange("140331:257717658-140331:1257717800"),
 )
 
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
@@ -113,6 +96,33 @@ process.options = cms.untracked.PSet(
 process.electronIDIso.isData = cms.untracked.bool(False)
 process.electronIDAntiIso.isData = cms.untracked.bool(False)
 
+process.preselectedJets.src = cms.InputTag("patJetsAK5JPT")
+
+# good vertices
+process.PVFilter.cut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.Rho <= 2")
+
+process.demo = cms.EDAnalyzer('SimpleEventDumper',
+                              verticesSource = cms.InputTag("PVFilter"),
+                              electronSource = cms.InputTag("cleanPatElectrons"),
+                              muonSource     = cms.InputTag("patMuons"),
+                              patmetSource = cms.InputTag("patMETs"),
+                              calometSource = cms.InputTag("met"), #uncorrected
+                              pfmetSource = cms.InputTag("pfMet"),
+                              tcmetSource = cms.InputTag("tcMet"),
+                              patjetSource = cms.InputTag("patJets"),
+                              pfjetSource = cms.InputTag("ak5PFJets"), #uncorrected
+                              pfpatjetSource = cms.InputTag("patJetsAK5PF"), #corrected, and possibility to access b-tagging for it
+                              jptjetSource = cms.InputTag("patJetsAK5JPT"),
+                              lep_pt_min = cms.double(10),
+                              mt_min = cms.double(20),
+                              jet_pt_min = cms.double(20),
+                              useL5corr = cms.bool(False),
+                              useL5corr_including_gluons = cms.bool(False),#
+
+                              imgSolStrategy = cms.int32(1), #0: ignore Img part; 1: adjust MT to MW (as TOP-09-005)
+                             )
+
+
 process.baseLeptonSequence = cms.Path(
     process.basePath
     )
@@ -120,12 +130,14 @@ process.baseLeptonSequence = cms.Path(
 #Muon control samples
 
 process.PathTSampleMuon = cms.Path(
-    process.TSampleMuon
+    process.TSampleMuon *
+    process.demo
     )
 
 ###Electron control samples
 process.PathTSampleElectron = cms.Path(
-    process.TSampleElectron
+    process.TSampleElectron *
+    process.demo
     )
 
 
@@ -188,6 +200,7 @@ process.allControlSamples = cms.OutputModule("PoolOutputModule",
     )
 
 )
+
 
 process.tSampleMu =  process.allControlSamples.clone(
     fileName = cms.untracked.string('DataTChanSampleMu.root'),
