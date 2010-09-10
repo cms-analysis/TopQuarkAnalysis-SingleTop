@@ -72,8 +72,8 @@ process.pathPreselection = cms.Path(
     process.patDefaultSequence     )
 
 
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(300) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
 
