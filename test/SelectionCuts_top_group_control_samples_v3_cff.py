@@ -22,8 +22,8 @@ ele2ndEleCuts = cms.string("et > 20 & abs(eta) < 2.5 & (dr03TkSumPt + dr03EcalRe
 #Cuts on the isolation of the leptons
 eleTightCut = cms.string("et>30  & abs(eta)<2.5  & gsfTrack().trackerExpectedHitsInner.numberOfHits == 0 & (dr03TkSumPt + dr03EcalRecHitSumEt + dr03HcalTowerSumEt)/et < 0.1 & dB < 0.02 && ( abs(superCluster.eta)> 1.5660 || abs(superCluster.eta)<14442)")
 
-topElectrons.id = cms.string("none")
-topElectrons.useConversionVeto = cms.untracked.bool(False)
+#topElectrons.id = cms.string("none")
+#topElectrons.useConversionVeto = cms.untracked.bool(False)
 
 muTightCut = cms.string("pt > 20 & isGlobalMuon & isTrackerMuon & abs(eta) < 2.1 & muonID('GlobalMuonPromptTight') > 0 & (isolationR03.sumPt + isolationR03.emEt + isolationR03.hadEt)/pt < 0.1 & dB < 0.02 ") 
 
