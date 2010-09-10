@@ -20,7 +20,7 @@ eleLooseCut = cms.string("et > 15 & abs(eta) < 2.5 & (dr03TkSumPt + dr03EcalRecH
 ele2ndEleCuts = cms.string("et > 20 & abs(eta) < 2.5 & (dr03TkSumPt + dr03EcalRecHitSumEt + dr03HcalTowerSumEt)/et < 1.0 ")
 
 #Cuts on the isolation of the leptons
-eleTightCut = cms.string("et>30 & hadronicOverEm & abs(eta)<2.5  & gsfTrack().trackerExpectedHitsInner.numberOfHits == 0 & (dr03TkSumPt + dr03EcalRecHitSumEt + dr03HcalTowerSumEt)/et < 0.1 & dB < 0.02 && ( abs(superCluster.eta)> 1.5660 || abs(superCluster.eta)<14442)")
+eleTightCut = cms.string("et>30  & abs(eta)<2.5  & gsfTrack().trackerExpectedHitsInner.numberOfHits == 0 & (dr03TkSumPt + dr03EcalRecHitSumEt + dr03HcalTowerSumEt)/et < 0.1 & dB < 0.02 && ( abs(superCluster.eta)> 1.5660 || abs(superCluster.eta)<14442)")
 
 muTightCut = cms.string("pt > 20 & isGlobalMuon & isTrackerMuon & abs(eta) < 2.1 & muonID('GlobalMuonPromptTight') > 0 & (isolationR03.sumPt + isolationR03.emEt + isolationR03.hadEt)/pt < 0.1 & dB < 0.02 ") 
 
@@ -116,21 +116,6 @@ topJets.checkOverlaps = cms.PSet(
 isMCSingleTopTChannel = cms.untracked.bool(False)
 
 
-
-
-#loose muons
-#looseMuons = cms.EDFilter("PATMuonSelector",
-#  src = cms.InputTag("preselectedMuons"),
-#  cut = cms.string('pt > 10 & abs(eta) < 2.5 & isGlobalMuon'),
-#  filter = cms.bool(False)                                
-#)
-
-#electron skim part
-#looseElectrons = cms.EDFilter("PATElectronSelector",
-#  src = cms.InputTag("preselectedElectrons"),
-#  cut = cms.string('et >  15 & abs(eta) < 2.5'),
-#  filter = cms.bool(False)                                
-#)
 #### Put the cuts in the modules ####
 looseElectrons.cut = ele2ndEleCuts
 #Preselection
@@ -145,31 +130,6 @@ preselectedJets.finalCut = jetTightCut
 topElectrons.cut =  eleTightCut
 topMuons.cut = muTightCut
 
-#opMuons.checkOverlaps = cms.PSet(
-#    myJets = cms.PSet(
-#    src = cms.InputTag("preselectedJets"),
-#    preselection = cms.string('pt > 30 && emEnergyFraction > 0.01 & jetID().n90Hits > 1 & jetID().fHPD < 0.98 '), #   algorithm = cms.string('bySuperClusterSeed'),
-#    algorithm = cms.string('byDeltaR'),
-#    deltaR = cms.double(0.3), 
-#    checkRecoComponents = cms.bool(False),
-#    pairCut =cms.string(""),
-#    requireNoOverlaps = cms.bool(False),
-#    ),
-#    )
-
-#topElectrons.checkOverlaps = cms.PSet(
-#    myJets = cms.PSet(
-#    src = cms.InputTag("preselectedJets"),
-#    preselection = cms.string('pt > 30'),
-#    #   algorithm = cms.string('bySuperClusterSeed'),
-#    algorithm = cms.string('byDeltaR'),
-#    deltaR = cms.double(0.3), 
-#    checkRecoComponents = cms.bool(False),
-#    pairCut =cms.string(""),
-#    requireNoOverlaps = cms.bool(False),
-#    )
-#    )
-
 #Selection : Jets
 topJets.cut = jetTightCut
 topJetsPF.cut = jetTightCutPF
@@ -183,25 +143,11 @@ forwardJetsPF.cut = forwardJetsCut
 bJetsPF.cut = bJetsCut 
 
 
-
-
-
-#WMass
-#selectSingleTops.transverseWMassCut = transverseWMassCut
-
-#Counting
-#Counting loose muons
-#countLeptons.cut1= muLooseCuts
-#countLeptons.cut2= eleLooseCuts
-
-
 countMuons.minNumber = minMuons
 countMuons.maxNumber = maxMuons
 
 countMuonsPF.minNumber = minMuons
 countMuonsPF.maxNumber = maxMuons
-#countMuons.verbose = cms.untracked.bool(True)
-
 
 countElectrons.minNumber = minElectrons
 countElectrons.maxNumber = maxElectrons
@@ -240,52 +186,6 @@ countLeptons.maxNumber = maxLeptons
 
 countJetsPF.minNumber = cms.uint32(2)
 countJetsPF.maxNumber = cms.uint32(2)
-
-
-#topJets.checkOverlaps = cms.PSet(
-#    myElectrons = cms.PSet(
-#    src = cms.InputTag('topElectrons'),
-#    preselection = cms.string(""),
-#    algorithm = cms.string('byDeltaR'),
-#    deltaR = cms .double(0.3),
-#    checkRecoComponents = cms.bool(False),
-#    pairCut =cms.string(""),
-#    requireNoOverlaps = cms.bool(False),
-#    ),
-#)
-
-
-#topJetsPF.checkOverlaps = cms.PSet(
-#    myElectrons = cms.PSet(
-#    src = cms.InputTag('topElectrons'),
-#    preselection = cms.string(""),
-#    Algorithm = cms.string('byDeltaR'),
-#    deltaR = #cms .double(0.3),
-#    checkRecoComponents = cms.bool(False),
-#    pairCut =cms.string(""),
-#    requireNoOverlaps = cms.bool(False),
-#    ),
-#)
-
-#topJetsPF.cut = cms.string('numberOfDaughters > 1 && neutralHadronEnergyFraction < 1 && neutralEmEnergyFraction < 1 && ( (abs(eta)>2.4) || (abs(eta)<2.4 && chargedMultiplicity > 0 && chargedHadronEnergyFraction > 0)) && pt > 30')
-
-#    myPhotons = cms.PSet(
-#    src = cms.InputTag('cleanLayer1Photons'),
-#    preselection = photonsCut,
-    #   algorithm = cms.string('bySuperClusterSeed'),
-#    algorithm = cms.string('byDeltaR'),
-#    deltaR = cms.double(0.5), 
-#    Checkrecocomponents = cms.bool(False),
-#    pairCut =cms.string(""),
-#   requireNoOverlaps = cms.bool(False),
-#    ),
-#    )
-
-
-#Cuts on the transverse mass of the W from top decay
-#transverseWMassCut = cms.untracked.double(50)
-
-
 
 ############Control samples part
 
