@@ -25,7 +25,8 @@ eleTightCut = cms.string("et>30  & abs(eta)<2.5  & gsfTrack().trackerExpectedHit
 #topElectrons.id = cms.string("none")
 #topElectrons.useConversionVeto = cms.untracked.bool(False)
 
-muTightCut = cms.string("pt > 20 & isGlobalMuon & isTrackerMuon & abs(eta) < 2.1 & muonID('GlobalMuonPromptTight') > 0 & (isolationR03.sumPt + isolationR03.emEt + isolationR03.hadEt)/pt < 0.1 & dB < 0.02 ") 
+#muTightCut = cms.string("pt > 20 & isGlobalMuon & isTrackerMuon & abs(eta) < 2.1 & muonID('GlobalMuonPromptTight') > 0 & (isolationR03.sumPt + isolationR03.emEt + isolationR03.hadEt)/pt < 0.1 & dB < 0.02 && innerTrack.numberOfValidHits > 10") 
+muTightCut = cms.string("pt > 20 & isGlobalMuon & isTrackerMuon & abs(eta) < 2.1 & muonID('GlobalMuonPromptTight') > 0 & (isolationR03.sumPt + isolationR03.emEt + isolationR03.hadEt)/pt < 0.05 & dB < 0.02 && innerTrack.numberOfValidHits > 10") 
 
 jetCut = cms.string('pt >  30 & abs(eta) < 5.0')# & jetID().fHPD < 0.98 & jetID().n90Hits > 1 ')
 
@@ -39,14 +40,14 @@ jetTightCutPF = cms.string("pt > 30 && abs(eta)<5 &&!hasOverlaps('myElectrons') 
 #jetTightCut = cms.string('pt > 30')
 
 #Cut to define forward jets 
-forwardJetsCut = cms.string('(eta > 2.5) || (eta < -2.5)')
+#forwardJetsCut = cms.string('(eta > 2.5) || (eta < -2.5) ')
 
 #Cuts for b-tagging
-bJetsCut = cms.string('bDiscriminator("trackCountingHighPurBJetTags") > 3.41 && pt > 30')
+bJetsCut = cms.string('bDiscriminator("trackCountingHighPurBJetTags") > 3.41')
 
 #Cuts for anti-b tagging algorythm
 antiBJetsCut = cms.string('bDiscriminator("trackCountingHighEffBJetTags") < 1.7 && pt > 30') 
-
+forwardJetsCut = cms.string('(bDiscriminator("trackCountingHighEffBJetTags") < 1.7) || abs(eta)>2.5')
 
 
 ### Cuts for the number of objects: counting how many of them survive the cuts ###
@@ -57,7 +58,7 @@ maxLeptons = cms.int32(1)
 
 #Number of jets that survive kinematic cuts ( kin )
 minJets = cms.uint32(2)
-maxJets = cms.uint32(3)
+maxJets = cms.uint32(2)
 
 #Number of b-tagged jets ( kin + b-tag algo )
 minBTags = cms.uint32(1)

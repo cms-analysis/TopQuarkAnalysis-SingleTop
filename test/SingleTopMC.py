@@ -72,8 +72,8 @@ process.pathPreselection = cms.Path(
     process.patDefaultSequence     )
 
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
 
@@ -94,6 +94,7 @@ process.options = cms.untracked.PSet(
     )
 
 process.preselectedJets.src = cms.InputTag("patJetsAK5JPT")
+process.preselectedMETs.src = cms.InputTag("patMETsTC")
 
 process.demo = cms.EDAnalyzer('SimpleEventDumper',
                               verticesSource = cms.InputTag("PVFilter"),

@@ -22,6 +22,8 @@ from PhysicsTools.PatAlgos.tools.coreTools import *
 # turn off MC matching for the process
 removeMCMatching(process, ['All'])
 
+
+
 # add PF
 
 addJetCollection(process,
@@ -75,7 +77,14 @@ process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
 
 #    'file:/tmp/oiorio/94659715-5F91-DF11-BBCD-001D09F2AF96.root'
-'rfio:/castor/cern.ch/cms/store/data/Run2010A/Mu/RECO/v4/000/140/331/94659715-5F91-DF11-BBCD-001D09F2AF96.root'
+
+
+'rfio:/castor/cern.ch/cms/store/data/Run2010A/EG/RECO/v4/000/142/311/3C6D0701-4AA0-DF11-8437-0030487CD184.root'
+#'rfio:/castor/cern.ch/cms/store/data/Run2010A/Mu/RECO/v4/000/140/331/94659715-5F91-DF11-BBCD-001D09F2AF96.root'
+
+#'file:Event_142132_223_143054151.root'
+#'file:Event_143181_892_622755695.root',
+# 'file:Event_142928_446_107153746.root',
 
 #'rfio:/castor/cern.ch/user/g/giamman/singletop/sync/F81B1889-AF4B-DF11-85D3-001A64789DF4.root',
 
@@ -92,11 +101,19 @@ process.options = cms.untracked.PSet(
     FailPath = cms.untracked.vstring('ProductNotFound','Type Mismatch')
     )
 
+process.preselectedElectrons.isData = cms.untracked.bool(True)
+process.topElectrons.isData = cms.untracked.bool(True)
+#process.topElectronsPF.isData = cms.untracked.bool(True)
+
 
 process.electronIDIso.isData = cms.untracked.bool(False)
 process.electronIDAntiIso.isData = cms.untracked.bool(False)
 
 process.preselectedJets.src = cms.InputTag("patJetsAK5JPT")
+process.preselectedMETs.src = cms.InputTag("patMETsTC")
+
+
+
 
 # good vertices
 process.PVFilter.cut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.Rho <= 2")
@@ -121,6 +138,9 @@ process.demo = cms.EDAnalyzer('SimpleEventDumper',
 
                               imgSolStrategy = cms.int32(1), #0: ignore Img part; 1: adjust MT to MW (as TOP-09-005)
                              )
+
+process.hltFilterPhoton20 = process.hltFilterDev.clone(HLTPaths = ('HLT_Photon20_Cleaned_L1R','HLT_Photon20_Cleaned_L1R'))
+process.hltFilterPhoton20.HLTPathsPrescales = cms.vuint32(1,1)
 
 
 process.baseLeptonSequence = cms.Path(
@@ -153,7 +173,7 @@ process.allControlSamples = cms.OutputModule("PoolOutputModule",
      outputCommands = cms.untracked.vstring(
     'drop *',
 
-
+    'keep *_recoTops_*_*',
     'keep *_patMETsPFlow_*_*',
     'keep *_patMETsTC_*_*',
     'keep *_patMETsPF_*_*',
@@ -213,8 +233,8 @@ process.tSampleMu =  process.allControlSamples.clone(
 )
 
 process.tSampleEle =  process.allControlSamples.clone(
-    fileName = cms.untracked.string('DataTChanSampleEle.root'),
-    
+    fileName = cms.untracked.string('DataTChanSampleElectron.root'),
+
     SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
 #    'PathTSampleMuon',
     'PathTSampleElectron',

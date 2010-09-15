@@ -113,9 +113,12 @@ int main(int argc,  char* argv[]){
   
   
   
+
   while(!cfgfile.eof()){
     
     cfgfile >> filename;
+    
+    
     
     TFile file_sig (filename.c_str());
     fwlite::Event ev_sig(&file_sig);
@@ -146,7 +149,7 @@ int main(int argc,  char* argv[]){
 	if(!MET.failedToGet()){
 	  
 	  for(unsigned int i = 0; i < MET->size(); ++i){
-	    
+    
 	    double preselectedMETsPt  = (*MET)[i].pt();
 	    double preselectedMETsPx  = (*MET)[i].px();
 	    double preselectedMETsPy  = (*MET)[i].py();
