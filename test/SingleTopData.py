@@ -19,7 +19,7 @@ from PhysicsTools.PatAlgos.tools.coreTools import *
 
 #Path for the module that produces the tree for analysis 
 
-# turn off MC matching for the process
+#turn off MC matching for the process
 removeMCMatching(process, ['All'])
 
 
@@ -139,8 +139,9 @@ process.demo = cms.EDAnalyzer('SimpleEventDumper',
                               imgSolStrategy = cms.int32(1), #0: ignore Img part; 1: adjust MT to MW (as TOP-09-005)
                              )
 
-process.hltFilterEle=process.hltFilter.clone(HLTPaths = ("HLT_Ele15_SW_L1R","HLT_Ele15_SW_L1R"))
-#process.hltFilterEle=process.hltFilter.clone(HLTPaths = ("HLT_Ele17_SW_TightEleId_L1R","HLT_Ele17_SW_TightEleId_L1R"))
+process.hltFilterEle = process.hltFilter.clone(HLTPaths = ('HLT_Ele15_SW_L1R','HLT_Ele15_SW_L1R'))
+#process.hltFilterPhoton20.HLTPathsPrescales = cms.vuint32(1,1)
+
 
 process.baseLeptonSequence = cms.Path(
     process.basePath

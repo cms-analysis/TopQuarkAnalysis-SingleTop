@@ -22,7 +22,7 @@ boostedTopsWSamplePseudoBTagsTops = boostedTops.clone(
 
 boostedForwardJetsWSamplePseudoBTagsTops = boostedForwardJets.clone(
     boostSrc = cms.InputTag('recoTopsWSamplePseudoBTags'),
-    src = ('pseudoForwardJets'),
+    src = cms.InputTag('pseudoForwardJets'),
     )
 
 
@@ -47,30 +47,6 @@ boostedForwardJetsAntiIsoTops = boostedForwardJets.clone(
     )
 
 
-pseudoBJets = cms.EDProducer("SingleTopBJetsProducer",
-                               src = cms.InputTag("topJets"),
-#                               bThreshold = cms.untracked.double(-999),
-                               veto = cms.untracked.bool(False),
-                               )
-
-pseudoBJetsAntiIso = cms.EDProducer("SingleTopBJetsProducer",
-                               src = cms.InputTag("topJetsAntiIso"),
-#                               bThreshold = cms.untracked.double(-999),
-                               veto = cms.untracked.bool(False),
-                               )
-
-pseudoForwardJets = cms.EDProducer("SingleTopBJetsProducer",
-                               src = cms.InputTag("topJets"),
- #                              bThreshold = cms.untracked.double(-999),
-                               veto = cms.untracked.bool(True),
-                               )
-
-pseudoForwardJetsAntiIso = cms.EDProducer("SingleTopBJetsProducer",
-                               src = cms.InputTag("topJetsAntiIso"),
- #                              bThreshold = cms.untracked.double(-999),
-                               veto = cms.untracked.bool(True),
-                               )
-
 
 #### W-Like samples
 recoTopsWSamplePseudoBTagsAntiIso = recoTopsAntiIso.clone(jetsSource = cms.InputTag('pseudoBJetsAntiIso'))
@@ -81,7 +57,7 @@ boostedTopsWSamplePseudoBTagsAntiIsoTops = boostedTops.clone(
     )
 
 boostedForwardJetsWSamplePseudoBTagsAntiIsoTops = boostedForwardJets.clone(
-    src = cms.InputTag('forwardJetsAntiIso'),
+    src = cms.InputTag('pseudoForwardJetsAntiIso'),
     boostSrc = cms.InputTag('recoTopsWSamplePseudoBTagsAntiIso'),
     )
 
@@ -126,10 +102,35 @@ SingleTopWtransverseMassFilterTTBarSample = SingleTopWtransverseMassFilter.clone
     ) 
 
 
+pseudoBJets = cms.EDProducer("SingleTopBJetsProducer",
+                               src = cms.InputTag("topJets"),
+#                               bThreshold = cms.untracked.double(-999),
+                               veto = cms.untracked.bool(False),
+                               )
+
+pseudoForwardJets = cms.EDProducer("SingleTopBJetsProducer",
+                               src = cms.InputTag("topJets"),
+ #                              bThreshold = cms.untracked.double(-999),
+                               veto = cms.untracked.bool(True),
+                               )
+
+pseudoBJetsAntiIso = cms.EDProducer("SingleTopBJetsProducer",
+                               src = cms.InputTag("topJetsAntiIso"),
+#                               bThreshold = cms.untracked.double(-999),
+                               veto = cms.untracked.bool(False),
+                               )
+
+pseudoForwardJetsAntiIso = cms.EDProducer("SingleTopBJetsProducer",
+                               src = cms.InputTag("topJetsAntiIso"),
+ #                              bThreshold = cms.untracked.double(-999),
+                               veto = cms.untracked.bool(True),
+                               )
+
 countWSamplePseudoBTags = countBTags.clone(src = cms.InputTag('pseudoBJets')) 
 
 
 ###QCD AntiIso W-Like sample 
 
 countWSamplePseudoBTagsAntiIso = countBTags.clone(src = cms.InputTag('pseudoBJetsAntiIso')) 
+
 
