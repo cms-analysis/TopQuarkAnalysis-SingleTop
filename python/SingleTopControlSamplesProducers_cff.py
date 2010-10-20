@@ -22,6 +22,7 @@ boostedTopsWSamplePseudoBTagsTops = boostedTops.clone(
 
 boostedForwardJetsWSamplePseudoBTagsTops = boostedForwardJets.clone(
     boostSrc = cms.InputTag('recoTopsWSamplePseudoBTags'),
+    src = ('pseudoForwardJets'),
     )
 
 
@@ -45,6 +46,30 @@ boostedForwardJetsAntiIsoTops = boostedForwardJets.clone(
     boostSrc = cms.InputTag('recoTopsAntiIso'),
     )
 
+
+pseudoBJets = cms.EDProducer("SingleTopBJetsProducer",
+                               src = cms.InputTag("topJets"),
+#                               bThreshold = cms.untracked.double(-999),
+                               veto = cms.untracked.bool(False),
+                               )
+
+pseudoBJetsAntiIso = cms.EDProducer("SingleTopBJetsProducer",
+                               src = cms.InputTag("topJetsAntiIso"),
+#                               bThreshold = cms.untracked.double(-999),
+                               veto = cms.untracked.bool(False),
+                               )
+
+pseudoForwardJets = cms.EDProducer("SingleTopBJetsProducer",
+                               src = cms.InputTag("topJets"),
+ #                              bThreshold = cms.untracked.double(-999),
+                               veto = cms.untracked.bool(True),
+                               )
+
+pseudoForwardJetsAntiIso = cms.EDProducer("SingleTopBJetsProducer",
+                               src = cms.InputTag("topJetsAntiIso"),
+ #                              bThreshold = cms.untracked.double(-999),
+                               veto = cms.untracked.bool(True),
+                               )
 
 
 #### W-Like samples
@@ -101,45 +126,10 @@ SingleTopWtransverseMassFilterTTBarSample = SingleTopWtransverseMassFilter.clone
     ) 
 
 
-
-pseudoBJets = preselectedJets.clone(
-    src= cms.InputTag("topJets"),
-    checkOverlaps = cms.PSet(
-    myForwardJets = cms.PSet(
-    src = cms.InputTag('forwardJets'),
-    preselection = cms.string(""),
-    algorithm = cms.string('byDeltaR'),
-    deltaR = cms .double(0.05),
-    checkRecoComponents = cms.bool(False),
-    pairCut =cms.string(""),
-    requireNoOverlaps = cms.bool(False),
-    ),
-    
-    ),
-    finalCut = cms.string('pt > 30 & abs(eta) < 2.5 & !hasOverlaps("myForwardJets") && bDiscriminator("trackCountingHighPurBJetTags") < 5.36'),
-)
-
 countWSamplePseudoBTags = countBTags.clone(src = cms.InputTag('pseudoBJets')) 
 
 
 ###QCD AntiIso W-Like sample 
 
-pseudoBJetsAntiIso = topJetsAntiIso.clone(
-    checkOverlaps = cms.PSet(
-    myForwardJetsAntiIso = cms.PSet(
-    src = cms.InputTag('forwardJetsAntiIso'),
-    preselection = cms.string(""),
-    algorithm = cms.string('byDeltaR'),
-    deltaR = cms .double(0.05),
-    checkRecoComponents = cms.bool(False),
-    pairCut =cms.string(""),
-    requireNoOverlaps = cms.bool(False),
-    ),
-    
-    ),
-    finalCut = cms.string('pt > 30 & abs(eta) < 2.5 & !hasOverlaps("myForwardJetsAntiIso") && bDiscriminator("trackCountingHighPurBJetTags") < 5.36'),
-)
-
 countWSamplePseudoBTagsAntiIso = countBTags.clone(src = cms.InputTag('pseudoBJetsAntiIso')) 
-
 
