@@ -11,6 +11,12 @@ singleTopObservablesTSample = cms.EDProducer(
     topsSource = cms.InputTag('boostedTops'), 
     )
 
+singleTopObservablesTSamplePF = cms.EDProducer(
+    'TopCosThetaStarDumper',
+    jetsSource = cms.InputTag('boostedForwardJetsPF'), 
+    topsSource = cms.InputTag('boostedTopsPF'), 
+    )
+
 
 ###Part of W enriched sample
 recoTopsWSamplePseudoBTags = recoTops.clone(jetsSource = cms.InputTag('pseudoBJets'))
@@ -25,15 +31,18 @@ boostedForwardJetsWSamplePseudoBTagsTops = boostedForwardJets.clone(
     src = cms.InputTag('pseudoForwardJets'),
     )
 
-
-
-
 ###Part of QCD enriched samples
-recoTopsAntiIso = recoTops.clone(
-    jetsSource = cms.InputTag('bJetsAntiIso'),
+recoTopsAntiIso = recoTops.clone(  jetsSource = cms.InputTag('bJetsAntiIso'),
     electronsSource = cms.InputTag('topElectronsAntiIso'),
     muonsSource = cms.InputTag('topMuonsAntiIso'),
     )
+
+
+recoTopsAntiIsoPF = recoTopsPF.clone(  jetsSource = cms.InputTag('bJetsAntiIsoPF'),
+    electronsSource = cms.InputTag('topElectronsAntiIso'),
+    muonsSource = cms.InputTag('topMuonsAntiIso'),
+    )
+
 
 
 boostedTopsAntiIsoTops = boostedTops.clone(

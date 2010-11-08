@@ -173,8 +173,14 @@ countJets.maxNumber = maxJets
 countBTags.minNumber = minBTags
 countBTags.maxNumber = maxBTags
 
+countBTagsAntiIso.minNumber = minBTags
+countBTagsAntiIso.maxNumber = maxBTags
+
 countBTagsPF.minNumber = minBTags
 countBTagsPF.maxNumber = maxBTags
+
+countBTagsAntiIsoPF.minNumber = minBTags
+countBTagsAntiIsoPF.maxNumber = maxBTags
 
 countAntiBTags.minNumber = minNonBTags
 countAntiBTags.maxNumber = maxNonBTags
@@ -182,8 +188,14 @@ countAntiBTags.maxNumber = maxNonBTags
 countForwardJets.minNumber = minFwdJets
 countForwardJets.maxNumber = maxFwdJets
 
+countForwardJetsAntiIso.minNumber = minFwdJets
+countForwardJetsAntiIso.maxNumber = maxFwdJets
+
 countForwardJetsPF.minNumber = minFwdJets
 countForwardJetsPF.maxNumber = maxFwdJets
+
+countForwardJetsAntiIsoPF.minNumber = minFwdJets
+countForwardJetsAntiIsoPF.maxNumber = maxFwdJets
 
 countLeptons.minNumber = minLeptons
 countLeptons.maxNumber = maxLeptons
@@ -209,6 +221,9 @@ muTightAntiIsoCut = cms.string("pt > 20 & abs(eta) < 2.1 & muonID('GlobalMuonPro
 jetAntiIsoTightCut = cms.string('pt > 30 && !hasOverlaps("myElectronsAntiIso") && !hasOverlaps("myElectronsIso") && emEnergyFraction > 0.01 & jetID().n90Hits > 1 & jetID().fHPD < 0.98 ') 
 bJetsAntiIso.cut = bJetsCut  
 forwardJetsAntiIso.cut = forwardJetsCut
+
+bJetsAntiIsoPF.cut = bJetsCut  
+forwardJetsAntiIsoPF.cut = forwardJetsCut
 
 
 #Check that the jet does not overlap with the high pt Anti-Isolated electrons
@@ -238,8 +253,12 @@ preselectedMuonsAntiIso.cut = muLooseAntiIsoCut
 preselectedElectronsAntiIso.cut = eleLooseAntiIsoCut
 
 
-topMuonsAntiIso.finalCut = muTightAntiIsoCut
-topElectronsAntiIso.finalCut = eleTightAntiIsoCut
+topMuonsAntiIso.cut = muTightAntiIsoCut
+topElectronsAntiIso.cut = eleTightAntiIsoCut
+#topelectronsAntiIso.id = cms.string("cIso70")
+#topElectronsAntiIso.id = cms.string("cIso95") 
+topElectronsAntiIso.id = cms.string("antiIso") 
+
 
 topJetsAntiIso.finalCut = jetAntiIsoTightCut
 
@@ -261,6 +280,13 @@ countJetsNonTTBar.maxNumber = cms.uint32(2)
 
 countJetsNonTTBarAntiIso.minNumber = cms.uint32(2)
 countJetsNonTTBarAntiIso.maxNumber = cms.uint32(2) 
+
+
+countJetsNonTTBarPF.minNumber = cms.uint32(2)
+countJetsNonTTBarPF.maxNumber = cms.uint32(2) 
+
+countJetsNonTTBarAntiIsoPF.minNumber = cms.uint32(2)
+countJetsNonTTBarAntiIsoPF.maxNumber = cms.uint32(2) 
 
 
 countJetsTTBarAntiIso.minNumber = cms.uint32(3)

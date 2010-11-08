@@ -4,7 +4,7 @@ from TopQuarkAnalysis.SingleTop.SingleTopProducers_cff import *
 from TopQuarkAnalysis.SingleTop.SingleTopSelectors_cff import *
 
 #from TopQuarkAnalysis.SingleTop.SingleTopHistogrammers_cff import *
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import *
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import *
 
 from TopQuarkAnalysis.SingleTop.SingleTopControlSamplesProducers_cff import *
 
