@@ -9,12 +9,14 @@ singleTopObservablesTSample = cms.EDProducer(
     'TopCosThetaStarDumper',
     jetsSource = cms.InputTag('boostedForwardJets'), 
     topsSource = cms.InputTag('boostedTops'), 
+    tChanSource = cms.InputTag('recoTChanEvents'),
     )
 
 singleTopObservablesTSamplePF = cms.EDProducer(
     'TopCosThetaStarDumper',
     jetsSource = cms.InputTag('boostedForwardJetsPF'), 
     topsSource = cms.InputTag('boostedTopsPF'), 
+    tChanSource = cms.InputTag('recoTChanEventsPF'),
     )
 
 
@@ -41,9 +43,33 @@ recoTopsAntiIso = recoTops.clone(  jetsSource = cms.InputTag('bJetsAntiIso'),
 recoTopsAntiIsoPF = recoTopsPF.clone(  jetsSource = cms.InputTag('bJetsAntiIsoPF'),
     electronsSource = cms.InputTag('topElectronsAntiIso'),
     muonsSource = cms.InputTag('topMuonsAntiIso'),
+   )
+
+
+recoTChanEventsAntiIso = cms.EDProducer("SingleTopTChanProducer",
+                                 topsSource = cms.InputTag("recoTopsAntiIso"),
+                                 lightJetsSource = cms.InputTag("forwardJetsAntiIso"),
+                                 )
+recoTChanEventsAntiIsoPF = cms.EDProducer("SingleTopTChanProducer",
+                                 topsSource = cms.InputTag("recoTopsAntiIsoPF"),
+                                 lightJetsSource = cms.InputTag("forwardJetsAntiIsoPF"),
+                                 )
+
+
+boostedEventsAntiIso = cms.EDProducer(
+    'NamedCompositeCandidateBooster',
+    src = cms.InputTag('recoTChanEventsAntiIso'),
+    boostSrc = cms.InputTag('recoTopsAntiIso')
     )
 
 
+boostedEventsAntiIsoPF = cms.EDProducer(
+    'NamedCompositeCandidateBooster',
+    src = cms.InputTag('recoTChanEventsAntiIsoPF'),
+    boostSrc = cms.InputTag('recoTopsAntiIsoPF')
+    )
+
+########
 
 boostedTopsAntiIsoTops = boostedTops.clone(
     src = cms.InputTag('recoTopsAntiIso'),
@@ -84,6 +110,13 @@ singleTopObservablesTTBarSample = singleTopObservablesTSample.clone()
 singleTopObservablesAntiIso = singleTopObservablesTSample.clone(
     jetsSource = cms.InputTag('boostedForwardJetsAntiIsoTops'),
     topsSource = cms.InputTag('boostedTopsAntiIsoTops'),
+    tChanSource = cms.InputTag('recoTChanEventsAntiIso'), 
+    
+    )
+
+singleTopObservablesAntiIsoPF = singleTopObservablesTSample.clone(
+    tChanSource = cms.InputTag('recoTChanEventsAntiIsoPF'), 
+    
     )
 
 ###Produce the observables

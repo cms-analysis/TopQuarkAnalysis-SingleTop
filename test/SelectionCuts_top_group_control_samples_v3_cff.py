@@ -28,7 +28,7 @@ eleTightCut = cms.string("et>30  & abs(eta)<2.5  & gsfTrack().trackerExpectedHit
 #muTightCut = cms.string("pt > 20 & isGlobalMuon & isTrackerMuon & abs(eta) < 2.1 & muonID('GlobalMuonPromptTight') > 0 & (isolationR03.sumPt + isolationR03.emEt + isolationR03.hadEt)/pt < 0.1 & dB < 0.02 && innerTrack.numberOfValidHits > 10") 
 muTightCut = cms.string("pt > 20 & isGlobalMuon & isTrackerMuon & abs(eta) < 2.1 & muonID('GlobalMuonPromptTight') > 0 & (isolationR03.sumPt + isolationR03.emEt + isolationR03.hadEt)/pt < 0.05 & dB < 0.02 && innerTrack.numberOfValidHits > 10") 
 
-jetCut = cms.string('pt >  30 & abs(eta) < 5.0')# & jetID().fHPD < 0.98 & jetID().n90Hits > 1 ')
+jetCut = cms.string('pt >  20 & abs(eta) < 5.0')# & jetID().fHPD < 0.98 & jetID().n90Hits > 1 ')
 
 #Jets cleaning part: very tight cut requiring no overlaps with electrons and muons!
 photonsCut = cms.string('pt/(pt+ caloIso) > 0.9')
