@@ -128,6 +128,12 @@ process.countForwardJetsAntiIsoPF.maxNumber = cms.uint32(15)
 process.countJetsAntiIsoPF.minNumber = cms.uint32(0)
 process.countJetsAntiIsoPF.maxNumber = cms.uint32(15)
 
+#
+process.topMuons.useJetVeto = cms.untracked.bool(False)
+process.topJetsPF.ptCut = cms.untracked.double(20.)
+process.topJetsAntiIsoPF.ptCut = cms.untracked.double(20.)
+
+
 
 # good vertices
 process.PVFilter.cut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.Rho <= 2")
@@ -154,7 +160,7 @@ process.demo = cms.EDAnalyzer('SimpleEventDumper',
                              )
 
 process.hltFilter.TriggerResultsTag = cms.InputTag("TriggerResults","","HLT")
-#process.hltFilter.HLTPaths = ['HLT_Mu15_v1']
+process.hltFilter.HLTPaths = ['HLT_Mu9']
 
 process.hltFilterPhoton20 = process.hltFilter.clone(HLTPaths = (
     'HLT_Ele15_SW_L1R',
@@ -249,10 +255,10 @@ process.allControlSamples = cms.OutputModule("PoolOutputModule",
 
 
 process.tSampleMu =  process.allControlSamples.clone(
-    fileName = cms.untracked.string('DataTChanSampleMu_147196_149442.root'),
+#    fileName = cms.untracked.string('DataTChanSampleMu_144115_147195.root'),
 #    fileName = cms.untracked.string('DataTChanSampleMu_145762_147196.root'),
 #    fileName = cms.untracked.string('DataTChanSampleMu_147196_148058.root'),
-#    fileName = cms.untracked.string('DataTChanSampleMu_132240_144114.root'),
+    fileName = cms.untracked.string('DataTChanSampleMu_132440_144114.root'),
                                     
  
     SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
@@ -263,10 +269,11 @@ process.tSampleMu =  process.allControlSamples.clone(
 )
 
 process.tSampleMuAntiIso =  process.allControlSamples.clone(
-    fileName = cms.untracked.string('DataQCDChanSampleMu_147196_149442.root'),
+#    fileName = cms.untracked.string('DataQCDChanSampleMu_147196_149442.root'),
+#    fileName = cms.untracked.string('DataQCDChanSampleMu_144115_147195.root'),
 #    fileName = cms.untracked.string('DataQCDChanSampleMu_145762_147196.root'),
 #    fileName = cms.untracked.string('DataQCDChanSampleMu_147196_148058.root'),
-#    fileName = cms.untracked.string('DataQCDChanSampleMu_132240_144114.root'),
+    fileName = cms.untracked.string('DataQCDChanSampleMu_132440_144114.root'),
 
     SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
     'PathTSampleMuonPFQCD',
