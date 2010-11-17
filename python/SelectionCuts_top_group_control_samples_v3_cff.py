@@ -20,7 +20,9 @@ eleLooseCut = cms.string("et > 15 & abs(eta) < 2.5 & (dr03TkSumPt + dr03EcalRecH
 ele2ndEleCuts = cms.string("et > 20 & abs(eta) < 2.5 & (dr03TkSumPt + dr03EcalRecHitSumEt + dr03HcalTowerSumEt)/et < 1.0 ")
 
 #Cuts on the isolation of the leptons
-eleTightCut = cms.string("et>30  & abs(eta)<2.5  & gsfTrack().trackerExpectedHitsInner.numberOfHits == 0 & (dr03TkSumPt + dr03EcalRecHitSumEt + dr03HcalTowerSumEt)/et < 0.1 & dB < 0.02 && ( abs(superCluster.eta)> 1.5660 || abs(superCluster.eta)<14442)")
+eleTightCut = cms.string("et>30  & abs(eta)<2.5  & gsfTrack().trackerExpectedHitsInner.numberOfHits == 0 & (dr03TkSumPt + dr03EcalRecHitSumEt + dr03HcalTowerSumEt)/et < 0.1 & dB < 0.02 && ( abs(superCluster.eta)> 1.5660 || abs(superCluster.eta)<1.4442)")
+
+eleTightCutForJets = cms.string("et>30  & abs(eta)<2.5  & (dr03TkSumPt + dr03EcalRecHitSumEt + dr03HcalTowerSumEt)/et < 0.1 & dB < 0.02 && ( abs(superCluster.eta)> 1.5660 || abs(superCluster.eta)<1.4442)")
 
 #topElectrons.id = cms.string("none")
 #topElectrons.useConversionVeto = cms.untracked.bool(False)
@@ -133,6 +135,9 @@ preselectedJets.finalCut = jetTightCut
 #selection: Leptons 
 topElectrons.cut =  eleTightCut
 topMuons.cut = muTightCut
+topElectronsForJets.cut =  eleTightCutForJets
+topMuonsForJets.cut =  muTightCut
+
 
 #Selection : Jets
 topJets.cut = jetTightCut

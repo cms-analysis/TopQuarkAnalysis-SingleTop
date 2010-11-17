@@ -74,12 +74,12 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1065) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
 
-#    'file:/tmp/oiorio/94659715-5F91-DF11-BBCD-001D09F2AF96.root'
+    'file:/tmp/oiorio/94659715-5F91-DF11-BBCD-001D09F2AF96.root'
 #'rfio:/castor/cern.ch/cms/store/data/Run2010A/Mu/RECO/v4/000/140/331/94659715-5F91-DF11-BBCD-001D09F2AF96.root'
 
 #    'file:/tmp/oiorio/3C6D0701-4AA0-DF11-8437-0030487CD184.root',
 
-    'rfio:/castor/cern.ch/user/o/oiorio/SingleTop/Candidates/Event_142928_446_107153746.root'
+#    'rfio:/castor/cern.ch/user/o/oiorio/SingleTop/Candidates/Event_142928_446_107153746.root'
     #'rfio:/castor/cern.ch/cms/store/data/Run2010A/EG/RECO/v4/000/142/311/3C6D0701-4AA0-DF11-8437-0030487CD184.root',
 
 #'rfio:/castor/cern.ch/user/g/giamman/singletop/sync/F81B1889-AF4B-DF11-85D3-001A64789DF4.root',
@@ -154,7 +154,7 @@ process.demo = cms.EDAnalyzer('SimpleEventDumper',
                              )
 
 process.hltFilter.TriggerResultsTag = cms.InputTag("TriggerResults","","HLT")
-
+#process.hltFilter.HLTPaths = ['HLT_Mu15_v1']
 
 process.hltFilterPhoton20 = process.hltFilter.clone(HLTPaths = (
     'HLT_Ele15_SW_L1R',
@@ -192,35 +192,35 @@ process.baseLeptonSequence = cms.Path(
 
 #Muon control samples
 
-#process.PathTSampleMuonPF = cms.Path(
-#    process.TSampleMuonPF *
-#    process.nTuples *
-#    process.demo
-#    )
-
-#process.PathTSampleMuonPFQCD = cms.Path(
-#    process.QCDSampleMuonPF *
-#    process.nTuplesAntiIso *
-    #    process.demo
-#    )
-
-###Electron control samples
-
-process.PathTSampleElectronPF = cms.Path(
-    process.hltFilterPhoton20 *
-    process.hltFilterSummary *
-    process.TSampleElectronPF *
+process.PathTSampleMuonPF = cms.Path(
+    process.TSampleMuonPF *
     process.nTuples *
     process.demo
     )
 
-process.PathTSampleElectronPFQCD = cms.Path(
-    process.hltFilterPhoton20 *
-    process.hltFilterSummary *
-    process.QCDSampleElectronPF *
+process.PathTSampleMuonPFQCD = cms.Path(
+    process.QCDSampleMuonPF *
     process.nTuplesAntiIso *
     process.demo
     )
+
+###Electron control samples
+
+#process.PathTSampleElectronPF = cms.Path(
+#    process.hltFilterPhoton20 *
+#    process.hltFilterSummary *
+#    process.TSampleElectronPF *
+#    process.nTuples *
+#    process.demo
+#    )
+
+#process.PathTSampleElectronPFQCD = cms.Path(
+#    process.hltFilterPhoton20 *
+#    process.hltFilterSummary *
+#    process.QCDSampleElectronPF *
+#    process.nTuplesAntiIso *
+#    process.demo
+#    )
 
 
 #process.PathTSampleElectronPFQCD = cms.Path(
@@ -249,7 +249,8 @@ process.allControlSamples = cms.OutputModule("PoolOutputModule",
 
 
 process.tSampleMu =  process.allControlSamples.clone(
-    fileName = cms.untracked.string('DataTChanSampleMu_145762_147196.root'),
+    fileName = cms.untracked.string('DataTChanSampleMu_147196_149442.root'),
+#    fileName = cms.untracked.string('DataTChanSampleMu_145762_147196.root'),
 #    fileName = cms.untracked.string('DataTChanSampleMu_147196_148058.root'),
 #    fileName = cms.untracked.string('DataTChanSampleMu_132240_144114.root'),
                                     
@@ -262,7 +263,8 @@ process.tSampleMu =  process.allControlSamples.clone(
 )
 
 process.tSampleMuAntiIso =  process.allControlSamples.clone(
-    fileName = cms.untracked.string('DataQCDChanSampleMu_145762_147196.root'),
+    fileName = cms.untracked.string('DataQCDChanSampleMu_147196_149442.root'),
+#    fileName = cms.untracked.string('DataQCDChanSampleMu_145762_147196.root'),
 #    fileName = cms.untracked.string('DataQCDChanSampleMu_147196_148058.root'),
 #    fileName = cms.untracked.string('DataQCDChanSampleMu_132240_144114.root'),
 
@@ -305,9 +307,9 @@ outputCommands = saveNTuplesAntiIso,
 
 
 process.outpath = cms.EndPath(
-    #process.tSampleMu + 
-    #process.tSampleMuAntiIso  
-    process.tSampleEleAntiIso +
-    process.tSampleEle 
+    process.tSampleMu + 
+    process.tSampleMuAntiIso  
+#    process.tSampleEleAntiIso +
+#    process.tSampleEle 
     )
 

@@ -20,13 +20,15 @@ eleLooseCut = cms.string("et > 15 & abs(eta) < 2.5 & (dr03TkSumPt + dr03EcalRecH
 ele2ndEleCuts = cms.string("et > 20 & abs(eta) < 2.5 & (dr03TkSumPt + dr03EcalRecHitSumEt + dr03HcalTowerSumEt)/et < 1.0 ")
 
 #Cuts on the isolation of the leptons
-eleTightCut = cms.string("et>30  & abs(eta)<2.5  & gsfTrack().trackerExpectedHitsInner.numberOfHits == 0 & (dr03TkSumPt + dr03EcalRecHitSumEt + dr03HcalTowerSumEt)/et < 0.1 & dB < 0.02 && ( abs(superCluster.eta)> 1.5660 || abs(superCluster.eta)<14442)")
+eleTightCut = cms.string("et>30  & abs(eta)<2.5  & gsfTrack().trackerExpectedHitsInner.numberOfHits == 0 & (dr03TkSumPt + dr03EcalRecHitSumEt + dr03HcalTowerSumEt)/et < 0.1 & dB < 0.02 && ( abs(superCluster.eta)> 1.5660 || abs(superCluster.eta)<1.4442)")
+
+eleTightCutForJets = cms.string("et>30  & abs(eta)<2.5  & (dr03TkSumPt + dr03EcalRecHitSumEt + dr03HcalTowerSumEt)/et < 0.1 & dB < 0.02 && ( abs(superCluster.eta)> 1.5660 || abs(superCluster.eta)<1.4442)")
 
 #topElectrons.id = cms.string("none")
 #topElectrons.useConversionVeto = cms.untracked.bool(False)
 
 #muTightCut = cms.string("pt > 20 & isGlobalMuon & isTrackerMuon & abs(eta) < 2.1 & muonID('GlobalMuonPromptTight') > 0 & (isolationR03.sumPt + isolationR03.emEt + isolationR03.hadEt)/pt < 0.1 & dB < 0.02 && innerTrack.numberOfValidHits > 10") 
-muTightCut = cms.string("pt > 20 & isGlobalMuon & isTrackerMuon & abs(eta) < 2.1 & muonID('GlobalMuonPromptTight') > 0 & (isolationR03.sumPt + isolationR03.emEt + isolationR03.hadEt)/pt < 0.05 & dB < 0.02 && innerTrack.numberOfValidHits > 10") 
+muTightCut = cms.string("pt > 20 & isGlobalMuon & isTrackerMuon & abs(eta) < 2.1 & muonID('GlobalMuonPromptTight') > 0 & (isolationR03.sumPt + isolationR03.emEt + isolationR03.hadEt)/pt < 0.05 & dB < 0.02 && innerTrack.numberOfValidHits > 10 && innerTrack.hitPattern.pixelLayersWithMeasurement >= 1 && numberOfMatches > 1") 
 
 jetCut = cms.string('pt >  20 & abs(eta) < 5.0')# & jetID().fHPD < 0.98 & jetID().n90Hits > 1 ')
 
@@ -133,6 +135,8 @@ preselectedJets.finalCut = jetTightCut
 #selection: Leptons 
 topElectrons.cut =  eleTightCut
 topMuons.cut = muTightCut
+topElectronsForJets.cut =  eleTightCutForJets
+topMuonsForJets.cut =  muTightCut
 
 #Selection : Jets
 topJets.cut = jetTightCut
