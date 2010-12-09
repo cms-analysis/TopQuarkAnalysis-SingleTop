@@ -2,50 +2,90 @@ import FWCore.ParameterSet.Config as cms
 
 process = cms.Process("SingleTop")
 
-## Load additional RECO config
+process.load("FWCore.MessageLogger.MessageLogger_cfi")
+
+process.options = cms.untracked.PSet(
+    wantSummary = cms.untracked.bool(True),
+    FailPath = cms.untracked.vstring('ProductNotFound','Type Mismatch')
+    )
+
+
+# conditions ------------------------------------------------------------------
+
 process.load("Configuration.StandardSequences.MixingNoPileUp_cff")
-process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff") ### real data
 process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-process.GlobalTag.globaltag = cms.string('GR_R_38X_V11::All') #TAG FOR 382
+process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff") ### real data
+#process.GlobalTag.globaltag = cms.string("GR_R_35X_V6::All")
+#process.GlobalTag.globaltag = cms.string('GR_R_38X_V11::All') #TAG FOR  382
+#process.GlobalTag.globaltag = cms.string("GR_R_38X_V11::All")
+from Configuration.PyReleaseValidation.autoCond import autoCond
+process.GlobalTag.globaltag = autoCond['startup']
+
+
 
 process.load("TopQuarkAnalysis.SingleTop.SingleTopSequences_cff") 
 process.load("SelectionCuts_top_group_control_samples_v3_cff")
+
+
+
+# set the dB to the beamspot
+process.patMuons.usePV = cms.bool(False)
+process.patElectrons.usePV = cms.bool(False)
+
 
 from PhysicsTools.PatAlgos.recoLayer0.jetCorrFactors_cfi import *
 from PhysicsTools.PatAlgos.tools.jetTools import *
 from PhysicsTools.PatAlgos.tools.metTools import *
 from PhysicsTools.PatAlgos.tools.coreTools import *
 
+print "test0 "
+
 #Path for the module that produces the tree for analysis 
 
+
+#add ak5GenJets
+
+process.load("RecoJets.Configuration.GenJetParticles_cff")
+process.load("RecoJets.JetProducers.ak5GenJets_cfi")
+
+
+
+# set default collection
+switchJetCollection( process,
+                     jetCollection=cms.InputTag('ak5CaloJets'),
+###MC:                     jetCorrLabel=('AK5Calo', ['L2Relative', 'L3Absolute']))
+                     jetCorrLabel=('AK5Calo', ['L2Relative', 'L3Absolute', 'L2L3Residual']))
+
 # turn off MC matching for the process
-removeMCMatching(process, ['All'])
+removeMCMatching(process, ['All'],"",False)
+
+#from PhysicsTools.PatAlgos.tools.cmsswVersionTools import *
+#run36xOn35xInput(process)
 
 # add PF
-
 addJetCollection(process,
                    cms.InputTag('ak5PFJets'),
                    'AK5',
                    'PF',
                    doJTA=True,
                    doBTagging=True,
-                   jetCorrLabel=('AK5','PF'),
+                   jetCorrLabel=('AK5PF', cms.vstring(['L2Relative', 'L3Absolute'])),#('AK5','PF'),
                    doType1MET=True,
                    doJetID      = True,
                    jetIdLabel   = "ak5"
                   )
 
+
 # add JPT
 process.load('JetMETCorrections.Configuration.DefaultJEC_cff')
 process.load('RecoJets.Configuration.RecoJPTJets_cff')
-
 
 addJetCollection(process,cms.InputTag('JetPlusTrackZSPCorJetAntiKt5'),
                                   'AK5', 'JPT',
                                   doJTA        = True,
                                   doBTagging   = True,
-                                  jetCorrLabel = ('AK5','JPT'),
+                                  jetCorrLabel = ('AK5JPT', cms.vstring(['L2Relative', 'L3Absolute'])),#('AK5','JPT'),
                                   doType1MET   = False,
                                   doL1Cleaning = False,
                                   doL1Counters = True,
@@ -54,17 +94,13 @@ addJetCollection(process,cms.InputTag('JetPlusTrackZSPCorJetAntiKt5'),
                                   jetIdLabel   = "ak5"
                                   )
 
-# corrections:
-patJetCorrFactors.corrSample = cms.string("Spring10") 
-switchJECSet( process, "Spring10")
-
 
 addTcMET(process, 'TC')
 addPfMET(process, 'PF')
 
+############################
 
 process.pathPreselection = cms.Path(
-    process.recoJPTJets +
     process.patDefaultSequence 
     )
 
@@ -89,13 +125,6 @@ process.source = cms.Source ("PoolSource",
 duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
 #eventsToProcess = cms.untracked.VEventRange("140331:257717658-140331:1257717800"),
 )
-
-process.load("FWCore.MessageLogger.MessageLogger_cfi")
-
-process.options = cms.untracked.PSet(
-    wantSummary = cms.untracked.bool(True),
-    FailPath = cms.untracked.vstring('ProductNotFound','Type Mismatch')
-    )
 
 process.preselectedElectrons.isData = cms.untracked.bool(True)
 process.topElectrons.isData = cms.untracked.bool(True)

@@ -49,7 +49,7 @@ bJetsCut = cms.string('bDiscriminator("trackCountingHighPurBJetTags") > 3.41')
 
 #Cuts for anti-b tagging algorythm
 antiBJetsCut = cms.string('bDiscriminator("trackCountingHighEffBJetTags") < 1.7 && pt > 30') 
-forwardJetsCut = cms.string('(bDiscriminator("trackCountingHighEffBJetTags") < 1.7) || abs(eta)>2.5')
+forwardJetsCut = cms.string('(bDiscriminator("trackCountingHighEffBJetTags") < 1.7)')# || abs(eta)>2.5')
 
 
 ### Cuts for the number of objects: counting how many of them survive the cuts ###
@@ -64,7 +64,7 @@ maxJets = cms.uint32(2)
 
 #Number of b-tagged jets ( kin + b-tag algo )
 minBTags = cms.uint32(1)
-maxBTags = cms.uint32(1)
+maxBTags = cms.uint32(2)
 
 #Number of anti-b-tagged jets ( kin + NOT anti-b-tag algo)
 minNonBTags = cms.uint32(1)
