@@ -101,6 +101,7 @@ addPfMET(process, 'PF')
 ############################
 
 process.pathPreselection = cms.Path(
+    process.patElectronIDs +
     process.patDefaultSequence 
     )
 
@@ -163,12 +164,29 @@ process.topJetsPF.ptCut = cms.untracked.double(20.)
 process.topJetsAntiIsoPF.ptCut = cms.untracked.double(20.)
 
 
+process.singleTopObservablesTSamplePF = cms.EDProducer(
+    'TopCosThetaStarDumperData',
+    jetsSource = cms.InputTag('boostedForwardJetsPF'), 
+    topsSource = cms.InputTag('boostedTopsPF'), 
+    tChanSource = cms.InputTag('recoTChanEventsPF'),
+    )
+
+
+process.singleTopObservablesAntiIso = process.singleTopObservablesTSamplePF.clone(
+    jetsSource = cms.InputTag('boostedForwardJetsAntiIsoTops'),
+    topsSource = cms.InputTag('boostedTopsAntiIsoTops'),
+    tChanSource = cms.InputTag('recoTChanEventsAntiIso'), 
+   
+    )
+
+
 
 # good vertices
 process.PVFilter.cut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.Rho <= 2")
 
 process.demo = cms.EDAnalyzer('SimpleEventDumper',
-                              verticesSource = cms.InputTag("PVFilter"),
+#                              verticesSource = cms.InputTag("PVFilter"),
+                              verticesSource = cms.InputTag("offlinePrimaryVertices"),
                               electronSource = cms.InputTag("cleanPatElectrons"),
                               muonSource     = cms.InputTag("patMuons"),
                               patmetSource = cms.InputTag("patMETs"),
@@ -267,19 +285,18 @@ process.PathTSampleMuonPFQCD = cms.Path(
 #    )
 
 
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import saveNTuplesMu
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import saveNTuplesEle
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import saveNTuplesMuAntiIso
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import saveNTuplesEleAntiIso
 
-from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import saveNTuplesAntiIso
-from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import saveNTuples
 
 ## Output module configuration
 process.allControlSamples = cms.OutputModule("PoolOutputModule",
 #                                fileName = cms.untracked.string('rfio:/CST/cern.ch/user/o/oiorio/SingleTop/SubSkims/WControlSamples1.root'),
                    fileName = cms.untracked.string('test.root'),
                                            
-
-       outputCommands = saveNTuples,
-
-
+     outputCommands = saveNTuplesMu,
 )
 
 
@@ -288,12 +305,16 @@ process.tSampleMu =  process.allControlSamples.clone(
 #    fileName = cms.untracked.string('DataTChanSampleMu_145762_147196.root'),
 #    fileName = cms.untracked.string('DataTChanSampleMu_147196_148058.root'),
     fileName = cms.untracked.string('DataTChanSampleMu_132440_144114.root'),
+
+    outputCommands = saveNTuplesMu,
                                     
  
     SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
     'PathTSampleMuonPF',
 #    'PathTSampleElectron',
     )
+
+
 )
 )
 
@@ -303,13 +324,12 @@ process.tSampleMuAntiIso =  process.allControlSamples.clone(
 #    fileName = cms.untracked.string('DataQCDChanSampleMu_145762_147196.root'),
 #    fileName = cms.untracked.string('DataQCDChanSampleMu_147196_148058.root'),
     fileName = cms.untracked.string('DataQCDChanSampleMu_132440_144114.root'),
-
+    outputCommands = saveNTuplesMuAntiIso,
     SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
     'PathTSampleMuonPFQCD',
-#    'PathTSampleElectron',
+    #    'PathTSampleElectron',
     )
-),
-outputCommands = saveNTuplesAntiIso,
+                                         ),
 )
 
 process.tSampleEle =  process.allControlSamples.clone( 
@@ -318,7 +338,7 @@ process.tSampleEle =  process.allControlSamples.clone(
 #    fileName = cms.untracked.string('DataTChanSampleEle_143963_146427.root'),
 #    fileName = cms.untracked.string('DataTChanSampleEle_146428_147116.root'),
 #    fileName = cms.untracked.string('DataTChanSampleEle_147117_148058.root'),
-   
+    outputCommands = saveNTuplesEle,
     SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
 #    'PathTSampleMuon',
     'PathTSampleElectronPF',
@@ -332,13 +352,12 @@ process.tSampleEleAntiIso =  process.allControlSamples.clone(
 #  fileName = cms.untracked.string('DataQCDChanSampleEle_146428_147116.root'),
 #  fileName = cms.untracked.string('DataQCDChanSampleEle_147117_148058.root'),
 
-    
-    SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
+  outputCommands = saveNTuplesEleAntiIso,
+  SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
 #    'PathTSampleMuon',
     'PathTSampleElectronPFQCD',
     )
-),
-outputCommands = saveNTuplesAntiIso,
+                                      ),
 )
 
 

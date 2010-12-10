@@ -13,27 +13,34 @@ process.options = cms.untracked.PSet(
 
 # conditions ------------------------------------------------------------------
 
+print "test02 "
+
 process.load("Configuration.StandardSequences.MixingNoPileUp_cff")
 process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff") ### real data
+
+print "test03 "
+
 #process.GlobalTag.globaltag = cms.string("GR_R_35X_V6::All")
 #process.GlobalTag.globaltag = cms.string('GR_R_38X_V11::All') #TAG FOR  382
 #process.GlobalTag.globaltag = cms.string("GR_R_38X_V11::All")
+
+print "test04 "
+
 from Configuration.PyReleaseValidation.autoCond import autoCond
 process.GlobalTag.globaltag = autoCond['startup']
-
-
-
 process.load("TopQuarkAnalysis.SingleTop.SingleTopSequences_cff") 
 process.load("SelectionCuts_top_group_control_samples_v3_cff")
 
+print "test05 "
 
 
 # set the dB to the beamspot
 process.patMuons.usePV = cms.bool(False)
 process.patElectrons.usePV = cms.bool(False)
 
+print "test06 "
 
 from PhysicsTools.PatAlgos.recoLayer0.jetCorrFactors_cfi import *
 from PhysicsTools.PatAlgos.tools.jetTools import *
@@ -211,10 +218,10 @@ process.WLightFilter = process.flavorHistoryFilter.clone(pathToSelect = cms.int3
 process.WccFlter = process.flavorHistoryFilter.clone(pathToSelect = cms.int32(6))
 process.WbbFilter = process.flavorHistoryFilter.clone(pathToSelect = cms.int32(5))
 
-#process.hltFilter.TriggerResultsTag = cms.InputTag("TriggerResults","","REDIGI38X")
+process.hltFilter.TriggerResultsTag = cms.InputTag("TriggerResults","","REDIGI38X")
 #process.hltFilter.TriggerResultsTag = cms.InputTag("TriggerResults","","REDIGI37X")
 #process.hltFilter.TriggerResultsTag = cms.InputTag("TriggerResults","","REDIGI")
-process.hltFilter.TriggerResultsTag = cms.InputTag("TriggerResults","","HLT")
+#process.hltFilter.TriggerResultsTag = cms.InputTag("TriggerResults","","HLT")
 
 #process.bJetsPF = cms.EDProducer("SingleTopBJetsProducer",
 #                               src = cms.InputTag("topJetsPF"),
@@ -249,17 +256,17 @@ process.baseLeptonSequence = cms.Path(
 
 #Muon control samples
 
+#process.PathTSampleMuonPF = cms.Path(
+#    process.TSampleMuonPF *
+#    process.nTuples *
+#    process.demo
+#    )
+
 process.PathTSampleMuonPF = cms.Path(
     process.TSampleMuonPF *
     process.nTuples *
     process.demo
     )
-
-#process.PathTSampleMuon = cms.Path(
-#    process.TSampleMuon *
-#    process.nTuples *
-#    process.demo
-#    )
 
 process.PathTSampleMuonPFQCD = cms.Path(
     process.QCDSampleMuonPF *
@@ -269,24 +276,23 @@ process.PathTSampleMuonPFQCD = cms.Path(
 
 ###Electron control samples
 
-process.PathTSampleElectronPF = cms.Path(
-    process.TSampleElectronPF *
-    process.nTuples *
-    process.demo
-    )
+#process.PathTSampleElectronPF = cms.Path(
+#    process.TSampleElectronPF *
+#    process.nTuples *
+#    process.demo
+#    )
 
 
-process.PathTSampleElectronPFQCD = cms.Path(
+#process.PathTSampleElectronPFQCD = cms.Path(
 #    process.TSampleElectronAntiIso *
 #    process.QCDSampleElectron *
-    process.QCDSampleElectronPF *
+#    process.QCDSampleElectronPF *
 #    process.PathElectronsAntiIso *
-    process.nTuplesAntiIso *
-    process.demo
-    )
+#    process.nTuplesAntiIso *
+#    process.demo
+#    )
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import saveNTuplesMu
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import saveNTuplesEle
-
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import saveNTuplesMuAntiIso
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import saveNTuplesEleAntiIso
 
@@ -303,7 +309,7 @@ process.allControlSamples = cms.OutputModule("PoolOutputModule",
 
 
 process.tSampleMu =  process.allControlSamples.clone(
-    fileName = cms.untracked.string('TSampleMuWJets.root'),
+    fileName = cms.untracked.string('TSampleMuWC.root'),
     
     SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
     'PathTSampleMuonPF',
@@ -314,7 +320,7 @@ process.tSampleMu =  process.allControlSamples.clone(
 
 
 process.tSampleMuAntiIso =  process.allControlSamples.clone(
-    fileName = cms.untracked.string('QCDSampleMuWJets.root'),
+    fileName = cms.untracked.string('QCDSampleMuWC.root'),
     SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
     'PathTSampleMuonPFQCD',
 #    'PathTSampleElectron',
@@ -327,7 +333,7 @@ process.tSampleMuAntiIso =  process.allControlSamples.clone(
 process.tSampleEleAntiIso =  process.allControlSamples.clone(
     #    fileName = cms.untracked.string('QCDChanSampleEleCiso95.root'),
 #    fileName = cms.untracked.string('QCDSampleEleQCDBCToE_Pt80to170.root'),
-    fileName = cms.untracked.string('QCDSampleEleWJets.root'),
+    fileName = cms.untracked.string('QCDSampleEleWC.root'),
  
     SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
     'PathTSampleElectronPFQCD',
@@ -351,7 +357,7 @@ process.tSampleEleAntiIso =  process.allControlSamples.clone(
 
 process.tSampleEle =  process.allControlSamples.clone(
 #    fileName = cms.untracked.string('QCDChanSampleEleCiso95.root'),
-fileName = cms.untracked.string('TSampleEleWJets.root'),
+fileName = cms.untracked.string('TSampleEleWC.root'),
     SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
 #    'PathTSampleMuon',
     'PathTSampleElectronPF',
@@ -365,8 +371,8 @@ fileName = cms.untracked.string('TSampleEleWJets.root'),
 )
 process.outpath = cms.EndPath(
     process.tSampleMu + 
-    process.tSampleMuAntiIso + 
-    process.tSampleEle +
-    process.tSampleEleAntiIso 
+    process.tSampleMuAntiIso# + 
+#    process.tSampleEle +
+#    process.tSampleEleAntiIso 
     )
 
