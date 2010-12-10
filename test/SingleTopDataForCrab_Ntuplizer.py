@@ -277,10 +277,8 @@ process.PathTSampleMuonPFQCD = cms.Path(
 
 
 #process.PathTSampleElectronPFQCD = cms.Path(
-#    process.TSampleElectronAntiIso *
-#    process.QCDSampleElectron *
 #    process.QCDSampleElectronPF *
-#    process.PathElectronsAntiIso *
+#    process.nTuplesAntiIso *
 #    process.demo
 #    )
 

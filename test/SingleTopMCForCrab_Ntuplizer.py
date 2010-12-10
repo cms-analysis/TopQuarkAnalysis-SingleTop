@@ -309,7 +309,7 @@ process.allControlSamples = cms.OutputModule("PoolOutputModule",
 
 
 process.tSampleMu =  process.allControlSamples.clone(
-    fileName = cms.untracked.string('TSampleMuWC.root'),
+    fileName = cms.untracked.string('TSampleMuQCDMu.root'),
     
     SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
     'PathTSampleMuonPF',
@@ -320,7 +320,7 @@ process.tSampleMu =  process.allControlSamples.clone(
 
 
 process.tSampleMuAntiIso =  process.allControlSamples.clone(
-    fileName = cms.untracked.string('QCDSampleMuWC.root'),
+    fileName = cms.untracked.string('QCDSampleMuQCDMu.root'),
     SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
     'PathTSampleMuonPFQCD',
 #    'PathTSampleElectron',
@@ -333,7 +333,7 @@ process.tSampleMuAntiIso =  process.allControlSamples.clone(
 process.tSampleEleAntiIso =  process.allControlSamples.clone(
     #    fileName = cms.untracked.string('QCDChanSampleEleCiso95.root'),
 #    fileName = cms.untracked.string('QCDSampleEleQCDBCToE_Pt80to170.root'),
-    fileName = cms.untracked.string('QCDSampleEleWC.root'),
+    fileName = cms.untracked.string('QCDSampleEleQCDMu.root'),
  
     SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
     'PathTSampleElectronPFQCD',
@@ -357,7 +357,7 @@ process.tSampleEleAntiIso =  process.allControlSamples.clone(
 
 process.tSampleEle =  process.allControlSamples.clone(
 #    fileName = cms.untracked.string('QCDChanSampleEleCiso95.root'),
-fileName = cms.untracked.string('TSampleEleWC.root'),
+fileName = cms.untracked.string('TSampleEleQCDMu.root'),
     SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
 #    'PathTSampleMuon',
     'PathTSampleElectronPF',
@@ -371,7 +371,7 @@ fileName = cms.untracked.string('TSampleEleWC.root'),
 )
 process.outpath = cms.EndPath(
     process.tSampleMu + 
-    process.tSampleMuAntiIso# + 
+    process.tSampleMuAntiIso #+ 
 #    process.tSampleEle +
 #    process.tSampleEleAntiIso 
     )
