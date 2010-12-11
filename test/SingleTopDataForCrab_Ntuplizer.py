@@ -172,13 +172,9 @@ process.singleTopObservablesTSamplePF = cms.EDProducer(
     )
 
 
-process.singleTopObservablesAntiIso = process.singleTopObservablesTSamplePF.clone(
-    jetsSource = cms.InputTag('boostedForwardJetsAntiIsoTops'),
-    topsSource = cms.InputTag('boostedTopsAntiIsoTops'),
-    tChanSource = cms.InputTag('recoTChanEventsAntiIso'), 
-   
+process.singleTopObservablesAntiIsoPF = singleTopObservablesTSample.clone(
+    tChanSource = cms.InputTag('recoTChanEventsAntiIsoPF'), 
     )
-
 
 
 # good vertices
@@ -317,8 +313,8 @@ process.tSampleMu =  process.allControlSamples.clone(
 )
 
 process.tSampleMuAntiIso =  process.allControlSamples.clone(
-#    fileName = cms.untracked.string('DataQCDChanSampleMu_147196_149442.root'),
 #    fileName = cms.untracked.string('DataQCDChanSampleMu_144115_147195.root'),
+#    fileName = cms.untracked.string('DataQCDChanSampleMu_132440_144114.root'),
 #    fileName = cms.untracked.string('DataQCDChanSampleMu_145762_147196.root'),
 #    fileName = cms.untracked.string('DataQCDChanSampleMu_147196_148058.root'),
     fileName = cms.untracked.string('DataQCDChanSampleMu_132440_144114.root'),
