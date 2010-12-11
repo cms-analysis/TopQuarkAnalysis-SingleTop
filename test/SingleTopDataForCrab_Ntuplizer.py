@@ -172,7 +172,7 @@ process.singleTopObservablesTSamplePF = cms.EDProducer(
     )
 
 
-process.singleTopObservablesAntiIsoPF = singleTopObservablesTSample.clone(
+process.singleTopObservablesAntiIsoPF = singleTopObservablesTSamplePF.clone(
     tChanSource = cms.InputTag('recoTChanEventsAntiIsoPF'), 
     )
 
