@@ -158,6 +158,9 @@ process.countForwardJetsAntiIsoPF.maxNumber = cms.uint32(15)
 process.countJetsAntiIsoPF.minNumber = cms.uint32(0)
 process.countJetsAntiIsoPF.maxNumber = cms.uint32(15)
 
+process.countJetsNonTTBarAntiIsoPF.minNumber = cms.uint32(0)
+process.countJetsNonTTBarAntiIsoPF.maxNumber = cms.uint32(15)
+
 #
 process.topMuons.useJetVeto = cms.untracked.bool(False)
 process.topJetsPF.ptCut = cms.untracked.double(20.)
@@ -241,11 +244,11 @@ process.baseLeptonSequence = cms.Path(
 
 #Muon control samples
 
-process.PathTSampleMuonPF = cms.Path(
-    process.TSampleMuonPF *
-    process.nTuples *
-    process.demo
-    )
+#process.PathTSampleMuonPF = cms.Path(
+#    process.TSampleMuonPF *
+#    process.nTuples *
+#    process.demo
+#    )
 
 process.PathTSampleMuonPFQCD = cms.Path(
     process.QCDSampleMuonPF *
@@ -356,7 +359,7 @@ process.tSampleEleAntiIso =  process.allControlSamples.clone(
 
 
 process.outpath = cms.EndPath(
-    process.tSampleMu + 
+#    process.tSampleMu + 
     process.tSampleMuAntiIso  
 #    process.tSampleEleAntiIso +
 #    process.tSampleEle 
