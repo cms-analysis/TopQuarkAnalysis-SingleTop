@@ -25,7 +25,8 @@ print "test03 "
 #process.GlobalTag.globaltag = cms.string("GR_R_35X_V6::All")
 #process.GlobalTag.globaltag = cms.string('GR_R_38X_V11::All') #TAG FOR  382
 #process.GlobalTag.globaltag = cms.string("GR_R_38X_V11::All")
-process.GlobalTag.globaltag = cms.string("START311_V2::All")
+#process.GlobalTag.globaltag = cms.string("START311_V2::All")
+process.GlobalTag.globaltag = cms.string('GR_R_311_V2::All')
 
 print "test04 "
 
@@ -55,9 +56,6 @@ print "test0 "
 #add ak5GenJets
 
 
-process.load("RecoJets.Configuration.GenJetParticles_cff")
-process.load("RecoJets.JetProducers.ak5GenJets_cfi")
-
 print "test00 "
 
 
@@ -72,7 +70,7 @@ print "test00 "
 inputJetCorrLabel = ('AK5PF', ['L1Offset', 'L2Relative', 'L3Absolute', 'L2L3Residual'])
 
 # add pf met
-#removeMCMatching(process, ['All'],"",False)
+removeMCMatching(process, ['All'],"",False)
 
 
 
@@ -119,7 +117,8 @@ process.scrapingVeto = cms.EDFilter("FilterOutScraping",
 # HB + HE noise filtering
 process.load('CommonTools/RecoAlgos/HBHENoiseFilter_cfi')
 
-mytrigs=["HLT_Mu9"]
+#mytrigs=["HLT_Mu9"]
+mytrigs=["*"]
 
 from HLTrigger.HLTfilters.hltHighLevel_cfi import *
 if mytrigs is not None :
@@ -165,12 +164,6 @@ process.load("PhysicsTools.HepMCCandAlgos.flavorHistoryPaths_cfi")
 #process.cFlavorHistoryProducer.matchedSrc = cms.InputTag("antikt5GenJets")
 #process.bFlavorHistoryProducer.matchedSrc = cms.InputTag("antikt5GenJets")
 
-process.PathFlavor = cms.Path(
-    process.genParticlesForJets *
-    process.ak5GenJets *
-    process.cFlavorHistoryProducer *
-    process.bFlavorHistoryProducer
-    )
 
 
 # Taus are currently broken in 4.1.x
@@ -190,14 +183,15 @@ process.pathPreselection = cms.Path(
 
 
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
 
 #    'file:/tmp/oiorio/F81B1889-AF4B-DF11-85D3-001A64789DF4.root'
 #'rfio:/castor/cern.ch/user/g/giamman/singletop/sync/00012F91-72E5-DF11-A763-00261834B5F1.root'
-'file:/tmp/oiorio/00012F91-72E5-DF11-A763-00261834B5F1.root'
+'file:/tmp/oiorio/EC0EE286-FA55-E011-B99B-003048F024F6.root'
+#'file:/tmp/oiorio/00012F91-72E5-DF11-A763-00261834B5F1.root'
 #'file:/tmp/oiorio/F81B1889-AF4B-DF11-85D3-001A64789DF4.root'
 #'rfio:    /castor/cern.ch/user/g/giamman/singletop/sync/F81B1889-AF4B-DF11-85D3-001A64789DF4.root',
 #    'file:/tmp/oiorio/TChanFile2_1_1_L7h.root',
@@ -253,6 +247,7 @@ process.WbbFilter = process.flavorHistoryFilter.clone(pathToSelect = cms.int32(5
 #process.hltFilter.TriggerResultsTag = cms.InputTag("TriggerResults","","REDIGI37X")
 #process.hltFilter.TriggerResultsTag = cms.InputTag("TriggerResults","","REDIGI")
 process.hltFilter.TriggerResultsTag = cms.InputTag("TriggerResults","","HLT")
+process.hltFilter.HLTPaths = mytrigs
 
 #process.bJetsPF = cms.EDProducer("SingleTopBJetsProducer",
 #                               src = cms.InputTag("topJetsPF"),
@@ -282,7 +277,7 @@ process.hltFilter.TriggerResultsTag = cms.InputTag("TriggerResults","","HLT")
 #process.countJetsNonTTBarAntiIso.minNumber = cms.uint32(0)
 
 process.baseLeptonSequence = cms.Path(
-    process.basePath
+    process.basePathData
     )
 
 #Muon control samples
@@ -293,17 +288,17 @@ process.baseLeptonSequence = cms.Path(
 #    process.demo
 #    )
 
-process.PathTSampleMuonPF = cms.Path(
-    process.IsoMuonsSkimPF *
-    process.nTuplesSkim #*
+#process.PathTSampleMuonPF = cms.Path(
+#    process.IsoMuonsSkimPF *
+#    process.nTuplesSkim #*
 #    process.demo
-    )
+#    )
 
-process.PathTSampleMuonPFQCD = cms.Path(
-    process.AntiIsoMuonsSkimPF *
-    process.nTuplesAntiIsoSkim #*
+#process.PathTSampleMuonPFQCD = cms.Path(
+#    process.AntiIsoMuonsSkimPF *
+#    process.nTuplesAntiIsoSkim #*
 #    process.demo
-    )
+#    )
 
 ###Electron control samples
 
@@ -315,11 +310,11 @@ process.PathTSampleElectronPF = cms.Path(
     )
 
 
-process.PathTSampleElectronPFQCD = cms.Path(
-    process.AntiIsoElectronsSkimPF *
-    process.nTuplesAntiIsoSkim #*
+#process.PathTSampleElectronPFQCD = cms.Path(
+#    process.AntiIsoElectronsSkimPF *
+#    process.nTuplesAntiIsoSkim #*
 #    process.demo
-)
+#)
 
 #    process.TSampleElectronAntiIso *
 #    process.QCDSampleElectron *
@@ -348,7 +343,7 @@ process.allControlSamples = cms.OutputModule("PoolOutputModule",
 
 
 process.tSampleMu =  process.allControlSamples.clone(
-    fileName = cms.untracked.string('TSampleMuQCDMu.root'),
+    fileName = cms.untracked.string('TSampleMuData.root'),
     
     SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
     'PathTSampleMuonPF',
@@ -359,7 +354,7 @@ process.tSampleMu =  process.allControlSamples.clone(
 
 
 process.tSampleMuAntiIso =  process.allControlSamples.clone(
-    fileName = cms.untracked.string('QCDSampleMuQCDMu.root'),
+    fileName = cms.untracked.string('QCDSampleMuData.root'),
     SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
     'PathTSampleMuonPFQCD',
 #    'PathTSampleElectron',
@@ -372,7 +367,7 @@ process.tSampleMuAntiIso =  process.allControlSamples.clone(
 process.tSampleEleAntiIso =  process.allControlSamples.clone(
     #    fileName = cms.untracked.string('QCDChanSampleEleCiso95.root'),
 #    fileName = cms.untracked.string('QCDSampleEleQCDBCToE_Pt80to170.root'),
-    fileName = cms.untracked.string('QCDSampleEleQCDMu.root'),
+    fileName = cms.untracked.string('QCDSampleEleData.root'),
  
     SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
     'PathTSampleElectronPFQCD',
@@ -396,7 +391,7 @@ process.tSampleEleAntiIso =  process.allControlSamples.clone(
 
 process.tSampleEle =  process.allControlSamples.clone(
 #    fileName = cms.untracked.string('QCDChanSampleEleCiso95.root'),
-fileName = cms.untracked.string('TSampleEleQCDMu.root'),
+fileName = cms.untracked.string('TSampleEleData.root'),
     SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring(
 #    'PathTSampleMuon',
     'PathTSampleElectronPF',
@@ -409,9 +404,9 @@ fileName = cms.untracked.string('TSampleEleQCDMu.root'),
 
 )
 process.outpath = cms.EndPath(
-    process.tSampleMu + 
-    process.tSampleMuAntiIso + 
-    process.tSampleEle +
-    process.tSampleEleAntiIso 
+#    process.tSampleMu #+ 
+#    process.tSampleMuAntiIso + 
+    process.tSampleEle #+
+#    process.tSampleEleAntiIso 
     )
 
