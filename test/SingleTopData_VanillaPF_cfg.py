@@ -171,7 +171,7 @@ removeSpecificPATObjects( process, ['Taus'],False )
 process.patDefaultSequence.remove( process.patTaus )
 process.patDefaultSequence.remove( process.selectedPatTaus )
 process.patDefaultSequence.remove( process.cleanPatTaus )
-
+process.cleanPatJets.checkOverlaps.taus.src = cms.InputTag("cleanPatMuons")
 
 process.pathPreselection = cms.Path(
 
@@ -284,15 +284,15 @@ process.baseLeptonSequence = cms.Path(
 
 #process.PathTSampleMuonPF = cms.Path(
 #    process.TSampleMuonPF *
-#    process.nTuples *
+#    process.nTuples #*
 #    process.demo
 #    )
 
-#process.PathTSampleMuonPF = cms.Path(
-#    process.IsoMuonsSkimPF *
-#    process.nTuplesSkim #*
+process.PathTSampleMuonPF = cms.Path(
+    process.IsoMuonsSkimPF *
+    process.nTuplesSkim #*
 #    process.demo
-#    )
+    )
 
 #process.PathTSampleMuonPFQCD = cms.Path(
 #    process.AntiIsoMuonsSkimPF *
@@ -302,12 +302,12 @@ process.baseLeptonSequence = cms.Path(
 
 ###Electron control samples
 
-process.PathTSampleElectronPF = cms.Path(
-    process.IsoElectronsSkimPF *
+#process.PathTSampleElectronPF = cms.Path(
+#    process.IsoElectronsSkimPF *
     #    process.TSampleElectronPF *
-    process.nTuplesSkim #*
+#    process.nTuplesSkim #*
 #    process.demo
-    )
+#    )
 
 
 #process.PathTSampleElectronPFQCD = cms.Path(
@@ -404,9 +404,9 @@ fileName = cms.untracked.string('TSampleEleData.root'),
 
 )
 process.outpath = cms.EndPath(
-#    process.tSampleMu #+ 
+    process.tSampleMu #+ 
 #    process.tSampleMuAntiIso + 
-    process.tSampleEle #+
+#    process.tSampleEle #+
 #    process.tSampleEleAntiIso 
     )
 

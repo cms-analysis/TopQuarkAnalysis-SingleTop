@@ -16,6 +16,7 @@ process.GlobalTag.globaltag = cms.string("START39_V9::All")
 
 
 
+
 #Load B-Tag
 #MC measurements from 36X
 process.load ("RecoBTag.PerformanceDB.PoolBTagPerformanceDBMC36X")
@@ -39,9 +40,15 @@ process.source = cms.Source ("PoolSource",
 
 ),
 duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
-)
 
-process.TFileService = cms.Service("TFileService", fileName = cms.string("plotsData.root"))
+)
+from DataMu_B import *
+from DataEle_B import *
+
+process.source.fileNames = DataEleT
+process.source.fileNames = DataMuT
+
+process.TFileService = cms.Service("TFileService", fileName = cms.string("plotsDataMuNew.root"))
 
 process.SystematicsAnalyzer = cms.EDAnalyzer('SingleTopSystematicsDumper',                              
 systematics = cms.untracked.vstring(),#BTagUp","BTagDown","MisTagUp","MisTagDown","JESUp","JESDown","UnclusteredMETUp","UnclusteredMETDown"),
@@ -50,7 +57,7 @@ channelInfo = cms.PSet(
     channel = cms.untracked.string("Data"),
     originalEvents = cms.untracked.double(-1),
     finalLumi = cms.untracked.double(-1),
-    MTWCut = cms.untracked.double(50.0),#Default 50.0 GeV
+    MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
     ),
 
 

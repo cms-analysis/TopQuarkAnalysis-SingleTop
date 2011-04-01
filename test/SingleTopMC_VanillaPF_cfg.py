@@ -178,7 +178,7 @@ removeSpecificPATObjects( process, ['Taus'],False )
 process.patDefaultSequence.remove( process.patTaus )
 process.patDefaultSequence.remove( process.selectedPatTaus )
 process.patDefaultSequence.remove( process.cleanPatTaus )
-
+process.cleanPatJets.checkOverlaps.taus.src = cms.InputTag("cleanPatMuons")
 
 process.pathPreselection = cms.Path(
 
