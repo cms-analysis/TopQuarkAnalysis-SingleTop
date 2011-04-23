@@ -237,10 +237,10 @@ nTupleLooseMuons = nTupleMuons.clone(
     tag = cms.untracked.string("AbsoluteDB"),
     quantity = cms.untracked.string("dB")
     ),
-    cms .PSet(
-    tag = cms.untracked.string("TrackerValidInnerHits"),
-    quantity = cms.untracked.string("innerTrack.numberOfValidHits")
-    ),
+#    cms .PSet(
+#    tag = cms.untracked.string("TrackerValidInnerHits"),
+#    quantity = cms.untracked.string("innerTrack.numberOfValidHits")
+#    ),
 
     )
     )
@@ -437,7 +437,6 @@ singleTopMCNeutrinos = cms.EDProducer(
     quantity = cms.untracked.string("theta")
     ),
 
-
     ),
 
 )
@@ -447,8 +446,6 @@ singleTopMCLeptons = singleTopMCNeutrinos.clone( src = cms.InputTag("MCTruthPart
 singleTopMCRecoilQuark = singleTopMCNeutrinos.clone( src = cms.InputTag("MCTruthParticles","singleTopRecoilQuark"), prefix = cms.untracked.string("mcRecoilQuark"))
 singleTopMCBQuark = singleTopMCNeutrinos.clone( src = cms.InputTag("MCTruthParticles","bGenParticles"), prefix = cms.untracked.string("mcBQuark"))
  
-
-
 
 
 nTuplesSkim = cms.Sequence(
@@ -477,7 +474,7 @@ saveNTuplesSkim = cms.untracked.vstring(
     'keep floats_nTupleAllJets_*_*',
     'keep floats_nTuplePatMETsPF_*_*',
     'keep floats_nTupleTopJetsPF_*_*',
-#    'keep *_UnclusteredMETPF_*_*',
+    'keep *_UnclusteredMETPF_*_*',
     )
 
 

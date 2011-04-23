@@ -34,7 +34,7 @@ print "test04 "
 #from Configuration.PyReleaseValidation.autoCond import autoCond
 #process.GlobalTag.globaltag = autoCond['startup']
 process.load("TopQuarkAnalysis.SingleTop.SingleTopSequences_New_cff") 
-#process.load("SelectionCuts_top_group_control_samples_v3_cff")
+process.load("SelectionCuts_Skim_cff");
 
 print "test05 "
 
@@ -108,7 +108,7 @@ process.pathPreselection = cms.Path(
 
 
 
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
@@ -209,8 +209,8 @@ savePatTupleSkimLoose = cms.untracked.vstring(
 ## Output module configuration
 process.singleTopNTuple = cms.OutputModule("PoolOutputModule",
 #                                fileName = cms.untracked.string('rfio:/CST/cern.ch/user/o/oiorio/SingleTop/SubSkims/WControlSamples1.root'),
-                   fileName = cms.untracked.string('/tmp/oiorio/test_edmntuple.root'),
-#                   fileName = cms.untracked.string('edmntuple.root'),
+#                   fileName = cms.untracked.Bstring('/tmp/oiorio/edmntuple_tchannel_big.root'),
+                   fileName = cms.untracked.string('edmntuple_TTBar.root'),
                                              
                    SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('selection')),
                    outputCommands = saveNTuplesSkimLoose,
@@ -218,7 +218,7 @@ process.singleTopNTuple = cms.OutputModule("PoolOutputModule",
 
 process.singleTopPatTuple = cms.OutputModule("PoolOutputModule",
 #                                fileName = cms.untracked.string('rfio:/CST/cern.ch/user/o/oiorio/SingleTop/SubSkims/WControlSamples1.root'),
-                   fileName = cms.untracked.string('pattuple.root'),
+                   fileName = cms.untracked.string('pattuple_tchannel.root'),
 
 
                    SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('selection')),
@@ -227,7 +227,7 @@ process.singleTopPatTuple = cms.OutputModule("PoolOutputModule",
 
 process.singleTopNTupleMu = cms.OutputModule("PoolOutputModule",
 #                                fileName = cms.untracked.string('rfio:/CST/cern.ch/user/o/oiorio/SingleTop/SubSkims/WControlSamples1.root'),
-                   fileName = cms.untracked.string('/tmp/oiorio/test_ntuple_new.root'),
+                   fileName = cms.untracked.string('/tmp/oiorio/test_ntuple_all.root'),
 
 
                    SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('selection')),
