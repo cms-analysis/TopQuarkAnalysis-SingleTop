@@ -51,6 +51,12 @@ nTupleTopJetsPF = cms.EDProducer(
     tag = cms.untracked.string("JetCorrTotal"),
     quantity = cms.untracked.string("jecFactor('Uncorrected')")
     ),
+    #G.Benelli
+    #Adding jet charge from PAT ;)
+    cms.PSet(
+    tag = cms.untracked.string("Charge"),
+    quantity = cms.untracked.string("charge")
+    )
     )
 )
 

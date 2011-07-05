@@ -95,17 +95,17 @@ process.pfJets.Rho_EtaMax =  cms.double(4.4)
 
 #Compute the mean pt per unit area (rho) from the
 #PFchs inputs
-from RecoJets.JetProducers.kt4PFJets_cfi import kt4PFJets
-process.kt6PFJets = kt4PFJets.clone(
-    rParam = cms.double(0.6),
-    src = cms.InputTag('pfNoElectron'+postfix),
-    doAreaFastjet = cms.bool(True),
-    doRhoFastjet = cms.bool(True),
-    voronoiRfact = cms.double(0.9),
-    Rho_EtaMax =  cms.double(4.4)
-    )
-
-process.patJetCorrFactors.rho = cms.InputTag("kt6PFJets", "rho")
+#from RecoJets.JetProducers.kt4PFJets_cfi import kt4PFJets
+#process.kt6PFJets = kt4PFJets.clone(
+#    rParam = cms.double(0.6),
+#    src = cms.InputTag('pfNoElectron'+postfix),
+#    doAreaFastjet = cms.bool(True),
+#    doRhoFastjet = cms.bool(True),
+#    voronoiRfact = cms.double(0.9),
+#    Rho_EtaMax =  cms.double(4.4)
+#    )
+#
+#process.patJetCorrFactors.rho = cms.InputTag("kt6PFJets", "rho")
 
 #Muons
 applyPostfix(process,"isoValMuonWithNeutral",postfix).deposits[0].deltaR = cms.double(0.3)
@@ -123,9 +123,9 @@ applyPostfix(process,"pfIsolatedMuons",postfix).combinedIsolationCut = cms.doubl
 applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.double(0.2)
 
 # Add the PV selector and KT6 producer to the sequence
-getattr(process,"patPF2PATSequence"+postfix).replace(
-    getattr(process,"pfNoElectron"+postfix),
-    getattr(process,"pfNoElectron"+postfix)*process.kt6PFJets )
+#getattr(process,"patPF2PATSequence"+postfix).replace(
+#    getattr(process,"pfNoElectron"+postfix),
+#    getattr(process,"pfNoElectron"+postfix)*process.kt6PFJets )
 
 process.load("RecoVertex.PrimaryVertexProducer.OfflinePrimaryVertices_cfi")
 process.load("RecoVertex.PrimaryVertexProducer.OfflinePrimaryVerticesWithBS_cfi")

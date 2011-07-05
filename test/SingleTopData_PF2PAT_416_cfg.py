@@ -85,16 +85,16 @@ process.pfJets.Rho_EtaMax =  cms.double(4.4)
 
 # Compute the mean pt per unit area (rho) from the
 # PFchs inputs
-from RecoJets.JetProducers.kt4PFJets_cfi import kt4PFJets
-process.kt6PFJets = kt4PFJets.clone(
-    rParam = cms.double(0.6),
-    src = cms.InputTag('pfNoElectron'+postfix),
-    doAreaFastjet = cms.bool(True),
-    doRhoFastjet = cms.bool(True),
-    voronoiRfact = cms.double(0.9),
-    Rho_EtaMax =  cms.double(4.4)
-    )
-process.patJetCorrFactors.rho = cms.InputTag("kt6PFJets", "rho")
+#from RecoJets.JetProducers.kt4PFJets_cfi import kt4PFJets
+#process.kt6PFJets = kt4PFJets.clone(
+#    rParam = cms.double(0.6),
+#    src = cms.InputTag('pfNoElectron'+postfix),
+#    doAreaFastjet = cms.bool(True),
+#    doRhoFastjet = cms.bool(True),
+#    voronoiRfact = cms.double(0.9),
+#    Rho_EtaMax =  cms.double(4.4)
+#    )
+#process.patJetCorrFactors.rho = cms.InputTag("kt6PFJets", "rho")
 
 #Muons
 applyPostfix(process,"isoValMuonWithNeutral",postfix).deposits[0].deltaR = cms.double(0.3)
@@ -114,9 +114,9 @@ applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.d
 
 
 # Add the PV selector and KT6 producer to the sequence
-getattr(process,"patPF2PATSequence"+postfix).replace(
-    getattr(process,"pfNoElectron"+postfix),
-    getattr(process,"pfNoElectron"+postfix)*process.kt6PFJets )
+#getattr(process,"patPF2PATSequence"+postfix).replace(
+#    getattr(process,"pfNoElectron"+postfix),
+#    getattr(process,"pfNoElectron"+postfix)*process.kt6PFJets )
 
 process.load("RecoVertex.PrimaryVertexProducer.OfflinePrimaryVertices_cfi")
 process.load("RecoVertex.PrimaryVertexProducer.OfflinePrimaryVerticesWithBS_cfi")
@@ -139,7 +139,8 @@ process.pathPreselection = cms.Path(
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
-'file:/tmp/oiorio/FAAFC2CB-4077-E011-879F-003048F1BF66.root'
+#'file:/tmp/oiorio/FAAFC2CB-4077-E011-879F-003048F1BF66.root'
+    'file:/tmp/gbenelli/DoubleMu_PromptReco_v1_samplefile.root'
 #'file:/tmp/oiorio/401AE9B7-F8A1-E011-93CB-003048F1C832.root',
 #'file:/tmp/oiorio/F81B1889-AF4B-DF11-85D3-001A64789DF4.root'
 #'file:/tmp/oiorio/EC0EE286-FA55-E011-B99B-003048F024F6.root'
@@ -222,7 +223,7 @@ process.singleTopNTuple = cms.OutputModule("PoolOutputModule",
 #                                fileName = cms.untracked.string('rfio:/CST/cern.ch/user/o/oiorio/SingleTop/SubSkims/WControlSamples1.root'),
 #                   fileName = cms.untracked.Bstring('/tmp/oiorio/edmntuple_tchannel_big.root'),
 #                   fileName = cms.untracked.string('/tmp/oiorio/edmntuple_DataEle_v4.root'),
-                   fileName = cms.untracked.string('edmntuple_DataEle_v4.root'),
+                   fileName = cms.untracked.string('edmntuple_DataMuMu_v1_nokt6.root'),
                                              
                    SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('selection')),
                    outputCommands = saveNTuplesSkimLoose,
