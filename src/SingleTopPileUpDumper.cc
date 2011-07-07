@@ -47,17 +47,17 @@ void SingleTopPileUpDumper::analyze(const Event& iEvent, const EventSetup& iSetu
   
   // cout << " test pupinfo size " << pileUpInfo->size()<< endl;
   
-  //  std::vector<PileupSummaryInfo>::const_iterator PVI;
+  std::vector<PileupSummaryInfo>::const_iterator PVI;
   
   int npv = -1;
-  //  for(PVI = pileUpInfo->begin(); PVI != pileUpInfo->end(); ++PVI) {
-  //  int BX = PVI->getBunchCrossing();
+  for(PVI = pileUpInfo->begin(); PVI != pileUpInfo->end(); ++PVI) {
+    int BX = PVI->getBunchCrossing();
     
-  //    if(BX == 0) { 
-  npv = pileUpInfo->getPU_NumInteractions();
-      //    continue;
-      // }
-      //  }
+    if(BX == 0) { 
+      npv = PVI->getPU_NumInteractions();
+      continue;
+    }
+  }
  
 
   hPileUp->Fill(npv);

@@ -100,7 +100,7 @@ class SingleTopPileUpDumper : public edm::EDAnalyzer {
   // Handles
 
   edm::InputTag pileUpInfo_;
-  edm::Handle< PileupSummaryInfo >  pileUpInfo;
+  edm::Handle<std::vector< PileupSummaryInfo > >  pileUpInfo;
   string channel;
   TH1F *hPileUp;  
  

@@ -89,7 +89,7 @@ process.pfPileUp.checkClosestZVertex = cms.bool(False)
 process.pfPileUp.Vertices = cms.InputTag('goodOfflinePrimaryVertices')
 process.pfJets.doAreaFastjet = True
 process.pfJets.doRhoFastjet = False
-process.pfJets.Rho_EtaMax =  cms.double(4.4)
+#process.pfJets.Rho_EtaMax =  cms.double(4.4)
 
 
 
@@ -152,7 +152,9 @@ process.source = cms.Source ("PoolSource",
 #'file:/tmp/oiorio/D0B32FD9-6D87-E011-8572-003048678098.root'
 #'file:/tmp/oiorio/149E3017-B799-E011-9FA9-003048F118C2.root'
 #'file:/tmp/oiorio/WJetsSmallFile_1_1_nb1.root',
-'file:/tmp/oiorio/00012F91-72E5-DF11-A763-00261834B5F1.root',
+#'file:/tmp/oiorio/SingleTop/tWChannelSampleRootFile.root'
+#'file:/tmp/oiorio/00012F91-72E5-DF11-A763-00261834B5F1.root',
+'file:/tmp/oiorio/4C5DC3EC-524E-E011-8571-485B39800B73.root',
 ),
 duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 )

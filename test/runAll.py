@@ -12,40 +12,40 @@ fileName = "SingleTopSystematicsWithTrigger_cfg.py"
 #Channels to include
 channels = [
 #
-# "DataMu",
-# "DataEle",
-# "DataMuQCD",
-# "DataEleQCD",
+  "DataMu",
+  "DataEle",
+#  "DataMuQCD",
+#  "DataEleQCD",
 #
- "TChannel",
+#  "TChannel",
 #
- "QCDMu",
- "EMEnriched_30to80",
- "EMEnriched_80to170",
- "BCtoE_20to30",
- "BCtoE_30to80",
- "BCtoE_80to170",
-# "GJets_HT_40To100",
- "GJets_HT_100To200",
- "GJets_HT_200",
+#  "QCDMu",
+#  "EMEnriched_30to80",
+#  "EMEnriched_80to170",
+#  "BCtoE_20to30",
+#  "BCtoE_30to80",
+#  "BCtoE_80to170",
+#  "GJets_HT_40To100",
+#  "GJets_HT_100To200",
+#  "GJets_HT_200",
+
+#  "TTBar",
+  
+#   "ZJets",
+#   "ZJets_wlight",
+#   "ZJets_wcc",
+#   "ZJets_wbb",
+#   "tWChan ",
+#   "sChan",#
 #
- "TTBar",
-# 
-  "ZJets",
-  "ZJets_wlight",
-   "ZJets_wcc",
-   "ZJets_wbb",
-   "TWChannel ",
-   "SChannel",#
-#
-  "WJets_wlight",
-  "WJets_wcc",
-  "WJets_wbb",
-  "WJets",
-  "Wc_wc",
-  "Vqq_wbb",
-  "Vqq_wcc",
-  "VV",
+#  "WJets_wlight",
+#  "WJets_wcc",
+#  "WJets_wbb",
+#  "WJets",
+#  "Wc_wc",
+#  "Vqq_wbb",
+#  "Vqq_wcc",
+#  "VV",
 
    ]
 
@@ -100,10 +100,18 @@ def changeChannel(fileName,channelOld,channelNew,switch,isMC):
         #        line = "process.source.fileNames = cms.untracked.vstring('"+dataPath+"DataMuMerged.root',)"
         #       line = "process.source.fileNames = cms.untracked.vstring('"+dataPath+"Mu_v1Merged.root','"+dataPath+"Mu_v2Merged.root','"+dataPath+"Ele_v1Merged.root','"+dataPath+"Ele_v2Merged.root',)"
     if channelNew == "DataMu" or channelNew == "DataMuQCD":
-        inputs = "process.source.fileNames = cms.untracked.vstring('"+dataPath+"MuMerged.root',)"
+        inputs = "process.source.fileNames = cms.untracked.vstring("
+        inputs = inputs +"'"+dataPath+"Mu_v4Merged.root',"
+        inputs = inputs +"'"+dataPath+"Mu_v2Merged.root',"
+        inputs = inputs +"'"+dataPath+"Mu_v1Merged.root',"
+        inputs = inputs +")"
         o.write(inputs)
     if channelNew == "DataEle" or channelNew == "DataEleQCD":
-        inputs = "process.source.fileNames = cms.untracked.vstring('"+dataPath+"EleMerged.root','"+dataPath+"EleMerged.root' )"
+        inputs = "process.source.fileNames = cms.untracked.vstring("
+        inputs = inputs +"'"+dataPath+"Ele_v4Merged.root',"
+        inputs = inputs +"'"+dataPath+"Ele_v2Merged.root',"
+        inputs = inputs +"'"+dataPath+"Ele_v1Merged.root',"
+        inputs = inputs +")"
         o.write(inputs)
     o.close()
     return o
