@@ -14,7 +14,10 @@ HLTFilterMuOrEleMC = cms.EDFilter('SingleTopTriggers',
                                                                "HLT_Ele22_SW_TighterCaloIdIsol_L1R_v3",
                                                                "HLT_Ele17_SW_TighterEleIdIsol_L1R_v3",
                                                                "HLT_IsoMu17_v4",
-                                                               ),    
+                                                               ),
+
+                                  runList = cms.vstring("*"),
+
                            channel = cms.untracked.int32(1),#Useless now
                            )                         
 
@@ -37,6 +40,8 @@ HLTFilterMu = cms.EDFilter('SingleTopTriggers',
                            isMC = cms.untracked.bool(False),
                            triggerList = cms.vstring("HLT_IsoMu17_v5",   
                                                                "HLT_IsoMu17_v6",),
+                           #runList = cms.vstring("*"),
+
                            channel = cms.untracked.int32(2),#Useless now
                            )                         
 
