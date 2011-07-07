@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  * 
  * Produces systematics histograms out of a standard Single Top n-tuple 
- * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.9 2011/07/04 00:56:21 oiorio Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11 2011/07/04 18:20:36 oiorio Exp $
  */
 
 
@@ -232,7 +232,7 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   //Not used anymore:
   double loosePtCut ;
   string rootFileName, dataPUFile_,mcPUFile_;
-  
+  bool doPileUp_;
   
  
 };

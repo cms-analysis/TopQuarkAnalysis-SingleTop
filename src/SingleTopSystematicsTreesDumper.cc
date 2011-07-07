@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.10 2011/07/04 00:56:22 oiorio Exp $ 
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12 2011/07/04 18:20:36 oiorio Exp $ 
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file 
 //
@@ -56,6 +56,8 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
 
   dataPUFile_ =  iConfig.getUntrackedParameter< std::string >("dataPUFile","pileUpDistr.root");
   mcPUFile_ =  iConfig.getUntrackedParameter< std::string >("mcPUFile","pileupdistr_TChannel.root");
+
+  doPileUp_ =  iConfig.getUntrackedParameter< bool >("doPileUp",false);
   
   leptonsPt_ =  iConfig.getParameter< edm::InputTag >("leptonsPt");
   leptonsPhi_ =  iConfig.getParameter< edm::InputTag >("leptonsPhi");
@@ -374,12 +376,12 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
   JES_b_overCut = 0.03;
   
   std::string puhistoname = "pileUpDumper/PileUp"+channel;
-
-  LumiWeights_ = edm::LumiReWeighting(
-				      mcPUFile_,
-				      dataPUFile_,
-				      puhistoname,
-				      std::string("pileup")  );
+  
+  if(doPileUp_) LumiWeights_ = edm::LumiReWeighting(
+						   mcPUFile_,
+						   dataPUFile_,
+						   puhistoname,
+						   std::string("pileup")  );
 
   //  cout<< "I work for now but I do nothing. But again, if you gotta do nothing, you better do it right. To prove my good will I will provide you with somse numbers later."<<endl;
 }
@@ -446,7 +448,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 
   double myWeight = 1.;
 
-  if(channel != "Data"){
+  if(doPileUp_) if(channel != "Data"){
     iEvent.getByLabel(npv_,npv);
     myWeight = LumiWeights_.weight(*npv);
   }
