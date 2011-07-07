@@ -17,27 +17,27 @@ channels = [
 # "DataMuQCD",
 # "DataEleQCD",
 #
-# "TChannel",
+ "TChannel",
 #
-# "QCDMu",
-# "EMEnriched_30to80",
-# "EMEnriched_80to170",
-# "BCtoE_20to30",
-# "BCtoE_30to80",
-# "BCtoE_80to170",
+ "QCDMu",
+ "EMEnriched_30to80",
+ "EMEnriched_80to170",
+ "BCtoE_20to30",
+ "BCtoE_30to80",
+ "BCtoE_80to170",
 # "GJets_HT_40To100",
-# "GJets_HT_100To200",
-# "GJets_HT_200",
+ "GJets_HT_100To200",
+ "GJets_HT_200",
 #
-# "TTBar",
+ "TTBar",
 # 
-#  "ZJets",
-#  "ZJets_wlight",
+  "ZJets",
+  "ZJets_wlight",
    "ZJets_wcc",
    "ZJets_wbb",
-   "tWChan ",
-   "sChan",#
-
+   "TWChannel ",
+   "SChannel",#
+#
   "WJets_wlight",
   "WJets_wcc",
   "WJets_wbb",

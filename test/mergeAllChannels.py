@@ -4,14 +4,14 @@ import os,sys,re,shutil
 
 
 #Castor directory with all sub-directories:
-#inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/MC2011"
-inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/Run2011/"
+#inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/MC2011/Spring11/QCDEle"
+inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/Run2011/Mu_v2/"
 #inputDir = "/castor/cern.ch/user/m/mmerola/SingleTop_AfterMoriond/Data"
 #inputDir = "/castor/cern.ch/user/m/mmerola/SingleTop_AfterMoriond/MC/"
 
 #Original config file
 #fName = "copyTemplate.py"
-fName = "copyFlavorSeparationTemplateForSub.py"
+#fName = "copyFlavorSeparationTemplateForSub.py"
 fName = "copyFlavorSeparationTemplate.py"
 fNameBsub = "mergeBsub.py"
 f = open(fName)
@@ -20,14 +20,29 @@ f = open(fName)
 
 #Channels to include
 channels = [
+# "Mu_v1",
+ "Mu_v2",
+# "Ele_v2",
+# "Ele_v1",
+# "Mu_v4",
 #    "TChannel",
+#    "TWChannel",
+#    "SChannel",
 #    "VV",
 #    "TTBar",
-#    '30to80_BCtoE',
-#     "ZJets",
-     #"QCDMu",
-#     "DataEle",
-#     "QCDMu",
+#"QCD_Pt-20to30_EMEnriched",
+#"QCD_Pt-30to80_EMEnriched",
+#"QCD_Pt-80to170_EMEnriched",
+#"QCD_Pt-20to30_BCtoE",
+#"QCD_Pt-30to80_BCtoE",
+#"QCD_Pt-80to170_BCtoE",
+#"HT-100to200",#
+#"HT-200",
+#    "30to80_BCtoE",
+#    "20to30_BCtoE",
+#    "80to170_BCtoE",
+#    "ZJets",
+#    "QCDMu",
 #     "QCDEle",
 #     "WJets",
 #    "WJets",
@@ -36,13 +51,13 @@ channels = [
 #"Mu_v2",
 #"Ele_v1",
 #"Ele_v2",
-"Ele_v4",
+#"Ele_v4",
 #    "Vqq",
 #    "Wc",
     ]
 
 
-Prefix = "edmntuple_Data"
+Prefix = "edmntuple_"
 #Prefix = ""
 
 Switch = "None"
@@ -83,7 +98,7 @@ def appendInput(fileName,directory,channel,prefix):
     o.write("process.source.fileNames.extend([")
     
     inputRedirect = "rfdir "+directory +"/"+channel+"/ | cut -c68-200 > "+ channel+"_input.py"
-    if channel == "Data":
+    if channel == "Data" or "QCDEle" in directory:
         inputRedirect = "rfdir "+directory +"| cut -c68-200 > "+ channel+"_input.py"
     os.system(inputRedirect)
     tmp = open(channel+"_input.py")
@@ -96,7 +111,7 @@ def appendInput(fileName,directory,channel,prefix):
             #print "beginName is " + beginName +" word is "+ word
             if beginName in word:
                 #print " word ok , is it true? " + hasWord 
-                if channel != "Data":
+                if channel != "Data" and not "QCDEle" in directory :
                     line = "'"+line.replace(word,word.replace(beginName,"rfio:"+directory+"/"+channel+"/"+beginName))
                 else:
                     line = "'"+line.replace(word,word.replace(beginName,"rfio:"+directory+"/"+beginName))

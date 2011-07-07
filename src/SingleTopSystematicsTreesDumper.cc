@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.11 2011/07/04 18:11:28 oiorio Exp $ 
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.13 2011/07/04 18:24:25 oiorio Exp $ 
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file 
 //
@@ -373,6 +373,8 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
   JES_b_cut = 0.02;
   JES_b_overCut = 0.03;
   
+  
+  leptonRelIsoQCDCutUpper = 0.4,leptonRelIsoQCDCutLower=0.2;  
 
   /*  LumiWeights_ = edm::LumiReWeighting(
 				      mcPUFile_,
@@ -388,17 +390,11 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 {
 
 
-  iEvent.getByLabel(jetsEta_,jetsEta);
-  iEvent.getByLabel(jetsPt_,jetsPt);
-  iEvent.getByLabel(jetsPhi_,jetsPhi);
-  
-  iEvent.getByLabel(jetsEnergy_,jetsEnergy);
-  iEvent.getByLabel(jetsBTagAlgo_,jetsBTagAlgo);
-  iEvent.getByLabel(jetsAntiBTagAlgo_,jetsAntiBTagAlgo);
-  iEvent.getByLabel(jetsFlavour_,jetsFlavour);
-  iEvent.getByLabel(jetsCorrTotal_,jetsCorrTotal);
-  iEvent.getByLabel(METPhi_,METPhi);
-  iEvent.getByLabel(METPt_,METPt);
+  gotLeptons=0;
+  gotJets=0;
+  gotMets=0;
+
+
   
   iEvent.getByLabel(leptonsEta_,leptonsEta);
   iEvent.getByLabel(leptonsPt_,leptonsPt);
@@ -422,15 +418,10 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
   float metPx = 0; 
   float metPy = 0;
   
-  metPx = METPt->at(0)*cos(METPhi->at(0));
-  metPy = METPt->at(0)*sin(METPhi->at(0));
-
-  float metPxTmp = metPx; 
-  float metPyTmp = metPy;
 
   size_t nLeptons = 0;//leptonsPt->size();
+  size_t nJets = 0;
   
-  size_t nJets = jetsPt->size();
   
   double WeightLumi = finalLumi*crossSection/originalEvents;
   double BTagWeight = 1;
@@ -455,7 +446,10 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
   //double MyWeight = LumiWeights_.weight( (*iEventB) );
   
   //double w = LumiWeights_.weight(iEvent);
-  
+
+  float metPxTmp = 0;
+  float metPyTmp = 0;
+
   if(channel=="Data")WeightLumi=1;
   
   for(size_t s = 0; s < systematics.size();++s){
@@ -507,9 +501,26 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     jets.clear();
     bjets.clear();
     antibjets.clear();
+
+
     
+    if(!gotMets){
+      iEvent.getByLabel(METPhi_,METPhi);
+      iEvent.getByLabel(METPt_,METPt);
+      
+      metPx = METPt->at(0)*cos(METPhi->at(0));
+      metPy = METPt->at(0)*sin(METPhi->at(0));
+      
+      metPxTmp = metPx; 
+      metPyTmp = metPy;
+      
+      gotMets = true;
+    }
+
     //Define - initialize some variables
     MTWValue =0;
+    
+
     metPx = metPxTmp; 
     metPy = metPyTmp;
     
@@ -528,6 +539,9 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     //Taking the unclustered met previously evaluated 
     //and already present in the n-tuples
     //This is used for syst up and down
+    
+
+      
     if(syst_name == "UnclusteredMETUp"){
       iEvent.getByLabel(UnclMETPx_,UnclMETPx);
       iEvent.getByLabel(UnclMETPy_,UnclMETPy);
@@ -578,6 +592,58 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       leptons.push_back(math::PtEtaPhiELorentzVector(leptonPt,leptonEta,leptonPhi,leptonE));
   
      }
+
+
+    //Loop for the qcd leptons
+    if(doQCD_){
+      for(size_t i = 0;i<nLeptons;++i){
+	
+	float leptonRelIso = leptonsRelIso->at(i);
+	
+	
+	
+	lepRelIso = leptonRelIso;
+	//Use an anti-isolation requirement
+	if(  leptonRelIso > leptonRelIsoQCDCutUpper )continue;
+	 if( leptonRelIso < leptonRelIsoQCDCutLower )continue;
+	 
+	 if(leptonsFlavour_ == "electron"  ) {
+	   float leptonID = leptonsID->at(i);
+	   electronID = leptonID;
+	 } 
+	 
+	 float leptonPt = leptonsPt->at(i);
+	 float leptonPhi = leptonsPhi->at(i);
+	 float leptonEta = leptonsEta->at(i);
+	 float leptonE = leptonsEnergy->at(i);
+	 //Create the lepton
+	 leptonsQCD.push_back(math::PtEtaPhiELorentzVector(leptonPt,leptonEta,leptonPhi,leptonE));
+      }
+     }
+    
+
+
+    if(leptons.size()!=1 && leptonsQCD.size()!=1) continue;
+
+
+
+    if(!gotJets){
+      iEvent.getByLabel(jetsEta_,jetsEta);
+      iEvent.getByLabel(jetsPt_,jetsPt);
+      iEvent.getByLabel(jetsPhi_,jetsPhi);
+      
+      iEvent.getByLabel(jetsEnergy_,jetsEnergy);
+      iEvent.getByLabel(jetsBTagAlgo_,jetsBTagAlgo);
+      iEvent.getByLabel(jetsAntiBTagAlgo_,jetsAntiBTagAlgo);
+      iEvent.getByLabel(jetsFlavour_,jetsFlavour);
+      iEvent.getByLabel(jetsCorrTotal_,jetsCorrTotal);
+
+      nJets = jetsPt->size();
+
+      gotJets= true;
+    }
+    
+    
 
     //Jets loop
     for(size_t i = 0;i<nJets;++i){
@@ -828,29 +894,6 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     if( jets.size()<2 )continue;
     if( maxPtTree< maxPtCut )continue;
     
-    //Loop for the qcd leptons
-     if(doQCD_){
-       for(size_t i = 0;i<nLeptons;++i){
-	 
-	 float leptonRelIso = leptonsRelIso->at(i);
-	 
-	 lepRelIso = leptonRelIso;
-	 //Use an anti-isolation requirement
-	 if(leptonRelIso < RelIsoQCDCut )continue;
-	 
-	 if(leptonsFlavour_ == "electron"  ) {
-	   float leptonID = leptonsID->at(i);
-	   electronID = leptonID;
-	 } 
-
-	 float leptonPt = leptonsPt->at(i);
-	 float leptonPhi = leptonsPhi->at(i);
-	 float leptonEta = leptonsEta->at(i);
-	 float leptonE = leptonsEnergy->at(i);
-	 //Create the lepton
-	 leptonsQCD.push_back(math::PtEtaPhiELorentzVector(leptonPt,leptonEta,leptonPhi,leptonE));
-      }
-     }
           
      //Part of the effective selection and filling
      
@@ -1044,7 +1087,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       topMassTree = top.mass();
       mtwMassTree = MTWValue;
       chargeTree = leptonsCharge->at(0) ; 
-      
+       
       lepPt = leptons.at(0).pt();
       lepEta = leptons.at(0).eta();
       lepPhi = leptons.at(0).phi();

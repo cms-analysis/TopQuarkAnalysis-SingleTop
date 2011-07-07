@@ -56,22 +56,22 @@ if switch == "wlight":
         process.wbbFilter 
         )
     process.skimwlight = cms.OutputModule("PoolOutputModule",
-                                          fileName = cms.untracked.string('rfio:/castor/cern.ch/user/o/oiorio/SingleTop/2011/MergedNew/TChannel_wlightMerged.root'),
+                                          fileName = cms.untracked.string('rfio:/castor/cern.ch/user/o/oiorio/SingleTop/2011/Merged/TChannel_wlightMerged.root'),
                                           outputCommands = cms.untracked.vstring(    'keep *',   ),
                                           SelectEvents = cms.untracked.PSet( SelectEvents = cms.vstring('Pathwlight')),
                                           )
     process.skimwcc = cms.OutputModule("PoolOutputModule",
-                                       fileName = cms.untracked.string('rfio:/castor/cern.ch/user/o/oiorio/SingleTop/2011/MergedNew/TChannel_wccMerged.root'),
+                                       fileName = cms.untracked.string('rfio:/castor/cern.ch/user/o/oiorio/SingleTop/2011/Merged/TChannel_wccMerged.root'),
                                        outputCommands = cms.untracked.vstring(    'keep *',   ),
                                        SelectEvents = cms.untracked.PSet( SelectEvents = cms.vstring('Pathwcc')),
                                        )
     process.skimwbb = cms.OutputModule("PoolOutputModule",
-                                       fileName = cms.untracked.string('rfio:/castor/cern.ch/user/o/oiorio/SingleTop/2011/MergedNew/TChannel_wbbMerged.root'),
+                                       fileName = cms.untracked.string('rfio:/castor/cern.ch/user/o/oiorio/SingleTop/2011/Merged/TChannel_wbbMerged.root'),
                                        outputCommands = cms.untracked.vstring(    'keep *',   ),
                                        SelectEvents = cms.untracked.PSet( SelectEvents = cms.vstring('Pathwbb')),
                                        )
     process.skimwall = cms.OutputModule("PoolOutputModule",
-                                        fileName = cms.untracked.string('rfio:/castor/cern.ch/user/o/oiorio/SingleTop/2011/MergedNew/TChannelMerged.root'),
+                                        fileName = cms.untracked.string('rfio:/castor/cern.ch/user/o/oiorio/SingleTop/2011/Merged/TChannelMerged.root'),
                                         outputCommands = cms.untracked.vstring(    'keep *',   ),
 #                                        SelectEvents = cms.untracked.PSet( SelectEvents = cms.vstring('*')),
                                         )
@@ -101,12 +101,12 @@ if switch == "vqq":
         )
     
     process.skimwcc = cms.OutputModule("PoolOutputModule",
-                                       fileName = cms.untracked.string('rfio:/castor/cern.ch/user/o/oiorio/SingleTop/2011/MergedNew/TChannel_wccMerged.root'),
+                                       fileName = cms.untracked.string('rfio:/castor/cern.ch/user/o/oiorio/SingleTop/2011/Merged/TChannel_wccMerged.root'),
                                        outputCommands = cms.untracked.vstring(    'keep *',   ),
                                        SelectEvents = cms.untracked.PSet( SelectEvents = cms.vstring('Pathwcc1','Pathwcc2')),
                                        )
     process.skimwbb = cms.OutputModule("PoolOutputModule",
-                                       fileName = cms.untracked.string('rfio:/castor/cern.ch/user/o/oiorio/SingleTop/2011/MergedNew/TChannel_wbbMerged.root'),
+                                       fileName = cms.untracked.string('rfio:/castor/cern.ch/user/o/oiorio/SingleTop/2011/Merged/TChannel_wbbMerged.root'),
                                        outputCommands = cms.untracked.vstring(    'keep *',   ),
                                        SelectEvents = cms.untracked.PSet( SelectEvents = cms.vstring('Pathwbb1','Pathwbb2')),
                                        )
@@ -125,7 +125,7 @@ if switch == "wc":
         process.wcFilter 
         )
     process.skimwc = cms.OutputModule("PoolOutputModule",
-                                       fileName = cms.untracked.string('rfio:/castor/cern.ch/user/o/oiorio/SingleTop/2011/MergedNew/TChannel_wcMerged.root'),
+                                       fileName = cms.untracked.string('rfio:/castor/cern.ch/user/o/oiorio/SingleTop/2011/Merged/TChannel_wcMerged.root'),
                                        outputCommands = cms.untracked.vstring(    'keep *',   ),
                                        SelectEvents = cms.untracked.PSet( SelectEvents = cms.vstring('Pathwc')),
                                        )
@@ -133,7 +133,7 @@ if switch == "wc":
     
 if switch == "None":
     process.skimwall = cms.OutputModule("PoolOutputModule",
-                                        fileName = cms.untracked.string('rfio:/castor/cern.ch/user/o/oiorio/SingleTop/2011/MergedNew/TChannelMerged.root'),
+                                        fileName = cms.untracked.string('rfio:/castor/cern.ch/user/o/oiorio/SingleTop/2011/Merged/TChannelMerged.root'),
                                         outputCommands = cms.untracked.vstring(    'keep *',   ),
 #                                        SelectEvents = cms.untracked.PSet( SelectEvents = cms.vstring('*')),
                                         )
