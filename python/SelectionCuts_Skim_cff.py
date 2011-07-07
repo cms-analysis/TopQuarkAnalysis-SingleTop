@@ -16,17 +16,17 @@ from TopQuarkAnalysis.SingleTop.SingleTopSelectors_cff import *
 #eleLooseCut = cms.string("et > 15 & abs(eta) < 2.5")#RelIso < 0.2
 
 #With isolation requirements
-muLooseCut = cms.string("isGlobalMuon & pt > 10 & abs(eta) < 2.5 & (isolationR03.sumPt + isolationR03.emEt + isolationR03.hadEt)/pt < 0.2") 
-eleLooseCut = cms.string("et > 15 & abs(eta) < 2.5 & (dr03TkSumPt + dr03EcalRecHitSumEt + dr03HcalTowerSumEt)/et < 0.2 ")
+muLooseCut = cms.string("isGlobalMuon & pt > 10 & abs(eta) < 2.5 & (chargedHadronIso+ neutralHadronIso + photonIso )/pt <0.2")
+eleLooseCut = cms.string("et > 15 & abs(eta) < 2.5 & (chargedHadronIso+ neutralHadronIso + photonIso )/pt <0.2")
 
 eleZVetoCut = cms.string("et > 20 &  (abs(superCluster.eta)> 1.5660 || abs(superCluster.eta)<1.4442) & eta < 2.5 & (dr03TkSumPt + dr03EcalRecHitSumEt + dr03HcalTowerSumEt)/et < 0.1 & (electronID('simpleEleId95cIso')==1 || electronID('simpleEleId70cIso')==3 ||  electronID('simpleEleId70cIso')==5 ||  electronID('simpleEleId70cIso')==7)")
 # Require ID + or of all possible combinations
 
 #Tight leptons selection criteria
 #No isolation or electronID requirement
-eleTightCut = cms.string("et>30  && abs(eta)<2.5  & (gsfTrack().trackerExpectedHitsInner.numberOfHits == 0) & dB < 0.02 & ( abs(superCluster.eta)> 1.5660 || abs(superCluster.eta)<1.4442)")
+eleTightCut = cms.string("et>30  && abs(eta)<2.5  & ( abs(superCluster.eta)> 1.5660 || abs(superCluster.eta)<1.4442)")
 
-muTightCut = cms.string("pt > 20 & isGlobalMuon && isTrackerMuon & abs(eta) < 2.1 && numberOfMatches() > 1  && muonID('GlobalMuonPromptTight') > 0 & dB < 0.02 & innerTrack.numberOfValidHits > 10 && innerTrack.hitPattern.pixelLayersWithMeasurement() >= 1 ")
+muTightCut = cms.string("pt > 20 & isGlobalMuon && isTrackerMuon & abs(eta) < 2.5 && numberOfMatches() > 1  && muonID('GlobalMuonPromptTight') > 0 & innerTrack.numberOfValidHits > 10 ")
 
 #Jet definition
 jetLooseCut = cms.string("numberOfDaughters()>1 & pt()> 20 && abs(eta())<5 & ((abs(eta())>2.4) || ( chargedHadronEnergyFraction() > 0 & chargedMultiplicity()>0 & neutralEmEnergyFraction() < 0.99 & neutralHadronEnergyFraction() < 0.99 & chargedEmEnergyFraction()<0.99))")
