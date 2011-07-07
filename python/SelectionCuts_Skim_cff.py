@@ -26,7 +26,7 @@ eleZVetoCut = cms.string("et > 20 &  (abs(superCluster.eta)> 1.5660 || abs(super
 #No isolation or electronID requirement
 eleTightCut = cms.string("et>30  && abs(eta)<2.5  & ( abs(superCluster.eta)> 1.5660 || abs(superCluster.eta)<1.4442)")
 
-muTightCut = cms.string("pt > 20 & isGlobalMuon && isTrackerMuon & abs(eta) < 2.5 && numberOfMatches() > 1  && muonID('GlobalMuonPromptTight') > 0 & innerTrack.numberOfValidHits > 10 && innerTrack.hitPattern.pixelLayersWithMeasurement >=1  ")
+muTightCut = cms.string("pt > 20 & isGlobalMuon && isTrackerMuon & abs(eta) < 2.1 && numberOfMatches() > 1  && muonID('GlobalMuonPromptTight') > 0 & innerTrack.numberOfValidHits > 10 && innerTrack.hitPattern.pixelLayersWithMeasurement() >=1 ")
 
 #Jet definition
 jetLooseCut = cms.string("numberOfDaughters()>1 & pt()> 20 && abs(eta())<5 & ((abs(eta())>2.4) || ( chargedHadronEnergyFraction() > 0 & chargedMultiplicity()>0 & neutralEmEnergyFraction() < 0.99 & neutralHadronEnergyFraction() < 0.99 & chargedEmEnergyFraction()<0.99))")

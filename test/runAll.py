@@ -102,15 +102,15 @@ def changeChannel(fileName,channelOld,channelNew,switch,isMC):
     if channelNew == "DataMu" or channelNew == "DataMuQCD":
         inputs = "process.source.fileNames = cms.untracked.vstring("
         inputs = inputs +"'"+dataPath+"Mu_v4Merged.root',"
-        inputs = inputs +"'"+dataPath+"Mu_v2Merged.root',"
-        inputs = inputs +"'"+dataPath+"Mu_v1Merged.root',"
+#        inputs = inputs +"'"+dataPath+"Mu_v2Merged.root',"
+#        inputs = inputs +"'"+dataPath+"Mu_v1Merged.root',"
         inputs = inputs +")"
         o.write(inputs)
     if channelNew == "DataEle" or channelNew == "DataEleQCD":
         inputs = "process.source.fileNames = cms.untracked.vstring("
         inputs = inputs +"'"+dataPath+"Ele_v4Merged.root',"
-        inputs = inputs +"'"+dataPath+"Ele_v2Merged.root',"
-        inputs = inputs +"'"+dataPath+"Ele_v1Merged.root',"
+#        inputs = inputs +"'"+dataPath+"Ele_v2Merged.root',"
+#        inputs = inputs +"'"+dataPath+"Ele_v1Merged.root',"
         inputs = inputs +")"
         o.write(inputs)
     o.close()
