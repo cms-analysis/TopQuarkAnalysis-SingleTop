@@ -12,8 +12,8 @@ fileName = "SingleTopSystematicsWithTrigger_cfg.py"
 #Channels to include
 channels = [
 #
-  "DataMu",
-  "DataEle",
+#  "DataMu",
+#  "DataEle",
 #  "DataMuQCD",
 #  "DataEleQCD",
 #
@@ -43,8 +43,8 @@ channels = [
 #  "WJets_wbb",
 #  "WJets",
 #  "Wc_wc",
-#  "Vqq_wbb",
-#  "Vqq_wcc",
+  "Vqq_wbb",
+  "Vqq_wcc",
 #  "VV",
 
    ]

@@ -80,7 +80,7 @@ process.pfPileUp.checkClosestZVertex = cms.bool(False)
 process.pfPileUp.Vertices = cms.InputTag('goodOfflinePrimaryVertices')
 process.pfJets.doAreaFastjet = True
 process.pfJets.doRhoFastjet = False
-process.pfJets.Rho_EtaMax =  cms.double(4.4)
+#process.pfJets.Rho_EtaMax =  cms.double(4.4)
 
 
 # Compute the mean pt per unit area (rho) from the
@@ -92,7 +92,7 @@ process.kt6PFJets = kt4PFJets.clone(
     doAreaFastjet = cms.bool(True),
     doRhoFastjet = cms.bool(True),
     voronoiRfact = cms.double(0.9),
-    Rho_EtaMax =  cms.double(4.4)
+ #   Rho_EtaMax =  cms.double(4.4)
     )
 process.patJetCorrFactors.rho = cms.InputTag("kt6PFJets", "rho")
 
@@ -133,7 +133,7 @@ process.pathPreselection = cms.Path(
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
-'file:/tmp/oiorio/401AE9B7-F8A1-E011-93CB-003048F1C832.root',
+'file:/tmp/oiorio/166CA048-918A-E011-9F31-003048F118AA.root',
 #'file:/tmp/oiorio/F81B1889-AF4B-DF11-85D3-001A64789DF4.root'
 #'file:/tmp/oiorio/EC0EE286-FA55-E011-B99B-003048F024F6.root'
 #'file:/tmp/oiorio/D0B32FD9-6D87-E011-8572-003048678098.root'

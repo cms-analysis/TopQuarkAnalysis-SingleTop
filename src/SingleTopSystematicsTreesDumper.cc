@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12 2011/07/04 18:20:36 oiorio Exp $ 
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.1 2011/07/07 15:33:39 oiorio Exp $ 
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file 
 //
@@ -174,6 +174,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
     treesWSample[syst]->Branch("etaHighBTag",&etaTree2);
     treesWSample[syst]->Branch("costhetalj",&cosTree);
     treesWSample[syst]->Branch("topMass",&topMassTree);
+    treesWSample[syst]->Branch("topMassLowBTag",&topMassLowBTagTree);
     treesWSample[syst]->Branch("mtwMass",&mtwMassTree);
     
     treesWSample[syst]->Branch("charge",&chargeTree);
@@ -267,6 +268,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
     treesWSampleQCD[syst]->Branch("etaHighBTag",&etaTree2);
     treesWSampleQCD[syst]->Branch("costhetalj",&cosTree);
     treesWSampleQCD[syst]->Branch("topMass",&topMassTree);
+    treesWSampleQCD[syst]->Branch("topMassLowBTag",&topMassLowBTagTree);
     treesWSampleQCD[syst]->Branch("mtwMass",&mtwMassTree);
     treesWSampleQCD[syst]->Branch("leptonRelIso",&lepRelIso);
 
@@ -880,6 +882,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	   etaTree = fabs(antibjets.at(0).eta());
 	   cosTree = fCosThetaLJ;
 	   topMassTree = top.mass();
+
+
 	   mtwMassTree = MTWValueQCD;
 	   chargeTree = leptonsCharge->at(0) ; 
 	   
@@ -959,6 +963,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	       
 	       math::PtEtaPhiELorentzVector top = top4Momentum(leptonsQCD.at(0),jets.at(positionHigh),metPx,metPy);
 	       float fCosThetaLJ =  cosThetaLJ(leptonsQCD.at(0),jets.at(positionLow),top);
+
+
 	       
 	       runTree = iEvent.eventAuxiliary().run();
 	       lumiTree = iEvent.eventAuxiliary().luminosityBlock();
@@ -968,6 +974,10 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
        
 	       cosTree = fCosThetaLJ;
 	       topMassTree = top.mass();
+
+	       math::PtEtaPhiELorentzVector top2 = top4Momentum(leptonsQCD.at(0),jets.at(positionLow),metPx,metPy);
+	       topMassLowBTagTree = top2.mass();
+	       
 	       mtwMassTree = MTWValue;
 	       chargeTree = leptonsCharge->at(0);
 	       
@@ -1134,6 +1144,10 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	  
 	  cosTree = fCosThetaLJ;
 	  topMassTree = top.mass();
+
+	  math::PtEtaPhiELorentzVector top2 = top4Momentum(leptons.at(0),jets.at(positionLow),metPx,metPy);
+	  topMassLowBTagTree = top2.mass();
+
 	  mtwMassTree = MTWValue;
 	  chargeTree = leptonsCharge->at(0);
 	  
