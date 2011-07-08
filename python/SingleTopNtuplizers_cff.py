@@ -206,14 +206,14 @@ nTupleMuons = nTupleElectrons.clone(
     tag = cms.untracked.string("AbsoluteDB"),
     quantity = cms.untracked.string("dB"),
     ),
-    cms .PSet(
-    tag = cms.untracked.string("TrackerValidInnerHits"),
-    quantity = cms.untracked.string("innerTrack.numberOfValidHits")
-    ),
-    cms .PSet(
-    tag = cms.untracked.string("PixelValidInnerHits"),
-    quantity = cms.untracked.string("innerTrack.hitPattern.pixelLayersWithMeasurement()")
-    ),
+#    cms .PSet(
+#    tag = cms.untracked.string("TrackerValidInnerHits"),
+#    quantity = cms.untracked.string("innerTrack.numberOfValidHits")
+#    ),
+#    cms .PSet(
+#    tag = cms.untracked.string("PixelValidInnerHits"),
+#    quantity = cms.untracked.string("innerTrack.hitPattern.pixelLayersWithMeasurement()")
+#    ),
     )
     )
 
@@ -272,15 +272,15 @@ nTupleLooseMuons = nTupleMuons.clone(
     tag = cms.untracked.string("AbsoluteDB"),
     quantity = cms.untracked.string("dB"),
     ),
-    cms .PSet(
-    tag = cms.untracked.string("TrackerValidInnerHits"),
-    quantity = cms.untracked.string("innerTrack.numberOfValidHits")
-    ),
-    cms .PSet(
-    tag = cms.untracked.string("PixelValidInnerHits"),
-    quantity = cms.untracked.string("innerTrack.hitPattern.pixelLayersWithMeasurement")
-    ),
-
+#    cms .PSet(
+#    tag = cms.untracked.string("TrackerValidInnerHits"),
+#    quantity = cms.untracked.string("innerTrack.numberOfValidHits")
+#    ),
+#    cms .PSet(
+#    tag = cms.untracked.string("PixelValidInnerHits"),
+#    quantity = cms.untracked.string("innerTrack.hitPattern.pixelLayersWithMeasurement")
+#    ),
+    
     
     )
     )

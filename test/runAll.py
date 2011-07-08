@@ -38,12 +38,12 @@ channels = [
 #   "tWChan ",
 #   "sChan",#
 #
-#  "WJets_wlight",
+# "WJets_wlight",
 #  "WJets_wcc",
 #  "WJets_wbb",
 #  "WJets",
-#  "Wc_wc",
-  "Vqq_wbb",
+  "Wc_wc",
+#  "Vqq_wbb",
   "Vqq_wcc",
 #  "VV",
 
