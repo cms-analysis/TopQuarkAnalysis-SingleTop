@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.5 2011/07/11 19:35:50 oiorio Exp $ 
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.13.2.3 2011/07/11 19:52:39 oiorio Exp $ 
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file 
 //
@@ -371,7 +371,8 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
   }  
     
   //  JEC_PATH = "CondFormats/JetMETObjects/data/";
-  JEC_PATH = "./JECs/";
+  //  JEC_PATH = "./JECs/";
+  JEC_PATH = "./";
   //  fip = edm::FileInPath(JEC_PATH+"Spring10_Uncertainty_AK5PF.txt");
   //fip = edm::FileInPath(JEC_PATH+"GR_R_42_V19_AK5PF_Uncertainty.txt");
   //jecUnc = new JetCorrectionUncertainty(fip.fullPath());
