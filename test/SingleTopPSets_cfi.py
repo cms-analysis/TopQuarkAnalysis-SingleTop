@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-lumi = cms.untracked.double(869129366.562)
+lumi = cms.untracked.double(869.129366562)
 
 TChannelMu = cms.PSet(
     crossSection = cms.untracked.double(20.93),
@@ -316,84 +316,84 @@ DataEle = cms.PSet(
     )
 
 
-#QCDEMEnriched_20to30 = cms.PSet(
+#QCDQCD_Pt_20to30EMEnriched = cms.PSet(
 #    crossSection = cms.untracked.double(2454400.),
 #    channel = cms.untracked.string("QCD"),
 #    finalLumi = lumi,
 #    originalEvents = cms.untracked.double(1100000),
 #    )
 
-EMEnriched_30to80Ele = cms.PSet(
+QCD_Pt_30to80EMEnrichedEle = cms.PSet(
     crossSection = cms.untracked.double(3866200.),
-    channel = cms.untracked.string("EMEnriched_30to80"),
+    channel = cms.untracked.string("QCD_Pt_30to80EMEnriched"),
     finalLumi = lumi,
     originalEvents = cms.untracked.double(70708892),
     )
 
-EMEnriched_30to80Mu = cms.PSet(
+QCD_Pt_30to80EMEnrichedMu = cms.PSet(
         crossSection = cms.untracked.double(3866200.),
-            channel = cms.untracked.string("EMEnriched_30to80"),
+            channel = cms.untracked.string("QCD_Pt_30to80EMEnriched"),
             finalLumi = lumi,
             originalEvents = cms.untracked.double(70708892),
             )
 
 
-EMEnriched_80to170Ele = cms.PSet(
+QCD_Pt_80to170EMEnrichedEle = cms.PSet(
     crossSection = cms.untracked.double(139500.),
-    channel = cms.untracked.string("EMEnriched_80to170"),
+    channel = cms.untracked.string("QCD_Pt_80to170EMEnriched"),
     finalLumi = lumi,
     originalEvents = cms.untracked.double(8069591),
     )
 
-EMEnriched_80to170Mu = cms.PSet(
+QCD_Pt_80to170EMEnrichedMu = cms.PSet(
         crossSection = cms.untracked.double(139500.),
-            channel = cms.untracked.string("EMEnriched_80to170"),
+            channel = cms.untracked.string("QCD_Pt_80to170EMEnriched"),
             finalLumi = lumi,
             originalEvents = cms.untracked.double(8069591),
             )
 
 
 
-BCtoE_20to30Ele = cms.PSet(
+QCD_Pt_20to30BCtoEEle = cms.PSet(
     crossSection = cms.untracked.double(132160.),
-    channel = cms.untracked.string("BCtoE_20to30"),
+    channel = cms.untracked.string("QCD_Pt_20to30BCtoE"),
     finalLumi = lumi,
     originalEvents = cms.untracked.double(1993439),
     )
 
-BCtoE_20to30Mu = cms.PSet(
+QCD_Pt_20to30BCtoEMu = cms.PSet(
         crossSection = cms.untracked.double(132160.),
-            channel = cms.untracked.string("BCtoE_20to30"),
+            channel = cms.untracked.string("QCD_Pt_20to30BCtoE"),
             finalLumi = lumi,
             originalEvents = cms.untracked.double(1993439),
             )
 
 
-BCtoE_30to80Ele = cms.PSet(
+QCD_Pt_30to80BCtoEEle = cms.PSet(
     crossSection = cms.untracked.double(136804.),
-    channel = cms.untracked.string("BCtoE_30to80"),
+    channel = cms.untracked.string("QCD_Pt_30to80BCtoE"),
     finalLumi = lumi,
     originalEvents = cms.untracked.double(1795502),
     )
 
-BCtoE_30to80Mu = cms.PSet(
+QCD_Pt_30to80BCtoEMu = cms.PSet(
         crossSection = cms.untracked.double(136804.),
-            channel = cms.untracked.string("BCtoE_30to80"),
+            channel = cms.untracked.string("QCD_Pt_30to80BCtoE"),
             finalLumi = lumi,
             originalEvents = cms.untracked.double(1795502),
             )
 
 
-BCtoE_80to170Ele = cms.PSet(
+QCD_Pt_80to170BCtoEEle = cms.PSet(
     crossSection = cms.untracked.double(9360.),
-    channel = cms.untracked.string("BCtoE_80to170"),
+    channel = cms.untracked.string("QCD_Pt_80to170BCtoE"),
     finalLumi = lumi,
     originalEvents = cms.untracked.double(1043390),
     )
 
-BCtoE_80to170Mu = cms.PSet(
+QCD_Pt_80to170BCtoEMu = cms.PSet(
         crossSection = cms.untracked.double(9360.),
-            channel = cms.untracked.string("BCtoE_80to170"),
+            channel = cms.untracked.string("QCD_Pt_80to170BCtoE"),
             finalLumi = lumi,
             originalEvents = cms.untracked.double(1043390),
             )

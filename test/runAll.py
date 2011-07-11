@@ -12,14 +12,27 @@ fileName = "SingleTopSystematicsWithTrigger_cfg.py"
 #Channels to include
 channels = [
 #
-  "DataMu",
-  "DataEle",
+#  "DataMu",
+#  "DataEle",
 #  "DataMuQCD",
 #  "DataEleQCD",
 #
 #  "TChannel",
 #
 #  "QCDMu",
+#  "QCD_Pt_20to30BCtoE",
+#  "QCD_Pt_30to80BCtoE",
+#  "QCD_Pt_80to170BCtoE",
+
+#  "QCD_Pt_20to30EMEnriched",
+#  "QCD_Pt_30to80EMEnriched",
+#  "QCD_Pt_80to170EMEnriched",
+  
+#  "QCD_Pt-30to80",
+#  "QCD_Pt-80to170",
+
+
+
 #  "EMEnriched_30to80",
 #  "EMEnriched_80to170",
 #  "BCtoE_20to30",
@@ -29,24 +42,23 @@ channels = [
 #  "GJets_HT_100To200",
 #  "GJets_HT_200",
 
-#  "TTBar",
+#  "Ttbar ",
   
 #   "ZJets",
 #   "ZJets_wlight",
 #   "ZJets_wcc",
 #   "ZJets_wbb",
-#   "tWChan ",
-#   "sChan",#
+#   "TWChannel ",
+#   "SChannel",
 #
-#  "WJets_wlight",
+  "WJets_wlight",
 #  "WJets_wcc",
 #  "WJets_wbb",
-#  "WJets",
+  "WJets",
 #  "Wc_wc",
 #  "Vqq_wbb",
 #  "Vqq_wcc",
 #  "VV",
-
    ]
 
 #Path to take data merged files
@@ -101,14 +113,14 @@ def changeChannel(fileName,channelOld,channelNew,switch,isMC):
         #       line = "process.source.fileNames = cms.untracked.vstring('"+dataPath+"Mu_v1Merged.root','"+dataPath+"Mu_v2Merged.root','"+dataPath+"Ele_v1Merged.root','"+dataPath+"Ele_v2Merged.root',)"
     if channelNew == "DataMu" or channelNew == "DataMuQCD":
         inputs = "process.source.fileNames = cms.untracked.vstring("
-        inputs = inputs +"'"+dataPath+"Mu_v4Merged.root',"
+#        inputs = inputs +"'"+dataPath+"Mu_v4Merged.root',"
         inputs = inputs +"'"+dataPath+"Mu_v2Merged.root',"
         inputs = inputs +"'"+dataPath+"Mu_v1Merged.root',"
         inputs = inputs +")"
         o.write(inputs)
     if channelNew == "DataEle" or channelNew == "DataEleQCD":
         inputs = "process.source.fileNames = cms.untracked.vstring("
-        inputs = inputs +"'"+dataPath+"Ele_v4Merged.root',"
+#        inputs = inputs +"'"+dataPath+"Ele_v4Merged.root',"
         inputs = inputs +"'"+dataPath+"Ele_v2Merged.root',"
         inputs = inputs +"'"+dataPath+"Ele_v1Merged.root',"
         inputs = inputs +")"
