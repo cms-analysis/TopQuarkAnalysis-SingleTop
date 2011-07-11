@@ -12,45 +12,44 @@ fileName = "SingleTopSystematicsWithTrigger_cfg.py"
 #Channels to include
 channels = [
 #
- # "DataMu",
+#  "DataMu",
 #  "DataEle",
 #  "DataMuQCD",
 #  "DataEleQCD",
 #
-  "TChannel",
+ "TChannel",
 #
-   "QCDMu",
-
-  "QCD_Pt_30to80BCtoE",
-  "QCD_Pt_20to30BCtoE",
-  "QCD_Pt_80to170BCtoE",
-
-  "QCD_Pt_20to30EMEnriched",
-  "QCD_Pt_30to80EMEnriched",
-  "QCD_Pt_80to170EMEnriched",
-
-  "HT-100to200",
-  "HT-200",
-
-
-   "TTBar",
+#  "QCDMu",
+#
+# "QCD_Pt_30to80BCtoE",
+# "QCD_Pt_20to30BCtoE",
+# "QCD_Pt_80to170BCtoE",
+#
+# "QCD_Pt_20to30EMEnriched",
+# "QCD_Pt_30to80EMEnriched",
+# "QCD_Pt_80to170EMEnriched",
+#
+# "HT-100to200",
+# "HT-200",
+#
+#  "TTBar",
 # 
-  "ZJets",
-  "ZJets_wlight",
-  "ZJets_wcc",
-  "ZJets_wbb",
-
-  "TWChannel",
-  "SChannel",#
+# "ZJets",
+# "ZJets_wlight",
+# "ZJets_wcc",
+# "ZJets_wbb",
 #
-  "WJets_wlight",
-  "WJets_wcc",
-  "WJets_wbb",
-  "WJets",
-  "Wc_wc",
-  "Vqq_wbb",
-  "Vqq_wcc",
-  "VV",
+# "TWChannel",
+# "SChannel",#
+#
+# "WJets_wlight",
+# "WJets_wcc",
+# "WJets_wbb",
+# "WJets",
+# "Wc_wc",
+# "Vqq_wbb",
+# "Vqq_wcc",
+# "VV",
 
    ]
 

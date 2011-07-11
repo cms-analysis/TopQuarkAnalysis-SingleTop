@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  * 
  * Produces systematics histograms out of a standard Single Top n-tuple 
- * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.12.2.1 2011/07/07 12:31:22 oiorio Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.4 2011/07/11 07:05:49 oiorio Exp $
  */
 
 
@@ -113,6 +113,13 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   double MisTagScaleFactor(string algo,string syst_name,double sf, double eff, double sferr);
   double AntiBScaleFactor(string algo,string syst_name); 
   double AntiMisTagScaleFactor(string algo,string syst_name,double sf, double eff, double sferr);
+
+  double EventAntiScaleFactor(string algo,string syst_name );
+  double EventScaleFactor(string algo,string syst_name );
+  double SFMap(string);   double SFErrMap(string);   double EFFMap(string);   double EFFErrMap(string); 
+
+  void InitializeEventScaleFactorMap();
+  double EventScaleFactorMap(string, string);
   
   //Jet uncertainty as a function of eta pt and jet flavour
   double jetUncertainty(double eta, double ptCorr, int flavour);
@@ -237,6 +244,21 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   double leptonRelIsoQCDCutUpper,leptonRelIsoQCDCutLower;  
  
   bool gotLeptons,gotJets,gotMets;
+
+
+  double TCHP_LMisTagUp,  TCHP_BBTagUp, TCHP_CBTagUp, TCHP_LMisTagDown, TCHP_BBTagDown, TCHP_CBTagDown;
+  double TCHP_LAntiMisTagUp,  TCHP_BAntiBTagUp, TCHP_CAntiBTagUp, TCHP_LAntiMisTagDown, TCHP_BAntiBTagDown, TCHP_CAntiBTagDown;
+  double TCHP_C,  TCHP_B, TCHP_L;
+  double TCHP_CAnti,  TCHP_BAnti, TCHP_LAnti;
+
+  double TCHE_LMisTagUp,  TCHE_BBTagUp, TCHE_CBTagUp, TCHE_LMisTagDown, TCHE_BBTagDown, TCHE_CBTagDown;
+  double TCHE_LAntiMisTagUp,  TCHE_BAntiBTagUp, TCHE_CAntiBTagUp, TCHE_LAntiMisTagDown, TCHE_BAntiBTagDown, TCHE_CAntiBTagDown;
+  double TCHE_C,  TCHE_B, TCHE_L;
+  double TCHE_CAnti,  TCHE_BAnti, TCHE_LAnti;
+
+
+
+  
 
 };
 

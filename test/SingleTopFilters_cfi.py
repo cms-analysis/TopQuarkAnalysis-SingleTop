@@ -3,8 +3,8 @@ import FWCore.ParameterSet.Config as cms
 import HLTrigger.HLTfilters.hltHighLevel_cfi
 
 
-processName = "HLT";
-#REDIGI311X
+#processName = "HLT";
+processName = "REDIGI311X"
 
 
 HLTFilterMuOrEleMC = cms.EDFilter('SingleTopTriggers',

@@ -25,7 +25,7 @@ process.load ("RecoBTag.PerformanceDB.BTagPerformanceDB1011")
 process.load ("RecoBTag.PerformanceDB.PoolBTagPerformanceDB1011")
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(2000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(2000) )
 
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
@@ -58,7 +58,7 @@ process.WeightProducer = cms.EDProducer("SingleTopPileUpWeighter",
                                         )
 
 #Output
-process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/TChannel.root"))
+process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/TChannel_Tmp.root"))
 
 process.load("SingleTopAnalyzers_cfi")
 process.load("SingleTopRootPlizer_cfi")
@@ -81,6 +81,7 @@ process.TreesEle.doPU = cms.untracked.bool(False)
 
 
 channel_instruction = "channel_instruction" #SWITCH_INSTRUCTION
+channel_instruction = "allmc" #SWITCH_INSTRUCTION
 
 MC_instruction = False #TRIGGER_INSTRUCTION
 
@@ -98,7 +99,7 @@ if channel_instruction == "allmc":
     process.PathSys = cms.Path(
     #    process.PlotsMu +
     #    process.PlotsEle +
-#    process.HLTFilterMuOrEleMC *
+    process.HLTFilterMuOrEleMC *
     process.TreesMu +
     process.TreesEle
     )
