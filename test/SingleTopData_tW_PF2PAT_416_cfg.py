@@ -36,7 +36,9 @@ process.GlobalTag.globaltag = cms.string('GR_R_41_V0::All')
 #from Configuration.PyReleaseValidation.autoCond import autoCond
 #process.GlobalTag.globaltag = autoCond['startup']
 process.load("TopQuarkAnalysis.SingleTop.SingleTopSequences_cff")
-process.load("TopQuarkAnalysis.SingleTop.SelectionCuts_Skim_cff");
+#G.Benelli
+#tW dilepton final state special selection!
+process.load("TopQuarkAnalysis.SingleTop.SelectionCuts_tW_Skim_cff");
 
 # require physics declared
 process.load('HLTrigger.special.hltPhysicsDeclared_cfi')
@@ -98,21 +100,20 @@ process.pfJets.Rho_EtaMax =  cms.double(4.4)
 
 #tW dilepton channel PF Iso cone 0.3
 #Muons
-#applyPostfix(process,"isoValMuonWithNeutral",postfix).deposits[0].deltaR = cms.double(0.3)
-#applyPostfix(process,"isoValMuonWithCharged",postfix).deposits[0].deltaR = cms.double(0.3)
-#applyPostfix(process,"isoValMuonWithPhotons",postfix).deposits[0].deltaR = cms.double(0.3)
+applyPostfix(process,"isoValMuonWithNeutral",postfix).deposits[0].deltaR = cms.double(0.3)
+applyPostfix(process,"isoValMuonWithCharged",postfix).deposits[0].deltaR = cms.double(0.3)
+applyPostfix(process,"isoValMuonWithPhotons",postfix).deposits[0].deltaR = cms.double(0.3)
 #electrons
-#applyPostfix(process,"isoValElectronWithNeutral",postfix).deposits[0].deltaR = cms.double(0.3)
-#applyPostfix(process,"isoValElectronWithCharged",postfix).deposits[0].deltaR = cms.double(0.3)
-#applyPostfix(process,"isoValElectronWithPhotons",postfix).deposits[0].deltaR = cms.double(0.3)
+applyPostfix(process,"isoValElectronWithNeutral",postfix).deposits[0].deltaR = cms.double(0.3)
+applyPostfix(process,"isoValElectronWithCharged",postfix).deposits[0].deltaR = cms.double(0.3)
+applyPostfix(process,"isoValElectronWithPhotons",postfix).deposits[0].deltaR = cms.double(0.3)
 
-#t-channel PFRelIso cut at 0.125
-applyPostfix(process,"pfIsolatedMuons",postfix).combinedIsolationCut = cms.double(0.125)
-applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.double(0.125)
+#applyPostfix(process,"pfIsolatedMuons",postfix).combinedIsolationCut = cms.double(0.125)
+#applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.double(0.125)
 
 #tW dilepton channel PF RelIso cut at 0.2
-#applyPostfix(process,"pfIsolatedMuons",postfix).combinedIsolationCut = cms.double(0.2)
-#applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.double(0.2)
+applyPostfix(process,"pfIsolatedMuons",postfix).combinedIsolationCut = cms.double(0.2)
+applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.double(0.2)
 
 
 

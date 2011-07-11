@@ -30,7 +30,7 @@ process.GlobalTag.globaltag = cms.string('START41_V0::All')
 #from Configuration.PyReleaseValidation.autoCond import autoCond
 #process.GlobalTag.globaltag = autoCond['startup']
 process.load("TopQuarkAnalysis.SingleTop.SingleTopSequences_cff") 
-process.load("SelectionCuts_Skim_cff");
+process.load("TopQuarkAnalysis.SingleTop.SelectionCuts_Skim_cff");
 
 
 #from PhysicsTools.PatAlgos.tools.cmsswVersionTools import *
@@ -157,7 +157,8 @@ process.source = cms.Source ("PoolSource",
 #'file:/tmp/oiorio/149E3017-B799-E011-9FA9-003048F118C2.root'
 #'file:/tmp/oiorio/WJetsSmallFile_1_1_nb1.root',
 #'file:/tmp/oiorio/00012F91-72E5-DF11-A763-00261834B5F1.root',
-'file:/tmp/oiorio/4C5DC3EC-524E-E011-8571-485B39800B73.root',
+#'file:/tmp/oiorio/4C5DC3EC-524E-E011-8571-485B39800B73.root',
+    'file:/tmp/gbenelli/4C5DC3EC-524E-E011-8571-485B39800B73.root',
 ),
 duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 )

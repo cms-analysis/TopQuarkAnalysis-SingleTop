@@ -51,6 +51,16 @@ nTupleTopJetsPF = cms.EDProducer(
     tag = cms.untracked.string("JetCorrTotal"),
     quantity = cms.untracked.string("jecFactor('Uncorrected')")
     ),
+    #chargedHadronEnergyFraction()
+    cms.PSet(
+    tag = cms.untracked.string("ChargedHadronEnergyFraction"),
+    quantity = cms.untracked.string("chargedHadronEnergyFraction()")
+    ),
+    #chargedMultiplicity()
+    cms.PSet(
+    tag = cms.untracked.string("ChargedMultiplicity"),
+    quantity = cms.untracked.string("chargedMultiplicity()")
+    ),
     )
 )
 
@@ -136,10 +146,10 @@ nTupleElectrons = cms.EDProducer(
 #    tag = cms.untracked.string("EidRobustHighEnergy"),
 #    quantity = cms.untracked.string("electronID('eidRobustHighEnergy')")
 #    ),
-#    cms.PSet(
-#    tag = cms.untracked.string("SuperClusterEta"),
-#    quantity = cms.untracked.string("superCluster.eta")
-#    ),
+    cms.PSet(
+    tag = cms.untracked.string("SuperClusterEta"),
+    quantity = cms.untracked.string("superCluster.eta")
+    ),
     cms.PSet(
     tag = cms.untracked.string("AbsoluteDB"),
     quantity = cms.untracked.string("dB"),
@@ -210,10 +220,15 @@ nTupleMuons = nTupleElectrons.clone(
 #    tag = cms.untracked.string("TrackerValidInnerHits"),
 #    quantity = cms.untracked.string("innerTrack.numberOfValidHits")
 #    ),
-#    cms .PSet(
-#    tag = cms.untracked.string("PixelValidInnerHits"),
-#    quantity = cms.untracked.string("innerTrack.hitPattern.pixelLayersWithMeasurement()")
-#    ),
+    cms .PSet(
+    tag = cms.untracked.string("PixelValidInnerHits"),
+    quantity = cms.untracked.string("innerTrack.hitPattern.pixelLayersWithMeasurement()")
+    ),
+    #Adding nmumber of (Muon) matches since we relaxed cut (t-channel cuts at >1, we should cut at >0, but it should be included in GlobalMuonPromptTight...
+    cms .PSet(
+    tag = cms.untracked.string("MuonStationHits"),
+    quantity = cms.untracked.string("numberOfMatches()")
+    ),
     )
     )
 
@@ -264,24 +279,27 @@ nTupleLooseMuons = nTupleMuons.clone(
 #    tag = cms.untracked.string("IsGlobalMuon"),
 #    quantity = cms.untracked.string("isGlobalMuon")
 #    ),
-#    cms.PSet(
-#    tag = cms.untracked.string("IsTrackerMuon"),
-#    quantity = cms.untracked.string("isTrackerMuon")
-#    ),
+    cms.PSet(
+    tag = cms.untracked.string("IsTrackerMuon"),
+    quantity = cms.untracked.string("isTrackerMuon")
+    ),
     cms.PSet(
     tag = cms.untracked.string("AbsoluteDB"),
     quantity = cms.untracked.string("dB"),
     ),
-#    cms .PSet(
-#    tag = cms.untracked.string("TrackerValidInnerHits"),
-#    quantity = cms.untracked.string("innerTrack.numberOfValidHits")
-#    ),
-#    cms .PSet(
-#    tag = cms.untracked.string("PixelValidInnerHits"),
-#    quantity = cms.untracked.string("innerTrack.hitPattern.pixelLayersWithMeasurement")
-#    ),
-    
-    
+    cms .PSet(
+    tag = cms.untracked.string("TrackerValidInnerHits"),
+    quantity = cms.untracked.string("innerTrack.numberOfValidHits")
+    ),
+    cms .PSet(
+    tag = cms.untracked.string("PixelValidInnerHits"),
+    quantity = cms.untracked.string("innerTrack.hitPattern.pixelLayersWithMeasurement")
+    ),
+    #Adding nmumber of (Muon) matches since we relaxed cut (t-channel cuts at >1, we should cut at >0, but it should be included in GlobalMuonPromptTight...
+    cms .PSet(
+    tag = cms.untracked.string("MuonStationHits"),
+    quantity = cms.untracked.string("numberOfMatches()")
+    ),    
     )
     )
 
