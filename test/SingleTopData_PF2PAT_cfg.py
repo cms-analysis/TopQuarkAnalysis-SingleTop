@@ -31,7 +31,10 @@ process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff") ### real data
 
-process.GlobalTag.globaltag = cms.string('GR_R_42_V12::All')
+#GR_R_42_V19fg
+process.GlobalTag.globaltag = cms.string('GR_R_42_V19::All')
+
+
 
 #from Configuration.PyReleaseValidation.autoCond import autoCond
 #process.GlobalTag.globaltag = autoCond['startup']
@@ -97,19 +100,21 @@ process.kt6PFJets = kt4PFJets.clone(
 process.patJetCorrFactors.rho = cms.InputTag("kt6PFJets", "rho")
 
 #Muons
-applyPostfix(process,"isoValMuonWithNeutral",postfix).deposits[0].deltaR = cms.double(0.3)
-applyPostfix(process,"isoValMuonWithCharged",postfix).deposits[0].deltaR = cms.double(0.3)
-applyPostfix(process,"isoValMuonWithPhotons",postfix).deposits[0].deltaR = cms.double(0.3)
+#applyPostfix(process,"isoValMuonWithNeutral",postfix).deposits[0].deltaR = cms.double(0.3)
+#applyPostfix(process,"isoValMuonWithCharged",postfix).deposits[0].deltaR = cms.double(0.3)
+#applyPostfix(process,"isoValMuonWithPhotons",postfix).deposits[0].deltaR = cms.double(0.3)
 #electrons
-applyPostfix(process,"isoValElectronWithNeutral",postfix).deposits[0].deltaR = cms.double(0.3)
-applyPostfix(process,"isoValElectronWithCharged",postfix).deposits[0].deltaR = cms.double(0.3)
-applyPostfix(process,"isoValElectronWithPhotons",postfix).deposits[0].deltaR = cms.double(0.3)
+#applyPostfix(process,"isoValElectronWithNeutral",postfix).deposits[0].deltaR = cms.double(0.3)
+#applyPostfix(process,"isoValElectronWithCharged",postfix).deposits[0].deltaR = cms.double(0.3)
+#applyPostfix(process,"isoValElectronWithPhotons",postfix).deposits[0].deltaR = cms.double(0.3)
 
-#applyPostfix(process,"pfIsolatedMuons",postfix).combinedIsolationCut = cms.double(0.125)
-#applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.double(0.125)
+applyPostfix(process,"pfIsolatedMuons",postfix).combinedIsolationCut = cms.double(0.125)
+applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.double(0.125)
 
-applyPostfix(process,"pfIsolatedMuons",postfix).combinedIsolationCut = cms.double(0.2)
-applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.double(0.2)
+#applyPostfix(process,"pfIsolatedMuons",postfix).combinedIsolationCut = cms.double(0.2)
+#applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.double(0.2)
+
+#process.patJets.addJetCorrFactors = cms.bool(False)
 
 # Add the PV selector and KT6 producer to the sequence
 getattr(process,"patPF2PATSequence"+postfix).replace(
@@ -129,8 +134,8 @@ process.pathPreselection = cms.Path(
 #getattr(process,"pfNoTau"+postfix).enable = False
 #Getattr (process,"pfNoJet"+postfix).enable = True 
 
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
 'file:/tmp/oiorio/166CA048-918A-E011-9F31-003048F118AA.root',
@@ -214,7 +219,7 @@ savePatTupleSkimLoose = cms.untracked.vstring(
 process.singleTopNTuple = cms.OutputModule("PoolOutputModule",
 #                                fileName = cms.untracked.string('rfio:/CST/cern.ch/user/o/oiorio/SingleTop/SubSkims/WControlSamples1.root'),
 #                   fileName = cms.untracked.Bstring('/tmp/oiorio/edmntuple_tchannel_big.root'),
-#                   fileName = cms.untracked.string('/tmp/oiorio/edmntuple_DataEle_v4.root'),
+#                   fileName = cms.untracked.string('/tmp/oiorio/edmntuple_Data_V19Corr.root'),
                    fileName = cms.untracked.string('edmntuple_DataEle_v4.root'),
                                              
                    SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('selection')),
@@ -223,12 +228,13 @@ process.singleTopNTuple = cms.OutputModule("PoolOutputModule",
 
 process.singleTopPatTuple = cms.OutputModule("PoolOutputModule",
 #                                fileName = cms.untracked.string('rfio:/CST/cern.ch/user/o/oiorio/SingleTop/SubSkims/WControlSamples1.root'),
-                   fileName = cms.untracked.string('pattuple_tchannel.root'),
+                   fileName = cms.untracked.string('/tmp/oiorio/pattuple_tchannel_v19.root'),
 
 
-                   SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('selection')),
+#                   SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('selection')),
                    outputCommands = savePatTupleSkimLoose
 )
+
 process.singleTopNTuple.dropMetaData = cms.untracked.string("ALL")
 
 process.outpath = cms.EndPath(

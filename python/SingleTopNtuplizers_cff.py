@@ -448,8 +448,10 @@ nTupleAllJets = nTupleTopJetsPF.clone(
  #   tag = cms.untracked.string("NeutralEmEnergyFraction"),
  #   quantity = cms.untracked.string("neutralEmEnergyFraction")
  #   ),
+
+
  #   #JEC factor to uncorrected jet
-    cms.PSet(
+   cms.PSet(
     tag = cms.untracked.string("JetCorrTotal"),
     quantity = cms.untracked.string("jecFactor('Uncorrected')")
     ),
@@ -532,7 +534,7 @@ singleTopMCBQuark = singleTopMCNeutrinos.clone( src = cms.InputTag("MCTruthParti
 
 nTuplesSkim = cms.Sequence(
     nTupleTopJetsPF +
-    nTupleAllJets +
+#    nTupleAllJets +
     nTuplePatMETsPF +
     nTupleAllElectrons +
     nTupleAllMuons +

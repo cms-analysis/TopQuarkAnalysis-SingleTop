@@ -1,14 +1,17 @@
 import FWCore.ParameterSet.Config as cms
 
 TreesEle = cms.EDAnalyzer('SingleTopSystematicsTreesDumper',                              
-#systematics = cms.untracked.vstring("BTagUp","BTagDown","MisTagUp","MisTagDown","JESUp","JESDown","UnclusteredMETUp","UnclusteredMETDown"),
-systematics = cms.untracked.vstring(""),
+systematics = cms.untracked.vstring("BTagUp","BTagDown","MisTagUp","MisTagDown","JESUp","JESDown","UnclusteredMETUp","UnclusteredMETDown"),
+#systematics = cms.untracked.vstring(""),
 doBScan = cms.untracked.bool(True),
-#rateSystematics = cms.untracked.vstring("WLightRateUp",                                        "WLightRateDown",                                        "TTBarRateUp",                                        "Ttbarratedown ",                                        "WHFRateUp",                                        "WHFRateDown"),
-rateSystematics = cms.untracked.vstring(""),
+rateSystematics = cms.untracked.vstring("WLightRateUp",                                        "WLightRateDown",                                        "TTBarRateUp",                                        "Ttbarratedown ",                                        "WHFRateUp",                                        "WHFRateDown"),
+#rateSystematics = cms.untracked.vstring(""),
 leptonsID = cms.InputTag("nTupleElectrons","tightElectronsSimpleEleId70cIso"),  
+preWeights =cms.InputTag("WeightProducer","PUWeight"),
+doPU = cms.untracked.bool(False),
+
 #mode = cms.untracked.string("pt"),
-maxPtCut = cms.untracked.double("45"),
+#maxPtCut = cms.untracked.double("45"),
 
 channelInfo = cms.PSet(
     crossSection = cms.untracked.double(20.93),

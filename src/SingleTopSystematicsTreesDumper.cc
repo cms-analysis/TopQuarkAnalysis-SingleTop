@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.2 2011/07/08 02:37:00 oiorio Exp $ 
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.13.2.1 2011/07/07 12:31:23 oiorio Exp $ 
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file 
 //
@@ -32,7 +32,6 @@
 #include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
 #include "TopQuarkAnalysis/SingleTop/interface/EquationSolver.h"
 
-
 SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::ParameterSet& iConfig)
 {
   //MCLightQuarkProducer   = iConfig.getParameter<InputTag>("MCLightQuarkProducer");
@@ -54,11 +53,6 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
 
   maxPtCut = iConfig.getUntrackedParameter<double>("maxPtCut",30);
 
-  dataPUFile_ =  iConfig.getUntrackedParameter< std::string >("dataPUFile","pileUpDistr.root");
-  mcPUFile_ =  iConfig.getUntrackedParameter< std::string >("mcPUFile","pileupdistr_TChannel.root");
-
-  doPileUp_ =  iConfig.getUntrackedParameter< bool >("doPileUp",false);
-  
   leptonsPt_ =  iConfig.getParameter< edm::InputTag >("leptonsPt");
   leptonsPhi_ =  iConfig.getParameter< edm::InputTag >("leptonsPhi");
   leptonsEta_ =  iConfig.getParameter< edm::InputTag >("leptonsEta");
@@ -98,6 +92,10 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
 
   mode_ =  iConfig.getUntrackedParameter<std::string >("mode",""); 
   npv_ = iConfig.getParameter< edm::InputTag >("nvertices");//,"PileUpSync"); 
+
+  doPU_ = iConfig.getUntrackedParameter< bool >("doPU",true);
+  
+  preWeights_ =  iConfig.getParameter< edm::InputTag >("preWeights");
   
   systematics.push_back("noSyst");
   
@@ -372,42 +370,35 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
     }
   }  
     
-  JEC_PATH = "CondFormats/JetMETObjects/data/";
-  fip = edm::FileInPath(JEC_PATH+"Spring10_Uncertainty_AK5PF.txt");
-  jecUnc = new JetCorrectionUncertainty(fip.fullPath());
+  //  JEC_PATH = "CondFormats/JetMETObjects/data/";
+  JEC_PATH = "./JECs/";
+  //  fip = edm::FileInPath(JEC_PATH+"Spring10_Uncertainty_AK5PF.txt");
+  //fip = edm::FileInPath(JEC_PATH+"GR_R_42_V19_AK5PF_Uncertainty.txt");
+  //jecUnc = new JetCorrectionUncertainty(fip.fullPath());
+  jecUnc  = new JetCorrectionUncertainty(JEC_PATH+"GR_R_42_V19_AK5PF_Uncertainty.txt");
   JES_SW = 0.015;
   JES_b_cut = 0.02;
   JES_b_overCut = 0.03;
   
-  std::string puhistoname = "pileUpDumper/PileUp"+channel;
   
-  if(doPileUp_) LumiWeights_ = edm::LumiReWeighting(
-						   mcPUFile_,
-						   dataPUFile_,
-						   puhistoname,
-						   std::string("pileup")  );
+  leptonRelIsoQCDCutUpper = 0.4,leptonRelIsoQCDCutLower=0.2;  
 
-
-  topMassMeas = 172.9;
   
   //  cout<< "I work for now but I do nothing. But again, if you gotta do nothing, you better do it right. To prove my good will I will provide you with somse numbers later."<<endl;
+
+  topMassMeas = 172.9;
+
 }
 
 void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSetup& iSetup)
 {
 
 
-  iEvent.getByLabel(jetsEta_,jetsEta);
-  iEvent.getByLabel(jetsPt_,jetsPt);
-  iEvent.getByLabel(jetsPhi_,jetsPhi);
-  
-  iEvent.getByLabel(jetsEnergy_,jetsEnergy);
-  iEvent.getByLabel(jetsBTagAlgo_,jetsBTagAlgo);
-  iEvent.getByLabel(jetsAntiBTagAlgo_,jetsAntiBTagAlgo);
-  iEvent.getByLabel(jetsFlavour_,jetsFlavour);
-  iEvent.getByLabel(jetsCorrTotal_,jetsCorrTotal);
-  iEvent.getByLabel(METPhi_,METPhi);
-  iEvent.getByLabel(METPt_,METPt);
+  gotLeptons=0;
+  gotJets=0;
+  gotMets=0;
+
+
   
   iEvent.getByLabel(leptonsEta_,leptonsEta);
   iEvent.getByLabel(leptonsPt_,leptonsPt);
@@ -419,7 +410,14 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
   
   iEvent.getByLabel(looseElectronsRelIso_,looseElectronsRelIso);
   iEvent.getByLabel(looseMuonsRelIso_,looseMuonsRelIso);     
+
+  double myWeight =1;
   
+  if(doPU_){
+    iEvent.getByLabel(preWeights_,preWeights);
+    myWeight = *preWeights;
+  }
+
   iSetup.get<BTagPerformanceRecord>().get("MISTAGTCHPT",perfHP);
   iSetup.get<BTagPerformanceRecord>().get("MISTAGTCHEL",perfHE);
   
@@ -431,15 +429,10 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
   float metPx = 0; 
   float metPy = 0;
   
-  metPx = METPt->at(0)*cos(METPhi->at(0));
-  metPy = METPt->at(0)*sin(METPhi->at(0));
-
-  float metPxTmp = metPx; 
-  float metPyTmp = metPy;
 
   size_t nLeptons = 0;//leptonsPt->size();
+  size_t nJets = 0;
   
-  size_t nJets = jetsPt->size();
   
   double WeightLumi = finalLumi*crossSection/originalEvents;
   double BTagWeight = 1;
@@ -453,18 +446,16 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
   float ptCut = 30;  
   //  float maxPtCut = maxPtCut_;
 
-  double myWeight = 1.;
 
-  if(doPileUp_) if(channel != "Data"){
-    iEvent.getByLabel(npv_,npv);
-    myWeight = LumiWeights_.weight(*npv);
-  }
 
   //edm::EventBase* const iEventB = dynamic_cast<edm::EventBase*>(&iEvent);
   //double MyWeight = LumiWeights_.weight( (*iEventB) );
   
   //double w = LumiWeights_.weight(iEvent);
-  
+
+  float metPxTmp = 0;
+  float metPyTmp = 0;
+
   if(channel=="Data")WeightLumi=1;
   
   for(size_t s = 0; s < systematics.size();++s){
@@ -516,9 +507,26 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     jets.clear();
     bjets.clear();
     antibjets.clear();
+
+
     
+    if(!gotMets){
+      iEvent.getByLabel(METPhi_,METPhi);
+      iEvent.getByLabel(METPt_,METPt);
+      
+      metPx = METPt->at(0)*cos(METPhi->at(0));
+      metPy = METPt->at(0)*sin(METPhi->at(0));
+      
+      metPxTmp = metPx; 
+      metPyTmp = metPy;
+      
+      gotMets = true;
+    }
+
     //Define - initialize some variables
     MTWValue =0;
+    
+
     metPx = metPxTmp; 
     metPy = metPyTmp;
     
@@ -537,6 +545,9 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     //Taking the unclustered met previously evaluated 
     //and already present in the n-tuples
     //This is used for syst up and down
+    
+
+      
     if(syst_name == "UnclusteredMETUp"){
       iEvent.getByLabel(UnclMETPx_,UnclMETPx);
       iEvent.getByLabel(UnclMETPy_,UnclMETPy);
@@ -587,6 +598,54 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       leptons.push_back(math::PtEtaPhiELorentzVector(leptonPt,leptonEta,leptonPhi,leptonE));
   
      }
+
+
+    //Loop for the qcd leptons
+    if(doQCD_){
+      for(size_t i = 0;i<nLeptons;++i){
+	
+	float leptonRelIso = leptonsRelIso->at(i);
+	
+	
+	
+	lepRelIso = leptonRelIso;
+	//Use an anti-isolation requirement
+	if(  leptonRelIso > leptonRelIsoQCDCutUpper )continue;
+	 if( leptonRelIso < leptonRelIsoQCDCutLower )continue;
+	 
+	 if(leptonsFlavour_ == "electron"  ) {
+	   float leptonID = leptonsID->at(i);
+	   electronID = leptonID;
+	 } 
+	 
+	 float leptonPt = leptonsPt->at(i);
+	 float leptonPhi = leptonsPhi->at(i);
+	 float leptonEta = leptonsEta->at(i);
+	 float leptonE = leptonsEnergy->at(i);
+	 //Create the lepton
+	 leptonsQCD.push_back(math::PtEtaPhiELorentzVector(leptonPt,leptonEta,leptonPhi,leptonE));
+      }
+     }
+    
+    if(leptons.size()!=1 && leptonsQCD.size()!=1) continue;
+    
+    if(!gotJets){
+      iEvent.getByLabel(jetsEta_,jetsEta);
+      iEvent.getByLabel(jetsPt_,jetsPt);
+      iEvent.getByLabel(jetsPhi_,jetsPhi);
+      
+      iEvent.getByLabel(jetsEnergy_,jetsEnergy);
+      iEvent.getByLabel(jetsBTagAlgo_,jetsBTagAlgo);
+      iEvent.getByLabel(jetsAntiBTagAlgo_,jetsAntiBTagAlgo);
+      iEvent.getByLabel(jetsFlavour_,jetsFlavour);
+      iEvent.getByLabel(jetsCorrTotal_,jetsCorrTotal);
+
+      nJets = jetsPt->size();
+
+      gotJets= true;
+    }
+    
+    
 
     //Jets loop
     for(size_t i = 0;i<nJets;++i){
@@ -837,29 +896,6 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     if( jets.size()<2 )continue;
     if( maxPtTree< maxPtCut )continue;
     
-    //Loop for the qcd leptons
-     if(doQCD_){
-       for(size_t i = 0;i<nLeptons;++i){
-	 
-	 float leptonRelIso = leptonsRelIso->at(i);
-	 
-	 lepRelIso = leptonRelIso;
-	 //Use an anti-isolation requirement
-	 if(leptonRelIso < RelIsoQCDCut )continue;
-	 
-	 if(leptonsFlavour_ == "electron"  ) {
-	   float leptonID = leptonsID->at(i);
-	   electronID = leptonID;
-	 } 
-
-	 float leptonPt = leptonsPt->at(i);
-	 float leptonPhi = leptonsPhi->at(i);
-	 float leptonEta = leptonsEta->at(i);
-	 float leptonE = leptonsEnergy->at(i);
-	 //Create the lepton
-	 leptonsQCD.push_back(math::PtEtaPhiELorentzVector(leptonPt,leptonEta,leptonPhi,leptonE));
-      }
-     }
           
      //Part of the effective selection and filling
      
@@ -887,8 +923,6 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	   etaTree = fabs(antibjets.at(0).eta());
 	   cosTree = fCosThetaLJ;
 	   topMassTree = top.mass();
-
-
 	   mtwMassTree = MTWValueQCD;
 	   chargeTree = leptonsCharge->at(0) ; 
 	   
@@ -968,8 +1002,6 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	       
 	       math::PtEtaPhiELorentzVector top = top4Momentum(leptonsQCD.at(0),jets.at(positionHigh),metPx,metPy);
 	       float fCosThetaLJ =  cosThetaLJ(leptonsQCD.at(0),jets.at(positionLow),top);
-
-
 	       
 	       runTree = iEvent.eventAuxiliary().run();
 	       lumiTree = iEvent.eventAuxiliary().luminosityBlock();
@@ -979,13 +1011,6 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
        
 	       cosTree = fCosThetaLJ;
 	       topMassTree = top.mass();
-
-	       math::PtEtaPhiELorentzVector top2 = top4Momentum(leptonsQCD.at(0),jets.at(positionLow),metPx,metPy);
-	       topMassLowBTagTree = top2.mass();
-
-	       if(fabs(topMassLowBTagTree - topMassMeas) > fabs(topMassTree - topMassMeas) ) topMassBestTopTree = topMassTree;
-	       else topMassBestTopTree = topMassLowBTagTree;
-	       
 	       mtwMassTree = MTWValue;
 	       chargeTree = leptonsCharge->at(0);
 	       
@@ -1003,6 +1028,14 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	       metPhi = METPhi->at(0);
 	       
 	       topMassTree = top.mass();
+
+	       math::PtEtaPhiELorentzVector top2 = top4Momentum(leptonsQCD.at(0),jets.at(positionLow),metPx,metPy);
+	       topMassLowBTagTree = top2.mass();
+
+	       if(fabs(topMassLowBTagTree - topMassMeas) > fabs(topMassTree - topMassMeas) ) topMassBestTopTree = topMassTree;
+	       else topMassBestTopTree = topMassLowBTagTree;
+	       
+
 	       mtwMassTree = MTWValueQCD;
 	       
 	       //Mode - dependent part
@@ -1044,14 +1077,14 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
      MTWValue =  sqrt((leptons.at(0).pt()+metPt)*(leptons.at(0).pt()+metPt)  -(leptons.at(0).px()+metPx)*(leptons.at(0).px()+metPx) -(leptons.at(0).py()+metPy)*(leptons.at(0).py()+metPy));
      
      if( (leptons.size() == 1 && (looseMuonsRelIso->size( )+ looseElectronsRelIso->size())>1))   continue;//Loose muons size always >=1 due to presence of tight muon 
-    
-    //Signal sample
-    if( jets.size()!=2)continue;
-    
-    if( bjets.size()==1 && antibjets.size()==1){
-      
-      math::PtEtaPhiELorentzVector top = top4Momentum(leptons.at(0),bjets.at(0),metPx,metPy);
-      float fCosThetaLJ =  cosThetaLJ(leptons.at(0), antibjets.at(0), top);
+     
+     //Signal sample
+     if( jets.size()!=2)continue;
+     
+     if( bjets.size()==1 && antibjets.size()==1){
+       
+       math::PtEtaPhiELorentzVector top = top4Momentum(leptons.at(0),bjets.at(0),metPx,metPy);
+       float fCosThetaLJ =  cosThetaLJ(leptons.at(0), antibjets.at(0), top);
       
       //cout << " Signal Sample QCD; antib  algo 2 weight size "<< b_weight_antitag_algo2.size()<< " b algo 1 weight size "<< b_weight_tag_algo1.size()<< endl;
       runTree = iEvent.eventAuxiliary().run();
@@ -1064,7 +1097,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       topMassTree = top.mass();
       mtwMassTree = MTWValue;
       chargeTree = leptonsCharge->at(0) ; 
-      
+       
       lepPt = leptons.at(0).pt();
       lepEta = leptons.at(0).eta();
       lepPhi = leptons.at(0).phi();
@@ -1152,13 +1185,13 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	  
 	  cosTree = fCosThetaLJ;
 	  topMassTree = top.mass();
-
+	  
 	  math::PtEtaPhiELorentzVector top2 = top4Momentum(leptons.at(0),jets.at(positionLow),metPx,metPy);
 	  topMassLowBTagTree = top2.mass();
 	  
 	  if(fabs(topMassLowBTagTree - topMassMeas) > fabs(topMassTree - topMassMeas) ) topMassBestTopTree = topMassTree;
 	  else topMassBestTopTree = topMassLowBTagTree;
-
+	  
 	  mtwMassTree = MTWValue;
 	  chargeTree = leptonsCharge->at(0);
 	  
@@ -1405,16 +1438,17 @@ double SingleTopSystematicsTreesDumper::jetUncertainty(double eta, double ptCorr
   jecUnc->setJetPt(ptCorr);
   double JetCorrection = jecUnc->getUncertainty(true); // In principle, boolean controls if uncertainty on +ve or -ve side is returned (asymmetric errors) but not yet implemented.
   bool cut = ptCorr> 50 && ptCorr < 200 && fabs(eta) < 2.0;
-  // JES_SW = 0.015;                                                                                                                                 
-  //  double JES_PU=0.75*0.8*2.2/ptCorr;
-  double JES_PU=0.; //We are using pfNoPU must understand what value to put there
+  JES_SW = 0.015;                                                                                                                                 
+  double JES_PU=0.75*0.8*2.2/ptCorr;
+  //  double JES_PU=0.; //We are using pfNoPU must understand what value to put there
   double JES_b=0;
   if(abs(flavour)==5){
     if(cut) JES_b = JES_b_cut;
     else JES_b = JES_b_overCut;
   }
   //    float JESUncertaintyTmp = sqrt(JESUncertainty*JESUncertainty + JetCorrection*JetCorrection);                                                 
-  return sqrt(JES_b*JES_b + JES_PU*JES_PU +JES_SW*JES_SW + JetCorrection*JetCorrection);
+  //  return sqrt(JES_b*JES_b + JES_PU*JES_PU +JES_SW*JES_SW + JetCorrection*JetCorrection);
+  return JetCorrection;
 }
 
 //EndJob filling rate systematics trees

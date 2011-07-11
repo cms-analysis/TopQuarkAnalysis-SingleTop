@@ -12,40 +12,45 @@ fileName = "SingleTopSystematicsWithTrigger_cfg.py"
 #Channels to include
 channels = [
 #
-#  "DataMu",
+ # "DataMu",
 #  "DataEle",
 #  "DataMuQCD",
 #  "DataEleQCD",
 #
-#  "TChannel",
+  "TChannel",
 #
-#  "QCDMu",
-#  "EMEnriched_30to80",
-#  "EMEnriched_80to170",
-#  "BCtoE_20to30",
-#  "BCtoE_30to80",
-#  "BCtoE_80to170",
-#  "GJets_HT_40To100",
-#  "GJets_HT_100To200",
-#  "GJets_HT_200",
+   "QCDMu",
 
-#  "TTBar",
-  
-#   "ZJets",
-#   "ZJets_wlight",
-#   "ZJets_wcc",
-#   "ZJets_wbb",
-#   "tWChan ",
-#   "sChan",#
+  "QCD_Pt_30to80BCtoE",
+  "QCD_Pt_20to30BCtoE",
+  "QCD_Pt_80to170BCtoE",
+
+  "QCD_Pt_20to30EMEnriched",
+  "QCD_Pt_30to80EMEnriched",
+  "QCD_Pt_80to170EMEnriched",
+
+  "HT-100to200",
+  "HT-200",
+
+
+   "TTBar",
+# 
+  "ZJets",
+  "ZJets_wlight",
+  "ZJets_wcc",
+  "ZJets_wbb",
+
+  "TWChannel",
+  "SChannel",#
 #
-# "WJets_wlight",
-#  "WJets_wcc",
-#  "WJets_wbb",
-#  "WJets",
+  "WJets_wlight",
+  "WJets_wcc",
+  "WJets_wbb",
+  "WJets",
   "Wc_wc",
-#  "Vqq_wbb",
+  "Vqq_wbb",
   "Vqq_wcc",
-#  "VV",
+  "VV",
 
    ]
 

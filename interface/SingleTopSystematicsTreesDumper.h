@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  * 
  * Produces systematics histograms out of a standard Single Top n-tuple 
- * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.2 2011/07/08 02:36:59 oiorio Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.12.2.1 2011/07/07 12:31:22 oiorio Exp $
  */
 
 
@@ -81,7 +81,7 @@
 #include "CondFormats/PhysicsToolsObjects/interface/BinningPointByMap.h"
 #include "RecoBTag/PerformanceDB/interface/BtagPerformance.h"
 
-#include "PhysicsTools/Utilities/interface/LumiReWeighting.h"
+//#include "PhysicsTools/Utilities/interface/LumiReWeighting.h"
 
 using namespace std;
 using namespace edm;
@@ -151,7 +151,8 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
     jetsFlavour_,
     UnclMETPx_,
     UnclMETPy_,
-    npv_;
+    npv_,
+    preWeights_;
 
 
   // Handles
@@ -178,7 +179,7 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   edm::Handle<int > npv;
   
   //Unclustered MET to take from the event
-  edm::Handle< double > UnclMETPx,UnclMETPy;
+  edm::Handle< double > UnclMETPx,UnclMETPy,preWeights;
   std::string leptonsFlavour_,mode_;  
 
   //Part for BTagging payloads
@@ -221,21 +222,22 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
     b_discriminator_value_tag_algo1,
     b_discriminator_value_antitag_algo2;
 
-  edm::LumiReWeighting LumiWeights_;
-
   //Variables to use as trees references
   double etaTree,etaTree2,cosTree,topMassTree,weightTree,mtwMassTree,lowBTagTree,highBTagTree,maxPtTree,minPtTree,topMassLowBTagTree,topMassBestTopTree,topMassMeas;
   int runTree, eventTree,lumiTree,chargeTree,electronID,bJetFlavourTree;
   double lepPt,lepEta,lepPhi,lepRelIso,fJetPhi,fJetPt,fJetEta,fJetE,bJetPt,bJetEta,bJetPhi,bJetE,metPt,metPhi,topPt,topPhi,topEta,topE,totalEnergy,totalMomentum;
 
- 
   
   //Not used anymore:
   double loosePtCut ;
   string rootFileName, dataPUFile_,mcPUFile_;
-  bool doPileUp_;
   
+  bool doPU_ ;
+
+  double leptonRelIsoQCDCutUpper,leptonRelIsoQCDCutLower;  
  
+  bool gotLeptons,gotJets,gotMets;
+
 };
 
 #endif
