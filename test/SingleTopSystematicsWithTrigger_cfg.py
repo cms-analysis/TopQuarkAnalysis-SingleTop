@@ -81,7 +81,7 @@ process.TreesEle.doPU = cms.untracked.bool(False)
 
 
 channel_instruction = "channel_instruction" #SWITCH_INSTRUCTION
-channel_instruction = "allmc" #SWITCH_INSTRUCTION
+#channel_instruction = "allmc" #SWITCH_INSTRUCTION
 
 MC_instruction = False #TRIGGER_INSTRUCTION
 
