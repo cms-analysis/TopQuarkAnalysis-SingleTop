@@ -227,7 +227,7 @@ process.singleTopNTuple = cms.OutputModule("PoolOutputModule",
 #                                fileName = cms.untracked.string('rfio:/CST/cern.ch/user/o/oiorio/SingleTop/SubSkims/WControlSamples1.root'),
 #                   fileName = cms.untracked.Bstring('/tmp/oiorio/edmntuple_tchannel_big.root'),
 #                   fileName = cms.untracked.string('/tmp/oiorio/edmntuple_DataEle_v4.root'),
-                   fileName = cms.untracked.string('edmntuple_DataMuMu_v1_nokt6.root'),
+                   fileName = cms.untracked.string('edmntuple_DataEleEle_v2.root'),
                                              
                    SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('selection')),
                    outputCommands = saveNTuplesSkimLoose,

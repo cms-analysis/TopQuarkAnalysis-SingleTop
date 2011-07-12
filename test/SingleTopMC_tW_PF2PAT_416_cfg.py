@@ -169,7 +169,7 @@ duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 )
 
 
-ChannelName = "TChannel";
+ChannelName = "TWChannel";
 
 #process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/"+ChannelName+"_pt_bmode.root"))
 process.TFileService = cms.Service("TFileService", fileName = cms.string("pileupdistr_"+ChannelName+".root"))
@@ -229,7 +229,7 @@ savePatTupleSkimLoose = cms.untracked.vstring(
 process.singleTopNTuple = cms.OutputModule("PoolOutputModule",
 #                                fileName = cms.untracked.string('rfio:/CST/cern.ch/user/o/oiorio/SingleTop/SubSkims/WControlSamples1.root'),
 #                   fileName = cms.untracked.Bstring('/tmp/oiorio/edmntuple_tchannel_big.root'),
-                   fileName = cms.untracked.string('edmntuple_'+ChannelName+'.root'),
+                   fileName = cms.untracked.string('edmntuple_'+ChannelName+'TEST.root'),
                                              
                    SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('selection')),
                    outputCommands = saveNTuplesSkimLoose,

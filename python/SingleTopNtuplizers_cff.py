@@ -303,11 +303,70 @@ nTupleLooseMuons = nTupleMuons.clone(
     )
     )
 
-nTupleAllMuons = nTupleLooseMuons.clone(
+#G.Benelli
+#Had to change this... cannot clone the LooseMuons, since some of the
+#selectedPatMuons seem to NOT have an inner track... hence crashing the job...
+#nTupleAllMuons = nTupleLooseMuons.clone(
+#    src = cms.InputTag("selectedPatMuons"),
+#    lazyParser = cms.untracked.bool(True),
+#    prefix = cms.untracked.string("allMuons"),
+#    )
+nTupleAllMuons = cms.EDProducer("CandViewNtpProducer",
     src = cms.InputTag("selectedPatMuons"),
-    lazyParser = cms.untracked.bool(True),
-    prefix = cms.untracked.string("allMuons"),
-    )
+    variables = cms.VPSet(cms.PSet(
+        tag = cms.untracked.string('Pt'),
+        quantity = cms.untracked.string('pt')
+    ), 
+        cms.PSet(
+            tag = cms.untracked.string('Eta'),
+            quantity = cms.untracked.string('eta')
+        ), 
+        cms.PSet(
+            tag = cms.untracked.string('Phi'),
+            quantity = cms.untracked.string('phi')
+        ), 
+        cms.PSet(
+            tag = cms.untracked.string('E'),
+            quantity = cms.untracked.string('energy')
+        ), 
+        cms.PSet(
+            tag = cms.untracked.string('Charge'),
+            quantity = cms.untracked.string('charge')
+        ), 
+        cms.PSet(
+            tag = cms.untracked.string('RelIso'),
+            quantity = cms.untracked.string('(isolationR03.sumPt + isolationR03.emEt + isolationR03.hadEt)/pt')
+        ), 
+        cms.PSet(
+            tag = cms.untracked.string('PFRelIso'),
+            quantity = cms.untracked.string('(chargedHadronIso+ neutralHadronIso + photonIso )/pt')
+        ), 
+        cms.PSet(
+            tag = cms.untracked.string('IsTrackerMuon'),
+            quantity = cms.untracked.string('isTrackerMuon')
+        ), 
+        cms.PSet(
+            tag = cms.untracked.string('AbsoluteDB'),
+            quantity = cms.untracked.string('dB')
+        ),
+#Comment these out for AllMuons objects in case they do not have an innerTrack:
+#        cms.PSet(
+#            tag = cms.untracked.string('TrackerValidInnerHits'),
+#            quantity = cms.untracked.string('innerTrack.numberOfValidHits')
+#        ), 
+#        cms.PSet(
+#            tag = cms.untracked.string('PixelValidInnerHits'),
+#            quantity = cms.untracked.string('innerTrack.hitPattern.pixelLayersWithMeasurement')
+#        ), 
+        cms.PSet(
+            tag = cms.untracked.string('MuonStationHits'),
+            quantity = cms.untracked.string('numberOfMatches()')
+        )),
+    prefix = cms.untracked.string('allMuons'),
+    lazyParser = cms.untracked.bool(True)
+)
+
+
 
 nTupleLooseElectrons = nTupleElectrons.clone(
     src = cms.InputTag("looseElectrons"),
