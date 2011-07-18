@@ -3,100 +3,72 @@ import FWCore.ParameterSet.Config as cms
 import HLTrigger.HLTfilters.hltHighLevel_cfi
 
 
-#processName = "HLT";
-processName = "REDIGI311X"
-
-
-HLTFilterMuOrEleMC = cms.EDFilter('SingleTopTriggers',
-                           HLTriggerResults = cms.InputTag("TriggerResults","",processName),
-                           isMC = cms.untracked.bool(False),
-                           triggerList = cms.vstring("HLT_Ele22_SW_TighterCaloIdIsol_L1R_v2",
-                                                               "HLT_Ele22_SW_TighterCaloIdIsol_L1R_v3",
-                                                               "HLT_Ele17_SW_TighterEleIdIsol_L1R_v3",
-                                                               "HLT_IsoMu17_v4",
-                                                               "HLT_IsoMu17_v5",
-                                                               "HLT_IsoMu17_v6",
-                                                     ),
-
-                                  runList = cms.vstring("*"),
-
-                           channel = cms.untracked.int32(1),#Useless now
-                           )                         
-
-HLTFilterMuOrEle = cms.EDFilter('SingleTopTriggers',
-                           HLTriggerResults = cms.InputTag("TriggerResults","",processName),
-                           isMC = cms.untracked.bool(False),
-                           triggerList = cms.vstring("HLT_IsoMu17_v5",   
-                                                               "HLT_IsoMu17_v6",
-                                                               "HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v1",
-                                                               "HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v2",
-                                                               "HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v3",
-                                                               ),    
-                
-                           channel = cms.untracked.int32(1),#Useless now
-                           )                         
-
+processNameData = "HLT";
+processNameMC = "REDIGI311X"
 
 HLTFilterMu = cms.EDFilter('SingleTopTriggers',
-                           HLTriggerResults = cms.InputTag("TriggerResults","",processName),
+                           HLTriggerResults = cms.InputTag("TriggerResults","",processNameData),
                            isMC = cms.untracked.bool(False),
-                           triggerList = cms.vstring("HLT_IsoMu17_v5",   
-                                                     "HLT_IsoMu17_v6",
-                                                     "HLT_IsoMu17_v7",
-                                                     "HLT_IsoMu17_v8",
-                                                     "HLT_IsoMu17_v9",
-                                                     "HLT_IsoMu17_v10",
-                                                     "HLT_IsoMu17_v11",
-                                                     "HLT_IsoMu17_v12",
-                                                     "HLT_IsoMu17_v13",
-                                                     "HLT_IsoMu17_v14",
-                                                     "HLT_IsoMu17_v15",
-                                                     "HLT_IsoMu17_v16",
-                                                     "HLT_IsoMu17_v17",
-                                                     "HLT_IsoMu17_v18",
+                           triggerList = cms.vstring("HLT_IsoMu17_v",
                                                      ),
-                           #runList = cms.vstring("*"),
-
+                           runRangesList = cms.vint32(-1),
+                           
                            channel = cms.untracked.int32(2),#Useless now
                            )                         
 
 HLTFilterEle = cms.EDFilter('SingleTopTriggers',
-                            HLTriggerResults = cms.InputTag("TriggerResults","",processName),
+                            HLTriggerResults = cms.InputTag("TriggerResults","",processNameData),
                             isMC = cms.untracked.bool(False),
-                            triggerList = cms.vstring("HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v1",
-                                                               "HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v2",
-                                                               "HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v3",
-                                                      
+                            triggerList = cms.vstring("HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v",
+                                                      "HLT_Ele25_CaloIdVT_TrkIdT_CentralJet30_BTagIP_v",
+                                                      "HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_CentralJet30_BTagIP_v",
                                                       ),
+                            runRangesList = cms.vint32(160404,163869,165970),
+
                             channel = cms.untracked.int32(3),#Useless now
                             )
 
+HLTFilterMuOrEleMC = cms.EDFilter('SingleTopTriggers',
+                                  HLTriggerResults = cms.InputTag("TriggerResults","",processNameMC),
+                                  isMC = cms.untracked.bool(False),
+                                  triggerList = cms.vstring("HLT_Ele22_SW_TighterCaloIdIsol_L1R_v",
+                                                            "HLT_Ele17_SW_TighterEleIdIsol_L1R_v",
+                                                               "HLT_IsoMu17_v",),
+                                  runRangesList = cms.vint32(-1),
+                                  
+                                  channel = cms.untracked.int32(1),#Useless now
+                                  )                         
+
+
 HLTFilterMuQCD = cms.EDFilter('SingleTopTriggers',
-                           HLTriggerResults = cms.InputTag("TriggerResults","",processName),
+                           HLTriggerResults = cms.InputTag("TriggerResults","",processNameData),
                            isMC = cms.untracked.bool(False),
-                           triggerList = cms.vstring("HLT_Mu17_CentralJet30_v1",
-                                                               "HLT_Mu17_CentralJet30_v2",
-                                                               "HLT_Mu17_CentralJet30_v3",
-                                                               "HLT_Mu17_CentralJet30_v4",
-                                                               "HLT_Mu17_CentralJet30_v5",
-                                                               "HLT_Mu17_CentralJet30_v6",
-                                                               "HLT_Mu17_DiCentralJet30_v1",
-                                                               "HLT_Mu17_DiCentralJet30_v2",
-                                                               "HLT_Mu17_DiCentralJet30_v3",
-                                                               "HLT_Mu17_DiCentralJet30_v4",
-                                                               "HLT_Mu17_DiCentralJet30_v5",
-                                                               "HLT_Mu17_DiCentralJet30_v6",
-                                                               ),
+                           triggerList = cms.vstring("HLT_Mu15_v",
+                                                     ),
+                           runRangesList = cms.vint32(-1),
+
                            channel = cms.untracked.int32(4),#Useless now
                            )                         
 
 HLTFilterEleQCD = cms.EDFilter('SingleTopTriggers',
-                            HLTriggerResults = cms.InputTag("TriggerResults","",processName),
-                            isMC = cms.untracked.bool(False),
-                               triggerList = cms.vstring("HLT_Ele25_CaloIdVT_TrkIdT_CentralDiJet30_v2",
-                                                                   "HLT_Ele25_CaloIdVT_TrkIdT_CentralDiJet30_v3",
-                                                                   "HLT_Ele25_CaloIdVT_TrkIdT_CentralJet40_BTagIP",
-                                                                   ),
+                               HLTriggerResults = cms.InputTag("TriggerResults","",processNameData),
+                               isMC = cms.untracked.bool(False),
+                               triggerList = cms.vstring("HLT_Ele25_CaloIdVT_TrkIdT_CentralDiJet30_v",
+                                                         ),
+                               runRangesList = cms.vint32(-1),
                                channel = cms.untracked.int32(5),#Useless now
                             )
+
+####################
+HLTFilterMuOrEle = cms.EDFilter('SingleTopTriggers',
+                                HLTriggerResults = cms.InputTag("TriggerResults","",processNameData),
+                                isMC = cms.untracked.bool(False),
+                                triggerList = cms.vstring("HLT_IsoMu17_v",   
+                                                          "HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v"),    
+                                runRangesList = cms.vint32(-1),
+                                
+                                channel = cms.untracked.int32(1),#Useless now
+                                )                         
+
+
 

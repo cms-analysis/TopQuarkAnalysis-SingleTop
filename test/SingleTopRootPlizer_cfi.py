@@ -8,7 +8,11 @@ rateSystematics = cms.untracked.vstring("WLightRateUp",                         
 #rateSystematics = cms.untracked.vstring(""),
 leptonsID = cms.InputTag("nTupleElectrons","tightElectronsSimpleEleId70cIso"),  
 preWeights =cms.InputTag("WeightProducer","PUWeight"),
-doPU = cms.untracked.bool(False),
+doPU = cms.untracked.bool(True),
+
+#dataPUFile = cms.untracked.string("pileUpDistr.root"),
+#mcPUFile = cms.untracked.string("pileupdistr_TChannel.root"),
+#puHistoName = cms.untracked.string("pileUpDumper/PileUpTChannel"),
 
 #mode = cms.untracked.string("pt"),
 #maxPtCut = cms.untracked.double("45"),

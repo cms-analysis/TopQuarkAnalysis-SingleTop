@@ -108,19 +108,19 @@ process.kt6PFJets = kt4PFJets.clone(
 process.patJetCorrFactors.rho = cms.InputTag("kt6PFJets", "rho")
 
 #Muons
-applyPostfix(process,"isoValMuonWithNeutral",postfix).deposits[0].deltaR = cms.double(0.3)
-applyPostfix(process,"isoValMuonWithCharged",postfix).deposits[0].deltaR = cms.double(0.3)
-applyPostfix(process,"isoValMuonWithPhotons",postfix).deposits[0].deltaR = cms.double(0.3)
+#applyPostfix(process,"isoValMuonWithNeutral",postfix).deposits[0].deltaR = cms.double(0.3)
+#applyPostfix(process,"isoValMuonWithCharged",postfix).deposits[0].deltaR = cms.double(0.3)
+#applyPostfix(process,"isoValMuonWithPhotons",postfix).deposits[0].deltaR = cms.double(0.3)
 #electrons
-applyPostfix(process,"isoValElectronWithNeutral",postfix).deposits[0].deltaR = cms.double(0.3)
-applyPostfix(process,"isoValElectronWithCharged",postfix).deposits[0].deltaR = cms.double(0.3)
-applyPostfix(process,"isoValElectronWithPhotons",postfix).deposits[0].deltaR = cms.double(0.3)
+#applyPostfix(process,"isoValElectronWithNeutral",postfix).deposits[0].deltaR = cms.double(0.3)
+#applyPostfix(process,"isoValElectronWithCharged",postfix).deposits[0].deltaR = cms.double(0.3)
+#applyPostfix(process,"isoValElectronWithPhotons",postfix).deposits[0].deltaR = cms.double(0.3)
 
 #applyPostfix(process,"pfIsolatedMuons",postfix).combinedIsolationCut = cms.double(0.125)
 #applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.double(0.125)
 
-applyPostfix(process,"pfIsolatedMuons",postfix).combinedIsolationCut = cms.double(0.2)
-applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.double(0.2)
+#applyPostfix(process,"pfIsolatedMuons",postfix).combinedIsolationCut = cms.double(0.125)
+#applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.double(0.125)
 
 # Add the PV selector and KT6 producer to the sequence
 getattr(process,"patPF2PATSequence"+postfix).replace(
@@ -133,6 +133,14 @@ process.pathPreselection = cms.Path(
     process.patElectronIDs *
     getattr(process,"patPF2PATSequence"+postfix)
     )
+
+process.PathFlavor = cms.Path(
+        process.genParticlesForJets *
+            process.ak5GenJets *
+            process.cFlavorHistoryProducer *
+            process.bFlavorHistoryProducer
+            )
+
 
 #getattr(process,"pfNoPileUp"+postfix).enable = True
 #getattr(process,"pfNoMuon"+postfix).enable = True
@@ -158,7 +166,7 @@ duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 )
 
 
-ChannelName = "TChannel";
+ChannelName = "WJets";
 
 #process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/"+ChannelName+"_pt_bmode.root"))
 process.TFileService = cms.Service("TFileService", fileName = cms.string("pileupdistr_"+ChannelName+".root"))

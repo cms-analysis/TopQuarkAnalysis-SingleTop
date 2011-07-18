@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.4 2011/07/11 07:05:50 oiorio Exp $ 
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.5 2011/07/11 19:35:50 oiorio Exp $ 
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file 
 //
@@ -91,9 +91,26 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
   //  jetsPF_ =  iConfig.getParameter< edm::InputTag >("patJets");
 
   mode_ =  iConfig.getUntrackedParameter<std::string >("mode",""); 
+
+
+  //Pile Up Part
+
   npv_ = iConfig.getParameter< edm::InputTag >("nvertices");//,"PileUpSync"); 
 
   doPU_ = iConfig.getUntrackedParameter< bool >("doPU",false);
+
+  dataPUFile_ =  iConfig.getUntrackedParameter< std::string >("dataPUFile","pileUpDistr.root");
+  mcPUFile_ = iConfig.getUntrackedParameter< std::string >("mcPUFile","pileupdistr_TChannel.root");
+  puHistoName_ = iConfig.getUntrackedParameter< std::string >("puHistoName","pileUpDumper/PileUp");
+  
+
+  if(doPU_){
+    LumiWeights_ = edm::LumiReWeighting(mcPUFile_,
+					dataPUFile_,
+					puHistoName_,
+					std::string("pileup") );
+  }
+
   
   preWeights_ =  iConfig.getParameter< edm::InputTag >("preWeights");
   
@@ -371,7 +388,8 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
   }  
     
   //  JEC_PATH = "CondFormats/JetMETObjects/data/";
-  JEC_PATH = "./JECs/";
+  //  JEC_PATH = "./JECs/";
+  JEC_PATH = "./";
   //  fip = edm::FileInPath(JEC_PATH+"Spring10_Uncertainty_AK5PF.txt");
   //fip = edm::FileInPath(JEC_PATH+"GR_R_42_V19_AK5PF_Uncertainty.txt");
   //jecUnc = new JetCorrectionUncertainty(fip.fullPath());
@@ -419,8 +437,10 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
   double myWeight =1;
   
   if(doPU_){
-    iEvent.getByLabel(preWeights_,preWeights);
-    myWeight = *preWeights;
+    iEvent.getByLabel(npv_,npv);
+    //int temppv= *npv; 
+    myWeight *=    LumiWeights_.weight( *npv);
+      //    myWeight = *preWeights;
   }
 
   iSetup.get<BTagPerformanceRecord>().get("MISTAGTCHPT",perfHP);
@@ -551,6 +571,25 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     //This is used for syst up and down
     
 
+    if(doPU_){
+      if(syst_name=="PUUp"){
+	if(*npv<=49){
+	  int temppv= *npv +1 ;
+	  myWeight =1;
+	  myWeight *=    LumiWeights_.weight( *npv);
+	}
+      }
+      if(syst_name=="PUDown"){
+	if(*npv>=1){
+	  myWeight =1;
+	  int temppv= *npv -1 ;
+	  myWeight *=    LumiWeights_.weight( *npv);
+	}
+      }
+      //    myWeight = *preWeights;
+    }
+
+
       
     if(syst_name == "UnclusteredMETUp"){
       iEvent.getByLabel(UnclMETPx_,UnclMETPx);
@@ -614,14 +653,18 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	
 	lepRelIso = leptonRelIso;
 	//Use an anti-isolation requirement
+
+	if(leptonsFlavour_ == "muon"){
 	if(  leptonRelIso > leptonRelIsoQCDCutUpper )continue;
 	 if( leptonRelIso < leptonRelIsoQCDCutLower )continue;
-	 
+	}
 	 if(leptonsFlavour_ == "electron"  ) {
+	   if( leptonRelIso < 0.1) continue;
 	   float leptonID = leptonsID->at(i);
+	   if(!(leptonID == 2  || leptonID == 3 ||leptonID == 4)) continue;
 	   electronID = leptonID;
 	 } 
-	 
+
 	 float leptonPt = leptonsPt->at(i);
 	 float leptonPhi = leptonsPhi->at(i);
 	 float leptonEta = leptonsEta->at(i);
@@ -994,7 +1037,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 		 runTree = iEvent.eventAuxiliary().run();
 		 lumiTree = iEvent.eventAuxiliary().luminosityBlock();
 		 eventTree = iEvent.eventAuxiliary().event();
-		 weightTree = Weight*b_weight_antitag_algo2.at(0)*b_weight_tag_algo2.at(0)*b_weight_antitag_algo1.at(0);
+		 if(b_weight_antitag_algo1.size()==2) weightTree = Weight*b_weight_antitag_algo2.at(0)*b_weight_tag_algo2.at(0)*b_weight_antitag_algo1.at(highBTagTreePosition);
+		 if(b_weight_antitag_algo1.size()==1) weightTree = Weight*b_weight_antitag_algo2.at(0)*b_weight_tag_algo2.at(0)*b_weight_antitag_algo1.at(0);
 		 
 		 etaTree = fabs(jets.at(lowBTagTreePosition).eta());
 		 etaTree2 = fabs(jets.at(highBTagTreePosition).eta());
@@ -1106,7 +1150,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
        float fCosThetaLJ =  cosThetaLJ(leptons.at(0), jets.at(lowBTagTreePosition), top);
        
        //       lowBTagTreePosition
-       cout << " Signal Sample ; antib  algo 2 weight size "<< b_weight_antitag_algo2.size()<< " b algo 1 weight size "<< b_weight_tag_algo1.size()<< endl;
+       //       cout << " Signal Sample ; antib  algo 2 weight size "<< b_weight_antitag_algo2.size()<< " b algo 1 weight size "<< b_weight_tag_algo1.size()<< endl;
 
        runTree = iEvent.eventAuxiliary().run();
        lumiTree = iEvent.eventAuxiliary().luminosityBlock();
@@ -1175,8 +1219,11 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	    runTree = iEvent.eventAuxiliary().run();
 	    lumiTree = iEvent.eventAuxiliary().luminosityBlock();
 	    eventTree = iEvent.eventAuxiliary().event();
-	    weightTree = Weight*b_weight_antitag_algo2.at(0)*b_weight_tag_algo2.at(0)*b_weight_antitag_algo1.at(0);
 	    
+	    if(b_weight_antitag_algo1.size()==2) weightTree = Weight*b_weight_antitag_algo2.at(0)*b_weight_tag_algo2.at(0)*b_weight_antitag_algo1.at(highBTagTreePosition);
+	    if(b_weight_antitag_algo1.size()==1) weightTree = Weight*b_weight_antitag_algo2.at(0)*b_weight_tag_algo2.at(0)*b_weight_antitag_algo1.at(0);
+	    
+
 	    etaTree = fabs(jets.at(lowBTagTreePosition).eta());
 	    etaTree2 = fabs(jets.at(highBTagTreePosition).eta());
 	    cosTree = fCosThetaLJ;

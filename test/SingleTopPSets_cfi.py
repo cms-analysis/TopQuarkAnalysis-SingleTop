@@ -37,18 +37,18 @@ TWChannelEle = cms.PSet(
             originalEvents = cms.untracked.double(494961),
             )
 
-sChanMu = cms.PSet(
+SChannelMu = cms.PSet(
             crossSection = cms.untracked.double(1.533),
-                        channel = cms.untracked.string("sChan"),
+                        channel = cms.untracked.string("SChannel"),
                         originalEvents = cms.untracked.double(494967),
                         finalLumi = lumiMu,
                         MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
                         RelIsoCut = cms.untracked.double(0.05),
                         )
 
-sChanEle = cms.PSet(
+SChannelEle = cms.PSet(
             crossSection = cms.untracked.double(1.533),
-                        channel = cms.untracked.string("sChan"),
+                        channel = cms.untracked.string("SChannel"),
                         finalLumi = lumiEle,
                         originalEvents = cms.untracked.double(494967),
                         )
@@ -400,47 +400,47 @@ QCD_Pt_80to170BCtoEMu = cms.PSet(
             )
 
 
-GJets_HT_40To100Ele = cms.PSet(
+HT_40To100Ele = cms.PSet(
     crossSection = cms.untracked.double(23620.),
-    channel = cms.untracked.string("GJets_HT_40To100"),
+    channel = cms.untracked.string("HT_40To100"),
     finalLumi = lumiEle,
     originalEvents = cms.untracked.double(2217101),
     )
 
-GJets_HT_40To100Mu = cms.PSet(
+HT_40To100Mu = cms.PSet(
         crossSection = cms.untracked.double(23620.),
-        channel = cms.untracked.string("GJets_HT_40To100"),
+        channel = cms.untracked.string("HT_40To100"),
         finalLumi = lumiMu,
         originalEvents = cms.untracked.double(2217101),
         )
 
 
 
-GJets_HT_100To200Ele = cms.PSet(
+HT_100to200Ele = cms.PSet(
     crossSection = cms.untracked.double(3476.),
-    channel = cms.untracked.string("GJets_HT_100To200"),
+    channel = cms.untracked.string("HT_100to200"),
     finalLumi = lumiEle,
     originalEvents = cms.untracked.double(1065691),
     )
 
-GJets_HT_100To200Mu = cms.PSet(
+HT_100to200Mu = cms.PSet(
         crossSection = cms.untracked.double(3476.),
-            channel = cms.untracked.string("GJets_HT_100To200"),
+            channel = cms.untracked.string("HT_100to200"),
             finalLumi = lumiMu,
             originalEvents = cms.untracked.double(1065691),
             )
 
 
-GJets_HT_200Ele = cms.PSet(
+HT_200Ele = cms.PSet(
     crossSection = cms.untracked.double(485.),
-    channel = cms.untracked.string("GJets_HT_200"),
+    channel = cms.untracked.string("HT_200"),
     finalLumi = lumiEle,
     originalEvents = cms.untracked.double(942171),
     )
 
-GJets_HT_200Mu = cms.PSet(
+HT_200Mu = cms.PSet(
         crossSection = cms.untracked.double(485.),
-            channel = cms.untracked.string("GJets_HT_200"),
+            channel = cms.untracked.string("HT_200"),
             finalLumi = lumiMu,
             originalEvents = cms.untracked.double(942171),
             )

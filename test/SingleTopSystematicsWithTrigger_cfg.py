@@ -25,7 +25,7 @@ process.load ("RecoBTag.PerformanceDB.BTagPerformanceDB1011")
 process.load ("RecoBTag.PerformanceDB.PoolBTagPerformanceDB1011")
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(2000) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(200000))
 
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
@@ -45,7 +45,7 @@ duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
 
 process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/TChannelMerged.root")
 #process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/edmntuple_TWChannel_7_1_SXi.root")
-#process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/edmntuple_TChannel_noMeta.root")
+process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/edmntuple_WJets_96_1_ClQ.root")
 
 #PileUpSync
 process.WeightProducer = cms.EDProducer("SingleTopPileUpWeighter",
@@ -58,12 +58,22 @@ process.WeightProducer = cms.EDProducer("SingleTopPileUpWeighter",
                                         )
 
 #Output
-process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/TChannel_Tmp.root"))
+#process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/TChannel.root"))
+process.TFileService = cms.Service("TFileService", fileName = cms.string("testNoPU.root"))
 
 process.load("SingleTopAnalyzers_cfi")
 process.load("SingleTopRootPlizer_cfi")
 process.load("SingleTopFilters_cfi")
 from SingleTopPSets_cfi import *
+
+process.TreesEle.dataPUFile = cms.untracked.string("pileUpDistr.root")
+process.TreesEle.mcPUFile = cms.untracked.string("pileupdistr_TChannel.root")
+process.TreesEle.puHistoName = cms.untracked.string("pileUpDumper/PileUpTChannel")
+
+process.TreesMu.dataPUFile = cms.untracked.string("pileUpDistr.root")
+process.TreesMu.mcPUFile = cms.untracked.string("pileupdistr_TChannel.root")
+process.TreesMu.puHistoName = cms.untracked.string("pileUpDumper/PileUpTChannel")
+
 
 process.TreesEle.channelInfo = TChannelEle
 process.TreesMu.channelInfo = TChannelMu
@@ -81,7 +91,7 @@ process.TreesEle.doPU = cms.untracked.bool(False)
 
 
 channel_instruction = "channel_instruction" #SWITCH_INSTRUCTION
-#channel_instruction = "allmc" #SWITCH_INSTRUCTION
+channel_instruction = "allmc" #SWITCH_INSTRUCTION
 
 MC_instruction = False #TRIGGER_INSTRUCTION
 

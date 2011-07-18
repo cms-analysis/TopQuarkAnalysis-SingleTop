@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  * 
  * Produces systematics histograms out of a standard Single Top n-tuple 
- * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.4 2011/07/11 07:05:49 oiorio Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.5 2011/07/11 19:35:49 oiorio Exp $
  */
 
 
@@ -81,7 +81,7 @@
 #include "CondFormats/PhysicsToolsObjects/interface/BinningPointByMap.h"
 #include "RecoBTag/PerformanceDB/interface/BtagPerformance.h"
 
-//#include "PhysicsTools/Utilities/interface/LumiReWeighting.h"
+#include "PhysicsTools/Utilities/interface/LumiReWeighting.h"
 
 using namespace std;
 using namespace edm;
@@ -237,9 +237,11 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   
   //Not used anymore:
   double loosePtCut ;
-  string rootFileName, dataPUFile_,mcPUFile_;
-  
   bool doPU_ ;
+  edm::LumiReWeighting LumiWeights_;
+  std::string mcPUFile_,dataPUFile_,puHistoName_;
+
+
 
   double leptonRelIsoQCDCutUpper,leptonRelIsoQCDCutLower;  
  
