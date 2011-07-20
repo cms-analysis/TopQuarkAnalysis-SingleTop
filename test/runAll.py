@@ -12,41 +12,41 @@ fileName = "SingleTopSystematicsWithTrigger_cfg.py"
 #Channels to include
 channels = [
 #
-  "DataMu",
-#  "DataEle",
+#  "DataMu",
+  "DataEle",
 #  "DataMuQCD",
 #  "DataEleQCD",
 #
-# "TChannel",
+# "TWChannel",
 #
 #  "QCDMu",
 #
-# "QCD_Pt_30to80BCtoE",
-# "QCD_Pt_20to30BCtoE",
-# "QCD_Pt_80to170BCtoE",
+# "QCD_Pt_30to80_BCtoE",
+# "QCD_Pt_20to30_BCtoE",
+# "QCD_Pt_80to170_BCtoE",
 ##
-# "QCD_Pt_20to30EMEnriched",
-## "QCD_Pt_30to80EMEnriched",
-# "QCD_Pt_80to170EMEnriched",
+# "QCD_Pt_20to30_EMEnriched",
+# "QCD_Pt_30to80_EMEnriched",
+# "QCD_Pt_80to170_EMEnriched",
 #
 # "HT_100to200",
 # "HT_200",
 #
-#  "TTBar",
+ # "TTBar",
 ## 
-# "ZJets",
+## "ZJets",
 # "ZJets_wlight",
 # "ZJets_wcc",
 # "ZJets_wbb",
-#
-# "TWChannel",
+
+# "TChannel",
 # "SChannel",#
 ##
 # "WJets_wlight",
 # "WJets_wcc",
 #"WJets_wbb",
 #"WJets",
-# "Wc_wc",
+#"Wc_wc",
 # "Vqq_wbb",
 # "Vqq_wcc",
 # "VV",
@@ -111,9 +111,9 @@ def changeChannel(fileName,channelOld,channelNew,switch,isMC):
         o.write(inputs)
     if channelNew == "DataEle" or channelNew == "DataEleQCD":
         inputs = "process.source.fileNames = cms.untracked.vstring("
-#        inputs = inputs +"'"+dataPath+"Ele_v4Merged.root',"
-        inputs = inputs +"'"+dataPath+"Ele_v2Merged.root',"
-        inputs = inputs +"'"+dataPath+"Ele_v1Merged.root',"
+        inputs = inputs +"'"+dataPath+"Ele_v4Merged.root',"
+#        inputs = inputs +"'"+dataPath+"Ele_v2Merged.root',"
+#        inputs = inputs +"'"+dataPath+"Ele_v1Merged.root',"
         inputs = inputs +")"
         o.write(inputs)
     o.close()

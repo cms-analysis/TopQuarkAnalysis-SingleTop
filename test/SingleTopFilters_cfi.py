@@ -34,7 +34,7 @@ HLTFilterMuOrEleMC = cms.EDFilter('SingleTopTriggers',
                                   triggerList = cms.vstring("HLT_Ele22_SW_TighterCaloIdIsol_L1R_v",
                                                             "HLT_Ele17_SW_TighterEleIdIsol_L1R_v",
                                                                "HLT_IsoMu17_v",),
-                                  runRangesList = cms.vint32(-1),
+                                  runRangesList = cms.vint32(-1,-1,-1),
                                   
                                   channel = cms.untracked.int32(1),#Useless now
                                   )                         

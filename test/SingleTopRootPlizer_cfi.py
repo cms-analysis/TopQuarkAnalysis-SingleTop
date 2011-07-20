@@ -1,7 +1,8 @@
 import FWCore.ParameterSet.Config as cms
 
 TreesEle = cms.EDAnalyzer('SingleTopSystematicsTreesDumper',                              
-systematics = cms.untracked.vstring("BTagUp","BTagDown","MisTagUp","MisTagDown","JESUp","JESDown","UnclusteredMETUp","UnclusteredMETDown"),
+systematics = cms.untracked.vstring("BTagUp","BTagDown","MisTagUp","MisTagDown","JESUp","JESDown","UnclusteredMETUp","UnclusteredMETDown",
+                                    "PUUp","PUDown"),
 #systematics = cms.untracked.vstring(""),
 doBScan = cms.untracked.bool(True),
 rateSystematics = cms.untracked.vstring("WLightRateUp",                                        "WLightRateDown",                                        "TTBarRateUp",                                        "Ttbarratedown ",                                        "WHFRateUp",                                        "WHFRateDown"),
@@ -25,7 +26,11 @@ channelInfo = cms.PSet(
     finalLumi = cms.untracked.double(14.5),
     MTWCut = cms.untracked.double(50.0),#Default 50.0 GeV
     loosePtCut = cms.untracked.double(30.0),#Default 30.0 GeV
-    RelIsoCut = cms.untracked.double(0.1)
+    RelIsoCut = cms.untracked.double(0.1),
+    mcPUFile = cms.untracked.string("pileupdistr_TChannel.root"),
+    puHistoName = cms.untracked.string("pileUpDumper/PileUpTChannel"),
+
+
     ),
 
 

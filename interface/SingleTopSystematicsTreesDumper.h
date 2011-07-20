@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  * 
  * Produces systematics histograms out of a standard Single Top n-tuple 
- * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.5 2011/07/11 19:35:49 oiorio Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.6 2011/07/18 18:46:16 oiorio Exp $
  */
 
 
@@ -123,7 +123,11 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   
   //Jet uncertainty as a function of eta pt and jet flavour
   double jetUncertainty(double eta, double ptCorr, int flavour);
- 
+  
+  //Weight and probabilities for TurnOn curves
+  double turnOnWeight (std::vector<double> probs, int njets_req);
+  double jetprob(double pt,double tchp); 
+
   //Define vector of required systematics to loop on
   std::vector<std::string> systematics,rate_systematics;
 
@@ -237,11 +241,11 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   
   //Not used anymore:
   double loosePtCut ;
-  bool doPU_ ;
+  bool doPU_,doTurnOn_ ;
   edm::LumiReWeighting LumiWeights_;
   std::string mcPUFile_,dataPUFile_,puHistoName_;
 
-
+  std::vector<double> jetprobs;
 
   double leptonRelIsoQCDCutUpper,leptonRelIsoQCDCutLower;  
  

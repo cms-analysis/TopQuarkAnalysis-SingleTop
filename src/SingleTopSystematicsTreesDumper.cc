@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.5 2011/07/11 19:35:50 oiorio Exp $ 
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.6 2011/07/18 18:46:17 oiorio Exp $ 
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file 
 //
@@ -32,6 +32,7 @@
 #include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
 #include "TopQuarkAnalysis/SingleTop/interface/EquationSolver.h"
 
+
 SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::ParameterSet& iConfig)
 {
   //MCLightQuarkProducer   = iConfig.getParameter<InputTag>("MCLightQuarkProducer");
@@ -46,6 +47,9 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
   originalEvents = channelInfo.getUntrackedParameter<double>("originalEvents");
   finalLumi = channelInfo.getUntrackedParameter<double>("finalLumi");
   MTWCut = channelInfo.getUntrackedParameter<double>("MTWCut",50);
+  mcPUFile_ = channelInfo.getUntrackedParameter< std::string >("mcPUFile","pileupdistr_TChannel.root");
+  puHistoName_ = channelInfo.getUntrackedParameter< std::string >("puHistoName","pileUpDumper/PileUp");
+
 
 
   RelIsoCut = channelInfo.getUntrackedParameter<double>("RelIsoCut",0.1);
@@ -98,17 +102,18 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
   npv_ = iConfig.getParameter< edm::InputTag >("nvertices");//,"PileUpSync"); 
 
   doPU_ = iConfig.getUntrackedParameter< bool >("doPU",false);
+  doTurnOn_ = iConfig.getUntrackedParameter< bool >("doTurnOn",true);
 
   dataPUFile_ =  iConfig.getUntrackedParameter< std::string >("dataPUFile","pileUpDistr.root");
-  mcPUFile_ = iConfig.getUntrackedParameter< std::string >("mcPUFile","pileupdistr_TChannel.root");
-  puHistoName_ = iConfig.getUntrackedParameter< std::string >("puHistoName","pileUpDumper/PileUp");
   
 
   if(doPU_){
+    //    cout << " before lumiWeights "<<endl;
     LumiWeights_ = edm::LumiReWeighting(mcPUFile_,
 					dataPUFile_,
 					puHistoName_,
 					std::string("pileup") );
+    //    cout << " built lumiWeights "<<endl;
   }
 
   
@@ -434,13 +439,17 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
   iEvent.getByLabel(looseElectronsRelIso_,looseElectronsRelIso);
   iEvent.getByLabel(looseMuonsRelIso_,looseMuonsRelIso);     
 
-  double myWeight =1;
+  double PUWeight =1;
   
   if(doPU_){
+    //    cout << " before npv "<<endl;
+  
     iEvent.getByLabel(npv_,npv);
+    //    cout << "after npv val"<< *npv << endl;
     //int temppv= *npv; 
-    myWeight *=    LumiWeights_.weight( *npv);
-      //    myWeight = *preWeights;
+    PUWeight *=    LumiWeights_.weight( *npv);
+    //    cout << "got weight val "<<PUWeight << endl;
+      //    PUWeight = *preWeights;
   }
 
   iSetup.get<BTagPerformanceRecord>().get("MISTAGTCHPT",perfHP);
@@ -471,8 +480,10 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
   float ptCut = 30;  
   //  float maxPtCut = maxPtCut_;
 
-
-
+  
+  jetprobs.clear();
+  bool hasTurnOnWeight = false;
+  double turnOnWeightValue =1;
   //edm::EventBase* const iEventB = dynamic_cast<edm::EventBase*>(&iEvent);
   //double MyWeight = LumiWeights_.weight( (*iEventB) );
   
@@ -490,7 +501,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     //to normalize the sample to the luminosity 
     //required in the cfg
     Weight = WeightLumi;
-    Weight *= myWeight;
+    //    Weight *= PUWeight;
     BTagWeight = 1;
     BTagWeightWSample = 1;
     BTagWeightTTSample = 1;
@@ -575,18 +586,18 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       if(syst_name=="PUUp"){
 	if(*npv<=49){
 	  int temppv= *npv +1 ;
-	  myWeight =1;
-	  myWeight *=    LumiWeights_.weight( *npv);
+	  PUWeight =1;
+	  PUWeight *=  LumiWeights_.weight( temppv);
 	}
       }
       if(syst_name=="PUDown"){
 	if(*npv>=1){
-	  myWeight =1;
+	  PUWeight =1;
 	  int temppv= *npv -1 ;
-	  myWeight *=    LumiWeights_.weight( *npv);
+	  PUWeight *=  LumiWeights_.weight( temppv);
 	}
       }
-      //    myWeight = *preWeights;
+      //    PUWeight = *preWeights;
     }
 
 
@@ -692,14 +703,24 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       gotJets= true;
     }
     
+    if(leptonsFlavour_ == "electron" && doTurnOn_){
+      if (!hasTurnOnWeight){
+	for(size_t i = 0;i<nJets;++i){
+	  jetprobs.push_back(jetprob(jetsPt->at(i),jetsBTagAlgo->at(i)));
+	}
+	turnOnWeightValue = turnOnWeight(jetprobs,1);
+	hasTurnOnWeight=true;
+      }
+    }
     
-
+    Weight *= turnOnWeightValue;
+    Weight *= PUWeight;
     //Jets loop
     for(size_t i = 0;i<nJets;++i){
       eta = jetsEta->at(i);
       ptCorr = jetsPt->at(i);
       flavour = jetsFlavour->at(i);
-
+      
       //Pt cut
       bool passesPtCut = ptCorr>ptCut;
       
@@ -2033,7 +2054,30 @@ double SingleTopSystematicsTreesDumper::AntiMisTagScaleFactor(string algo,string
 }
 
 
+double SingleTopSystematicsTreesDumper::turnOnWeight (std::vector<double> probabilities, int njets_req =1){
+  double prob =0;
+  for(unsigned int i=0; i<pow(2,probabilities.size());++i){
+    //at least njets_req objects for trigger required
+    int ntrigobj=0;
+    for(unsigned int j=0; j<probabilities.size();++j){
+      if((int)(i/pow(2,j))%2) ntrigobj++;
+    }
+    if(ntrigobj<njets_req) continue;  
+    double newprob=1;
+    for(unsigned int j=0; j<probabilities.size();++j){
+      if((int)(i/pow(2,j))%2) newprob*=probabilities[j];
+      else newprob*=1-probabilities[j];
+    }
+    prob+=newprob;
+  }
+  return prob;
+}
 
+double SingleTopSystematicsTreesDumper::jetprob(double pt, double btag){
+  double prob=0.993*(exp(-51.0*exp(-0.160*pt)));
+  prob*=0.902*exp((-5.995*exp(-0.604*btag)));
+  return prob;
+}
 
 
 

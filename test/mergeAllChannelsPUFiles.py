@@ -4,14 +4,14 @@ import os,sys,re,shutil
 
 
 #Castor directory with all sub-directories:
-#inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/MC2011"
-inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/Run2011/"
+inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/MC2011/"
+#inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/Run2011/Ele_v4/Ele_v4"
 #inputDir = "/castor/cern.ch/user/m/mmerola/SingleTop_AfterMoriond/Data"
 #inputDir = "/castor/cern.ch/user/m/mmerola/SingleTop_AfterMoriond/MC/"
 
 #Original config file
 #fName = "copyTemplate.py"
-fName = "copyFlavorSeparationTemplateForSub.py"
+#fName = "copyFlavorSeparationTemplateForSub.py"
 fName = "copyFlavorSeparationTemplate.py"
 fNameBsub = "mergeBsub.py"
 f = open(fName)
@@ -21,18 +21,17 @@ f = open(fName)
 #Channels to include
 channels = [
 #    "TChannel",
+#    "SChannel",
 #    "VV",
 #    "TTBar",
 #    '30to80_BCtoE',
-
-
- "QCD_Pt-30to80_BCtoE",
-## "QCD_Pt_20to30_BCtoE",
- "QCD_Pt-80to170_BCtoE",
-##
- "QCD_Pt-20to30_EMEnriched",
- "QCD_Pt-30to80_EMEnriched",
- "QCD_Pt-80to170_EMEnriched",#     "ZJets",
+"QCD_Pt-20to30_EMEnriched",
+"QCD_Pt-30to80_EMEnriched",
+"QCD_Pt-80to170_EMEnriched",
+##"QCD_Pt-20to30_BCtoE",
+"QCD_Pt-30to80_BCtoE",
+"QCD_Pt-80to170_BCtoE",
+#     "ZJets",
      #"QCDMu",
 #     "DataEle",
 #     "QCDMu",
@@ -44,13 +43,14 @@ channels = [
 #"Mu_v2",
 #"Ele_v1",
 #"Ele_v2",
-#Ele_v4",
+#"Ele_v4",
 #    "Vqq",
 #    "Wc",
     ]
 
 
-Prefix = "edmntuple_Data"
+Prefix = "edmntuple_"
+PrefixHisto = "pileupdistr_"
 #Prefix = ""
 
 Switch = "None"
@@ -58,8 +58,9 @@ Switch = "None"
 #Choose if you want to do bsub, run or just prepare the configuration files
 #if none of those is chosen, it just produces the cfg files to run and bsub
 mode = ""
-mode = "cmsRun"
+#mode = "cmsRun"
 #mode = "bsub"
+mode = "hadd"
 
 #Function to replace a sequence of characters channelOld to channelNew in a file 
 def changeChannel(fileName,channelOld,channelNew,switch,suffix): 
@@ -91,8 +92,10 @@ def appendInput(fileName,directory,channel,prefix):
     o.write("process.source.fileNames.extend([")
     
     inputRedirect = "rfdir "+directory +"/"+channel+"/ | cut -c68-200 > "+ channel+"_input.py"
-    if channel == "Data":
+    if channel == "Data" or "QCDEle" in directory:
         inputRedirect = "rfdir "+directory +"| cut -c68-200 > "+ channel+"_input.py"
+    if "HT-" in channel or "QCD_Pt" in channel:
+        inputRedirect = "rfdir "+directory +"/QCDEle | cut -c68-200 > "+ channel+"_input.py"
     os.system(inputRedirect)
     tmp = open(channel+"_input.py")
     lines = tmp.readlines()
@@ -104,8 +107,11 @@ def appendInput(fileName,directory,channel,prefix):
             #print "beginName is " + beginName +" word is "+ word
             if beginName in word:
                 #print " word ok , is it true? " + hasWord 
-                if channel != "Data":
-                    line = "'"+line.replace(word,word.replace(beginName,"rfio:"+directory+"/"+channel+"/"+beginName))
+                if channel != "Data" and not "QCDEle" in directory :
+                    if "HT-" in channel or "QCD_Pt" in channel:
+                        line = "'"+line.replace(word,word.replace(beginName,"rfio:"+directory+"/QCDEle/"+beginName))
+                    else:    
+                        line = "'"+line.replace(word,word.replace(beginName,"rfio:"+directory+"/"+channel+"/"+beginName))
                 else:
                     line = "'"+line.replace(word,word.replace(beginName,"rfio:"+directory+"/"+beginName))
                 if ".root" in word:
@@ -122,6 +128,52 @@ def appendInput(fileName,directory,channel,prefix):
     o.close()    
     #    os.system("rm "+channel+"_input.py")
     return o
+
+
+def haddInput(directory,channel,prefix): 
+    o = open (channel+"_hadd.py","w")
+
+    
+    inputRedirect = "rfdir "+directory +"/"+channel+"/ | cut -c68-200 > "+ channel+"_input.py"
+    if channel == "Data":
+        inputRedirect = "rfdir "+directory +"| cut -c68-200 > "+ channel+"_input.py"
+    if "HT-" in channel or "QCD_Pt" in channel:
+        inputRedirect = "rfdir "+directory +"/QCDEle | cut -c68-200 > "+ channel+"_input.py"
+    os.system(inputRedirect)
+    tmp = open(channel+"_input.py")
+    lines = tmp.readlines()
+    command = ("hadd -f pileupdistr_"+channel+".root ")
+    for line in lines:
+        words = line.split()
+        hasWord = "true" 
+        for word in words:
+            beginName = prefix+channel
+            if beginName in word:
+            #print " word ok , is it true? " + hasWord 
+                if channel != "Data" and not "QCDEle" in directory :
+                    if "HT-" in channel or "QCD_Pt" in channel:
+                        line = line.replace(word,word.replace(beginName,"rfio:"+directory+"/QCDEle/"+beginName))
+                    else:    
+                        line = line.replace(word,word.replace(beginName,"rfio:"+directory+"/"+channel+"/"+beginName))
+                else:
+                    line = line.replace(word,word.replace(beginName,"rfio:"+directory+"/"+beginName))
+                if ".root" in word:
+                    line = line.replace(word,word.replace(".root",".root "))
+                if "\n" in word:
+                    line =(line.replace(word,word.replace("\n"," ")))
+#                print "line after " + line
+            else:
+                #print ("error! please, check that either the path : \n" +directory +"\n is correct or that the file name contains files starting with '"+beginName+"' \n (try rfdir "+directory +" | grep "+beginName+") \n")
+                hasWord = "false" 
+        if hasWord == "true":
+            command +=(line)
+    s = command.replace(os.linesep," ")
+    #sys.stdout.write(command)
+    o.write(s)
+    o.close()    
+    #    os.system("rm "+channel+"_input.py")
+    return o
+
 
 
 
@@ -160,23 +212,27 @@ for channel in channels:
     cfg_file = appendInput("./"+channel+"_cfg.py",inputDir,channel,Prefix)
 
     bsub_file = changeChannel(tmpNameBsub,channelOld,channel,Switch,SuffixBsub)
-    
+
+    hadd_file = haddInput(inputDir,channel,PrefixHisto)
     command = 'nohup cmsRun ./' + channel+SuffixCfg+' > /tmp/oiorio/'+channel+'_merge.log &'
     command_bsub = 'bsub -q1nd ' + channel + SuffixBsub
-
+    command_hadd = 'nohup ./'+channel+'_hadd.py > /tmp/oiorio/'+channel+'_hadd.log &' 
     
     
     print command +"\n"
     print command_bsub
 
     os.system("chmod 777 "+ channel + SuffixBsub)
+    os.system("chmod 777 "+ channel + "_hadd.py")
 
 
     if mode == "bsub":
         os.system(command_bsub ) 
     if mode == "cmsRun":
         os.system(command )
-        
+    if mode == "hadd":
+        os.system(command_hadd )
+
     
     
     #os.system("rm "+channel+"_cfg.py") 
