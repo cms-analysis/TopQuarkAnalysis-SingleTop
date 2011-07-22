@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.6 2011/07/18 18:46:17 oiorio Exp $ 
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.8 2011/07/22 08:09:39 oiorio Exp $ 
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file 
 //
@@ -772,11 +772,11 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       bool passesBTag = valueAlgo1  >bTagThreshold;
       bool passesAntiBTag = valueAlgo2 <1.7;
 
-      if(leptonsFlavour_ == "electron" && !isControlSample_) 
-	{
-	  valueAlgo2 = jetsBTagAlgo->at(i);
-	  passesAntiBTag = valueAlgo2 <1.93;
-	}
+      //      if(leptonsFlavour_ == "electron" && !isControlSample_) 
+      //	{
+      //	  valueAlgo2 = jetsBTagAlgo->at(i);
+      //	  passesAntiBTag = valueAlgo2 <1.93;
+      //	}
 
 
       if(!passesPtCut) continue;

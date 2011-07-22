@@ -59,7 +59,7 @@ process.WeightProducer = cms.EDProducer("SingleTopPileUpWeighter",
                                         )
 
 #Output
-process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/TChannel_sameAlgo.root"))
+process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/TChannel.root"))
 #process.TFileService = cms.Service("TFileService", fileName = cms.string("testNoPU.root"))
 
 process.load("SingleTopAnalyzers_cfi")
@@ -104,7 +104,7 @@ process.PUWeightsPath = cms.Path(
 )
 
 if channel_instruction == "allmc":
-    process.TreesEle.doTurnOn = cms.untracked.bool(False) 
+    #    process.TreesEle.doTurnOn = cms.untracked.bool(False) 
     process.PathSys = cms.Path(
     #    process.PlotsMu +
     #    process.PlotsEle +

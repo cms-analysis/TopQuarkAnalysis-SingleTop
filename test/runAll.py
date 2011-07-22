@@ -12,39 +12,41 @@ fileName = "SingleTopSystematicsWithTrigger_cfg.py"
 #Channels to include
 channels = [
 #
-  "DataMuV4",
-#  "DataEleV4",
+#  "DataMuV4",
+  "DataEleV4",
+#  "DataMuV12",
 #  "DataMuQCDV12",
+  "DataEleQCDV4",
 #  "DataEleQCDV12",
 #
 # "TWChannel",
-#
-#  "QCDMu",
-#
+##
+##  "QCDMu",
+##
 # "QCD_Pt_30to80_BCtoE",
 # "QCD_Pt_20to30_BCtoE",
 # "QCD_Pt_80to170_BCtoE",
-#
+##
 # "QCD_Pt_20to30_EMEnriched",
-# "QCD_Pt_30to80_EMEnriched",
-# "QCD_Pt_80to170_EMEnriched",
+# "Qcd_pt_30to80_emenriched ",
+# "QCD_Pt_80to170_EMEnriche#d",
 #
 # "HT_100to200",
 # "HT_200",
 #
 # "TTBar",
-## 
+# 
 # "ZJets",
 # "ZJets_wlight",
 # "ZJets_wcc",
 # "ZJets_wbb",
 # "TChannel",
 # "SChannel",#
-##
+###
 # "WJets_wlight",
 # "WJets_wcc",
 #"WJets_wbb",
-#"WJets",
+#"Wjets",
 #"Wc_wc",
 # "Vqq_wbb ",
 # "Vqq_wcc",
@@ -103,16 +105,17 @@ def changeChannel(fileName,channelOld,channelNew,switch,isMC):
         #       line = "process.source.fileNames = cms.untracked.vstring('"+dataPath+"Mu_v1Merged.root','"+dataPath+"Mu_v2Merged.root','"+dataPath+"Ele_v1Merged.root','"+dataPath+"Ele_v2Merged.root',)"
     if "DataMu" in channelNew:# == "DataMu" or channelNew == "DataMuQCD":
         inputs = "process.source.fileNames = cms.untracked.vstring("
-        inputs = inputs +"'"+dataPath+"Mu_v4Merged.root',"
-#        inputs = inputs +"'"+dataPath+"Mu_v2Merged.root',"
-#        inputs = inputs +"'"+dataPath+"Mu_v1Merged.root',"
+#        inputs = inputs +"'"+dataPath+"Mu_v4Merged.root',"
+        inputs = inputs +"'"+dataPath+"Mu_v2Merged.root',"
+        inputs = inputs +"'"+dataPath+"Mu_v1Merged.root',"
         inputs = inputs +")"
         o.write(inputs)
     if "DataEle" in channelNew:#channelNew == "DataEle" or channelNew == "DataEleQCD":
         inputs = "process.source.fileNames = cms.untracked.vstring("
 #        inputs = inputs +"'"+dataPath+"Ele_v4Merged.root',"
-        inputs = inputs +"'"+dataPath+"Ele_v2Merged.root',"
-        inputs = inputs +"'"+dataPath+"Ele_v1Merged.root',"
+        inputs = inputs +"'"+dataPath+"Ele_v4.root',"
+#        inputs = inputs +"'"+dataPath+"Ele_v2Merged.root',"
+#        inputs = inputs +"'"+dataPath+"Ele_v1Merged.root',"
         inputs = inputs +")"
         o.write(inputs)
     o.close()
