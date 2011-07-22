@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  * 
  * Produces systematics histograms out of a standard Single Top n-tuple 
- * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.6 2011/07/18 18:46:16 oiorio Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.7 2011/07/20 21:44:07 oiorio Exp $
  */
 
 
@@ -146,6 +146,7 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
     leptonsEnergy_,
     leptonsCharge_,
     leptonsRelIso_,
+    leptonsQCDRelIso_,
     leptonsID_,
     leptonsDB_,
     looseElectronsRelIso_,
@@ -173,6 +174,7 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
    leptonsEnergy,
    leptonsCharge,
    leptonsRelIso,
+   leptonsQCDRelIso,
    looseElectronsRelIso,
    looseMuonsRelIso,
    leptonsID,
@@ -220,7 +222,7 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   //Other variables definitions
   double bTagThreshold,maxPtCut;
   size_t bScanSteps;
-  bool doBScan_,doQCD_;
+  bool doBScan_,doQCD_,isControlSample_;
   //To be changed in 1 tree, now we keep 
   //because we have no time to change and debug
   map<string, TTree*> treesScan[10];
@@ -252,10 +254,16 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   bool gotLeptons,gotJets,gotMets;
 
 
-  double TCHP_LMisTagUp,  TCHP_BBTagUp, TCHP_CBTagUp, TCHP_LMisTagDown, TCHP_BBTagDown, TCHP_CBTagDown;
-  double TCHP_LAntiMisTagUp,  TCHP_BAntiBTagUp, TCHP_CAntiBTagUp, TCHP_LAntiMisTagDown, TCHP_BAntiBTagDown, TCHP_CAntiBTagDown;
-  double TCHP_C,  TCHP_B, TCHP_L;
-  double TCHP_CAnti,  TCHP_BAnti, TCHP_LAnti;
+  double TCHPM_LMisTagUp,  TCHPM_BBTagUp, TCHPM_CBTagUp, TCHPM_LMisTagDown, TCHPM_BBTagDown, TCHPM_CBTagDown;
+  double TCHPM_LAntiMisTagUp,  TCHPM_BAntiBTagUp, TCHPM_CAntiBTagUp, TCHPM_LAntiMisTagDown, TCHPM_BAntiBTagDown, TCHPM_CAntiBTagDown;
+  double TCHPM_C,  TCHPM_B, TCHPM_L;
+  double TCHPM_CAnti,  TCHPM_BAnti, TCHPM_LAnti;
+
+  double TCHPT_LMisTagUp,  TCHPT_BBTagUp, TCHPT_CBTagUp, TCHPT_LMisTagDown, TCHPT_BBTagDown, TCHPT_CBTagDown;
+  double TCHPT_LAntiMisTagUp,  TCHPT_BAntiBTagUp, TCHPT_CAntiBTagUp, TCHPT_LAntiMisTagDown, TCHPT_BAntiBTagDown, TCHPT_CAntiBTagDown;
+  double TCHPT_C,  TCHPT_B, TCHPT_L;
+  double TCHPT_CAnti,  TCHPT_BAnti, TCHPT_LAnti;
+
 
   double TCHE_LMisTagUp,  TCHE_BBTagUp, TCHE_CBTagUp, TCHE_LMisTagDown, TCHE_BBTagDown, TCHE_CBTagDown;
   double TCHE_LAntiMisTagUp,  TCHE_BAntiBTagUp, TCHE_CAntiBTagUp, TCHE_LAntiMisTagDown, TCHE_BAntiBTagDown, TCHE_CAntiBTagDown;

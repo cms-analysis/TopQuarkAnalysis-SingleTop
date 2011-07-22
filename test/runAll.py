@@ -12,10 +12,10 @@ fileName = "SingleTopSystematicsWithTrigger_cfg.py"
 #Channels to include
 channels = [
 #
-#  "DataMu",
-  "DataEle",
-#  "DataMuQCD",
-#  "DataEleQCD",
+  "DataMuV4",
+#  "DataEleV4",
+#  "DataMuQCDV12",
+#  "DataEleQCDV12",
 #
 # "TWChannel",
 #
@@ -24,7 +24,7 @@ channels = [
 # "QCD_Pt_30to80_BCtoE",
 # "QCD_Pt_20to30_BCtoE",
 # "QCD_Pt_80to170_BCtoE",
-##
+#
 # "QCD_Pt_20to30_EMEnriched",
 # "QCD_Pt_30to80_EMEnriched",
 # "QCD_Pt_80to170_EMEnriched",
@@ -32,13 +32,12 @@ channels = [
 # "HT_100to200",
 # "HT_200",
 #
- # "TTBar",
+# "TTBar",
 ## 
-## "ZJets",
+# "ZJets",
 # "ZJets_wlight",
 # "ZJets_wcc",
 # "ZJets_wbb",
-
 # "TChannel",
 # "SChannel",#
 ##
@@ -47,7 +46,7 @@ channels = [
 #"WJets_wbb",
 #"WJets",
 #"Wc_wc",
-# "Vqq_wbb",
+# "Vqq_wbb ",
 # "Vqq_wcc",
 # "VV",
    ]
@@ -69,7 +68,7 @@ channel_instruction = "all"
 def changeChannel(fileName,channelOld,channelNew,switch,isMC): 
     print " Channel test " + channelNew
     channelToReplace = channelNew
-    if channelNew=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
+    if "Data" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
         channelToReplace = "Data"
         #if channelNew=="DataEle":
        # channelNew_2 = "Data"
@@ -102,18 +101,18 @@ def changeChannel(fileName,channelOld,channelNew,switch,isMC):
         #        line = "process.source.fileNames = cms.untracked.vstring('"+dataPath+"DataMuMerged.root','"+dataPath+"DataEleMerged.root',)"
         #        line = "process.source.fileNames = cms.untracked.vstring('"+dataPath+"DataMuMerged.root',)"
         #       line = "process.source.fileNames = cms.untracked.vstring('"+dataPath+"Mu_v1Merged.root','"+dataPath+"Mu_v2Merged.root','"+dataPath+"Ele_v1Merged.root','"+dataPath+"Ele_v2Merged.root',)"
-    if channelNew == "DataMu" or channelNew == "DataMuQCD":
+    if "DataMu" in channelNew:# == "DataMu" or channelNew == "DataMuQCD":
         inputs = "process.source.fileNames = cms.untracked.vstring("
-#        inputs = inputs +"'"+dataPath+"Mu_v4Merged.root',"
-        inputs = inputs +"'"+dataPath+"Mu_v2Merged.root',"
-        inputs = inputs +"'"+dataPath+"Mu_v1Merged.root',"
+        inputs = inputs +"'"+dataPath+"Mu_v4Merged.root',"
+#        inputs = inputs +"'"+dataPath+"Mu_v2Merged.root',"
+#        inputs = inputs +"'"+dataPath+"Mu_v1Merged.root',"
         inputs = inputs +")"
         o.write(inputs)
-    if channelNew == "DataEle" or channelNew == "DataEleQCD":
+    if "DataEle" in channelNew:#channelNew == "DataEle" or channelNew == "DataEleQCD":
         inputs = "process.source.fileNames = cms.untracked.vstring("
-        inputs = inputs +"'"+dataPath+"Ele_v4Merged.root',"
-#        inputs = inputs +"'"+dataPath+"Ele_v2Merged.root',"
-#        inputs = inputs +"'"+dataPath+"Ele_v1Merged.root',"
+#        inputs = inputs +"'"+dataPath+"Ele_v4Merged.root',"
+        inputs = inputs +"'"+dataPath+"Ele_v2Merged.root',"
+        inputs = inputs +"'"+dataPath+"Ele_v1Merged.root',"
         inputs = inputs +")"
         o.write(inputs)
     o.close()
@@ -132,13 +131,13 @@ shutil.copy(fileName,tmpName)
 for channel in channels:
 
     isMC = "False"
-    if channel == "DataMu":
+    if "DataMu" in channel and not "QCD" in channel:
         channel_instruction = "mu"
-    elif channel == "DataEle":
+    elif "DataEle" in channel and not "QCD" in channel:
         channel_instruction = "ele"
-    elif channel == "DataMuQCD":
+    elif "DataMu" in channel and "QCD" in channel:
         channel_instruction = "muqcd"
-    elif channel == "DataEleQCD":
+    elif "DataEle" in channel and "QCD" in channel:
         channel_instruction = "eleqcd"
     else : 
         channel_instruction = "allmc"   

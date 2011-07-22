@@ -39,7 +39,6 @@ HLTFilterMuOrEleMC = cms.EDFilter('SingleTopTriggers',
                                   channel = cms.untracked.int32(1),#Useless now
                                   )                         
 
-
 HLTFilterMuQCD = cms.EDFilter('SingleTopTriggers',
                            HLTriggerResults = cms.InputTag("TriggerResults","",processNameData),
                            isMC = cms.untracked.bool(False),
@@ -53,7 +52,7 @@ HLTFilterMuQCD = cms.EDFilter('SingleTopTriggers',
 HLTFilterEleQCD = cms.EDFilter('SingleTopTriggers',
                                HLTriggerResults = cms.InputTag("TriggerResults","",processNameData),
                                isMC = cms.untracked.bool(False),
-                               triggerList = cms.vstring("HLT_Ele25_CaloIdVT_TrkIdT_CentralDiJet30_v",
+                               triggerList = cms.vstring("HLT_Ele25_CaloIdVT_TrkIdT_CentralJet30_v",
                                                          ),
                                runRangesList = cms.vint32(-1),
                                channel = cms.untracked.int32(5),#Useless now

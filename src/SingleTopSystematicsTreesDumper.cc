@@ -50,7 +50,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
   mcPUFile_ = channelInfo.getUntrackedParameter< std::string >("mcPUFile","pileupdistr_TChannel.root");
   puHistoName_ = channelInfo.getUntrackedParameter< std::string >("puHistoName","pileUpDumper/PileUp");
 
-
+  isControlSample_ = iConfig.getUntrackedParameter<bool>("isControlSample",false);
 
   RelIsoCut = channelInfo.getUntrackedParameter<double>("RelIsoCut",0.1);
   loosePtCut = channelInfo.getUntrackedParameter<double>("loosePtCut",30); 
@@ -63,6 +63,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
   leptonsEnergy_ =  iConfig.getParameter< edm::InputTag >("leptonsEnergy");
   leptonsCharge_ =  iConfig.getParameter< edm::InputTag >("leptonsCharge");
   leptonsRelIso_ =  iConfig.getParameter< edm::InputTag >("leptonsRelIso");
+  leptonsQCDRelIso_ =  iConfig.getParameter< edm::InputTag >("leptonsQCDRelIso");
   leptonsDB_ =  iConfig.getParameter< edm::InputTag >("leptonsDB");
   leptonsID_ =  iConfig.getParameter< edm::InputTag >("leptonsID");
 
@@ -77,6 +78,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
   jetsEnergy_ =  iConfig.getParameter< edm::InputTag >("jetsEnergy");
   
   jetsBTagAlgo_ =  iConfig.getParameter< edm::InputTag >("jetsBTagAlgo");
+  //  jetsAntiBTagAlgo_ =  iConfig.getParameter< edm::InputTag >("jetsAntiBTagAlgo");
   jetsAntiBTagAlgo_ =  iConfig.getParameter< edm::InputTag >("jetsAntiBTagAlgo");
   jetsFlavour_ =  iConfig.getParameter< edm::InputTag >("jetsFlavour");
 
@@ -366,6 +368,9 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
       treesScan[step][syst]->Branch("weight",&weightTree);
       treesScan[step][syst]->Branch("leptonRelIso",&lepRelIso);
 
+      treesScan[step][syst]->Branch("metPt",&metPt);
+
+
       treesScan[step][syst]->Branch("ID",&electronID);
 
       
@@ -378,6 +383,8 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
       treesScanQCD[step][syst]->Branch("costhetalj",&cosTree);
       treesScanQCD[step][syst]->Branch("topMass",&topMassTree);
       treesScanQCD[step][syst]->Branch("mtwMass",&mtwMassTree);
+
+      treesScanQCD[step][syst]->Branch("metPt",&metPt);
       
       treesScanQCD[step][syst]->Branch("highBTag",&highBTagTree);
       treesScanQCD[step][syst]->Branch("lowBTag",&lowBTagTree);
@@ -426,7 +433,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
   gotJets=0;
   gotMets=0;
 
-
+  //bool isControlSample_ = false; 
   
   iEvent.getByLabel(leptonsEta_,leptonsEta);
   iEvent.getByLabel(leptonsPt_,leptonsPt);
@@ -434,6 +441,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
   iEvent.getByLabel(leptonsEnergy_,leptonsEnergy);
   iEvent.getByLabel(leptonsCharge_,leptonsCharge);
   iEvent.getByLabel(leptonsRelIso_,leptonsRelIso);
+  iEvent.getByLabel(leptonsQCDRelIso_,leptonsQCDRelIso);
   iEvent.getByLabel(leptonsID_,leptonsID);
   
   iEvent.getByLabel(looseElectronsRelIso_,looseElectronsRelIso);
@@ -629,10 +637,12 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     for(size_t i = 0;i<nLeptons;++i){
       
       float leptonRelIso = leptonsRelIso->at(i);
+      float leptonQCDRelIso = leptonsQCDRelIso->at(i);
       lepRelIso = leptonRelIso;
       
       //Apply isolation cut
       if(leptonRelIso>RelIsoCut)continue;
+      if(leptonQCDRelIso>leptonRelIsoQCDCutLower)continue;
       //if electron apply ID cuts
       if(leptonsFlavour_ == "electron"  ) {
 	if(leptonsID->size()==0)cout<< "warning requiring ele id of collection which has no entries! Check the leptonsFlavour parameter "<<endl;
@@ -659,18 +669,19 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       for(size_t i = 0;i<nLeptons;++i){
 	
 	float leptonRelIso = leptonsRelIso->at(i);
+	float leptonQCDRelIso = leptonsQCDRelIso->at(i);
 	
 	
 	
 	lepRelIso = leptonRelIso;
 	//Use an anti-isolation requirement
 
-	if(leptonsFlavour_ == "muon"){
-	if(  leptonRelIso > leptonRelIsoQCDCutUpper )continue;
-	 if( leptonRelIso < leptonRelIsoQCDCutLower )continue;
-	}
+	//	if(leptonsFlavour_ == "muon"){
+	if(  leptonQCDRelIso > leptonRelIsoQCDCutUpper )continue;
+	 if( leptonQCDRelIso < leptonRelIsoQCDCutLower )continue;
+	 //	}
 	 if(leptonsFlavour_ == "electron"  ) {
-	   if( leptonRelIso < 0.1) continue;
+	   //if( leptonRelIso < 0.1) continue;
 	   float leptonID = leptonsID->at(i);
 	   if(!(leptonID == 2  || leptonID == 3 ||leptonID == 4)) continue;
 	   electronID = leptonID;
@@ -712,8 +723,9 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	hasTurnOnWeight=true;
       }
     }
+
     
-    Weight *= turnOnWeightValue;
+    //    Weight * turnOnWeightValue;
     Weight *= PUWeight;
     //Jets loop
     for(size_t i = 0;i<nJets;++i){
@@ -756,9 +768,16 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       
       double valueAlgo1 = jetsBTagAlgo->at(i);
       double valueAlgo2 = jetsAntiBTagAlgo->at(i);
-
+      
       bool passesBTag = valueAlgo1  >bTagThreshold;
       bool passesAntiBTag = valueAlgo2 <1.7;
+
+      if(leptonsFlavour_ == "electron" && !isControlSample_) 
+	{
+	  valueAlgo2 = jetsBTagAlgo->at(i);
+	  passesAntiBTag = valueAlgo2 <1.93;
+	}
+
 
       if(!passesPtCut) continue;
       
@@ -782,14 +801,14 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	if(abs(flavour)==4){ 
 	  //Old prescriptions had a constant SF for 
 	  //b(c) jets
-	  BTagWeight*=EventScaleFactorMap("TCHP_C",syst_name);
+	  BTagWeight*=EventScaleFactorMap("TCHPT_C",syst_name);
 	  //Add to the weight vector
-	  //	  b_weight_tag_algo1.push_back(TCHP_CTag);
-	  b_weight_tag_algo1.push_back(EventScaleFactorMap("TCHP_C",syst_name));
+	  //	  b_weight_tag_algo1.push_back(TCHPT_CTag);
+	  b_weight_tag_algo1.push_back(EventScaleFactorMap("TCHPT_C",syst_name));
 	}
 	if(abs(flavour)==5){
-	  BTagWeight*=EventScaleFactorMap("TCHP_B",syst_name);
-	  b_weight_tag_algo1.push_back(EventScaleFactorMap("TCHP_B",syst_name));
+	  BTagWeight*=EventScaleFactorMap("TCHPT_B",syst_name);
+	  b_weight_tag_algo1.push_back(EventScaleFactorMap("TCHPT_B",syst_name));
 	}
 	if((abs(flavour)<4 && abs(flavour)!=0) || abs(flavour) > 5 ){
 	  
@@ -808,9 +827,9 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	  //Function to retrieve the Mistag weight
 	  //Given the DataBase SF and the systematics (up/down)
 	  
-	  double mistagsf =  MisTagScaleFactor("TCHP_L",syst_name,SF,eff,SFErr); 
+	  double mistagsf =  MisTagScaleFactor("TCHPT_L",syst_name,SF,eff,SFErr); 
 	  */
-	  double mistagsf = EventScaleFactorMap("TCHP_L",syst_name);
+	  double mistagsf = EventScaleFactorMap("TCHPT_L",syst_name);
 	  //Apply mistag sf 
 	  BTagWeight*= mistagsf;
 	  b_weight_tag_algo1.push_back(mistagsf);
@@ -834,12 +853,12 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	    //b(c) jets
 	    //Notice that it requires the knowledge of b-efficiency on MC
 	    //Taken from an AN, will be updated with new recipes
-	    BTagWeight*=EventScaleFactorMap("TCHP_CAnti",syst_name);
+	    BTagWeight*=EventScaleFactorMap("TCHPT_CAnti",syst_name);
 
-	    b_weight_antitag_algo1.push_back(EventScaleFactorMap("TCHP_CAnti",syst_name));
+	    b_weight_antitag_algo1.push_back(EventScaleFactorMap("TCHPT_CAnti",syst_name));
 	  }
 	  if(abs(flavour)==5){
-	    BTagWeight*=EventScaleFactorMap("TCHP_BAnti",syst_name) ;
+	    BTagWeight*=EventScaleFactorMap("TCHPT_BAnti",syst_name) ;
 	    b_weight_antitag_algo1.push_back(EventScaleFactorMap("TCHB_BAnti",syst_name));
 	  }
 	  if((abs(flavour)<4 && abs(flavour)!=0) || abs(flavour) > 5 ){
@@ -858,9 +877,9 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	    
 	    //Function to retrieve the Mistag weight
 	    //Given the DataBase SF and the systematics (up/down)
-	    double mistagsf =  AntiMisTagScaleFactor("TCHP_L",syst_name,SF,eff,SFErr); 
+	    double mistagsf =  AntiMisTagScaleFactor("TCHPT_L",syst_name,SF,eff,SFErr); 
 	    */
-	    double mistagsf = EventScaleFactorMap("TCHP_LAnti",syst_name);
+	    double mistagsf = EventScaleFactorMap("TCHPT_LAnti",syst_name);
 	    BTagWeight*= mistagsf;
 	    b_weight_antitag_algo1.push_back(mistagsf);
 	    
@@ -872,6 +891,13 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	  
 	}
 	if(passesAntiBTag){
+
+	  string algoname ="TCHE";
+
+	  if  (leptonsFlavour_ == "electron" && !isControlSample_) {
+	    algoname ="TCHPM";
+	  }
+	  
 	  //Same thing as previous b-tag loop
 	  //with a different b-tagging algo: 
 	  
@@ -884,12 +910,16 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	  else{
 	    //For the rest, it is a repeat the previous case
 	    if(abs(flavour)==4) {
-	      BTagWeight*=EventScaleFactorMap("TCHE_CAnti",syst_name) ;
-	      b_weight_antitag_algo2.push_back(EventScaleFactorMap("TCHE_CAnti",syst_name));
+	      //	      BTagWeight*=EventScaleFactorMap(algoname+"_CAnti",syst_name) ;
+	      // b_weight_antitag_algo2.push_back(EventScaleFactorMap(algoname+"_CAnti",syst_name));
+		BTagWeight*=EventScaleFactorMap(algoname+"_CAnti",syst_name) ;
+		b_weight_antitag_algo2.push_back(EventScaleFactorMap(algoname+"_CAnti",syst_name));
 	    }
 	    if(abs(flavour)==5){
-	      BTagWeight*= EventScaleFactorMap("TCHE_BAnti",syst_name) ;
-	      b_weight_antitag_algo2.push_back(EventScaleFactorMap("TCHE_BAnti",syst_name));
+	      //	      BTagWeight*= EventScaleFactorMap(algoname+"_BAnti",syst_name) ;
+	      //b_weight_antitag_algo2.push_back(EventScaleFactorMap(algoname+"_BAnti",syst_name));
+		BTagWeight*= EventScaleFactorMap(algoname+"_BAnti",syst_name) ;
+		b_weight_antitag_algo2.push_back(EventScaleFactorMap(algoname+"_BAnti",syst_name));
 	    }
 	    if((abs(flavour)<4 && abs(flavour)!=0) || abs(flavour) > 5 ){
 	      /*      
@@ -903,10 +933,10 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 		      double SF = (perfHE->getResult(PerformanceResult::BTAGLEFFCORR,measurePoint));
 		      double SFErr = (perfHE->getResult(PerformanceResult::BTAGLERRCORR,measurePoint));
 		      
-		      double mistagsf =AntiMisTagScaleFactor("TCHE_L",syst_name,SF,eff,SFErr);
+		      double mistagsf =AntiMisTagScaleFactor(algoname+"_L",syst_name,SF,eff,SFErr);
 	      */
-	      
-	      double mistagsf = EventScaleFactorMap("TCHE_LAnti",syst_name);
+
+		double mistagsf = EventScaleFactorMap(algoname+"_LAnti",syst_name);
 	      BTagWeight*=  mistagsf;
 	      b_weight_antitag_algo2.push_back(mistagsf);
 	      
@@ -918,14 +948,21 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	  }
 	}
 	else{
+	  string algoname ="TCHE";
+
+	  //	  if  (leptonsFlavour_ == "electron" && !isControlSample_) {
+	  //  algoname ="TCHPM";
+	  //}
+
+
 	  //antibjets.push_back(jets.back());
 	  if(abs(flavour)==4) {
-	    BTagWeight*= EventScaleFactorMap("TCHE_C",syst_name) ;
-	    b_weight_tag_algo2.push_back(EventScaleFactorMap("TCHE_C",syst_name));
+	    BTagWeight*= EventScaleFactorMap(algoname+"_C",syst_name) ;
+	    b_weight_tag_algo2.push_back(EventScaleFactorMap(algoname+"_C",syst_name));
 	  }
 	  if(abs(flavour)==5){
-	    BTagWeight*= EventScaleFactorMap("TCHE_B",syst_name) ;
-	    b_weight_tag_algo2.push_back(EventScaleFactorMap("TCHE_B",syst_name));
+	    BTagWeight*= EventScaleFactorMap(algoname+"_B",syst_name) ;
+	    b_weight_tag_algo2.push_back(EventScaleFactorMap(algoname+"_B",syst_name));
 	  }
 	  if((abs(flavour)<4 && abs(flavour)!=0) || abs(flavour) > 5 ){
 	    
@@ -940,10 +977,10 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	    double SF = (perfHE->getResult(PerformanceResult::BTAGLEFFCORR,measurePoint));
 	    double SFErr = (perfHE->getResult(PerformanceResult::BTAGLERRCORR,measurePoint));
 	    
- 	    double mistagsf =AntiMisTagScaleFactor("TCHE_L",syst_name,SF,eff,SFErr);
+ 	    double mistagsf =AntiMisTagScaleFactor(algoname+"_L",syst_name,SF,eff,SFErr);
 	    */
 	    
-	    double mistagsf = EventScaleFactorMap("TCHE_L",syst_name);
+	    double mistagsf = EventScaleFactorMap(algoname+"_L",syst_name);
 	    BTagWeight*=  mistagsf;
 	    b_weight_tag_algo2.push_back(mistagsf);
 	    
@@ -999,7 +1036,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	   runTree = iEvent.eventAuxiliary().run();
 	   lumiTree = iEvent.eventAuxiliary().luminosityBlock();
 	   eventTree = iEvent.eventAuxiliary().event();
-	   weightTree = Weight*b_weight_tag_algo1.at(0)*b_weight_antitag_algo1.at(0) ;
+	   weightTree = Weight*b_weight_tag_algo1.at(0)*b_weight_antitag_algo1.at(0)* turnOnWeightValue ;
 	   
 	   etaTree = fabs(jets.at(lowBTagTreePosition).eta());
 	   cosTree = fCosThetaLJ;
@@ -1029,7 +1066,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	   totalEnergy = (top+jets.at(lowBTagTreePosition)).energy();
 	   totalMomentum = (top+jets.at(lowBTagTreePosition)).P();
 	   
-	   metPt = METPt->at(0);
+	   //	   metPt = METPt->at(0);
 	   metPhi = METPhi->at(0);
 	   
 	   
@@ -1058,9 +1095,11 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 		 runTree = iEvent.eventAuxiliary().run();
 		 lumiTree = iEvent.eventAuxiliary().luminosityBlock();
 		 eventTree = iEvent.eventAuxiliary().event();
-		 if(b_weight_antitag_algo1.size()==2) weightTree = Weight*b_weight_antitag_algo2.at(0)*b_weight_tag_algo2.at(0)*b_weight_antitag_algo1.at(highBTagTreePosition);
-		 if(b_weight_antitag_algo1.size()==1) weightTree = Weight*b_weight_antitag_algo2.at(0)*b_weight_tag_algo2.at(0)*b_weight_antitag_algo1.at(0);
+		 if(b_weight_antitag_algo1.size()==2) weightTree = Weight*b_weight_antitag_algo2.at(0)*b_weight_tag_algo2.at(0)*b_weight_antitag_algo1.at(highBTagTreePosition)* turnOnWeightValue;
+		 if(b_weight_antitag_algo1.size()==1) weightTree = Weight*b_weight_antitag_algo2.at(0)*b_weight_tag_algo2.at(0)*b_weight_antitag_algo1.at(0)* turnOnWeightValue;
 		 
+		 //		 metPt = METPt->at(0);
+
 		 etaTree = fabs(jets.at(lowBTagTreePosition).eta());
 		 etaTree2 = fabs(jets.at(highBTagTreePosition).eta());
 		 cosTree = fCosThetaLJ;
@@ -1073,6 +1112,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	     
 	     //WSample QCD
 	     if (antibjets.size()==2 ){ 
+	       
+	       
 
 	       int positionHigh = highBTagTreePosition;
 	       int positionLow = lowBTagTreePosition;
@@ -1090,7 +1131,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	       eventTree = iEvent.eventAuxiliary().event();
 	       //weightTree = Weight * b_weight_antitag_algo2.at(0) * b_weight_antitag_algo2.at(1);
 	       weightTree = Weight * b_weight_antitag_algo2.at(0) * b_weight_antitag_algo2.at(1);
-       
+	       
 	       cosTree = fCosThetaLJ;
 	       topMassTree = top.mass();
 	       mtwMassTree = MTWValue;
@@ -1106,7 +1147,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	       topPhi = top.phi();
 	       
 	       
-	       metPt = METPt->at(0);
+	       //       metPt = METPt->at(0);
 	       metPhi = METPhi->at(0);
 	       
 	       topMassTree = top.mass();
@@ -1176,7 +1217,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
        runTree = iEvent.eventAuxiliary().run();
        lumiTree = iEvent.eventAuxiliary().luminosityBlock();
        eventTree = iEvent.eventAuxiliary().event();
-       weightTree = Weight*b_weight_tag_algo1.at(0)*b_weight_antitag_algo1.at(0) ;
+       weightTree = Weight*b_weight_tag_algo1.at(0)*b_weight_antitag_algo1.at(0)* turnOnWeightValue;
        
        etaTree = fabs(jets.at(lowBTagTreePosition).eta());
        cosTree = fCosThetaLJ;
@@ -1214,7 +1255,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       totalEnergy = (top+jets.at(lowBTagTreePosition)).energy();
       totalMomentum = (top+jets.at(lowBTagTreePosition)).P();
       
-      metPt = METPt->at(0);
+      //      metPt = METPt->at(0);
       metPhi = METPhi->at(0);
       
       trees[syst_name]->Fill();
@@ -1241,8 +1282,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	    lumiTree = iEvent.eventAuxiliary().luminosityBlock();
 	    eventTree = iEvent.eventAuxiliary().event();
 	    
-	    if(b_weight_antitag_algo1.size()==2) weightTree = Weight*b_weight_antitag_algo2.at(0)*b_weight_tag_algo2.at(0)*b_weight_antitag_algo1.at(highBTagTreePosition);
-	    if(b_weight_antitag_algo1.size()==1) weightTree = Weight*b_weight_antitag_algo2.at(0)*b_weight_tag_algo2.at(0)*b_weight_antitag_algo1.at(0);
+	    if(b_weight_antitag_algo1.size()==2) weightTree = Weight*b_weight_antitag_algo2.at(0)*b_weight_tag_algo2.at(0)*b_weight_antitag_algo1.at(highBTagTreePosition)* turnOnWeightValue;
+	    if(b_weight_antitag_algo1.size()==1) weightTree = Weight*b_weight_antitag_algo2.at(0)*b_weight_tag_algo2.at(0)*b_weight_antitag_algo1.at(0)* turnOnWeightValue;
 	    
 
 	    etaTree = fabs(jets.at(lowBTagTreePosition).eta());
@@ -1250,6 +1291,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	    cosTree = fCosThetaLJ;
 	    topMassTree = top.mass();
 	    mtwMassTree = MTWValue;
+
+	    //	    metPt = METPt->at(0);
 
 	    fJetPt = jets.at(lowBTagTreePosition).pt();
 	    bJetPt = jets.at(highBTagTreePosition).pt();
@@ -1322,7 +1365,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	  topPhi = top.phi();
 	  
 	  
-	  metPt = METPt->at(0);
+	  //	  metPt = METPt->at(0);
 	  metPhi = METPhi->at(0);
 	  
 	  treesWSample[syst_name]->Fill();
@@ -1710,15 +1753,15 @@ double SingleTopSystematicsTreesDumper::EventAntiScaleFactor(string algo,string 
 
   
   if(syst_name == "MisTagUp" || syst_name == "BTagUp"){
-    return (1-tcheeff)/(1-tcheeff*(mistagcentral+mistagerr));
+    return (1-tcheeff)/(1-tcheeff/(mistagcentral+mistagerr));
   }
   
   if(syst_name == "MisTagDown" || syst_name == "BTagDown"){
-    return (1-tcheeff)/(1-tcheeff*(mistagcentral-mistagerr));
+    return (1-tcheeff)/(1-tcheeff/(mistagcentral-mistagerr));
     
   }
 
-  return (1-tcheeff)/(1-tcheeff*(mistagcentral));
+  return (1-tcheeff)/(1-tcheeff/(mistagcentral));
   
 }
 
@@ -1767,9 +1810,14 @@ double SingleTopSystematicsTreesDumper::SFMap(string algo ){
   if(algo == "TCHPT_C")return 0.89;
   if(algo == "TCHPT_L")return 1.17;
 
+  if(algo == "TCHPM_B")return 0.91;
+  if(algo == "TCHPM_C")return 0.91;
+  if(algo == "TCHPM_L")return 0.91;
+
   if(algo == "TCHEL_B")return 0.95;
   if(algo == "TCHEL_C")return 0.95;
   if(algo == "TCHEL_L")return 1.11;
+
 
   return 0.9;
 }
@@ -1778,6 +1826,10 @@ double SingleTopSystematicsTreesDumper::SFErrMap(string algo ){
   if(algo == "TCHPT_B")return 0.092;
   if(algo == "TCHPT_C")return 0.092;
   if(algo == "TCHPT_L")return 0.18;
+
+  if(algo == "TCHPM_B")return 0.10;
+  if(algo == "TCHPM_C")return 0.10;
+  if(algo == "TCHPM_L")return 0.11;
 
   if(algo == "TCHEL_B")return 0.10;
   if(algo == "TCHEL_C")return 0.10;
@@ -1795,6 +1847,10 @@ double SingleTopSystematicsTreesDumper::EFFMap(string algo ){
   if(algo == "TCHEL_C")return 0.765;
   if(algo == "TCHEL_L")return 0.13;
 
+  if(algo == "TCHPM_B")return 0.48;
+  if(algo == "TCHPM_C")return 0.48;
+  if(algo == "TCHPM_L")return 0.0177;
+
   return 0.36;
 }
 
@@ -1808,7 +1864,11 @@ double SingleTopSystematicsTreesDumper::EFFErrMap(string algo ){
   if(algo == "TCHEL_B")return 0.05;
   if(algo == "TCHEL_C")return 0.05;
   if(algo == "TCHEL_L")return 0.03;
-  
+
+  if(algo == "TCHEL_B")return 0.05;
+  if(algo == "TCHEL_C")return 0.05;
+  if(algo == "TCHEL_L")return 0.004;
+
   return 0.05;
 }
 
@@ -1816,40 +1876,79 @@ double SingleTopSystematicsTreesDumper::EFFErrMap(string algo ){
 double SingleTopSystematicsTreesDumper::EventScaleFactorMap(string algo, string syst ){
 
   
-  if( algo== "TCHP_B" && syst == "BTagUp" )return
-    TCHP_BBTagUp;
-  if( algo== "TCHP_B" && syst == "BTagDown" )return
-    TCHP_BBTagDown;
-  if( algo== "TCHP_C" && syst == "BTagUp" )return
-    TCHP_CBTagUp;
-  if( algo== "TCHP_C" && syst == "BTagDown" )return
-    TCHP_CBTagDown;
-  if( algo== "TCHP_L" && syst == "MisTagUp" )return
-    TCHP_LMisTagUp;
-  if( algo== "TCHP_L" && syst == "MisTagDown" )return
-    TCHP_LMisTagDown;
+  if( algo== "TCHPT_B" && syst == "BTagUp" )return
+    TCHPT_BBTagUp;
+  if( algo== "TCHPT_B" && syst == "BTagDown" )return
+    TCHPT_BBTagDown;
+  if( algo== "TCHPT_C" && syst == "BTagUp" )return
+    TCHPT_CBTagUp;
+  if( algo== "TCHPT_C" && syst == "BTagDown" )return
+    TCHPT_CBTagDown;
+  if( algo== "TCHPT_L" && syst == "MisTagUp" )return
+    TCHPT_LMisTagUp;
+  if( algo== "TCHPT_L" && syst == "MisTagDown" )return
+    TCHPT_LMisTagDown;
     
-  if( algo== "TCHP_BAnti" && syst == "BTagUp" )return
-    TCHP_BAntiBTagUp;
-  if( algo== "TCHP_BAnti" && syst == "BTagDown" )return
-    TCHP_BAntiBTagDown;
-  if( algo== "TCHP_BAnti" && syst == "BTagUp" )return
-    TCHP_CAntiBTagUp;
-  if( algo== "TCHP_BAnti" && syst == "BTagDown" )return
-    TCHP_CAntiBTagDown;
-  if( algo== "TCHP_BAnti" && syst == "BTagUp" )return
-    TCHP_LAntiMisTagUp;
-  if( algo== "TCHP_BAnti" && syst == "BTagDown" )return
-    TCHP_LAntiMisTagDown;
+  if( algo== "TCHPT_BAnti" && syst == "BTagUp" )return
+    TCHPT_BAntiBTagUp;
+  if( algo== "TCHPT_BAnti" && syst == "BTagDown" )return
+    TCHPT_BAntiBTagDown;
+  if( algo== "TCHPT_BAnti" && syst == "BTagUp" )return
+    TCHPT_CAntiBTagUp;
+  if( algo== "TCHPT_BAnti" && syst == "BTagDown" )return
+    TCHPT_CAntiBTagDown;
+  if( algo== "TCHPT_BAnti" && syst == "BTagUp" )return
+    TCHPT_LAntiMisTagUp;
+  if( algo== "TCHPT_BAnti" && syst == "BTagDown" )return
+    TCHPT_LAntiMisTagDown;
   
-  if( algo== "TCHP_B" )return TCHP_B;
-  if( algo== "TCHP_C" )return TCHP_C;
-  if( algo== "TCHP_L" )return TCHP_L;
+  if( algo== "TCHPT_B" )return TCHPT_B;
+  if( algo== "TCHPT_C" )return TCHPT_C;
+  if( algo== "TCHPT_L" )return TCHPT_L;
   
-  if( algo== "TCHP_BAnti" )return   TCHP_BAnti;
-  if( algo== "TCHP_CAnti" )return   TCHP_CAnti;
-  if( algo== "TCHP_LAnti" )return   TCHP_LAnti;
+  if( algo== "TCHPT_BAnti" )return   TCHPT_BAnti;
+  if( algo== "TCHPT_CAnti" )return   TCHPT_CAnti;
+  if( algo== "TCHPT_LAnti" )return   TCHPT_LAnti;
 
+
+  /////m
+
+  if( algo== "TCHPM_B" && syst == "BTagUp" )return
+    TCHPM_BBTagUp;
+  if( algo== "TCHPM_B" && syst == "BTagDown" )return
+    TCHPM_BBTagDown;
+  if( algo== "TCHPM_C" && syst == "BTagUp" )return
+    TCHPM_CBTagUp;
+  if( algo== "TCHPM_C" && syst == "BTagDown" )return
+    TCHPM_CBTagDown;
+  if( algo== "TCHPM_L" && syst == "MisTagUp" )return
+    TCHPM_LMisTagUp;
+  if( algo== "TCHPM_L" && syst == "MisTagDown" )return
+    TCHPM_LMisTagDown;
+    
+  if( algo== "TCHPM_BAnti" && syst == "BTagUp" )return
+    TCHPM_BAntiBTagUp;
+  if( algo== "TCHPM_BAnti" && syst == "BTagDown" )return
+    TCHPM_BAntiBTagDown;
+  if( algo== "TCHPM_BAnti" && syst == "BTagUp" )return
+    TCHPM_CAntiBTagUp;
+  if( algo== "TCHPM_BAnti" && syst == "BTagDown" )return
+    TCHPM_CAntiBTagDown;
+  if( algo== "TCHPM_BAnti" && syst == "BTagUp" )return
+    TCHPM_LAntiMisTagUp;
+  if( algo== "TCHPM_BAnti" && syst == "BTagDown" )return
+    TCHPM_LAntiMisTagDown;
+  
+  if( algo== "TCHPM_B" )return TCHPM_B;
+  if( algo== "TCHPM_C" )return TCHPM_C;
+  if( algo== "TCHPM_L" )return TCHPM_L;
+  
+  if( algo== "TCHPM_BAnti" )return   TCHPM_BAnti;
+  if( algo== "TCHPM_CAnti" )return   TCHPM_CAnti;
+  if( algo== "TCHPM_LAnti" )return   TCHPM_LAnti;
+
+
+  /////m
 
   if( algo== "TCHE_B" && syst == "BTagUp" )return
     TCHE_BBTagUp;
@@ -1879,13 +1978,13 @@ double SingleTopSystematicsTreesDumper::EventScaleFactorMap(string algo, string 
 
  
 
-  if( algo== "TCHP_B" )return TCHP_B;
-  if( algo== "TCHP_C" )return TCHP_C;
-  if( algo== "TCHP_L" )return TCHP_L;
+  if( algo== "TCHE_B" )return TCHE_B;
+  if( algo== "TCHE_C" )return TCHE_C;
+  if( algo== "TCHE_L" )return TCHE_L;
     
-  if( algo== "TCHP_BAnti" )return   TCHP_BAnti;
-  if( algo== "TCHP_CAnti" )return   TCHP_CAnti;
-  if( algo== "TCHP_LAnti" )return   TCHP_LAnti;
+  if( algo== "TCHE_BAnti" )return   TCHE_BAnti;
+  if( algo== "TCHE_CAnti" )return   TCHE_CAnti;
+  if( algo== "TCHE_LAnti" )return   TCHE_LAnti;
   
   return 1.;
 
@@ -1893,31 +1992,59 @@ double SingleTopSystematicsTreesDumper::EventScaleFactorMap(string algo, string 
 
 
 void SingleTopSystematicsTreesDumper::InitializeEventScaleFactorMap(){
-    TCHP_B = EventScaleFactor("TCHP_B","noSyst");
-    TCHP_C = EventScaleFactor("TCHP_C","noSyst");
-    TCHP_L = EventScaleFactor("TCHP_L","noSyst");
+
+    TCHPT_B = EventScaleFactor("TCHPT_B","noSyst");
+    TCHPT_C = EventScaleFactor("TCHPT_C","noSyst");
+    TCHPT_L = EventScaleFactor("TCHPT_L","noSyst");
     
   
-    TCHP_BBTagUp = EventScaleFactor("TCHP_B","BTagUp");
-    TCHP_BBTagDown = EventScaleFactor("TCHP_B","BTagDown");
-    TCHP_CBTagUp = EventScaleFactor("TCHP_C","BTagUp");
-    TCHP_CBTagDown = EventScaleFactor("TCHP_C","BTagDown");
-    TCHP_LMisTagUp = EventScaleFactor("TCHP_L","MisTagUp");
-    TCHP_LMisTagDown = EventScaleFactor("TCHP_L","MisTagDown");
+    TCHPT_BBTagUp = EventScaleFactor("TCHPT_B","BTagUp");
+    TCHPT_BBTagDown = EventScaleFactor("TCHPT_B","BTagDown");
+    TCHPT_CBTagUp = EventScaleFactor("TCHPT_C","BTagUp");
+    TCHPT_CBTagDown = EventScaleFactor("TCHPT_C","BTagDown");
+    TCHPT_LMisTagUp = EventScaleFactor("TCHPT_L","MisTagUp");
+    TCHPT_LMisTagDown = EventScaleFactor("TCHPT_L","MisTagDown");
     
 
-    TCHP_BAnti = EventAntiScaleFactor("TCHP_B","noSyst");
-    TCHP_CAnti = EventAntiScaleFactor("TCHP_C","noSyst");
-    TCHP_LAnti = EventAntiScaleFactor("TCHP_L","noSyst");
+    TCHPT_BAnti = EventAntiScaleFactor("TCHPT_B","noSyst");
+    TCHPT_CAnti = EventAntiScaleFactor("TCHPT_C","noSyst");
+    TCHPT_LAnti = EventAntiScaleFactor("TCHPT_L","noSyst");
 
-    TCHP_BAntiBTagUp = EventAntiScaleFactor("TCHP_B","BTagUp");
-    TCHP_BAntiBTagDown = EventAntiScaleFactor("TCHP_B","BTagDown");
-    TCHP_CAntiBTagUp = EventAntiScaleFactor("TCHP_C","BTagUp");
-    TCHP_CAntiBTagDown = EventAntiScaleFactor("TCHP_C","BTagDown");
-    TCHP_LAntiMisTagUp = EventAntiScaleFactor("TCHP_L","MisTagUp");
-    TCHP_LAntiMisTagDown = EventAntiScaleFactor("TCHP_L","MisTagDown");
+    TCHPT_BAntiBTagUp = EventAntiScaleFactor("TCHPT_B","BTagUp");
+    TCHPT_BAntiBTagDown = EventAntiScaleFactor("TCHPT_B","BTagDown");
+    TCHPT_CAntiBTagUp = EventAntiScaleFactor("TCHPT_C","BTagUp");
+    TCHPT_CAntiBTagDown = EventAntiScaleFactor("TCHPT_C","BTagDown");
+    TCHPT_LAntiMisTagUp = EventAntiScaleFactor("TCHPT_L","MisTagUp");
+    TCHPT_LAntiMisTagDown = EventAntiScaleFactor("TCHPT_L","MisTagDown");
 
 
+  //  TCHP_LAntiMisTagDown = EventAntiScaleFactor("TCHP_L","MisTagDown");
+
+    TCHPM_B = EventScaleFactor("TCHPM_B","noSyst");
+    TCHPM_C = EventScaleFactor("TCHPM_C","noSyst");
+    TCHPM_L = EventScaleFactor("TCHPM_L","noSyst");
+    
+  
+    TCHPM_BBTagUp = EventScaleFactor("TCHPM_B","BTagUp");
+    TCHPM_BBTagDown = EventScaleFactor("TCHPM_B","BTagDown");
+    TCHPM_CBTagUp = EventScaleFactor("TCHPM_C","BTagUp");
+    TCHPM_CBTagDown = EventScaleFactor("TCHPM_C","BTagDown");
+    TCHPM_LMisTagUp = EventScaleFactor("TCHPM_L","MisTagUp");
+    TCHPM_LMisTagDown = EventScaleFactor("TCHPM_L","MisTagDown");
+    
+
+    TCHPM_BAnti = EventAntiScaleFactor("TCHPM_B","noSyst");
+    TCHPM_CAnti = EventAntiScaleFactor("TCHPM_C","noSyst");
+    TCHPM_LAnti = EventAntiScaleFactor("TCHPM_L","noSyst");
+
+    TCHPM_BAntiBTagUp = EventAntiScaleFactor("TCHPM_B","BTagUp");
+    TCHPM_BAntiBTagDown = EventAntiScaleFactor("TCHPM_B","BTagDown");
+    TCHPM_CAntiBTagUp = EventAntiScaleFactor("TCHPM_C","BTagUp");
+    TCHPM_CAntiBTagDown = EventAntiScaleFactor("TCHPM_C","BTagDown");
+    TCHPM_LAntiMisTagUp = EventAntiScaleFactor("TCHPM_L","MisTagUp");
+    TCHPM_LAntiMisTagDown = EventAntiScaleFactor("TCHPM_L","MisTagDown");
+
+    /////
 
     TCHE_B = EventScaleFactor("TCHE_B","noSyst");
     TCHE_C = EventScaleFactor("TCHE_C","noSyst");

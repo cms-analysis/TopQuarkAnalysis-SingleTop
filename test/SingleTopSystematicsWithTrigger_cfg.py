@@ -48,6 +48,7 @@ process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/TChannelMerge
 #process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/edmntuple_WJets_96_1_ClQ.root")
 
 #PileUpSync
+
 process.WeightProducer = cms.EDProducer("SingleTopPileUpWeighter",
                                         syncPU = cms.InputTag("NVertices","PileUpSync"),
                                         dataPUFile = cms.untracked.string("pileUpDistr.root"),
@@ -63,6 +64,7 @@ process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/o
 
 process.load("SingleTopAnalyzers_cfi")
 process.load("SingleTopRootPlizer_cfi")
+
 process.load("SingleTopFilters_cfi")
 from SingleTopPSets_cfi import *
 
@@ -102,6 +104,7 @@ process.PUWeightsPath = cms.Path(
 )
 
 if channel_instruction == "allmc":
+    process.TreesEle.doTurnOn = cms.untracked.bool(False) 
     process.PathSys = cms.Path(
     #    process.PlotsMu +
     #    process.PlotsEle +
@@ -156,6 +159,7 @@ if channel_instruction == "muqcd":
 if channel_instruction == "eleqcd":
     process.TreesEle.doTurnOn = cms.untracked.bool(False) 
     process.TreesEle.doPU = cms.untracked.bool(False) 
+    process.TreesEle.isControlSample = cms.untracked.bool(True) 
     process.PathSysEle = cms.Path(
     #    process.PlotsMu +
     #    process.PlotsEle +

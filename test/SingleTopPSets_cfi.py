@@ -10,7 +10,7 @@ TChannelMu = cms.PSet(
     originalEvents = cms.untracked.double(480000),
     finalLumi = lumiMu,
     MTWCut = cms.untracked.double(50.0),#Default 50.0 GeV
-    RelIsoCut = cms.untracked.double(0.05),
+    RelIsoCut = cms.untracked.double(0.1),
     mcPUFile = cms.untracked.string("pileupdistr_TChannel.root"),
     puHistoName = cms.untracked.string("pileUpDumper/PileUpTChannel"),
     )
@@ -33,7 +33,7 @@ TWChannelMu = cms.PSet(
             originalEvents = cms.untracked.double(409417),
             finalLumi = lumiMu,
             MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
-            RelIsoCut = cms.untracked.double(0.05),
+            RelIsoCut = cms.untracked.double(0.1),
         mcPUFile = cms.untracked.string("pileupdistr_TWChannel.root"),
         puHistoName = cms.untracked.string("pileUpDumper/PileUpTWChannel"),
             )
@@ -55,7 +55,7 @@ SChannelMu = cms.PSet(
                         originalEvents = cms.untracked.double(494967),
                         finalLumi = lumiMu,
                         MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
-                        RelIsoCut = cms.untracked.double(0.05),
+                        RelIsoCut = cms.untracked.double(0.1),
             mcPUFile = cms.untracked.string("pileupdistr_SChannel.root"),
         puHistoName = cms.untracked.string("pileUpDumper/PileUpSChannel"),
                         )
@@ -77,7 +77,7 @@ ZJetsMu = cms.PSet(
     finalLumi = lumiMu,
     originalEvents = cms.untracked.double(2595097),
     MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
-    RelIsoCut = cms.untracked.double(0.05),
+    RelIsoCut = cms.untracked.double(0.1),
     mcPUFile = cms.untracked.string("pileupdistr_ZJets.root"),
     puHistoName = cms.untracked.string("pileUpDumper/PileUpZJets"),
 )
@@ -98,7 +98,7 @@ WJetsMu = cms.PSet(
     finalLumi = lumiMu,
     originalEvents = cms.untracked.double(14800000),
     MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
-    RelIsoCut = cms.untracked.double(0.05),
+    RelIsoCut = cms.untracked.double(0.1),
     mcPUFile = cms.untracked.string("pileupdistr_WJets.root"),
     puHistoName = cms.untracked.string("pileUpDumper/PileUpWJets"),
 )
@@ -121,7 +121,7 @@ WJets_wlightMu = cms.PSet(
     finalLumi = lumiMu,
     originalEvents = cms.untracked.double(14800000),
     MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
-    RelIsoCut = cms.untracked.double(0.05),
+    RelIsoCut = cms.untracked.double(0.1),
     mcPUFile = cms.untracked.string("pileupdistr_WJets.root"),
     puHistoName = cms.untracked.string("pileUpDumper/PileUpWJets"),
     )
@@ -144,7 +144,7 @@ WJets_wccMu = cms.PSet(
     finalLumi = lumiMu,
     originalEvents = cms.untracked.double(14800000),
     MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
-    RelIsoCut = cms.untracked.double(0.05),
+    RelIsoCut = cms.untracked.double(0.1),
     mcPUFile = cms.untracked.string("pileupdistr_WJets.root"),
     puHistoName = cms.untracked.string("pileUpDumper/PileUpWJets"),
     )
@@ -165,7 +165,7 @@ WJets_wbbMu = cms.PSet(
     finalLumi = lumiMu,
     originalEvents = cms.untracked.double(14800000),
     MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
-    RelIsoCut = cms.untracked.double(0.05),
+    RelIsoCut = cms.untracked.double(0.1),
     mcPUFile = cms.untracked.string("pileupdistr_WJets.root"),
     puHistoName = cms.untracked.string("pileUpDumper/PileUpWJets"),
     )
@@ -189,7 +189,7 @@ ZJets_wlightMu = cms.PSet(
     finalLumi = lumiMu,
     originalEvents = cms.untracked.double(2543706),
     MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
-    RelIsoCut = cms.untracked.double(0.05),
+    RelIsoCut = cms.untracked.double(0.1),
     mcPUFile = cms.untracked.string("pileupdistr_ZJets.root"),
     puHistoName = cms.untracked.string("pileUpDumper/PileUpZJets"),
     )
@@ -212,7 +212,7 @@ ZJets_wccMu = cms.PSet(
     finalLumi = lumiMu,
     originalEvents = cms.untracked.double(2543706),
     MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
-    RelIsoCut = cms.untracked.double(0.05),
+    RelIsoCut = cms.untracked.double(0.1),
     mcPUFile = cms.untracked.string("pileupdistr_ZJets.root"),
     puHistoName = cms.untracked.string("pileUpDumper/PileUpZJets"),
     )
@@ -233,7 +233,7 @@ ZJets_wbbMu = cms.PSet(
     finalLumi = lumiMu,
     originalEvents = cms.untracked.double(2543706),
     MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
-    RelIsoCut = cms.untracked.double(0.05),
+    RelIsoCut = cms.untracked.double(0.1),
     mcPUFile = cms.untracked.string("pileupdistr_ZJets.root"),
     puHistoName = cms.untracked.string("pileUpDumper/PileUpZJets"),
     )
@@ -257,7 +257,7 @@ Vqq_wbbMu = cms.PSet(
     finalLumi = lumiMu,
     originalEvents = cms.untracked.double(740488),
     MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
-    RelIsoCut = cms.untracked.double(0.05),
+    RelIsoCut = cms.untracked.double(0.1),
     mcPUFile = cms.untracked.string("pileupdistr_Vqq.root"),
     puHistoName = cms.untracked.string("pileUpDumper/PileUpVqq"),
     )
@@ -281,7 +281,7 @@ Vqq_wccMu = cms.PSet(
     finalLumi = lumiMu,
     originalEvents = cms.untracked.double(740488),
     MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
-    RelIsoCut = cms.untracked.double(0.05),
+    RelIsoCut = cms.untracked.double(0.1),
     mcPUFile = cms.untracked.string("pileupdistr_Vqq.root"),
     puHistoName = cms.untracked.string("pileUpDumper/PileUpVqq"),
     )
@@ -306,7 +306,7 @@ Wc_wcMu = cms.PSet(
     finalLumi = lumiMu,
     originalEvents = cms.untracked.double(2792637),
     MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
-    RelIsoCut = cms.untracked.double(0.05),
+    RelIsoCut = cms.untracked.double(0.1),
     mcPUFile = cms.untracked.string("pileupdistr_Wc.root"),
     puHistoName = cms.untracked.string("pileUpDumper/PileUpWc"),
     )
@@ -329,7 +329,7 @@ VVMu = cms.PSet(
     finalLumi = lumiMu,
     originalEvents = cms.untracked.double(963356),
     MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
-    RelIsoCut = cms.untracked.double(0.05),
+    RelIsoCut = cms.untracked.double(0.1),
     mcPUFile = cms.untracked.string("pileupdistr_VV.root"),
     puHistoName = cms.untracked.string("pileUpDumper/PileUpVV"),
     )
@@ -354,7 +354,7 @@ TTBarMu = cms.PSet(
     originalEvents = cms.untracked.double(924208),
     finalLumi = lumiMu,
     MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
-    RelIsoCut = cms.untracked.double(0.05),
+    RelIsoCut = cms.untracked.double(0.1),
     mcPUFile = cms.untracked.string("pileupdistr_TTBar.root"),
     puHistoName = cms.untracked.string("pileUpDumper/PileUpTTBar"),
     )
@@ -377,7 +377,7 @@ DataMu = cms.PSet(
     originalEvents = cms.untracked.double(-1),
     finalLumi = cms.untracked.double(-1),
     MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
-    RelIsoCut = cms.untracked.double(0.05),
+    RelIsoCut = cms.untracked.double(0.1),
     mcPUFile = cms.untracked.string("pileupdistr_VV.root"),
     puHistoName = cms.untracked.string("pileUpDumper/PileUpVV"),
     )
