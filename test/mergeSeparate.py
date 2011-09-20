@@ -5,16 +5,13 @@ import os,sys,re,shutil
 
 #Castor directory with all sub-directories:
 #inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/MC2011/Summer11/"
+inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/MC2011/Summer11/Sep04"
+inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/MC2011/Summer11/Aug30"
 #inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/MC2011/Summer11/Aug28"
+#inputDir = "/castor/cern.ch/user/m/mmerola/SingleTop_2011/MC2011/Summer11/Aug30"
 #inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/Run2011/Aug24/"
-#inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop2011/Run2011/Data/Ele"
-inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/Run2011/Aug30"
-#inputDir = "/castor/cern.ch/user/m/mmerola/SingleTop_2011/Spring11/"
-#inputDir = "/castor/cern.ch/user/m/mmerola/SingleTop_2011/Summer11/"
-#inputDir = "/castor/cern.ch/user/m/mmerola/SingleTop_2011/Summer11/Run/"
-#inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/Run2011/Ele_v4/Ele_v4"
-#inputDir = "/castor/cern.ch/user/m/mmerola/SingleTop_AfterMoriond/Data"
-#inputDir = "/castor/cern.ch/user/m/mmerola/SingleTop_AfterMoriond/MC/"
+#inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/Run2011/Aug30"
+
 
 #Original config file
 #fName = "copyTemplate.py"
@@ -29,13 +26,19 @@ f = open(fName)
 
 #Channels to include
 channels = [
-#    "TChannel",
+#"TTBar",
+#"SChannel",
+#   "TWChannel",
 #    "TbarChannel",
 #"WW",
 #"WZ",
 #"ZZ",
 #    "TWChannel",
 #    "TbarWChannel",
+#    "ZJets_part_1",
+#    "ZJets_part_2",
+#    "ZJets_part_3",
+#    "SbarChannel",
 #    "SChannel",
 #    "VV",
 #    "TbarChannel",
@@ -46,15 +49,35 @@ channels = [
 #"QCD_Pt_20to30_EMEnriched",
 #"QCD_Pt_30to80_EMEnriched",
 #"QCD_Pt_80to170_EMEnriched",
+#"WJets_Q2Down"
 #"QCD_Pt_20to30_BCtoE",
-#"QCD_Pt_30to80_BCtoE",
+"QCD_Pt_30to80_BCtoE",
 #"QCD_Pt_80to170_BCtoE",
 #     "ZJets",
-#     "QCDMu",
-#     "DataEle",
+#    "QCDMu_part_1",
+#    "QCDMu_part_2",
+#    "QCDMu_part_3",
+#    "QCDMu_part_4",
+#    "QCDMu_part_5",
+#    "QCDMu_part_6",
+#    "QCDMu_part_7",
+#     "Dataele",
 #     "QCDMu",
 #     "QCDEle",
-#     "WJets",
+#     "WJets_part_1",
+#     "WJets_part_2",
+#     "WJets_part_3",
+#     "WJets_part_4",
+#     "WJets_part_5",
+#     "WJets_part_6",
+#     "WJets_part_7",
+ #    "WJets_part_8",
+#     "WJets_part_9",
+#     "WJets_part_10",
+##     "WJets_part_11",
+#     "WJets_part_12",
+#     "WJets_part_13",
+#     "WJets_part_14",
 #    "Mu",
 #"Mu_v1",
 # "Mu_v4_part_1",
@@ -63,10 +86,10 @@ channels = [
 #"EleHad_v4_part_1",
 #"EleHad_v4_part_2",
 #"EleHad_v4_part_3",
-"Mu_Aug05",
-"Mu_May10",
-"EleHad_Aug05",
-"EleHad_May10",
+#"Mu_Aug05",
+#"Mu_May10",
+#"EleHad_Aug05",
+#"EleHad_May10",
 #"Mu_Aug05",
 #"Ele_v1",
 #"Ele_v2",
@@ -78,7 +101,7 @@ channels = [
     ]
 
 
-Prefix = "edmntuple_Data"
+Prefix = "edmntuple_"
 PrefixHisto = "pileupdistr_"
 #Prefix = ""
 
@@ -130,11 +153,11 @@ def appendInput(fileName,directory,channel,prefix,parts):
             number = int(channel_number[1])
         print "split channel + number "+ channel + " , " + str(number)  
     print " outsude channel " + channel     
-    inputRedirect = "rfdir "+directory +"/"+channel+"/ | cut -c68-200 > "+ channel+"_input.py"
+    inputRedirect = "rfdir "+directory +"/"+channel+"/ | grep " + prefix + " | cut -c68-200 > "+ channel+"_input.py"
     if channel == "Data" or "QCDEle" in directory or "V2" in directory:
-        inputRedirect = "rfdir "+directory +"| cut -c68-200 > "+ channel+"_input.py"
+        inputRedirect = "rfdir "+directory +"| grep " + prefix + " | cut  -c68-200 > "+ channel+"_input.py"
     if "HT_" in channel or "QCD_Pt" in channel:
-        inputRedirect = "rfdir "+directory +"/QCDEle | cut -c68-200 > "+ channel+"_input.py"
+        inputRedirect = "rfdir "+directory +"/QCDEle | grep " + prefix + " | cut  -c68-200 > "+ channel+"_input.py"
     os.system(inputRedirect)
     
     tmp = open(channel+"_input.py","rw")
@@ -165,8 +188,13 @@ def appendInput(fileName,directory,channel,prefix,parts):
     tmp2.close()
     tmp2=open(channel+"_input_part"+str(number),"r")
     #Tmp (em) = open(channel+"_input.py","rw")
+    print "opening file: "+channel+"_input_part"+str(number)
     lines = tmp2.readlines()
+    lin =0;
     for line in lines:
+        lin = lin+1
+        lintemp = line.replace(os.linesep,"")
+        print " line: " +str(lin)+" "+ lintemp
         words = line.split()
         hasWord = "true" 
         for word in words:

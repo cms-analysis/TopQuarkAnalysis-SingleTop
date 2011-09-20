@@ -1,12 +1,12 @@
-#ifndef __SINGLETOP_SYST_TREES_DUMPER_H__
-#define __SINGLETOP_SYST_TREES_DUMPER_H__
+#ifndef __SINGLETOP_SYST_JETS_DUMPER_H__
+#define __SINGLETOP_SYST_JETS_DUMPER_H__
 
 /* \Class SingleTopSystematicsDumper
  *
  * \Authors A. Orso M. Iorio
  * 
  * Produces systematics histograms out of a standard Single Top n-tuple 
- * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.8 2011/07/22 08:09:38 oiorio Exp $
+ * \ version $Id: SingleTopSystematicsJetsDumper.h,v 1.11.2.8 2011/07/22 08:09:38 oiorio Exp $
  */
 
 
@@ -43,8 +43,7 @@
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
 #include "CondFormats/JetMETObjects/interface/JetResolution.h"
-#include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
-#include "CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h"
+
 
 //--------------------TQAF includes
 /*
@@ -88,10 +87,10 @@ using namespace reco;
 
 
 
-class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
+class SingleTopSystematicsJetsDumper : public edm::EDAnalyzer {
  public:
-  explicit SingleTopSystematicsTreesDumper(const edm::ParameterSet&);
-  //  ~SingleTopSystematicsTreesDumper();
+  explicit SingleTopSystematicsJetsDumper(const edm::ParameterSet&);
+  //  ~SingleTopSystematicsJetsDumper();
   
   
  private:
@@ -168,9 +167,7 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
     UnclMETPx_,
     UnclMETPy_,
     npv_,
-    preWeights_,
-    x1_,
-    x2_;
+    preWeights_;
 
 
   // Handles
@@ -201,15 +198,12 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   //Unclustered MET to take from the event
   edm::Handle< double > UnclMETPx,UnclMETPy,preWeights;
   edm::Handle< std::vector<double> > genJetsPt;
-  edm::Handle< float > x1h,x2h;
   std::string leptonsFlavour_,mode_;  
 
   //Part for BTagging payloads
   edm::ESHandle<BtagPerformance> perfMHP;
-  edm::ESHandle<BtagPerformance> perfMHPM;
   edm::ESHandle<BtagPerformance> perfMHE;
   edm::ESHandle<BtagPerformance> perfBHP;
-  edm::ESHandle<BtagPerformance> perfBHPM;
   edm::ESHandle<BtagPerformance> perfBHE;
 
   //Part for JEC and JES
@@ -229,12 +223,7 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   
   //Definition of trees
   map<string, TTree*> trees;
-  map<string, TTree*> treesESB;
-  map<string, TTree*> treesWSample;
-  map<string, TTree*> treesQCD;
-  map<string, TTree*> treesESBQCD;
-  map<string, TTree*> treesWSampleQCD;
-  
+
   //Other variables definitions
   double bTagThreshold,maxPtCut;
   size_t bScanSteps;
@@ -270,7 +259,7 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
  
   bool gotLeptons,gotJets,gotMets,gotLooseLeptons,gotPU;
 
-  int nb,nc,nudsg,ntchpt_tags,ntchpt_antitags,ntchpm_tags,ntche_tags,ntche_antitags;
+  int nb,nc,nudsg,ntchp_tags,ntchp_antitags,ntche_tags,ntche_antitags;
 
   double TCHPM_LMisTagUp,  TCHPM_BBTagUp, TCHPM_CBTagUp, TCHPM_LMisTagDown, TCHPM_BBTagDown, TCHPM_CBTagDown;
   double TCHPM_LAntiMisTagUp,  TCHPM_BAntiBTagUp, TCHPM_CAntiBTagUp, TCHPM_LAntiMisTagDown, TCHPM_BAntiBTagDown, TCHPM_CAntiBTagDown;
@@ -310,19 +299,22 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
     
   };
 
-  vector<BTagWeight::JetInfo> jsfshpt,jsfshel,jsfshpm;// bjs,cjs,ljs;
+  vector<BTagWeight::JetInfo> jsfshpt,jsfshel;// bjs,cjs,ljs;
   
-  BTagWeight b_tchpt_signal_region, b_tchel_sample_A, b_tchel_sample_B, b_tchpt_sample_B, b_tchpm_sample_ESB,b_tchpt_sample_ESB;
-  double b_weight_signal_region, b_weight_sample_A, b_weight_sample_B,b_weight_sample_ESB; 
+  BTagWeight b_tchpt_signal_region, b_tchel_sample_A, b_tchel_sample_B, b_tchpt_sample_B;
+  double b_weight_signal_region, b_weight_sample_A, b_weight_sample_B; 
+
+  BTagWeight  b_tchpt_geq_1, b_tchpt_geq_2;
   
-  float x1,x2,Q2;
+  BTagWeight  b_tchpt_1, b_tchpt_2;
 
-  bool isFirstEvent,doReCorrection_;
+  double b_weight_tchpt_geq_1, b_weight_tchpt_geq_2;
+  double b_weight_tchpt_1, b_weight_tchpt_2;
 
- vector<JetCorrectorParameters > *vParData;
-  FactorizedJetCorrector *JetCorrectorData;
- vector<JetCorrectorParameters > *vParMC;
-  FactorizedJetCorrector *JetCorrectorMC;
+  double njets_pass,weightLumi;
+  
+
+  bool isFirstEvent;
 };
 
 #endif

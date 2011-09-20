@@ -22,11 +22,11 @@ eleLooseCut = cms.string("et > 15 & abs(eta) < 2.5 & (chargedHadronIso+ neutralH
 eleZVetoCut = cms.string("et > 20 &  (abs(superCluster.eta)> 1.5660 || abs(superCluster.eta)<1.4442) & eta < 2.5 & (dr03TkSumPt + dr03EcalRecHitSumEt + dr03HcalTowerSumEt)/et < 0.1 & (electronID('simpleEleId95cIso')==1 || electronID('simpleEleId70cIso')==3 ||  electronID('simpleEleId70cIso')==5 ||  electronID('simpleEleId70cIso')==7)")
 # Require ID + or of all possible combinations
 
-#Tight leptons selection criteria
+#Tight leptons selection criteriamuon.globalTrack()->hitPattern().numberOfValidMuonHits()>0
 #No isolation or electronID requirement
 eleTightCut = cms.string("et>30  && abs(eta)<2.5  & ( abs(superCluster.eta)> 1.5660 || abs(superCluster.eta)<1.4442)")
 
-muTightCut = cms.string("pt > 20 & isGlobalMuon && isTrackerMuon & abs(eta) < 2.1 && numberOfMatches() > 1  && muonID('GlobalMuonPromptTight') > 0 & innerTrack.numberOfValidHits > 10 && innerTrack.hitPattern.pixelLayersWithMeasurement() >=1 ")
+muTightCut = cms.string("pt > 20 & isGlobalMuon && isTrackerMuon & abs(eta) < 2.1 && numberOfMatches() > 1  && muonID('GlobalMuonPromptTight') > 0 & innerTrack.numberOfValidHits > 10 && innerTrack.hitPattern.pixelLayersWithMeasurement() >=1 && globalTrack()->hitPattern().numberOfValidMuonHits()>0  ")
 
 #Jet definition
 jetLooseCut = cms.string("numberOfDaughters()>1 & pt()> 20 && abs(eta())<5 & ((abs(eta())>2.4) || ( chargedHadronEnergyFraction() > 0 & chargedMultiplicity()>0 & neutralEmEnergyFraction() < 0.99 & neutralHadronEnergyFraction() < 0.99 & chargedEmEnergyFraction()<0.99))")

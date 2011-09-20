@@ -3,20 +3,21 @@ import FWCore.ParameterSet.Config as cms
 
 #muon skim part
 looseMuons = cms.EDFilter("PATMuonSelector",
-  src = cms.InputTag("selectedPatMuons"),
+#  src = cms.InputTag("selectedPatMuons"),
+  src = cms.InputTag("patMuonsZeroIso"),
   cut = cms.string('pt > 10 & abs(eta) < 2.1 & isGlobalMuon'),
   filter = cms.bool(False)                                
 )
 
 #electron skim part
 looseElectrons = cms.EDFilter("PATElectronSelector",
-  src = cms.InputTag("selectedPatElectrons"),
+  src = cms.InputTag("patElectronsZeroIso"),
   cut = cms.string('pt >  20 & abs(eta) < 2.4'),
 )
 
 #electrons for z veto part
 zVetoElectrons = cms.EDFilter("PATElectronSelector",
-  src = cms.InputTag("selectedPatElectrons"),
+  src = cms.InputTag("patElectronsZeroIso"),
   cut = cms.string('pt >  20 & abs(eta) < 2.4'),
 )
 
@@ -30,9 +31,16 @@ preselectedJets = cms.EDFilter("PATJetSelector",
 UnclusteredMETPF = cms.EDProducer("SingleTopUnclusteredMETProducer",
                                   metSource = cms.InputTag("patMETs"),
                                   jetsSource = cms.InputTag("selectedPatJets"),
-                                  electronsSource = cms.InputTag("selectedPatElectrons"),
-                                  muonsSource = cms.InputTag("selectedPatMuons"),
+                                  electronsSource = cms.InputTag("patElectronsZeroIso"),
+                                  muonsSource = cms.InputTag("patMuonsZeroIso"),
                                   )
+
+#genJets:
+genJetsPF = cms.EDProducer("SingleTopGenJetPtEtaProducer",
+                         jetsSource = cms.InputTag("topJetsPF"),
+                         )
+
+
 
 #UnclusteredMET
 NVertices = cms.EDProducer("SingleTopPileUpProducer")
@@ -50,14 +58,14 @@ topJetsPF = cms.EDFilter("PATJetSelector",
 
 tightMuons = cms.EDFilter("PATMuonSelector",
                         preselection = cms.string(''),
-                        src = cms.InputTag("selectedPatMuons"),
+                        src = cms.InputTag("patMuonsZeroIso"),
                         cut = cms.string(''),
                         checkOverlaps = cms.PSet(),
                         )
 
 tightElectrons = cms.EDFilter("PATElectronSelector",
                         preselection = cms.string(''),
-                        src = cms.InputTag("selectedPatElectrons"),
+                        src = cms.InputTag("patElectronsZeroIso"),
                         cut = cms.string(''),
                         checkOverlaps = cms.PSet(),
                          )

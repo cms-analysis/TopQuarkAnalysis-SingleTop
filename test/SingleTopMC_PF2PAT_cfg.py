@@ -116,8 +116,8 @@ process.patJetCorrFactors.rho = cms.InputTag("kt6PFJets", "rho")
 #applyPostfix(process,"isoValElectronWithCharged",postfix).deposits[0].deltaR = cms.double(0.3)
 #applyPostfix(process,"isoValElectronWithPhotons",postfix).deposits[0].deltaR = cms.double(0.3)
 
-#applyPostfix(process,"pfIsolatedMuons",postfix).combinedIsolationCut = cms.double(0.125)
-#applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.double(0.125)
+applyPostfix(process,"pfIsolatedMuons",postfix).combinedIsolationCut = cms.double(0.2)
+applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.double(0.2)
 
 #applyPostfix(process,"pfIsolatedMuons",postfix).combinedIsolationCut = cms.double(0.125)
 #applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.double(0.125)
@@ -140,6 +140,33 @@ process.PathFlavor = cms.Path(
             process.cFlavorHistoryProducer *
             process.bFlavorHistoryProducer
             )
+
+
+process.pfIsolatedMuonsZeroIso = process.pfIsolatedMuons.clone(combinedIsolationCut =  cms.double(float("inf")))
+process.patMuonsZeroIso = process.patMuons.clone(pfMuonSource = cms.InputTag("pfIsolatedMuonsZeroIso"), genParticleMatch = cms.InputTag("muonMatchZeroIso"))
+# use pf isolation, but do not change matching
+tmp = process.muonMatch.src
+adaptPFMuons(process, process.patMuonsZeroIso, "")
+process.muonMatch.src = tmp
+
+process.muonMatchZeroIso = process.muonMatch.clone(src = cms.InputTag("pfIsolatedMuonsZeroIso"))
+
+process.pfIsolatedElectronsZeroIso = process.pfIsolatedElectrons.clone(combinedIsolationCut = cms.double(float("inf")))
+process.patElectronsZeroIso = process.patElectrons.clone(pfElectronSource = cms.InputTag("pfIsolatedElectronsZeroIso"))
+adaptPFElectrons(process, process.patElectronsZeroIso, "")
+
+process.ZeroIsoLeptonSequence = cms.Path(
+         process.pfIsolatedMuonsZeroIso +
+              process.muonMatchZeroIso +
+              process.patMuonsZeroIso +
+              process.pfIsolatedElectronsZeroIso +
+              process.patElectronsZeroIso
+              )
+
+
+
+#process.looseLeptonSequence.remove(process.muonMatchLoose)
+
 
 
 #getattr(process,"pfNoPileUp"+postfix).enable = True
@@ -218,6 +245,9 @@ savePatTupleSkimLoose = cms.untracked.vstring(
     'keep patElectrons_tightElectrons_*_*',
 
     'keep *_PDFInfo_*_*',
+
+    'keep *_patElectronsZeroIso_*_*',
+    'keep *_patMuonsZeroIso_*_*',
   
     'keep *_cFlavorHistoryProducer_*_*',
     'keep *_bFlavorHistoryProducer_*_*',
@@ -227,7 +257,7 @@ savePatTupleSkimLoose = cms.untracked.vstring(
 process.singleTopNTuple = cms.OutputModule("PoolOutputModule",
 #                                fileName = cms.untracked.string('rfio:/CST/cern.ch/user/o/oiorio/SingleTop/SubSkims/WControlSamples1.root'),
 #                   fileName = cms.untracked.Bstring('/tmp/oiorio/edmntuple_tchannel_big.root'),
-                   fileName = cms.untracked.string('edmntuple_'+ChannelName+'.root'),
+                   fileName = cms.untracked.string('/tmp/oiorio/edmntuple_'+ChannelName+'.root'),
                                              
                    SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('selection')),
                    outputCommands = saveNTuplesSkimLoose,
@@ -235,7 +265,7 @@ process.singleTopNTuple = cms.OutputModule("PoolOutputModule",
 
 process.singleTopPatTuple = cms.OutputModule("PoolOutputModule",
 #                                fileName = cms.untracked.string('rfio:/CST/cern.ch/user/o/oiorio/SingleTop/SubSkims/WControlSamples1.root'),
-                   fileName = cms.untracked.string('pattuple_'+ChannelName+'.root'),
+                   fileName = cms.untracked.string('/tmp/oiorio/pattuple_'+ChannelName+'.root'),
 
 
                    SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('selection')),
@@ -244,7 +274,7 @@ process.singleTopPatTuple = cms.OutputModule("PoolOutputModule",
 process.singleTopNTuple.dropMetaData = cms.untracked.string("ALL")
 
 process.outpath = cms.EndPath(
-    process.singleTopNTuple# +
-#    process.singleTopPatTuple 
+#    process.singleTopNTuple +
+    process.singleTopPatTuple 
     )
 

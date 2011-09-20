@@ -1,8 +1,9 @@
 import FWCore.ParameterSet.Config as cms
 
-lumiMu = cms.untracked.double(869.129366562)
+#lumiMu = cms.untracked.double(869.129366562)
+lumiMu = cms.untracked.double(1078.75640263)
 #lumiEle = cms.untracked.double(191.091)
-lumiEle = cms.untracked.double(887.239+191.091)
+lumiEle = cms.untracked.double(887.239)
 
 TChannelMu = cms.PSet(
     crossSection = cms.untracked.double(20.93),

@@ -128,6 +128,33 @@ process.pathPreselection = cms.Path(
     getattr(process,"patPF2PATSequence"+postfix)
     )
 
+process.pfIsolatedMuonsZeroIso = process.pfIsolatedMuons.clone(combinedIsolationCut =  cms.double(float("inf")))
+process.patMuonsZeroIso = process.patMuons.clone(pfMuonSource = cms.InputTag("pfIsolatedMuonsZeroIso"), genParticleMatch = cms.InputTag("muonMatchZeroIso"))
+# use pf isolation, but do not change matching
+tmp = process.muonMatch.src
+adaptPFMuons(process, process.patMuonsZeroIso, "")
+process.muonMatch.src = tmp
+
+process.muonMatchZeroIso = process.muonMatch.clone(src = cms.InputTag("pfIsolatedMuonsZeroIso"))
+
+process.pfIsolatedElectronsZeroIso = process.pfIsolatedElectrons.clone(combinedIsolationCut = cms.double(float("inf")))
+process.patElectronsZeroIso = process.patElectrons.clone(pfElectronSource = cms.InputTag("pfIsolatedElectronsZeroIso"))
+adaptPFElectrons(process, process.patElectronsZeroIso, "")
+
+process.ZeroIsoLeptonSequence = cms.Path(
+         process.pfIsolatedMuonsZeroIso +
+ #cd             process.muonMatchZeroIso +
+              process.patMuonsZeroIso +
+              process.pfIsolatedElectronsZeroIso +
+              process.patElectronsZeroIso
+              )
+
+
+
+#process.looseLeptonSequence.remove(process.muonMatchLoose)
+
+
+
 #getattr(process,"pfNoPileUp"+postfix).enable = True
 #getattr(process,"pfNoMuon"+postfix).enable = True
 #getattr(process,"pfNoElectron"+postfix).enable = True

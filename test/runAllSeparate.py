@@ -13,6 +13,16 @@ fileName = "SingleTopSystematicsWithTrigger_cfg.py"
 channels = [
 #
 #  "DataMuHadMay10",
+#  "Mu_v4_part_1",
+#  "Mu_v4_part_2",
+#  "Mu_v4_part_3",
+#  "Mu_Aug05",
+#  "Mu_May10",
+#  "EleHad_Aug05",
+ "EleHad_May10",
+#  "EleHad_v4_part_1",
+#  "EleHad_v4_part_2",
+#  "EleHad_v4_part_3",
 #  "DataEleV4",
 ##  "DataEleVControl",
 ##  "DataMuV12",
@@ -22,11 +32,18 @@ channels = [
 #####
 # "TWChannel",
 # "TbarWChannel",
- "TChannel",
- "TbarChannel",
+# "TChannel",
+# "TbarChannel",
 # "SChannel",
+# "SbarChannel",
 ###
-#  "QCDMu",
+#"QCDMu_part_1",
+#"QCDMu_part_2",
+#"QCDMu_part_3",
+#"QCDMu_part_4",
+#"QCDMu_part_5",
+#"QCDMu_part_6",
+#"QCDMu_part_7",
 ####
 # "QCD_Pt_30to80_BCtoE",
 # "QCD_Pt_20to30_BCtoE",
@@ -49,29 +66,31 @@ channels = [
 # "TChannel",
 # "SChannel",#
 ###
-#"ZJets_wbb1",
-#"ZJets_wbb2",
-#"ZJets_wbb3",
-#"ZJets_wbb4",    
-#"Wjets_wbb_part_11 ",
-#"WJets_wbb_part_12",
-#"WJets_wbb_part_13",
-#"WJets_wbb_part_14",
+#"ZJets_wlight_part_1",
+#"ZJets_wlight_part_2",
+#"ZJets_wlight_part_3",
+#ZJets_wbb4",    
+#"WJets_wcc_part_11",
+#"WJets_wcc_part_12",
+#"WJets_wcc_part_13",
+#"WJets_wcc_part_14",
 #"WJets_wbb_part_10",
-#"WJets_wbb_part_9",
-#"WJets_wbb_part_8",
-#"WJets_wbb_part_7",
-#"WJets_wbb_part_6",
-#"WJets_wbb_part_5",
-#"WJets_wbb_part_4",
-#"WJets_wbb_part_3",
-#"WJets_wbb_part_2",
-#"WJets_wbb_part_1",
+#"WJets_wcc_part_9",
+#"WJets_wcc_part_8",
+#"WJets_wcc_part_7",
+#"WJets_wcc_part_6",
+#"WJets_wcc_part_5",
+#"WJets_wcc_part_4",
+#"WJets_wcc_part_3",
+#"WJets_wcc_part_2",
+#"WJets_wcc_part_1",
 #"WJets",
 #"Wc_wc",cfa
 # "Vqq_wbbB",
 # "Vqq_wcc",
-# "VV",
+# "WW",
+# "WZ",
+# "ZZ",
   ]
 
 #Path to take data merged files
@@ -94,6 +113,8 @@ def changeChannel(fileName,channelOld,channelNew,switch,isMC):
     channelToReplace = channelNew
     if "Data" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
         channelToReplace = "Data"
+    if ("Mu" in channelNew or "Ele" in channelNew) and not "QCDMu" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
+        channelToReplace = "Data"
     if "WJets_wlight" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
         channelToReplace = "WJets_wlight"
     if "WJets_wcc" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
@@ -106,6 +127,8 @@ def changeChannel(fileName,channelOld,channelNew,switch,isMC):
         channelToReplace = "ZJets_wcc"
     if "ZJets_wbb" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
         channelToReplace = "ZJets_wbb"
+    if "QCDMu" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
+        channelToReplace = "QCDMu"
           #if channelNew=="DataEle":
        # channelNew_2 = "Data"
     file = open(fileName)
@@ -149,14 +172,14 @@ def changeChannel(fileName,channelOld,channelNew,switch,isMC):
         inputs = inputs.replace(channelToReplace,"ZJets")
         inputs = inputs +")"
         o.write(inputs)
-    if "DataMu" in channelNew:# == "DataMu" or channelNew == "DataMuQCD":
+    if "Mu" in channelNew or "Ele" in channelNew:# == "DataMu" or channelNew == "DataMuQCD":
         inputs = "process.source.fileNames = cms.untracked.vstring("
-        inputs = inputs +"'"+dataPath+"Mu_v1Merged.root',"
-        inputs = inputs +"'"+dataPath+"Mu_v4p1Merged.root',"
-        inputs = inputs +"'"+dataPath+"Mu_v4p2Merged.root',"
-        inputs = inputs +"'"+dataPath+"Mu_v4p3Merged.root',"
+        inputs = inputs +"'"+dataPath+channel+"Merged.root',"
+#        inputs = inputs +"'"+dataPath+"Mu_v4p1Merged.root',"
+#        inputs = inputs +"'"+dataPath+"Mu_v4p2Merged.root',"
+#        inputs = inputs +"'"+dataPath+"Mu_v4p3Merged.root',"
 #        inputs = inputs +"'"+dataPath+"Mu_v4Merged.root',"
-        inputs = inputs +"'"+dataPath+"Mu_v2Merged.root',"
+#        inputs = inputs +"'"+dataPath+"Mu_v2Merged.root',"
         inputs = inputs +")"
         o.write(inputs)
     if "DataEle" in channelNew:#channelNew == "DataEle" or channelNew == "DataEleQCD":
@@ -183,13 +206,15 @@ shutil.copy(fileName,tmpName)
 for channel in channels:
 
     isMC = "False"
-    if "DataMu" in channel and not "QCD" in channel:
+    if "Mu" in channel and not "QCD" in channel:
         channel_instruction = "mu"
-    elif "DataEle" in channel and not "QCD" in channel:
+    elif "Ele" in channel and not "QCD" in channel:
         channel_instruction = "ele"
-    elif "DataMu" in channel and ("QCD" in channel or "Had" in channel):
+    elif "Ele" in channel and not "QCD" in channel:
+        channel_instruction = "ele"
+    elif "Mu" in channel and ("QCD" in channel or "Had" in channel) and not "QCDMu" in channel:
         channel_instruction = "muqcd"
-    elif "DataEle" in channel and "QCD" in channel:
+    elif "Ele" in channel and "QCD" in channel:
         channel_instruction = "eleqcd"
     else : 
         channel_instruction = "allmc"   

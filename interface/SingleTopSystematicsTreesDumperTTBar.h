@@ -1,12 +1,12 @@
-#ifndef __SINGLETOP_SYST_TREES_DUMPER_H__
-#define __SINGLETOP_SYST_TREES_DUMPER_H__
+#ifndef __SINGLETOP_SYST_TREES_DUMPER_TTBAR_H__
+#define __SINGLETOP_SYST_TREES_DUMPER_TTBAR_H__
 
 /* \Class SingleTopSystematicsDumper
  *
  * \Authors A. Orso M. Iorio
  * 
  * Produces systematics histograms out of a standard Single Top n-tuple 
- * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.8 2011/07/22 08:09:38 oiorio Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumperTTBar.h,v 1.11.2.8 2011/07/22 08:09:38 oiorio Exp $
  */
 
 
@@ -88,10 +88,10 @@ using namespace reco;
 
 
 
-class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
+class SingleTopSystematicsTreesDumperTTBar : public edm::EDAnalyzer {
  public:
-  explicit SingleTopSystematicsTreesDumper(const edm::ParameterSet&);
-  //  ~SingleTopSystematicsTreesDumper();
+  explicit SingleTopSystematicsTreesDumperTTBar(const edm::ParameterSet&);
+  //  ~SingleTopSystematicsTreesDumperTTBar();
   
   
  private:
@@ -206,10 +206,8 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
 
   //Part for BTagging payloads
   edm::ESHandle<BtagPerformance> perfMHP;
-  edm::ESHandle<BtagPerformance> perfMHPM;
   edm::ESHandle<BtagPerformance> perfMHE;
   edm::ESHandle<BtagPerformance> perfBHP;
-  edm::ESHandle<BtagPerformance> perfBHPM;
   edm::ESHandle<BtagPerformance> perfBHE;
 
   //Part for JEC and JES
@@ -225,15 +223,10 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
     jets,
     loosejets,
     bjets,
-    antibjets;
+    bmiddlejets;
   
   //Definition of trees
-  map<string, TTree*> trees;
-  map<string, TTree*> treesESB;
-  map<string, TTree*> treesWSample;
-  map<string, TTree*> treesQCD;
-  map<string, TTree*> treesESBQCD;
-  map<string, TTree*> treesWSampleQCD;
+  map<string, TTree*> treesG3JG1T, trees2J2T,trees2J1TM,trees2J1TMQCD;
   
   //Other variables definitions
   double bTagThreshold,maxPtCut;
@@ -270,7 +263,7 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
  
   bool gotLeptons,gotJets,gotMets,gotLooseLeptons,gotPU;
 
-  int nb,nc,nudsg,ntchpt_tags,ntchpt_antitags,ntchpm_tags,ntche_tags,ntche_antitags;
+  int nb,nc,nudsg,ntchp_tags,ntchp_antitags,ntche_tags,ntche_antitags;
 
   double TCHPM_LMisTagUp,  TCHPM_BBTagUp, TCHPM_CBTagUp, TCHPM_LMisTagDown, TCHPM_BBTagDown, TCHPM_CBTagDown;
   double TCHPM_LAntiMisTagUp,  TCHPM_BAntiBTagUp, TCHPM_CAntiBTagUp, TCHPM_LAntiMisTagDown, TCHPM_BAntiBTagDown, TCHPM_CAntiBTagDown;
@@ -310,11 +303,11 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
     
   };
 
-  vector<BTagWeight::JetInfo> jsfshpt,jsfshel,jsfshpm;// bjs,cjs,ljs;
+  vector<BTagWeight::JetInfo> jsfshpt,jsfshel;// bjs,cjs,ljs;
   
-  BTagWeight b_tchpt_signal_region, b_tchel_sample_A, b_tchel_sample_B, b_tchpt_sample_B, b_tchpm_sample_ESB,b_tchpt_sample_ESB;
-  double b_weight_signal_region, b_weight_sample_A, b_weight_sample_B,b_weight_sample_ESB; 
-  
+  BTagWeight b_tchpt_2J2T, b_tchpm_2J1T, b_tchpt_G3JG1T;
+  double b_weight_2J2T, b_weight_2J1TM, b_weight_G3JG1T; 
+
   float x1,x2,Q2;
 
   bool isFirstEvent,doReCorrection_;
