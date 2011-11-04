@@ -76,6 +76,21 @@
   <use   name="PhysicsTools/CandUtils"/>
   <use   name="DataFormats/PatCandidates"/>
 </bin>
+<bin   name="fitsPlots1DKarlsruhe" file="fitsPlots1DKarlsruhe.cpp">
+  <use   name="FWCore/Framework"/>
+  <use   name="FWCore/Utilities"/>
+  <use   name="FWCore/FWLite"/>
+  <use   name="DataFormats/FWLite"/>
+  <use   name="DataFormats/Common"/>
+  <use   name="FWCore/ParameterSet"/>
+  <use   name="root"/>
+  <use   name="rootrflx"/>
+  <use   name="hepmc"/>
+  <use   name="PhysicsTools/UtilAlgos"/>
+  <use   name="CommonTools/UtilAlgos"/>
+  <use   name="PhysicsTools/CandUtils"/>
+  <use   name="DataFormats/PatCandidates"/>
+</bin>
 <bin   name="plots1DValidation" file="plots1DValidation.cpp">
   <use   name="FWCore/Framework"/>
   <use   name="FWCore/Utilities"/>
@@ -91,7 +106,7 @@
   <use   name="PhysicsTools/CandUtils"/>
   <use   name="DataFormats/PatCandidates"/>
 </bin>
-<bin   name="trainLL" file="03-tmva-train-oktay.cpp">
+<bin   name="trainLL" file="03-tmva-train.cpp">
   <use   name="FWCore/Framework"/>
   <use   name="FWCore/Utilities"/>
   <use   name="FWCore/FWLite"/>
