@@ -10,18 +10,22 @@ nTupleTopJetsPF = cms.EDProducer(
     cms.PSet(
     #B-Tagging
     tag = cms.untracked.string("TrackCountingHighPur"),
-    quantity = cms.untracked.string("bDiscriminator('trackCountingHighPurBJetTags')"),
+    quantity = cms.untracked.string("bDiscriminator('trackCountingHighPurBJetTags')")
     ),
     cms.PSet(
     tag = cms.untracked.string("TrackCountingHighEff"),
     quantity = cms.untracked.string("bDiscriminator('trackCountingHighEffBJetTags')")
     ),
     cms.PSet(
-    tag = cms.untracked.string("SecondaryVertexHighEffBJetTags"),
-    quantity = cms.untracked.string("bDiscriminator('simpleSecondaryVertexHighEffBJetTags')"),
+    tag = cms.untracked.string("CSVBJetTags"),
+    quantity = cms.untracked.string("bDiscriminator('combinedSecondaryVertexBJetTags')")
     ),
     cms.PSet(
-    tag = cms.untracked.string("SecondaryVertexHighPurBJetTags"),
+    tag = cms.untracked.string("SSVHighEffBJetTags"),
+    quantity = cms.untracked.string("bDiscriminator('simpleSecondaryVertexHighEffBJetTags')")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("SSVHighPurBJetTags"),
     quantity = cms.untracked.string("bDiscriminator('simpleSecondaryVertexHighPurBJetTags')"),
     ),
     ##    4-momentum
@@ -57,6 +61,26 @@ nTupleTopJetsPF = cms.EDProducer(
 nTuplePatMETsPF = cms.EDProducer(
     "CandViewNtpProducer",
     src = cms.InputTag("patMETsPF"),
+    lazyParser = cms.untracked.bool(True),
+    prefix = cms.untracked.string("patMETsPF"),
+    variables = cms.VPSet(
+
+    cms.PSet(
+    tag = cms.untracked.string("Pt"),
+    quantity = cms.untracked.string("pt")
+    ),
+
+    cms.PSet(
+    tag = cms.untracked.string("Phi"),
+    quantity = cms.untracked.string("phi")
+    ),
+    
+    )
+    )
+
+nTuplePatType1METsPF = cms.EDProducer(
+    "CandViewNtpProducer",
+    src = cms.InputTag("patType1CorrectedPFMet"),
     lazyParser = cms.untracked.bool(True),
     prefix = cms.untracked.string("patMETsPF"),
     variables = cms.VPSet(
@@ -231,6 +255,19 @@ nTupleMuons = nTupleElectrons.clone(
 #    ),
     )
     )
+
+nTupleQCDMuons = nTupleMuons.clone(
+    src = cms.InputTag("tightMuonsZeroIso"),
+    lazyParser = cms.untracked.bool(True),
+    prefix = cms.untracked.string("QCDMuons"),
+)
+
+
+nTupleQCDElectrons = nTupleElectrons.clone(
+    src = cms.InputTag("tightElectronsZeroIso"),
+    lazyParser = cms.untracked.bool(True),
+    prefix = cms.untracked.string("QCDElectrons"),
+)
 
 nTupleLooseMuons = nTupleMuons.clone(
     src = cms.InputTag("looseMuons"),
@@ -558,6 +595,8 @@ nTuplesSkim = cms.Sequence(
     nTuplePatMETsPF +
     nTupleAllElectrons +
     nTupleAllMuons +
+    nTupleQCDElectrons +
+    nTupleQCDMuons +
     nTupleLooseElectrons +
     nTupleLooseMuons +
     nTupleElectrons +
@@ -579,6 +618,8 @@ saveNTuplesSkim = cms.untracked.vstring(
     'keep floats_nTupleTopJetsPF_*_*',
     'keep *_UnclusteredMETPF_*_*',
     'keep *_NVertices_*_*',
+    'keep *_nTuplePatType1METsPF_*_*',
+    'keep *_UnclusteredType1METPF_*_*',
     )
 
 
@@ -592,7 +633,13 @@ saveNTuplesSkimMu.append('keep floats_nTupleMuons_*_*')
 saveNTuplesSkimEle.append('keep floats_nTupleElectrons_*_*')
 
 
+
+
+
 ##Skimmed Ntuple
+saveNTuplesSkimLoose.append('keep floats_nTupleQCDMuons_*_*')
+saveNTuplesSkimLoose.append('keep floats_nTupleQCDElectrons_*_*')
+
 saveNTuplesSkimLoose.append('keep floats_nTupleMuons_*_*')
 saveNTuplesSkimLoose.append('keep floats_nTupleElectrons_*_*')
 

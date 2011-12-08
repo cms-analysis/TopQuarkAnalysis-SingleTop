@@ -26,6 +26,10 @@ from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTuplesSkim
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleAllElectrons
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleAllMuons
 
+
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleQCDElectrons
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleQCDMuons
+
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleAllJets
 
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleLooseElectrons
@@ -66,7 +70,7 @@ HBHENoiseFilterResultProducer.minIsolatedNoiseSumE = cms.double(999999.)
 HBHENoiseFilterResultProducer.minIsolatedNoiseSumEt = cms.double(999999.)
 HBHENoiseFilterResultProducer.useTS4TS5 = cms.bool(True)
 
- 
+
 
 nTuplePatMETsPF.src = cms.InputTag('patMETs')
 
@@ -103,11 +107,14 @@ basePath = cms.Sequence(
    looseMuons +
    PVFilterProducer +
    looseElectrons +
-   zVetoElectrons +
+#   zVetoElectrons +
    topJetsPF +
    UnclusteredMETPF +
+   UnclusteredType1METPF +
    genJetsPF +
    NVertices +
+   tightMuonsZeroIso +
+   tightElectronsZeroIso + 
    tightMuons +
    tightElectrons +
 #  SingleTopMCProducer +
@@ -119,13 +126,16 @@ basePathData = cms.Sequence(
    looseMuons +
    PVFilterProducer +
    looseElectrons +
-   zVetoElectrons +
+   #   zVetoElectrons +
    topJetsPF +
    UnclusteredMETPF +
-#   NVertices +
+   UnclusteredType1METPF +
+   #   NVertices +
+   tightMuonsZeroIso +
+   tightElectronsZeroIso + 
    tightMuons +
    tightElectrons 
-#  SingleTopMCProducer +
+   #  SingleTopMCProducer +
    )
 
 #Flavor history tools sequence

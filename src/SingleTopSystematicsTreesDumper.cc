@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.9 2011/07/22 14:08:53 oiorio Exp $ 
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.10 2011/09/20 13:36:21 oiorio Exp $ 
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file 
 //
@@ -48,35 +48,26 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
   crossSection = channelInfo.getUntrackedParameter<double>("crossSection");
   originalEvents = channelInfo.getUntrackedParameter<double>("originalEvents");
   finalLumi = channelInfo.getUntrackedParameter<double>("finalLumi");
-  MTWCut = channelInfo.getUntrackedParameter<double>("MTWCut",50);
   mcPUFile_ = channelInfo.getUntrackedParameter< std::string >("mcPUFile","pileupdistr_TChannel.root");
   puHistoName_ = channelInfo.getUntrackedParameter< std::string >("puHistoName","pileUpDumper/PileUp");
 
-  isControlSample_ = iConfig.getUntrackedParameter<bool>("isControlSample",false);
-
   RelIsoCut = channelInfo.getUntrackedParameter<double>("RelIsoCut",0.1);
-  loosePtCut = channelInfo.getUntrackedParameter<double>("loosePtCut",30); 
-
+  
   maxPtCut = iConfig.getUntrackedParameter<double>("maxPtCut",30);
-
+  
   leptonsPt_ =  iConfig.getParameter< edm::InputTag >("leptonsPt");
   leptonsPhi_ =  iConfig.getParameter< edm::InputTag >("leptonsPhi");
   leptonsEta_ =  iConfig.getParameter< edm::InputTag >("leptonsEta");
   leptonsEnergy_ =  iConfig.getParameter< edm::InputTag >("leptonsEnergy");
   leptonsCharge_ =  iConfig.getParameter< edm::InputTag >("leptonsCharge");
   leptonsRelIso_ =  iConfig.getParameter< edm::InputTag >("leptonsRelIso");
-  leptonsQCDRelIso_ =  iConfig.getParameter< edm::InputTag >("leptonsQCDRelIso");
-
-
   leptonsDB_ =  iConfig.getParameter< edm::InputTag >("leptonsDB");
+  leptonsID_ =  iConfig.getParameter< edm::InputTag >("leptonsID");
+  leptonsFlavour_ =  iConfig.getUntrackedParameter< std::string >("leptonsFlavour");
 
   genJetsPt_  = iConfig.getParameter< edm::InputTag >("genJetsPt");
   //  genJetsEta_  = iConfig.getParameter< edm::InputTag >("genJetsEta");
 
-  leptonsID_ =  iConfig.getParameter< edm::InputTag >("leptonsID");
-
-  leptonsFlavour_ =  iConfig.getUntrackedParameter< std::string >("leptonsFlavour");
-  
   looseMuonsRelIso_ =  iConfig.getParameter< edm::InputTag >("looseMuonsRelIso");
   looseElectronsRelIso_ =  iConfig.getParameter< edm::InputTag >("looseElectronsRelIso");
 
@@ -84,9 +75,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
   jetsPt_ =  iConfig.getParameter< edm::InputTag >("jetsPt");
   jetsPhi_ =  iConfig.getParameter< edm::InputTag >("jetsPhi");
   jetsEnergy_ =  iConfig.getParameter< edm::InputTag >("jetsEnergy");
-  
   jetsBTagAlgo_ =  iConfig.getParameter< edm::InputTag >("jetsBTagAlgo");
-  //  jetsAntiBTagAlgo_ =  iConfig.getParameter< edm::InputTag >("jetsAntiBTagAlgo");
   jetsAntiBTagAlgo_ =  iConfig.getParameter< edm::InputTag >("jetsAntiBTagAlgo");
   jetsFlavour_ =  iConfig.getParameter< edm::InputTag >("jetsFlavour");
 
@@ -100,28 +89,22 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
   
   jetsCorrTotal_ =  iConfig.getParameter< edm::InputTag >("jetsCorrTotal");
 
-  doBScan_  =  iConfig.getUntrackedParameter< bool >("doBScan",false); 
   doQCD_  =  iConfig.getUntrackedParameter< bool >("doQCD",true); 
-  //  jetsPF_ =  iConfig.getParameter< edm::InputTag >("patJets");
-
-  mode_ =  iConfig.getUntrackedParameter<std::string >("mode",""); 
-
 
   //Q2 part
   x1_ = iConfig.getParameter<edm::InputTag>("x1") ;
   x2_ = iConfig.getParameter<edm::InputTag>("x2") ;
   
   //Pile Up Part
-
-  npv_ = iConfig.getParameter< edm::InputTag >("nvertices");//,"PileUpSync"); 
+  np1_ = iConfig.getParameter< edm::InputTag >("nVerticesPlus");//,"PileUpSync"); 
+  nm1_ = iConfig.getParameter< edm::InputTag >("nVerticesMinus");//,"PileUpSync"); 
+  n0_ = iConfig.getParameter< edm::InputTag >("nVertices");//,"PileUpSync"); 
 
   doPU_ = iConfig.getUntrackedParameter< bool >("doPU",false);
   doResol_ = iConfig.getUntrackedParameter< bool >("doResol",false);
   doTurnOn_ = iConfig.getUntrackedParameter< bool >("doTurnOn",true);
 
   doReCorrection_ = iConfig.getUntrackedParameter< bool >("doReCorrection",false);
-
-
   dataPUFile_ =  iConfig.getUntrackedParameter< std::string >("dataPUFile","pileUpDistr.root");
   
   if(doPU_){
@@ -834,9 +817,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     //Clear the vector of objects to be used in the selection
     leptons.clear();
     leptonsQCD.clear();
-
     
-
     //Define - initialize some variables
     MTWValue =0;
     
