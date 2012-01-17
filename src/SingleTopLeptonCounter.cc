@@ -2,7 +2,7 @@
  *\Author: A. Orso M. Iorio 
  *
  *
- *\version  $Id: SingleTopLeptonCounter.cc,v 1.1 2011/04/28 08:47:55 oiorio Exp $ 
+ *\version  $Id: SingleTopLeptonCounter.cc,v 1.1.2.1 2011/12/08 21:52:48 oiorio Exp $ 
  */
 
 
@@ -23,14 +23,14 @@ SingleTopLeptonCounter::SingleTopLeptonCounter(const edm::ParameterSet& iConfig)
   qcdMuons_ = iConfig.getParameter<edm::InputTag>("qcdMuons");
   qcdElectrons_ = iConfig.getParameter<edm::InputTag>("qcdElectrons");
 
-  minTight_ =  iConfig.getUntrackedParameter<int>("nTightLeptons",0);
-  maxTight_ =  iConfig.getUntrackedParameter<int>("nTightLeptons",99);
+  minTight_ =  iConfig.getUntrackedParameter<int>("minNumberTight",0);
+  maxTight_ =  iConfig.getUntrackedParameter<int>("maxNumberTight",99);
 
-  minLoose_ =  iConfig.getUntrackedParameter<int>("nTightLeptons",0);
-  maxLoose_ =  iConfig.getUntrackedParameter<int>("nTightLeptons",99);
+  minLoose_ =  iConfig.getUntrackedParameter<int>("minNumberLoose",0);
+  maxLoose_ =  iConfig.getUntrackedParameter<int>("maxNumberLoose",99);
 
-  minQCD_ =  iConfig.getUntrackedParameter<int>("nTightLeptons",0);
-  maxQCD_ =  iConfig.getUntrackedParameter<int>("nTightLeptons",99);
+  minQCD_ =  iConfig.getUntrackedParameter<int>("minNumberQCD",0);
+  maxQCD_ =  iConfig.getUntrackedParameter<int>("maxNumberQCD",99);
 
   doOverlap_ = iConfig.getUntrackedParameter<bool>("rejectOverlap",true);
   doQCD_ = iConfig.getUntrackedParameter<bool>("doQCD",true);
