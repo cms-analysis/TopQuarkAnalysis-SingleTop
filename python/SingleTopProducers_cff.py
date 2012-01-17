@@ -3,21 +3,20 @@ import FWCore.ParameterSet.Config as cms
 
 #muon skim part
 looseMuons = cms.EDFilter("PATMuonSelector",
-#  src = cms.InputTag("selectedPatMuons"),
-  src = cms.InputTag("patMuons"),
+  src = cms.InputTag("selectedPatMuons"),
   cut = cms.string('pt > 10 & abs(eta) < 2.1 & isGlobalMuon'),
   filter = cms.bool(False)                                
 )
 
 #electron skim part
 looseElectrons = cms.EDFilter("PATElectronSelector",
-  src = cms.InputTag("patElectrons"),
+  src = cms.InputTag("selectedPatElectrons"),
   cut = cms.string('pt >  20 & abs(eta) < 2.4'),
 )
 
 #electrons for z veto part
 zVetoElectrons = cms.EDFilter("PATElectronSelector",
-  src = cms.InputTag("patElectrons"),
+  src = cms.InputTag("selectedPatElectrons"),
   cut = cms.string('pt >  20 & abs(eta) < 2.4'),
 )
 
@@ -31,59 +30,15 @@ preselectedJets = cms.EDFilter("PATJetSelector",
 UnclusteredMETPF = cms.EDProducer("SingleTopUnclusteredMETProducer",
                                   metSource = cms.InputTag("patMETs"),
                                   jetsSource = cms.InputTag("selectedPatJets"),
-                                  electronsSource = cms.InputTag("patElectrons"),
-                                  muonsSource = cms.InputTag("patMuons"),
+                                  electronsSource = cms.InputTag("selectedPatElectrons"),
+                                  muonsSource = cms.InputTag("selectedPatMuons"),
                                   )
-
-
-UnclusteredType1METPF = cms.EDProducer("SingleTopUnclusteredMETProducer",
-                                  metSource = cms.InputTag("patType1CorrectedPFMet"),
-                                  jetsSource = cms.InputTag("selectedPatJets"),
-                                  electronsSource = cms.InputTag("patElectrons"),
-                                  muonsSource = cms.InputTag("patMuons"),
-                                  )
-
-#genJets:
-genJetsPF = cms.EDProducer("SingleTopGenJetPtEtaProducer",
-                         jetsSource = cms.InputTag("topJetsPF"),
-                         )
-
-
 
 #UnclusteredMET
 NVertices = cms.EDProducer("SingleTopPileUpProducer")
 
 #PDF Info
 PDFInfo = cms.EDProducer("PDFInfoDumper",
-                         )
-
-
-tightMuons = cms.EDFilter("PATMuonSelector",
-                        preselection = cms.string(''),
-                        src = cms.InputTag("patMuons"),
-                        cut = cms.string(''),
-                        checkOverlaps = cms.PSet(),
-                        )
-
-tightElectrons = cms.EDFilter("PATElectronSelector",
-                        preselection = cms.string(''),
-                        src = cms.InputTag("patElectrons"),
-                        cut = cms.string(''),
-                        checkOverlaps = cms.PSet(),
-                         )
-
-tightMuonsZeroIso = cms.EDFilter("PATMuonSelector",
-                        preselection = cms.string(''),
-                        src = cms.InputTag("patMuonsZeroIso"),
-                        cut = cms.string(''),
-                        checkOverlaps = cms.PSet(),
-                        )
-
-tightElectronsZeroIso = cms.EDFilter("PATElectronSelector",
-                        preselection = cms.string(''),
-                        src = cms.InputTag("patElectronsZeroIso"),
-                        cut = cms.string(''),
-                        checkOverlaps = cms.PSet(),
                          )
 
 topJetsPF = cms.EDFilter("PATJetSelector",
@@ -93,7 +48,19 @@ topJetsPF = cms.EDFilter("PATJetSelector",
                          checkOverlaps = cms.PSet(),
                            )
 
+tightMuons = cms.EDFilter("PATMuonSelector",
+                        preselection = cms.string(''),
+                        src = cms.InputTag("selectedPatMuons"),
+                        cut = cms.string(''),
+                        checkOverlaps = cms.PSet(),
+                        )
 
+tightElectrons = cms.EDFilter("PATElectronSelector",
+                        preselection = cms.string(''),
+                        src = cms.InputTag("selectedPatElectrons"),
+                        cut = cms.string(''),
+                        checkOverlaps = cms.PSet(),
+                         )
 
 #Met skim part
 preselectedMETs = cms.EDFilter("PATMETSelector",
