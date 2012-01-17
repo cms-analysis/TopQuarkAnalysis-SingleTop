@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  * 
  * Produces systematics histograms out of a standard Single Top n-tuple 
- * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.9 2011/09/20 13:36:20 oiorio Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.8 2011/07/22 08:09:38 oiorio Exp $
  */
 
 
@@ -170,10 +170,7 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
     npv_,
     preWeights_,
     x1_,
-    x2_,
-    np1_,
-    nm1_,
-     n0_;
+    x2_;
 
 
   // Handles
@@ -290,8 +287,6 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   double TCHEL_LAntiMisTagUp,  TCHEL_BAntiBTagUp, TCHEL_CAntiBTagUp, TCHEL_LAntiMisTagDown, TCHEL_BAntiBTagDown, TCHEL_CAntiBTagDown;
   double TCHEL_C,  TCHEL_B, TCHEL_L;
   double TCHEL_CAnti,  TCHEL_BAnti, TCHEL_LAnti;
-
-  long int nprecut, nlepton, nlepton2, njets, nbtag, nmtw;
 
   class BTagWeight 
   {
