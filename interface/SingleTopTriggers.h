@@ -5,7 +5,7 @@
  *
  * \Authors M.Merola, A. Orso M. Iorio
  * 
- * \ version $Id: SingleTopTriggers.h,v 1.2.2.1 2011/07/18 18:46:16 oiorio Exp $
+ * \ version $Id: SingleTopTriggers.h,v 1.2.2.2 2011/09/20 13:36:20 oiorio Exp $
  */
 
 
@@ -78,11 +78,11 @@ using namespace edm;
 using namespace reco;
 
 class SingleTopTriggers : public edm::EDFilter {
- public:
+public:
   explicit SingleTopTriggers(const edm::ParameterSet & iConfig);
   ~SingleTopTriggers();
 
- private:
+private:
   virtual  bool filter(edm::Event & iEvent, const edm::EventSetup & iSetup);
   //void  EventInfo();
   
@@ -96,6 +96,6 @@ class SingleTopTriggers : public edm::EDFilter {
   bool isMC, electronTrigger, muonTrigger, verbose;
   int channel;
     
- };
+};
 
 #endif

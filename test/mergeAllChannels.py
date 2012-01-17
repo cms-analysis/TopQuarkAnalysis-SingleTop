@@ -24,15 +24,7 @@ channels = [
 #    "VV",
 #    "TTBar",
 #    '30to80_BCtoE',
-
-
- "QCD_Pt-30to80_BCtoE",
-## "QCD_Pt_20to30_BCtoE",
- "QCD_Pt-80to170_BCtoE",
-##
- "QCD_Pt-20to30_EMEnriched",
- "QCD_Pt-30to80_EMEnriched",
- "QCD_Pt-80to170_EMEnriched",#     "ZJets",
+#     "ZJets",
      #"QCDMu",
 #     "DataEle",
 #     "QCDMu",
@@ -44,7 +36,7 @@ channels = [
 #"Mu_v2",
 #"Ele_v1",
 #"Ele_v2",
-#Ele_v4",
+"Ele_v4",
 #    "Vqq",
 #    "Wc",
     ]

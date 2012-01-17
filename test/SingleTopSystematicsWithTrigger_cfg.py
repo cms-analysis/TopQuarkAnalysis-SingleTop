@@ -18,20 +18,14 @@ process.GlobalTag.globaltag = cms.string("START39_V9::All")
 
 #Load B-Tag
 #MC measurements from 36X
-#process.load ("RecoBTag.PerformanceDB.PoolBTagPerformanceDBMC36X")
-#process.load ("RecoBTag.PerformanceDB.BTagPerformanceDBMC36X")
+process.load ("RecoBTag.PerformanceDB.PoolBTagPerformanceDBMC36X")
+process.load ("RecoBTag.PerformanceDB.BTagPerformanceDBMC36X")
 ##Measurements from Fall10
-#process.load ("RecoBTag.PerformanceDB.BTagPerformanceDB1011")
-#process.load ("RecoBTag.PerformanceDB.PoolBTagPerformanceDB1011")
+process.load ("RecoBTag.PerformanceDB.BTagPerformanceDB1011")
+process.load ("RecoBTag.PerformanceDB.PoolBTagPerformanceDB1011")
 
-#Spring11
-process.load ("RecoBTag.PerformanceDB.PoolBTagPerformanceDB1107")
-process.load ("RecoBTag.PerformanceDB.BTagPerformanceDB1107")
-
-
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(2000) )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(200000))
-
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
 
@@ -49,36 +43,16 @@ duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
 #process.source.fileNames = TChannel_ntuple
 
 process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/TChannelMerged.root")
-#process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/edmntuple_TWChannel_7_1_SXi.root")
-#process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/edmntuple_WJets_96_1_ClQ.root")
-
-#PileUpSync
-
-process.WeightProducer = cms.EDProducer("SingleTopPileUpWeighter",
-                                        syncPU = cms.InputTag("NVertices","PileUpSync"),
-                                        dataPUFile = cms.untracked.string("pileUpDistr.root"),
-                                        mcPUFile = cms.untracked.string("pileupdistr_TChannel.root"),
-                                        puHistoName = cms.untracked.string("pileUpDumper/PileUpTChannel"),
-                                        doPU = cms.untracked.bool(True),
-                                        #"file:/tmp/oiorio/pileupdistr_TChannel.root",
-                                        )
+#process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/edmntuple_TChannel_noMeta.root")
 
 #Output
+
 process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/TChannel.root"))
-#process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/TChannel_withQ2.root"))
-#process.TFileService = cms.Service("TFileService", fileName = cms.string("testNoPU.root"))
 
 process.load("SingleTopAnalyzers_cfi")
 process.load("SingleTopRootPlizer_cfi")
-
 process.load("SingleTopFilters_cfi")
-#from SingleTopPSets_cfi import *
-from SingleTopPSetsSummer_cfi import *
-
-process.TreesEle.dataPUFile = cms.untracked.string("pileUpDistr.root")
-process.TreesMu.dataPUFile = cms.untracked.string("pileUpDistr.root")
-
-#process.TreesEle.doTurnOn = cms.untracked.bool(False)
+from SingleTopPSets_cfi import *
 
 process.TreesEle.channelInfo = TChannelEle
 process.TreesMu.channelInfo = TChannelMu
@@ -87,18 +61,7 @@ process.PlotsMu.channelInfo = TChannelMu
 #process.TreesMu.systematics = cms.untracked.vstring();
 
 
-#doPU = cms.untracked.bool(False)
-
-process.WeightProducer.doPU = cms.untracked.bool(False)
-#process.TreesMu.doQCD = cms.untracked.bool(False)
-#process.TreesEle.doQCD = cms.untracked.bool(False)
-process.TreesMu.doResol = cms.untracked.bool(False)
-process.TreesEle.doResol = cms.untracked.bool(False)
-
-
-
 channel_instruction = "channel_instruction" #SWITCH_INSTRUCTION
-#channel_instruction = "allmc" #SWITCH_INSTRUCTION
 
 MC_instruction = False #TRIGGER_INSTRUCTION
 
@@ -107,27 +70,16 @@ process.HLTFilterEle.isMC = MC_instruction
 process.HLTFilterMuOrEle.isMC = MC_instruction
 process.HLTFilterMuOrEleMC.isMC = MC_instruction
     
-
-process.PUWeightsPath = cms.Path(
-    process.WeightProducer 
-)
-
 if channel_instruction == "allmc":
-    #    process.TreesEle.doTurnOn = cms.untracked.bool(False) 
-    process.PathSysMu = cms.Path(
+    process.PathSys = cms.Path(
     #    process.PlotsMu +
     #    process.PlotsEle +
-    process.HLTFilterMu *
-    process.TreesMu
-    )
-    process.PathSysEle = cms.Path(
+    process.HLTFilterMuOrEleMC *
+    process.TreesMu +
     process.TreesEle
     )
 
 if channel_instruction == "all":
-    process.TreesEle.doTurnOn = cms.untracked.bool(False) 
-    process.TreesEle.doPU = cms.untracked.bool(False) 
-    process.TreesMu.doPU = cms.untracked.bool(False) 
     process.PathSys = cms.Path(
     #    process.PlotsMu +
     #    process.PlotsEle +
@@ -137,10 +89,7 @@ if channel_instruction == "all":
     )
 
 if channel_instruction == "mu":
-    process.TreesMu.doPU = cms.untracked.bool(False) 
-    process.TreesMu.doResol = cms.untracked.bool(False) 
     process.PathSysMu = cms.Path(
-    process.WeightProducer +    
     #    process.PlotsMu +
     #    process.PlotsEle +
     process.HLTFilterMu *
@@ -148,11 +97,7 @@ if channel_instruction == "mu":
     )
 
 if channel_instruction == "ele":
-    process.TreesEle.doTurnOn = cms.untracked.bool(False) 
-    process.TreesEle.doPU = cms.untracked.bool(False) 
-    process.TreesEle.doResol = cms.untracked.bool(False) 
     process.PathSysMu = cms.Path(
-    process.WeightProducer +    
     #    process.PlotsMu +
     #    process.PlotsEle +
     process.HLTFilterEle *
@@ -160,8 +105,6 @@ if channel_instruction == "ele":
     )
 
 if channel_instruction == "muqcd":
-    process.TreesMu.doPU = cms.untracked.bool(False) 
-    process.TreesMu.doResol = cms.untracked.bool(False) 
     process.PathSysMu = cms.Path(
     #    process.PlotsMu +
     #    process.PlotsEle +
@@ -171,10 +114,6 @@ if channel_instruction == "muqcd":
 
 
 if channel_instruction == "eleqcd":
-    process.TreesEle.doTurnOn = cms.untracked.bool(False) 
-    process.TreesEle.doPU = cms.untracked.bool(False) 
-    process.TreesEle.doResol = cms.untracked.bool(False) 
-    process.TreesEle.isControlSample = cms.untracked.bool(True) 
     process.PathSysEle = cms.Path(
     #    process.PlotsMu +
     #    process.PlotsEle +

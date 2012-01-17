@@ -1,5 +1,5 @@
-#ifndef Single_Top_Lepton_Counter_h
-#define Single_Top_Lepton_Counter_h
+#ifndef Lepton_Counter__h
+#define Lepton_Counter__h
 
 /* \Class SingleTopLeptonCounter
  *
@@ -27,16 +27,17 @@ public:
       ~SingleTopLeptonCounter();
 private: 
   virtual bool filter(edm::Event & iEvent, const edm::EventSetup & iSetup);
-  edm::InputTag looseMuons_,looseElectrons_,
-    tightMuons_,tightElectrons_,
-    qcdMuons_,qcdElectrons_;
+  edm::InputTag looseMuons_,looseElectrons_;
+  edm::InputTag tightMuons_,tightElectrons_;
+  edm::InputTag qcdMuons_,qcdElectrons_;
 
-  edm::Handle<edm::View<reco::Candidate> > looseMuons,looseElectrons, tightMuons,tightElectrons,qcdMuons,qcdElectrons;
+  int minLoose_,maxLoose_;
+  int minTight_,maxTight_;
+  int minQCD_,maxQCD_;
 
-  int minTight_,maxTight_,
-    minLoose_,maxLoose_,
-    minQCD_,maxQCD_;
-  bool doOverlap_,doQCD_;
+  bool doQCD_,doOverlap_;
+  edm::Handle<edm::View<reco::Candidate> > looseMuons,looseElectrons,tightMuons,tightElectrons,qcdMuons,qcdElectrons;
+
 };
 
 

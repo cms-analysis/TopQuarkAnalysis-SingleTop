@@ -2,7 +2,7 @@
  *\Author: A. Orso M. Iorio 
  *
  *
- *\version  $Id: SingleTopUnclusteredMETProducer.cc,v 1.1 2011/03/24 15:58:07 oiorio Exp $ 
+ *\version  $Id: SingleTopUnclusteredMETProducer.cc,v 1.1 2010/11/11 10:51:41 oiorio Exp $ 
  */
 
 // Single Top producer: produces a top candidate made out of a Lepton, a B jet and a MET
@@ -50,22 +50,22 @@ void SingleTopUnclusteredMETProducer::produce(edm::Event & iEvent, const edm::Ev
   if(met->size()!=1)std::cout<<" not exactly 1 met: possible problem in configuration, metx mety put to dummy values -9999 "<<std::endl; 
   else {
     px_=met->at(0).px();
-    py_=met->at(0).py();
+    py_=met->at(0).px();
   }
 
   
   for(size_t j = 0; j < jets->size(); ++j){
     px_ +=jets->at(j).px() ;
-    py_ +=jets->at(j).py() ;
+    py_ +=jets->at(j).px() ;
   }  
 
   for(size_t m = 0; m < muons->size(); ++m){
     px_ +=muons->at(m).px() ;
-    py_ +=muons->at(m).py() ;
+    py_ +=muons->at(m).px() ;
   }
   for(size_t e = 0; e < electrons->size(); ++e){
     px_ +=electrons->at(e).px() ;
-    py_ +=electrons->at(e).py() ;
+    py_ +=electrons->at(e).px() ;
   }
   
   std::auto_ptr< double > px(new double( px_) ), py(new double(py_) );

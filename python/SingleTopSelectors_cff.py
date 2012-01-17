@@ -76,25 +76,16 @@ countLeptons = cms.EDFilter("SingleTopLeptonCounter",
                             qcdMuons = cms.InputTag("tightMuonsZeroIso"),
                             qcdElectrons = cms.InputTag("tightElectronsZeroIso"),
                             
-                            minTightLeptons = cms.int32(1),
-                            maxTightLeptons = cms.int32(1),
+                            minNumberTight = cms.untracked.int32(1),
+                            maxNumberTight = cms.untracked.int32(1),
 
-                            minLooseLeptons = cms.int32(0),
-                            maxLooseLeptons = cms.int32(0),
+                            minNumberLoose = cms.untracked.int32(0),
+                            maxNumberLoose = cms.untracked.int32(0),
                             
-                            minQCDLeptons = cms.int32(1),
-                            maxQCDLeptons = cms.int32(1),
+                            minNumberQCD = cms.untracked.int32(1),
+                            maxNumberQCD = cms.untracked.int32(1),
 
                             rejectOverlap = cms.untracked.bool(True),
                             doQCD = cms.untracked.bool(True),
+
                             )
-
-
-#countLeptons = cms.EDFilter("CandOrCounter",
-#                            
-#                            src1 = cms.InputTag("tightMuons"),
-#                            src2 = cms.InputTag("tightElectrons"),
-#                            
-#                            minNumber = cms.int32(1),
-#                            maxNumber = cms.int32(9999),
-#                            )

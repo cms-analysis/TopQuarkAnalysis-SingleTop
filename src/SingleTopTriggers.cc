@@ -94,39 +94,39 @@ bool SingleTopTriggers::filter( edm::Event& iEvent,const  edm::EventSetup& c)
       //      Std::cout << "List of triggers: \n";
       for (unsigned int i=0;i<HLTR->size();++i){
 
-	//	std::cout << " - " <<  hlNames_[i] << "   " << tr.accept(i) << std::endl;
-	    	
+	//std::cout << " - " <<  hlNames_[i] << "   " << tr.accept(i) << std::endl;
+	
 	tmptrig = hlNames_[i];
 	tmppass = tr.accept(i);
 	tmptrig.erase(tmptrig.end()-1);
 	tmptrig2 = tmptrig;
 	tmptrig2.erase(tmptrig2.end()-1);
 	
-	//	std::cout.width(3); std::cout << i;
-	//	std::cout << " - 2" <<  tmptrig << "   " << tmppass << std::endl;
+	//std::cout.width(3); std::cout << i;
+	//std::cout << " - 2" <<  tmptrig << "   " << tmppass << std::endl;
 	
 	if(!isMC){for(size_t r = 0; r< runRangesList.size();++r){
 	    int lowerRange = runRangesList.at(r);
 	    int upperRange = -1;
-	    //	  if (i ==0) cout <<" runRange "<< r << " lowRange " << lowerRange << " upperRange "<<upperRange << " "<< endl;
+	    //  if (i ==0) cout <<" runRange "<< r << " lowRange " << lowerRange << " upperRange "<<upperRange << " "<< endl;
 	    if(r!=runRangesList.size()-1){
 	      upperRange = runRangesList.at(r+1);
 	    }  
 	    bool isInRange= (irun >= lowerRange && (irun < upperRange || upperRange <0));
 	    if (!isInRange)continue;
 	    /*for( int j =1; j <= 10 ;++j){
-	      stringstream number;
-	      //if (i ==0) cout <<" j "<< j<<endl;
-	      
-	      number << j;
-	      string triggerVersion;
-	      number >> triggerVersion;
-	      
-	      //	    if (i ==0) cout <<" triggerVersion "<< triggerVersion<<endl;
-	      }*/
+	            stringstream number;
+		          //if (i ==0) cout <<" j "<< j<<endl;
+			        
+			        number << j;
+				      string triggerVersion;
+				            number >> triggerVersion;
+					          
+					    //    if (i ==0) cout <<" triggerVersion "<< triggerVersion<<endl;
+					    }*/
 	    string trigger = triggersList.at(r);
-	    
-	    //+ triggerVersion;	  //	    if (i ==0) cout <<" trigger "<< trigger<< " " <<endl;
+	        
+	    //+ triggerVersion;  //    if (i ==0) cout <<" trigger "<< trigger<< " " <<endl;
 	    if((tmptrig == trigger) && (tmppass)) { 
 	      if (verbose)cout << " run " << irun << " passes trigger "<< trigger << endl; 
 	      return true;
@@ -139,18 +139,18 @@ bool SingleTopTriggers::filter( edm::Event& iEvent,const  edm::EventSetup& c)
 	}
 	else{
 	  for(size_t r = 0; r< triggersList.size();++r){
-	    string trigger =triggersList.at(r); 	
+	    string trigger =triggersList.at(r); 
 	    if((tmptrig == trigger) && (tmppass)) return true;// muonNonIso =true;
 	    if((tmptrig2 == trigger) && (tmppass)) return true;// muonNonIso =true;
 	  }
 	}
       }
-      //	if (muonTrigger){
-      //	  cout << "channel Electron BUT Muon trigger " << endl;
+      //if (muonTrigger){
+      //  cout << "channel Electron BUT Muon trigger " << endl;
 
 
-	//	  return false;
-	//	}
+      //  return false;
+      //}
     }
       
     

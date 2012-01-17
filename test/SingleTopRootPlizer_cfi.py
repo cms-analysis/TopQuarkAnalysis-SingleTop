@@ -1,22 +1,18 @@
 import FWCore.ParameterSet.Config as cms
 
 TreesEle = cms.EDAnalyzer('SingleTopSystematicsTreesDumper',                              
-systematics = cms.untracked.vstring("BTagUp","BTagDown","MisTagUp","MisTagDown","JESUp","JESDown","UnclusteredMETUp","UnclusteredMETDown","PUUp","PUDown"),
+systematics = cms.untracked.vstring("BTagUp","BTagDown","MisTagUp","MisTagDown","JESUp","JESDown","UnclusteredMETUp","UnclusteredMETDown"),
 #systematics = cms.untracked.vstring(""),
 doBScan = cms.untracked.bool(True),
-rateSystematics = cms.untracked.vstring("WLightRateUp",                                        "WLightRateDown",                                        "TTBarRateUp",                                        "Ttbarratedown ",                                        "WHFRateUp",                                        "WHFRateDown"),
+#rateSystematics = cms.untracked.vstring("WLightRate","TTBarRate","WqqRate","WqRate"),
+rateSystematics = cms.untracked.vstring("WLightRateUp",
+                                        "WLightRateDown",
+                                        "TTBarRateUp",
+                                        "Ttbarratedown ",
+                                        "WHFRateUp",
+                                        "WHFRateDown"),
 #rateSystematics = cms.untracked.vstring(""),
 leptonsID = cms.InputTag("nTupleElectrons","tightElectronsSimpleEleId70cIso"),  
-preWeights =cms.InputTag("WeightProducer","PUWeight"),
-doPU = cms.untracked.bool(True),
-x1 = cms.InputTag("PDFInfo","x1"),
-x2 = cms.InputTag("PDFInfo","x2"),
-#doResol  = cms.untracked.bool(False),
-doResol  = cms.untracked.bool(True),
-#dataPUFile = cms.untracked.string("pileUpDistr.root"),
-#mcPUFile = cms.untracked.string("pileupdistr_TChannel.root"),
-#puHistoName = cms.untracked.string("pileUpDumper/PileUpTChannel"),
-
 #mode = cms.untracked.string("pt"),
 #maxPtCut = cms.untracked.double("45"),
 
@@ -28,10 +24,14 @@ channelInfo = cms.PSet(
     finalLumi = cms.untracked.double(14.5),
     MTWCut = cms.untracked.double(50.0),#Default 50.0 GeV
     loosePtCut = cms.untracked.double(30.0),#Default 30.0 GeV
-    RelIsoCut = cms.untracked.double(0.1),
+<<<<<<< SingleTopRootPlizer_cfi.py
+    RelIsoCut = cms.untracked.double(0.125),
     mcPUFile = cms.untracked.string("pileupdistr_TChannel.root"),
     puHistoName = cms.untracked.string("pileUpDumper/PileUpTChannel"),
 
+=======
+    RelIsoCut = cms.untracked.double(0.1)
+>>>>>>> 1.9
     ),
 
 
@@ -41,17 +41,13 @@ leptonsPt = cms.InputTag("nTupleElectrons","tightElectronsPt"),
 leptonsPhi = cms.InputTag("nTupleElectrons","tightElectronsPhi"),  
 leptonsEnergy = cms.InputTag("nTupleElectrons","tightElectronsE"),  
 leptonsCharge = cms.InputTag("nTupleElectrons","tightElectronsCharge"),  
-leptonsRelIso = cms.InputTag("nTupleElectrons","tightElectronsPFRelIso"),  
-#leptonsQCDRelIso = cms.InputTag("nTupleElectrons","tightElectronsRelIso"),  
-leptonsQCDRelIso = cms.InputTag("nTupleElectrons","tightElectronsPFRelIso"),  
-leptonsDB = cms.InputTag("nTupleElectrons","tightElectronsAbsoluteDB"),  
+leptonsRelIso = cms.InputTag("nTupleElectrons","tightElectronsRelIso"),  
+leptonsDB = cms.InputTag("nTupleElectrons","tightElectronsRelIso"),  
 
-looseElectronsRelIso = cms.InputTag("nTupleLooseElectrons","looseElectronsPFRelIso"),  
-looseMuonsRelIso = cms.InputTag("nTupleLooseMuons","looseMuonsPFRelIso"),  
+looseElectronsRelIso = cms.InputTag("nTupleLooseElectrons","looseElectronsRelIso"),  
+looseMuonsRelIso = cms.InputTag("nTupleLooseMuons","looseMuonsRelIso"),  
 
 leptonsFlavour = cms.untracked.string("electron"),
-
-genJetsPt =cms.InputTag("genJetsPF","genJetsPt"),  
 
 jetsPt = cms.InputTag("nTupleTopJetsPF","topJetsPFPt"),  
 jetsPhi = cms.InputTag("nTupleTopJetsPF","topJetsPFPhi"),  
@@ -82,17 +78,15 @@ TreesMu = TreesEle.clone(
         originalEvents = cms.untracked.double(480000),
         finalLumi = cms.untracked.double(14.5),
         MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
-        RelIsoCut = cms.untracked.double(0.05),
+        RelIsoCut = cms.untracked.double(0.15),
         ),
     leptonsEta = cms.InputTag("nTupleMuons","tightMuonsEta"),  
     leptonsPt = cms.InputTag("nTupleMuons","tightMuonsPt"),  
     leptonsPhi = cms.InputTag("nTupleMuons","tightMuonsPhi"),  
     leptonsEnergy = cms.InputTag("nTupleMuons","tightMuonsE"),  
     leptonsCharge = cms.InputTag("nTupleMuons","tightMuonsCharge"),  
-#    leptonsQCDRelIso = cms.InputTag("nTupleMuons","tightMuonsRelIso"),  
-    leptonsQCDRelIso = cms.InputTag("nTupleMuons","tightMuonsPFRelIso"),  
-    leptonsRelIso = cms.InputTag("nTupleMuons","tightMuonsPFRelIso"),  
-    leptonsDB = cms.InputTag("nTupleMuons","tightMuonsAbsoluteDB"),  
+    leptonsRelIso = cms.InputTag("nTupleMuons","tightMuonsRelIso"),  
+    leptonsDB = cms.InputTag("nTupleMuons","tightMuonsRelIso"),  
     leptonsID = cms.InputTag("nTupleElectrons","tightElectronsSimpleEleId70cIso"),  
     leptonsFlavour = cms.untracked.string("muon"),
 

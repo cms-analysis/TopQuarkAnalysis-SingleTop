@@ -31,10 +31,7 @@ process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff") ### real data
 
-#GR_R_42_V19fg
-process.GlobalTag.globaltag = cms.string('GR_R_42_V19::All')
-
-
+process.GlobalTag.globaltag = cms.string('GR_R_42_V12::All')
 
 #from Configuration.PyReleaseValidation.autoCond import autoCond
 #process.GlobalTag.globaltag = autoCond['startup']
@@ -83,7 +80,7 @@ process.pfPileUp.checkClosestZVertex = cms.bool(False)
 process.pfPileUp.Vertices = cms.InputTag('goodOfflinePrimaryVertices')
 process.pfJets.doAreaFastjet = True
 process.pfJets.doRhoFastjet = False
-#process.pfJets.Rho_EtaMax =  cms.double(4.4)
+process.pfJets.Rho_EtaMax =  cms.double(4.4)
 
 
 # Compute the mean pt per unit area (rho) from the
@@ -95,26 +92,24 @@ process.kt6PFJets = kt4PFJets.clone(
     doAreaFastjet = cms.bool(True),
     doRhoFastjet = cms.bool(True),
     voronoiRfact = cms.double(0.9),
- #   Rho_EtaMax =  cms.double(4.4)
+    Rho_EtaMax =  cms.double(4.4)
     )
 process.patJetCorrFactors.rho = cms.InputTag("kt6PFJets", "rho")
 
 #Muons
-#applyPostfix(process,"isoValMuonWithNeutral",postfix).deposits[0].deltaR = cms.double(0.3)
-#applyPostfix(process,"isoValMuonWithCharged",postfix).deposits[0].deltaR = cms.double(0.3)
-#applyPostfix(process,"isoValMuonWithPhotons",postfix).deposits[0].deltaR = cms.double(0.3)
+applyPostfix(process,"isoValMuonWithNeutral",postfix).deposits[0].deltaR = cms.double(0.3)
+applyPostfix(process,"isoValMuonWithCharged",postfix).deposits[0].deltaR = cms.double(0.3)
+applyPostfix(process,"isoValMuonWithPhotons",postfix).deposits[0].deltaR = cms.double(0.3)
 #electrons
-#applyPostfix(process,"isoValElectronWithNeutral",postfix).deposits[0].deltaR = cms.double(0.3)
-#applyPostfix(process,"isoValElectronWithCharged",postfix).deposits[0].deltaR = cms.double(0.3)
-#applyPostfix(process,"isoValElectronWithPhotons",postfix).deposits[0].deltaR = cms.double(0.3)
+applyPostfix(process,"isoValElectronWithNeutral",postfix).deposits[0].deltaR = cms.double(0.3)
+applyPostfix(process,"isoValElectronWithCharged",postfix).deposits[0].deltaR = cms.double(0.3)
+applyPostfix(process,"isoValElectronWithPhotons",postfix).deposits[0].deltaR = cms.double(0.3)
+
+#applyPostfix(process,"pfIsolatedMuons",postfix).combinedIsolationCut = cms.double(0.125)
+#applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.double(0.125)
 
 applyPostfix(process,"pfIsolatedMuons",postfix).combinedIsolationCut = cms.double(0.2)
 applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.double(0.2)
-
-#applyPostfix(process,"pfIsolatedMuons",postfix).combinedIsolationCut = cms.double(0.2)
-#applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.double(0.2)
-
-#process.patJets.addJetCorrFactors = cms.bool(False)
 
 # Add the PV selector and KT6 producer to the sequence
 getattr(process,"patPF2PATSequence"+postfix).replace(
@@ -128,44 +123,17 @@ process.pathPreselection = cms.Path(
     getattr(process,"patPF2PATSequence"+postfix)
     )
 
-process.pfIsolatedMuonsZeroIso = process.pfIsolatedMuons.clone(combinedIsolationCut =  cms.double(float("inf")))
-process.patMuonsZeroIso = process.patMuons.clone(pfMuonSource = cms.InputTag("pfIsolatedMuonsZeroIso"), genParticleMatch = cms.InputTag("muonMatchZeroIso"))
-# use pf isolation, but do not change matching
-tmp = process.muonMatch.src
-adaptPFMuons(process, process.patMuonsZeroIso, "")
-process.muonMatch.src = tmp
-
-process.muonMatchZeroIso = process.muonMatch.clone(src = cms.InputTag("pfIsolatedMuonsZeroIso"))
-
-process.pfIsolatedElectronsZeroIso = process.pfIsolatedElectrons.clone(combinedIsolationCut = cms.double(float("inf")))
-process.patElectronsZeroIso = process.patElectrons.clone(pfElectronSource = cms.InputTag("pfIsolatedElectronsZeroIso"))
-adaptPFElectrons(process, process.patElectronsZeroIso, "")
-
-process.ZeroIsoLeptonSequence = cms.Path(
-         process.pfIsolatedMuonsZeroIso +
- #cd             process.muonMatchZeroIso +
-              process.patMuonsZeroIso +
-              process.pfIsolatedElectronsZeroIso +
-              process.patElectronsZeroIso
-              )
-
-
-
-#process.looseLeptonSequence.remove(process.muonMatchLoose)
-
-
-
 #getattr(process,"pfNoPileUp"+postfix).enable = True
 #getattr(process,"pfNoMuon"+postfix).enable = True
 #getattr(process,"pfNoElectron"+postfix).enable = True
 #getattr(process,"pfNoTau"+postfix).enable = False
 #Getattr (process,"pfNoJet"+postfix).enable = True 
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
-'file:/tmp/oiorio/166CA048-918A-E011-9F31-003048F118AA.root',
+'file:/tmp/oiorio/401AE9B7-F8A1-E011-93CB-003048F1C832.root',
 #'file:/tmp/oiorio/F81B1889-AF4B-DF11-85D3-001A64789DF4.root'
 #'file:/tmp/oiorio/EC0EE286-FA55-E011-B99B-003048F024F6.root'
 #'file:/tmp/oiorio/D0B32FD9-6D87-E011-8572-003048678098.root'
@@ -246,7 +214,7 @@ savePatTupleSkimLoose = cms.untracked.vstring(
 process.singleTopNTuple = cms.OutputModule("PoolOutputModule",
 #                                fileName = cms.untracked.string('rfio:/CST/cern.ch/user/o/oiorio/SingleTop/SubSkims/WControlSamples1.root'),
 #                   fileName = cms.untracked.Bstring('/tmp/oiorio/edmntuple_tchannel_big.root'),
-#                   fileName = cms.untracked.string('/tmp/oiorio/edmntuple_Data_V19Corr.root'),
+#                   fileName = cms.untracked.string('/tmp/oiorio/edmntuple_DataEle_v4.root'),
                    fileName = cms.untracked.string('edmntuple_DataEle_v4.root'),
                                              
                    SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('selection')),
@@ -255,13 +223,12 @@ process.singleTopNTuple = cms.OutputModule("PoolOutputModule",
 
 process.singleTopPatTuple = cms.OutputModule("PoolOutputModule",
 #                                fileName = cms.untracked.string('rfio:/CST/cern.ch/user/o/oiorio/SingleTop/SubSkims/WControlSamples1.root'),
-                   fileName = cms.untracked.string('/tmp/oiorio/pattuple_tchannel_v19.root'),
+                   fileName = cms.untracked.string('pattuple_tchannel.root'),
 
 
-#                   SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('selection')),
+                   SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('selection')),
                    outputCommands = savePatTupleSkimLoose
 )
-
 process.singleTopNTuple.dropMetaData = cms.untracked.string("ALL")
 
 process.outpath = cms.EndPath(
