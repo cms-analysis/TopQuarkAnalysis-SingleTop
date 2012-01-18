@@ -34,7 +34,21 @@ UnclusteredMETPF = cms.EDProducer("SingleTopUnclusteredMETProducer",
                                   muonsSource = cms.InputTag("selectedPatMuons"),
                                   )
 
-#UnclusteredMET
+UnclusteredType1METPF = cms.EDProducer("SingleTopUnclusteredMETProducer",
+                                                                         metSource = cms.InputTag("patType1CorrectedPFMet"),
+                                                                         jetsSource = cms.InputTag("selectedPatJets"),
+                                                                         electronsSource = cms.InputTag("patElectrons"),
+                                                                         muonsSource = cms.InputTag("patMuons"),
+                                                                         )
+
+#genJets:
+genJetsPF = cms.EDProducer("SingleTopGenJetPtEtaProducer",
+                                                    jetsSource = cms.InputTag("topJetsPF"),
+                                                    )
+
+
+
+#PDF Info
 NVertices = cms.EDProducer("SingleTopPileUpProducer")
 
 #PDF Info
@@ -61,6 +75,20 @@ tightElectrons = cms.EDFilter("PATElectronSelector",
                         cut = cms.string(''),
                         checkOverlaps = cms.PSet(),
                          )
+
+tightElectronsZeroIso = cms.EDFilter("PATElectronSelector",
+                       preselection = cms.string(''),
+                       src = cms.InputTag("patElectronsZeroIso"),
+                       cut = cms.string(''),
+                       checkOverlaps = cms.PSet(),
+                                     )
+
+tightMuonsZeroIso = cms.EDFilter("PATMuonSelector",
+                                 preselection = cms.string(''),
+                                 src = cms.InputTag("patMuonsZeroIso"),
+                                 cut = cms.string(''),
+                                 checkOverlaps = cms.PSet(),
+                                 )
 
 #Met skim part
 preselectedMETs = cms.EDFilter("PATMETSelector",

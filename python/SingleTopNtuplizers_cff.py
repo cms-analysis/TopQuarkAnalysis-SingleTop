@@ -54,6 +54,11 @@ nTupleTopJetsPF = cms.EDProducer(
     )
 )
 
+nTupleVertices = cms.EDProducer(
+        "SingleTopVertexInfoDumper",
+            src = cms.InputTag("goodOfflinePrimaryVertices"),
+        )
+
 nTuplePatMETsPF = cms.EDProducer(
     "CandViewNtpProducer",
     src = cms.InputTag("patMETsPF"),
@@ -499,6 +504,39 @@ singleTopMCNeutrinos = cms.EDProducer(
 
 )
 
+nTuplePatType1METsPF = cms.EDProducer(
+          "CandViewNtpProducer",
+          src = cms.InputTag("patType1CorrectedPFMet"),
+          lazyParser = cms.untracked.bool(True),
+          prefix = cms.untracked.string("patMETsPF"),
+          variables = cms.VPSet(
+    
+          cms.PSet(
+          tag = cms.untracked.string("Pt"),
+          quantity = cms.untracked.string("pt")
+          ),
+    
+          cms.PSet(
+          tag = cms.untracked.string("Phi"),
+          quantity = cms.untracked.string("phi")
+          ),
+    
+         )
+         )
+  
+
+nTupleQCDMuons = nTupleMuons.clone(
+     src = cms.InputTag("tightMuonsZeroIso"),
+     lazyParser = cms.untracked.bool(True),
+     prefix = cms.untracked.string("QCDMuons"),
+ )
+
+nTupleQCDElectrons = nTupleElectrons.clone(
+    src = cms.InputTag("tightElectronsZeroIso"),
+    lazyParser = cms.untracked.bool(True),
+    prefix = cms.untracked.string("QCDElectrons"),
+)
+ 
 
 singleTopMCNeutrinos = cms.EDProducer(
     "CandViewNtpProducer",
@@ -530,8 +568,9 @@ nTuplesSkim = cms.Sequence(
     nTupleLooseElectrons +
     nTupleLooseMuons +
     nTupleElectrons +
-    nTupleZVetoElectrons +
-    nTupleMuons
+    nTupleMuons +
+    nTupleQCDElectrons +
+    nTupleQCDMuons 
     )
 
 saveNTuplesSkim = cms.untracked.vstring(
@@ -547,7 +586,9 @@ saveNTuplesSkim = cms.untracked.vstring(
     'keep floats_nTupleTopJetsPF_*_*',
     'keep *_UnclusteredMETPF_*_*',
     'keep *_NVertices_*_*',
-    )
+    'keep *_nTuplePatType1METsPF_*_*',
+    'keep *_UnclusteredType1METPF_*_*',
+         )
 
 
 
@@ -569,7 +610,11 @@ saveNTuplesSkimLoose.append('keep floats_nTupleAllElectrons_*_*')
 
 saveNTuplesSkimLoose.append('keep floats_nTupleLooseMuons_*_*')
 saveNTuplesSkimLoose.append('keep floats_nTupleLooseElectrons_*_*')
-saveNTuplesSkimLoose.append('keep floats_nTupleZVetoElectrons_*_*')
+#saveNTuplesSkimLoose.append('keep floats_nTupleZVetoElectrons_*_*')
+
+saveNTuplesSkimLoose.append('keep floats_nTupleQCDMuons_*_*')
+saveNTuplesSkimLoose.append('keep floats_nTupleQCDElectrons_*_*')
+  
 
 saveNTuplesSkimLoose.append('keep *_TriggerResults_*_*')
 
