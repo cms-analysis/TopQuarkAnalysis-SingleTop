@@ -55,7 +55,7 @@ process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/TChannelMerge
 #PileUpSync
 
 #Output
-process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/TChannel.root"))
+process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/TChannelSync.root"))
 #process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/TChannel_withQ2.root"))
 #process.TFileService = cms.Service("TFileService", fileName = cms.string("testNoPU.root"))
 
@@ -106,15 +106,14 @@ process.HLTFilterMuOrEleMC.isMC = MC_instruction
 #)
 
 if channel_instruction == "allmc":
-    process.TreesMu.doResol = cms.untracked.bool(True)
-    process.TreesEle.doResol = cms.untracked.bool(True)
+#    process.TreesMu.doResol = cms.untracked.bool(True)
+#    process.TreesEle.doResol = cms.untracked.bool(True)
     #    process.TreesEle.doTurnOn = cms.untracked.bool(False) 
-    process.PathSysMu = cms.Path(
-    #    process.PlotsMu +
-    #    process.PlotsEle +
-    process.HLTFilterMu *
-    process.TreesMu
-    )
+#    process.PathSysMu = cms.Path(
+#    process.HLTFilterMu *
+#    process.TreesMu
+#    )
+    process.TreesEle.doQCD = cms.untracked.bool(False)
     process.PathSysEle = cms.Path(
     process.TreesEle
     )

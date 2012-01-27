@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.14 2012/01/17 04:06:56 oiorio Exp $ 
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.13 2012/01/17 15:44:38 oiorio Exp $ 
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file 
 //
@@ -100,8 +100,11 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
   jetsAntiBTagAlgo_ =  iConfig.getParameter< edm::InputTag >("jetsAntiBTagAlgo");
   jetsFlavour_ =  iConfig.getParameter< edm::InputTag >("jetsFlavour");
 
-  genJetsPt_  = iConfig.getParameter< edm::InputTag >("genJetsPt");
-  genJetsEta_  = iConfig.getParameter< edm::InputTag >("genJetsEta");
+  //  genJetsPt_  = iConfig.getParameter< edm::InputTag >("genJetsPt");
+  //genJetsEta_  = iConfig.getParameter< edm::InputTag >("genJetsEta");//FIXMEEE
+
+  //  genJetsPt_  = iConfig.getParameter< edm::InputTag >("genJetsPt");
+  //genJetsEta_  = iConfig.getParameter< edm::InputTag >("genJetsEta");//FIXMEEE
 
 
   METPhi_ =  iConfig.getParameter< edm::InputTag >("METPhi");
@@ -135,12 +138,12 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
   dataPUFile_ =  iConfig.getUntrackedParameter< std::string >("dataPUFile","pileUpDistr.root");
   
   if(doPU_){
-    //    cout << " before lumIweightse "<<endl;
+    //    //cout << " before lumIweightse "<<endl;
     LumiWeights_ = edm::Lumi3DReWeighting(mcPUFile_,
 					dataPUFile_,
 					puHistoName_,
 					std::string("pileup") );
-    //    cout << " built lumiWeights "<<endl;
+    //    //cout << " built lumiWeights "<<endl;
   }
   
   //  preWeights_ =  iConfig.getParameter< edm::InputTag >("preWeights");
@@ -341,20 +344,20 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
   topMassMeas = 172.9;
   doReCorrection_= false;  
   /*  if(doReCorrection_){//FIXME CURRENTLY NOT WORKING!!!
-  cout << "jec 1" << endl;
+  //cout << "jec 1" << endl;
   JetCorrectorParameters *ResJetParData = new JetCorrectorParameters(JEC_PATH+"GR_R_42_V19_AK5PF_L2L3Residual.txt"); 
-  cout << "jec 1A" << endl;
+  //cout << "jec 1A" << endl;
   JetCorrectorParameters *L3JetParData  = new JetCorrectorParameters(JEC_PATH+"GR_R_42_V19_AK5PF_L3Absolute.txt");
   JetCorrectorParameters *L2JetParData  = new JetCorrectorParameters(JEC_PATH+"GR_R_42_V19_AK5PF_L2Relative.txt");
   JetCorrectorParameters *L1JetParData  = new JetCorrectorParameters(JEC_PATH+"GR_R_42_V19_AK5PF_L1FastJet.txt");
-  cout << "jec 1B" << endl;
+  //cout << "jec 1B" << endl;
   vParData->push_back(*L1JetParData);
-  cout << "jec 1C" << endl;
+  //cout << "jec 1C" << endl;
   vParData->push_back(*L2JetParData);
   vParData->push_back(*L3JetParData);
   vParData->push_back(*ResJetParData);
 
-  cout << "jec 2" << endl;
+  //cout << "jec 2" << endl;
   JetCorrectorParameters *L3JetParMC = new JetCorrectorParameters(JEC_PATH+"START42_V13::All_AK5PF_L3Absolute.txt");
   JetCorrectorParameters *L2JetParMC  = new JetCorrectorParameters(JEC_PATH+"START42_V13::All_AK5PF_L2Relative.txt");
   JetCorrectorParameters *L1JetParMC  = new JetCorrectorParameters(JEC_PATH+"START42_V13::All_AK5PF_L1FastJet.txt");
@@ -362,19 +365,19 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
    vParMC->push_back(*L2JetParMC);
    vParMC->push_back(*L3JetParMC);
    
-  cout << "jec 3" << endl;
+  //cout << "jec 3" << endl;
    JetCorrectorData = new FactorizedJetCorrector(*vParData);
    JetCorrectorMC = new FactorizedJetCorrector(*vParMC);
    }*/
    InitializeEventScaleFactorMap();
-  //  cout<< "I work for now but I do nothing. But again, if you gotta do nothing, you better do it right. To prove my good will I will provide you with somse numbers later."<<endl;
+  //  //cout<< "I work for now but I do nothing. But again, if you gotta do nothing, you better do it right. To prove my good will I will provide you with somse numbers later."<<endl;
    isFirstEvent = true;
 }
 
 void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSetup& iSetup)
 {
 
-  cout <<" test 1 "<<endl;
+  //cout <<" test 1 "<<endl;
   iEvent.getByLabel(jetsEta_,jetsEta);
   iEvent.getByLabel(jetsPt_,jetsPt);
   //  if(jetsPt->size() < 2)return; 
@@ -395,7 +398,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
   //  iSetup.get<BTagPerformanceRecord>().get("MISTAGTCHPT",perfHP);
   // iSetup.get<BTagPerformanceRecord>().get("MISTAGTCHEL",perfHE);
 
-  //  cout << "test 0 "<<endl;
+  //  //cout << "test 0 "<<endl;
 
   gotLeptons=0;
   gotQCDLeptons=0;
@@ -404,7 +407,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
   gotMets=0;
   gotPU=0;
 
-  cout <<" test 2 "<<endl;
+  //cout <<" test 2 "<<endl;
 
   bool passesSignal=false,passesQCDSignal=false,
     passesSampleA=false,passesSampleB=false,
@@ -481,12 +484,12 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
   
   if(channel=="Data")WeightLumi=1;
   
-  cout <<" test 3 "<<endl;
+  //cout <<" test 3 "<<endl;
 
   for(size_t s = 0; s < systematics.size();++s){
     string syst_name =  systematics.at(s);
     string syst = syst_name;  
-    //    cout <<" syst "<<  syst_name<< " nlept " << nLeptons<<endl;
+    //    //cout <<" syst "<<  syst_name<< " nlept " << nLeptons<<endl;
     nLeptons =0;
     nQCDLeptons =0;
     nJets =0;
@@ -507,7 +510,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 			     );
 
 
-    //    cout << "test 02 systs "<< syst_name <<endl;
+    //    //cout << "test 02 systs "<< syst_name <<endl;
     //Setup for systematics
 
     //This is done according to old b-tagging prescriptions
@@ -574,10 +577,10 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     
     //Lepton loop
     //     leptonsRelIso->size()
-  cout <<" test 4 "<<endl;
+  //cout <<" test 4 "<<endl;
 
     for(size_t i = 0;i < leptonsRelIso->size();++i){
-      //      cout << "test 03 systs "<< syst_name <<" leps "<< nLeptons << " loop pos" <<  i<<endl;
+      //      //cout << "test 03 systs "<< syst_name <<" leps "<< nLeptons << " loop pos" <<  i<<endl;
       float leptonRelIso = leptonsRelIso->at(i);
       lepRelIso = leptonRelIso;
       
@@ -632,7 +635,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 
     bool isQCD = (!passesLeptons);
 
-    //   cout <<" syst "<<  syst_name<< " nlept " << nLeptons << " passesLept "<< passesLeptons<< " passes QCD1 "<<isQCD<< endl;
+    //   //cout <<" syst "<<  syst_name<< " nlept " << nLeptons << " passesLept "<< passesLeptons<< " passes QCD1 "<<isQCD<< endl;
     //  cout << "test 03 "<<endl;
     //Loop for the qcd leptons
     if(doQCD_ && isQCD){
@@ -811,7 +814,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       metPy-= (*UnclMETPy) *0.1;
     }
     
-  cout <<" test 5 "<<endl;
+  //cout <<" test 5 "<<endl;
 
     
     if(!gotJets){
@@ -839,12 +842,12 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     
       gotJets= true;
     }
-  cout <<" test 6 "<<endl;
+  //cout <<" test 6 "<<endl;
     
     if(leptonsFlavour_ == "electron" && doTurnOn_){
       if (!hasTurnOnWeight){
 	for(size_t i = 0;i<nJets;++i){
-	  // 	  cout << "test 05 systs "<< syst_name <<" jets qcd "<< nJets << " loop pos" <<  i<<endl;
+	  // 	  //cout << "test 05 systs "<< syst_name <<" jets qcd "<< nJets << " loop pos" <<  i<<endl;
 	  if (fabs(jetsEta->at(i))>2.6) jetprobs.push_back(0.);
 	  else jetprobs.push_back(jetprob(jetsPt->at(i),jetsBTagAlgo->at(i)));
 	}
@@ -859,13 +862,13 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     //    Weight * turnOnWeightValue;
     Weight *= PUWeight;
 
-    //    cout <<" test syst 2 "<<  syst_name<< " nJets " << nJets << " passesLept "<< passesLeptons<< " passes QCD1 "<<isQCD<< endl;
+    //    //cout <<" test syst 2 "<<  syst_name<< " nJets " << nJets << " passesLept "<< passesLeptons<< " passes QCD1 "<<isQCD<< endl;
     
-  cout <<" test 7 "<<endl;
+  //cout <<" test 7 "<<endl;
 
     for(size_t i = 0;i<jetsPt->size();++i){
       
-      //      cout << "test 06 systs "<< syst_name <<" jets qcd "<< nJets << " loop pos" <<  i<<endl;
+      //      //cout << "test 06 systs "<< syst_name <<" jets qcd "<< nJets << " loop pos" <<  i<<endl;
 
 
 
@@ -889,6 +892,21 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       //If systematics JES up/down we need to change the pt of the jet
       //consider if it passes the threshold or not
 
+      if(doResol_ && genpt > 0.0){
+	//	TF1* fPtResol = ptResol->resolutionEtaPt(eta,ptCorr);
+	////cout<< " function parameters ";
+	//	  fPtResol -> Print();
+	////cout<<endl;
+	//double sigmaFunc = fPtResol->GetParameter("\\sigma");
+	//fPtResol->SetParameter("\\sigma",sigmaFunc*1.1);
+	//rndm = fPtResol->GetRandom();
+	resolScale = resolSF(fabs(eta),syst_name);
+	double smear = std::max((double)(0.0),(double)(ptCorr+(ptCorr-genpt)*resolScale)/ptCorr);
+	energyCorr = energyCorr * smear;
+	ptCorr = ptCorr*smear;
+      }
+
+
       if(syst_name == "JESUp"){
 	unc = jetUncertainty( eta,  ptCorr, flavour);
 	ptCorr = ptCorr * (1+unc);
@@ -904,19 +922,6 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	metPy-=-(jetsPt->at(i)*sin(jetsPhi->at(i)))*unc;
       }
       
-      if(doResol_ && genpt > 0.0){
-	//	TF1* fPtResol = ptResol->resolutionEtaPt(eta,ptCorr);
-	//cout<< " function parameters ";
-	//	  fPtResol -> Print();
-	//cout<<endl;
-	//double sigmaFunc = fPtResol->GetParameter("\\sigma");
-	//fPtResol->SetParameter("\\sigma",sigmaFunc*1.1);
-	//rndm = fPtResol->GetRandom();
-	resolScale = resolSF(fabs(eta),syst_name);
-	double smear = std::max((double)(0.0),(double)(ptCorr+(ptCorr-genpt)*resolScale)/ptCorr);
-	energyCorr = energyCorr * smear;
-	ptCorr = ptCorr*smear;
-      }
       
 	//Pt cut
 	bool passesPtCut = ptCorr>ptCut;
@@ -926,7 +931,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	  //  jets.push_back(math::PtEtaPhiELorentzVector(ptCorr,jetsEta->at(i), jetsPhi->at(i), energyCorr) ); 
 	}
     
-  cout <<" test 7.5 "<<endl;
+  //cout <<" test 7.5 "<<endl;
       //b tag thresholds 
       
       double valueAlgo1 = jetsBTagAlgo->at(i);
@@ -952,7 +957,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       }
       
       //Passes firs algorythm (b tag requirement in the case of t-channel standard selection)
-      //      cout << " test 2 "<<endl;
+      //      //cout << " test 2 "<<endl;
       
   double etaMin =  min(fabs(eta),(float)2.3999);
   double ptMin =  min(ptCorr,(float)239.9);//min(jets.back().pt(),998.0);
@@ -962,7 +967,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     //  }
   //Apply different SFs if it is b,c or light jet
   if(abs(flavour)==4){ 
-  cout <<" test 7.75 "<<endl;
+  //cout <<" test 7.75 "<<endl;
     ++nc;
     if(is_btag_relevant ){
       //double hpteff =(perfBHP->getResult(PerformanceResult::BTAGBEFF,measurePoint));
@@ -987,7 +992,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	hptmSFErr = -fabs(perfBHPM->getResult(PerformanceResult::BTAGBERRCORR,measurePoint));
 	helSFErr = -fabs(perfBHE->getResult(PerformanceResult::BTAGBERRCORR,measurePoint));
       }
-      //      cout <<"cjet hpt "<<hpteff<< " hpt sf "<< hptSF <<endl;
+      //      //cout <<"cjet hpt "<<hpteff<< " hpt sf "<< hptSF <<endl;
       
       jsfshpm.push_back(BTagWeight::JetInfo(hptmeff,hptmSF+hptmSFErr));
       jsfshpt.push_back(BTagWeight::JetInfo(hpteff,hptSF+hptSFErr));
@@ -998,7 +1003,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 
   }
   else if(abs(flavour)==5){
-  cout <<" test 7.75 2"<<endl;
+  //cout <<" test 7.75 2"<<endl;
     ++nb;
     if(is_btag_relevant ){
       //double hpteff =(perfBHP->getResult(PerformanceResult::BTAGBEFF,measurePoint));
@@ -1023,7 +1028,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	hptmSFErr = -fabs(perfBHPM->getResult(PerformanceResult::BTAGBERRCORR,measurePoint));
 	helSFErr = -fabs(perfBHE->getResult(PerformanceResult::BTAGBERRCORR,measurePoint));
       }
-      //    cout <<"bjet hpt "<<hpteff<< " hpt sf "<< hptSF << " jet pt "<< ptCorr<<"eta"<<etaMin <<endl;
+      //    //cout <<"bjet hpt "<<hpteff<< " hpt sf "<< hptSF << " jet pt "<< ptCorr<<"eta"<<etaMin <<endl;
       jsfshpm.push_back(BTagWeight::JetInfo(hptmeff,hptmSF+hptmSFErr));
       jsfshpt.push_back(BTagWeight::JetInfo(hpteff,hptSF+hptSFErr));
       jsfshel.push_back(BTagWeight::JetInfo(heleff,helSF+helSFErr));
@@ -1033,22 +1038,22 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     //  jsfshel.push_back(BTagWeight::JetInfo(1.,1.));
   }
   else{
-    cout <<" test 7.75 3"<<endl;
+    //cout <<" test 7.75 3"<<endl;
     if(is_btag_relevant ){
       double hpteff =(perfMHP->getResult(PerformanceResult::BTAGLEFF,measurePoint));
-      cout <<" test 7.75 4"<<endl;
+      //cout <<" test 7.75 4"<<endl;
       double hptSF = (perfMHP->getResult(PerformanceResult::BTAGLEFFCORR,measurePoint));
-      cout <<" test 7.75 5"<<endl;
+      //cout <<" test 7.75 5"<<endl;
       double hptSFErr =0.;
-      cout <<" test 7.75 6"<<endl;
+      //cout <<" test 7.75 6"<<endl;
       double hptmeff =(perfMHPM->getResult(PerformanceResult::BTAGLEFF,measurePoint));
-      cout <<" test 7.75 7"<<endl;
+      //cout <<" test 7.75 7"<<endl;
       double hptmSF = (perfMHPM->getResult(PerformanceResult::BTAGLEFFCORR,measurePoint));
       double hptmSFErr =0.;
       double heleff =(perfMHE->getResult(PerformanceResult::BTAGLEFF,measurePoint));
       double helSF = (perfMHE->getResult(PerformanceResult::BTAGLEFFCORR,measurePoint));
       double helSFErr =0.;
-      cout <<" test 7.75 3.5"<<endl;
+      //cout <<" test 7.75 3.5"<<endl;
       if(syst_name == "MisTagUp"){
 	hptSFErr = fabs(perfMHP->getResult(PerformanceResult::BTAGLERRCORR,measurePoint));
 	hptmSFErr = fabs(perfMHPM->getResult(PerformanceResult::BTAGBERRCORR,measurePoint));
@@ -1059,17 +1064,17 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	hptmSFErr = -fabs(perfMHPM->getResult(PerformanceResult::BTAGBERRCORR,measurePoint));
 	helSFErr = -fabs(perfMHE->getResult(PerformanceResult::BTAGLERRCORR,measurePoint));
       }
-      //    cout <<"light jet hpt "<<hpteff<< " hpt sf "<< hptSF <<endl;
+      //    //cout <<"light jet hpt "<<hpteff<< " hpt sf "<< hptSF <<endl;
       jsfshpm.push_back(BTagWeight::JetInfo(hptmeff,hptmSF+hptmSFErr));
       jsfshpt.push_back(BTagWeight::JetInfo(hpteff,hptSF+hptSFErr));
       jsfshel.push_back(BTagWeight::JetInfo(heleff,helSF+helSFErr));
     }
     ++nudsg;
   }
-  cout <<" test 7.8"<<endl;
+  //cout <<" test 7.8"<<endl;
 
   if(is_btag_relevant ) measurePoint.reset();
-  //	cout << " test 3 "<<endl;
+  //	//cout << " test 3 "<<endl;
     
   if(passesMediumBTag){
     ++ntchpm_tags;
@@ -1086,7 +1091,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     ++ntchpt_antitags;
     ++nAntiBJets;
   }
-  cout <<" test 7.9"<<endl;
+  //cout <<" test 7.9"<<endl;
   
   /*  if(passesAntiBTag){
     antibjets.push_back(jets.back());
@@ -1096,8 +1101,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
   
   //Condition to find the highest/lowest b-tag 
   //according to algo 1 (tchp) 
-  //      cout << " test highLow " << endl;
-  //cout << " i "<< i <<" jets size "<< jets.size()<< " btag  "<< 
+  //      //cout << " test highLow " << endl;
+  ////cout << " i "<< i <<" jets size "<< jets.size()<< " btag  "<< 
   if(jetsBTagAlgo->at(i) > highBTagTree){
     highBTagTree=jetsBTagAlgo->at(i);
     highBTagTreePosition=nJets-1;
@@ -1109,20 +1114,24 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
   }
   if(nJets>=10 )break;
     }
-  cout <<" test 8 "<<endl;
+  //cout <<" test 8 "<<endl;
     
     
-    //cout << " test 3 "<<endl;
-    //    cout <<" test "<<channel<<"nb" << nb << "nc"  << nc << " nudsg " <<nudsg<< " passes ? "<<  flavourFilter(channel,nb,nc,nudsg)<<endl;
+    ////cout << " test 3 "<<endl;
+    //    //cout <<" test "<<channel<<"nb" << nb << "nc"  << nc << " nudsg " <<nudsg<< " passes ? "<<  flavourFilter(channel,nb,nc,nudsg)<<endl;
+
+
+    
+    //    //cout <<" test syst 3 "<<  syst_name<< " nJets " << nJets << " passesLept "<< passesLeptons<< " passes QCD1 "<<isQCD<< endl;
+    
     if( !flavourFilter(channel,nb,nc,nudsg) ) continue;
 
-    //    cout <<" test syst 3 "<<  syst_name<< " nJets " << nJets << " passesLept "<< passesLeptons<< " passes QCD1 "<<isQCD<< endl;
-    
 
     /////////
     ///End of the standard lepton-jet loop 
     /////////
-    
+
+
     if( nJets <2 )continue;
     if(nJets >3)continue;
 
@@ -1136,12 +1145,12 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     //    1T_QCD=4;
     //    2T_QCD=5;
 
-    //    cout <<" syst "<<  syst_name<< " nlept " << nLeptons << " passesLept "<< passesLeptons<<" n jets " << nJets<< endl;
+    //    //cout <<" syst "<<  syst_name<< " nlept " << nLeptons << " passesLept "<< passesLeptons<<" n jets " << nJets<< endl;
     
 
     
     if(nJets == 2 || nJets == 3){
-      //      cout << " njets "<< nJets <<" nBJets "<< nBJets <<endl;
+      //      //cout << " njets "<< nJets <<" nBJets "<< nBJets <<endl;
 
 
       int B;
@@ -1164,6 +1173,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     metPt = sqrt(metPx*metPx+metPy*metPy);
     MTWValue =  sqrt((leptonPFour.pt()+metPt)*(leptonPFour.pt()+metPt)  -(leptonPFour.px()+metPx)*(leptonPFour.px()+metPx) -(leptonPFour.py()+metPy)*(leptonPFour.py()+metPy));
     bool passesMet= false;
+
     
     if( syst=="noSyst" && nJets ==2){
       ++passingJets;
@@ -1176,7 +1186,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       ++passingBJets;
     }
     
-      //      cout << " test b: low "<< lowBTagTreePosition<<" high "<< highBTagTreePosition << endl;
+      //      //cout << " test b: low "<< lowBTagTreePosition<<" high "<< highBTagTreePosition << endl;
       math::PtEtaPhiELorentzVector top = top4Momentum(leptonPFour,jets[highBTagTreePosition],metPx,metPy);
       float fCosThetaLJ =  cosThetaLJ(leptonPFour, jets[lowBTagTreePosition], top);
       
@@ -1185,26 +1195,26 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       eventTree = iEvent.eventAuxiliary().event();
       
 
-      //cout << " test c"<<endl;
+      ////cout << " test c"<<endl;
       etaTree = fabs(jets[lowBTagTreePosition].eta());
       cosTree = fCosThetaLJ;
       topMassTree = top.mass();
       mtwMassTree = MTWValue;
 
-      //cout << " test d"<<endl;
+      ////cout << " test d"<<endl;
       
       lepPt = leptonPFour.pt();
       lepEta = leptonPFour.eta();
       lepPhi = leptonPFour.phi();
 
-      //cout << " test e"<<endl;
+      ////cout << " test e"<<endl;
       
       bJetPt = jets[highBTagTreePosition].pt();
       bJetE = jets[highBTagTreePosition].energy();
       bJetEta = jets[highBTagTreePosition].eta();
       bJetPhi = jets[highBTagTreePosition].phi();
       
-      //cout << " test f"<<endl;
+      ////cout << " test f"<<endl;
 
       fJetPt = jets[lowBTagTreePosition].pt();
       fJetE = jets[lowBTagTreePosition].energy();
@@ -1212,7 +1222,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       fJetPhi = jets[lowBTagTreePosition].phi();
       
 
-      //cout << " test g"<<endl;
+      ////cout << " test g"<<endl;
       weightTree = bWeightTree*turnOnWeightValue*Weight;
       bWeightTree = b_weight_sample_B;
       // weightTree = bWeightTree*Weight;
@@ -1225,12 +1235,12 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       
       //	    metPt = METPt->at(0);
       
-      //cout << " test h"<<endl;
+      ////cout << " test h"<<endl;
 
       fJetPt = jets[lowBTagTreePosition].pt();
       bJetPt = jets[highBTagTreePosition].pt();
       
-      //cout << " test i"<<endl;
+      ////cout << " test i"<<endl;
       //      chargeTree = leptonsCharge->at(0);
 
       if (nJets ==2){
@@ -1387,12 +1397,12 @@ math::XYZTLorentzVector SingleTopSystematicsTreesDumper::NuMomentum(float lepton
 	  double p_y = ( mW*mW*pylep + 2*pxlep*pylep*p_x -mW*ptlep*solutions[i])/(2*pxlep*pxlep);
 	  double Delta2 = (p_x-metpx)*(p_x-metpx)+(p_y-metpy)*(p_y-metpy); 
 	  
-      //      std::cout<<"intermediate solution1 met x "<<metpx << " min px " << p_x  <<" met y "<<metpy <<" min py "<< p_y << std::endl; 
+      //      std:://cout<<"intermediate solution1 met x "<<metpx << " min px " << p_x  <<" met y "<<metpy <<" min py "<< p_y << std::endl; 
 
       if(Delta2< deltaMin && Delta2 > 0){deltaMin = Delta2;
       minPx=p_x;
       minPy=p_y;}
-      //     std::cout<<"solution1 met x "<<metpx << " min px " << minPx  <<" met y "<<metpy <<" min py "<< minPy << std::endl; 
+      //     std:://cout<<"solution1 met x "<<metpx << " min px " << minPx  <<" met y "<<metpy <<" min py "<< minPy << std::endl; 
       }
 	
 	//    } 
@@ -1403,11 +1413,11 @@ math::XYZTLorentzVector SingleTopSystematicsTreesDumper::NuMomentum(float lepton
 	double p_x = (solutions2[i]*solutions2[i]-mW*mW)/(4*pxlep); 
 	double p_y = ( mW*mW*pylep + 2*pxlep*pylep*p_x +mW*ptlep*solutions2[i])/(2*pxlep*pxlep);
 	double Delta2 = (p_x-metpx)*(p_x-metpx)+(p_y-metpy)*(p_y-metpy); 
-	//  std::cout<<"intermediate solution2 met x "<<metpx << " min px " << minPx  <<" met y "<<metpy <<" min py "<< minPy << std::endl; 
+	//  std:://cout<<"intermediate solution2 met x "<<metpx << " min px " << minPx  <<" met y "<<metpy <<" min py "<< minPy << std::endl; 
 	if(Delta2< deltaMin && Delta2 > 0){deltaMin = Delta2;
 	  minPx=p_x;
 	  minPy=p_y;}
-	//	std::cout<<"solution2 met x "<<metpx << " min px " << minPx  <<" met y "<<metpy <<" min py "<< minPy << std::endl; 
+	//	std:://cout<<"solution2 met x "<<metpx << " min px " << minPx  <<" met y "<<metpy <<" min py "<< minPy << std::endl; 
       }
       //}
   
@@ -1415,14 +1425,14 @@ math::XYZTLorentzVector SingleTopSystematicsTreesDumper::NuMomentum(float lepton
     double delta2ZeroValue= (zeroValue-metpx)*(zeroValue-metpx) + (pyZeroValue-metpy)*(pyZeroValue-metpy);
     
     if(deltaMin==14000*14000)return result;    
-    //    else std::cout << " test " << std::endl;
+    //    else std:://cout << " test " << std::endl;
 
     if(delta2ZeroValue < deltaMin){
       deltaMin = delta2ZeroValue;
       minPx=zeroValue;
       minPy=pyZeroValue;}
   
-    //    std::cout<<" MtW2 from min py and min px "<< sqrt((minPy*minPy+minPx*minPx))*ptlep*2 -2*(pxlep*minPx + pylep*minPy)  <<std::endl;
+    //    std:://cout<<" MtW2 from min py and min px "<< sqrt((minPy*minPy+minPx*minPx))*ptlep*2 -2*(pxlep*minPx + pylep*minPy)  <<std::endl;
     ///    ////Y part   
 
     double mu_Minimum = (mW*mW)/2 + minPx*pxlep + minPy*pylep;
@@ -1982,7 +1992,7 @@ float SingleTopSystematicsTreesDumper::BTagWeight::weight(vector<JetInfo> jets, 
 {
   if(!filter(tags))
     {
-      //   std::cout << "This event should not pass the selection, what is it doing here?" << std::endl;
+      //   std::cout << "nThis event should not pass the selection, what is it doing here?" << std::endl;
       return 0;
     }
   int njets=jets.size();

@@ -37,6 +37,7 @@ muTightCut = cms.string("pt > 20 & isGlobalMuon && isTrackerMuon & abs(eta) < 2.
 
 #eJet definition
 jetLooseCut = cms.string("numberOfDaughters()>1 & pt()> 20 && abs(eta())<5 & ((abs(eta())>=2.4) || ( chargedHadronEnergyFraction() > 0 & chargedMultiplicity()>0 & neutralEmEnergyFraction() < 0.99 & neutralHadronEnergyFraction() < 0.99 & chargedEmEnergyFraction()<0.99))")
+#jetLooseCut = cms.string("pt<40")
 
 
 

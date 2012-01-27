@@ -588,6 +588,7 @@ saveNTuplesSkim = cms.untracked.vstring(
     'keep *_NVertices_*_*',
     'keep *_nTuplePatType1METsPF_*_*',
     'keep *_UnclusteredType1METPF_*_*',
+    'keep *_genJetsPF_*_*',
          )
 
 

@@ -61,8 +61,10 @@ leptonsFlavour = cms.untracked.string("electron"),
 
 #Jets
 
-genJetsPt =cms.InputTag("genJetsPF","genJetsPt"),  
-genJetsEta =cms.InputTag("genJetsPF","genJetsEta"),  
+#genJetsPt =cms.InputTag("genJetsPF","genJetsPt"),  
+#genJetsEta =cms.InputTag("genJetsPF","genJetsEta"),  
+genJetsPt =cms.InputTag("nTupleTopJetsPF","topJetsPFPt"),  
+genJetsEta =cms.InputTag("nTupleTopJetsPF","topJetsPFEta"),  
 
 jetsPt = cms.InputTag("nTupleTopJetsPF","topJetsPFPt"),  
 jetsPhi = cms.InputTag("nTupleTopJetsPF","topJetsPFPhi"),  

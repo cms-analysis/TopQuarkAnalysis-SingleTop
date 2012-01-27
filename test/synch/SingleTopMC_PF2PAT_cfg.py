@@ -3,6 +3,7 @@ import FWCore.ParameterSet.Config as cms
 process = cms.Process("SingleTop")
 
 
+
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
 
 process.options = cms.untracked.PSet(
@@ -23,8 +24,8 @@ print "test "
 process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff") ### real data
-
 process.GlobalTag.globaltag = cms.string('START42_V13::All')
+
 #process.GlobalTag.globaltag = cms.string('START311_V2::All')
 
 #from Configuration.PyReleaseValidation.autoCond import autoCond
@@ -57,7 +58,7 @@ process.out = cms.OutputModule("PoolOutputModule",
                                outputCommands = cms.untracked.vstring(""),
                                )
 
-process.load("PhysicsTools.HepMCCandAlgos.flavorHistoryPaths_cfi")
+#rocess.load("PhysicsTools.HepMCCandAlgos.flavorHistoryPaths_cfi")
 
 #mytrigs=["HLT_Mu9"]
 mytrigs=["*"]
@@ -150,12 +151,6 @@ process.patseq = cms.Sequence(
 
 
 
-#process.PathFlavor = cms.Path(
-#        process.genParticlesForJets *
-#            process.ak5GenJets *
-#            process.cFlavorHistoryProducer *
-#            process.bFlavorHistoryProducer
-#            )
 
 
 process.pfIsolatedMuonsZeroIso = process.pfIsolatedMuons.clone(combinedIsolationCut =  cms.double(float("inf")))
@@ -168,7 +163,9 @@ process.muonMatchZeroIso = process.muonMatch.clone(src = cms.InputTag("pfIsolate
 
 process.pfIsolatedElectronsZeroIso = process.pfIsolatedElectrons.clone(combinedIsolationCut = cms.double(float("inf")))
 process.patElectronsZeroIso = process.patElectrons.clone(pfElectronSource = cms.InputTag("pfIsolatedElectronsZeroIso"))
-#adaptPFElectrons(process, process.patElectronsZeroIso, "")
+
+#####################
+#Adaptpfelectrons (process, process.patElectronsZeroIso, "")
 
 #Add the PF type 1 corrections to MET
 process.load("PhysicsTools.PatUtils.patPFMETCorrections_cff")
@@ -203,7 +200,7 @@ process.ZeroIsoLeptonSequence = cms.Path(
 #getattr(process,"pfNoTau"+postfix).enable = False
 #Getattr (process,"pfNoJet"+postfix).enable = True 
 
-
+process.pfNoTau.enable = False
 
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(2000) )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
@@ -218,6 +215,7 @@ process.source = cms.Source ("PoolSource",
 #'file:/tmp/oiorio/WJetsSmallFile_1_1_nb1.root',
 #'file:/tmp/oiorio/00012F91-72E5-DF11-A763-00261834B5F1.root',
 ),
+#eventsToProcess = cms.untracked.VEventRange('1:2807840-1:2807840'),
 duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 )
 
@@ -230,9 +228,9 @@ process.pileUpDumper = cms.EDAnalyzer("SingleTopPileUpDumper",
                                       channel = cms.string(ChannelName),
                                       )
 
-process.WLightFilter = process.flavorHistoryFilter.clone(pathToSelect = cms.int32(11))
-process.WccFlter = process.flavorHistoryFilter.clone(pathToSelect = cms.int32(6))
-process.WbbFilter = process.flavorHistoryFilter.clone(pathToSelect = cms.int32(5))
+#process.WLightFilter = process.flavorHistoryFilter.clone(pathToSelect = cms.int32(11))
+#process.WccFlter = process.flavorHistoryFilter.clone(pathToSelect = cms.int32(6))
+#process.WbbFilter = process.flavorHistoryFilter.clone(pathToSelect = cms.int32(5))
 
 #process.hltFilter.TriggerResultsTag = cms.InputTag("TriggerResults","","REDIGI38X")
 #process.hltFilter.TriggerResultsTag = cms.InputTag("TriggerResults","","REDIGI37X")
@@ -254,7 +252,7 @@ process.selection = cms.Path (
     process.preselection +
     process.nTuplesSkim
     )
-    
+   
         
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import saveNTuplesSkimLoose
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import saveNTuplesSkimMu
@@ -270,6 +268,7 @@ savePatTupleSkimLoose = cms.untracked.vstring(
     'keep *_patType1CorrectedPFMet_*_*',
     'keep *_PVFilterProducer_*_*',
 
+    'keep *_pfJets_*_*',
     'keep patJets_topJetsPF_*_*',
     'keep patMuons_looseMuons_*_*',
     'keep patElectrons_looseElectrons_*_*',
