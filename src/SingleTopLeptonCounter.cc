@@ -2,7 +2,7 @@
  *\Author: A. Orso M. Iorio 
  *
  *
- *\version  $Id: SingleTopLeptonCounter.cc,v 1.1.2.1 2011/12/08 21:52:48 oiorio Exp $ 
+ *\version  $Id: SingleTopLeptonCounter.cc,v 1.1.2.2 2012/01/17 04:06:56 oiorio Exp $ 
  */
 
 
@@ -80,17 +80,30 @@ bool SingleTopLeptonCounter::filter(edm::Event & iEvent, const edm::EventSetup &
   }
   else nLoose = looseMuons->size() +looseElectrons->size();
   nTight = tightMuons->size()+tightElectrons->size();
+
+  
+  //  std::cout << " nLoose " << nLoose << " minLoose " << minLoose_<< "maxLoose "<<maxLoose_<<std::endl;
+  //  std::cout << " nTight " << nTight << " minLoose " << minTight_<< "maxLoose "<<maxTight_<<std::endl;
   
   LooseLeptonAccept =  ( nLoose >= minLoose_ && nLoose <= maxLoose_);
   TightLeptonAccept =  ( nTight >= minTight_ && nTight <= maxTight_);
   LeptonAccept  = LooseLeptonAccept && TightLeptonAccept;
+
+  //  std::cout << " LeptonAccept "<< LeptonAccept << " LooseLeptonAccept " << LooseLeptonAccept << "TightLeptonAccept "<< TightLeptonAccept <<std::endl;
   
   if(!doQCD_) return LeptonAccept;
   else {
     
+    //    std::cout << " nQCD " << nQCD << " minQCD " << minQCD_<< "maxQCD "<<maxQCD_<<std::endl;
+
     nQCD = qcdMuons->size()+qcdElectrons->size();
+    
     QCDAccept = (nQCD>=minQCD_ && nQCD<= maxQCD_) ;
-    return LeptonAccept || QCDAccept;
+    
+    //   std::cout <<  " QCDLeptonAccept " << QCDAccept<< " Total accept "<<  (LeptonAccept || QCDAccept) <<std::endl;
+  
+
+  return (LeptonAccept || QCDAccept);
   }
   return true;
 
