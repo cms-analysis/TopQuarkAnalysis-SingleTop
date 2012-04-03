@@ -1,3 +1,5 @@
+cd ../../
+
 cvs co -r V06-04-19-01 DataFormats/PatCandidates
 cvs co -r V08-06-42 PhysicsTools/PatAlgos
 cvs co -r V00-05-24 PhysicsTools/PatExamples
@@ -11,8 +13,11 @@ cvs co -r V04-05-07 JetMETCorrections/Type1MET
 cvs co -r b4_2_X_cvMEtCorr_30Nov11 PhysicsTools/PatUtils
 cvs co -r V03-03-07 DataFormats/METReco
 
-cp ~oiorio/public/xMario/Lumi3DReWeighting.h ~/scratch0/Analysis/CMSSW_4_2_8/src/PhysicsTools/Utilities/interface/Lumi3DReWeighting.h
-cp ~oiorio/public/xMario/Lumi3DReWeighting.cc ~/scratch0/Analysis/CMSSW_4_2_8/src/PhysicsTools/Utilities/src/Lumi3DReWeighting.cc
+cp ~oiorio/public/xMario/Lumi3DReWeighting.h PhysicsTools/Utilities/interface/Lumi3DReWeighting.h
+cp ~oiorio/public/xMario/Lumi3DReWeighting.cc PhysicsTools/Utilities/src/Lumi3DReWeighting.cc
+
+scram setup lhapdffull
+cmsenv
 
 scram b -j 9 > & step1.log 
 
@@ -25,6 +30,7 @@ cvs up -r 1.4 JetMETCorrections/Modules/plugins/JetCorrectorOnTheFly.cc
 cvs up -r 1.6 JetMETCorrections/Modules/interface/JetCorrectionProducer.h
 cvs co -r $CMSSW_VERSION PhysicsTools/PatAlgos
 cvs up -r 1.64.2.4 PhysicsTools/PatAlgos/python/tools/jetTools.py
+
 
 scram b -j 9 > & step2.log &
 
