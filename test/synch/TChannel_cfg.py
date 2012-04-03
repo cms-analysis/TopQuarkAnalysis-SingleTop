@@ -35,8 +35,9 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
 
-'file:/tmp/oiorio/edmntuple_tchannel_big.root',
-
+#'file:/tmp/oiorio/edmntuple_tchannel_big.root',
+#'file:/tmp/oiorio/TChannelMerged.root',
+"file:/tmp/oiorio/edmntuple_SyncTest2.root"
 ),
 duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
 #eventsToProcess = cms.untracked.VEventRange('1:19517967-1:19517969'),
@@ -48,15 +49,19 @@ duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
 #from TChannel import *
 #process.source.fileNames = TChannel_ntuple
 
-process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/TChannelMerged.root")
-#process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/edmntuple_TWChannel_7_1_SXi.root")
+#process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/TChannelMerged.root")
+#process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/edmntuple_TTBar.root")#_190_0_dp4.root")
+
+
+
 #process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/edmntuple_WJets_96_1_ClQ.root")
 
 #PileUpSync
 
 #Output
-process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/TChannelSync.root"))
-#process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/TChannel_withQ2.root"))
+process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/TChannelSyncFast.root"))
+#process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/edmntuple_SyncTest2.root"))
+
 #process.TFileService = cms.Service("TFileService", fileName = cms.string("testNoPU.root"))
 
 #process.load("SingleTopAnalyzers_cfi")
@@ -86,8 +91,11 @@ process.TreesMu.channelInfo = TChannelMu
 process.TreesMu.doResol = cms.untracked.bool(False)
 process.TreesEle.doResol = cms.untracked.bool(False)
 
-process.TreesMu.doPU = cms.untracked.bool(False)
-process.TreesEle.doPU = cms.untracked.bool(False)
+process.TreesMu.doReCorrection = cms.untracked.bool(True)
+process.TreesEle.doReCorrection = cms.untracked.bool(True)
+
+#process.TreesMu.doPU = cms.untracked.bool(False)
+#process.TreesEle.doPU = cms.untracked.bool(False)
 
 
 channel_instruction = "allmc" #SWITCH_INSTRUCTION
@@ -108,12 +116,11 @@ process.HLTFilterMuOrEleMC.isMC = MC_instruction
 if channel_instruction == "allmc":
 #    process.TreesMu.doResol = cms.untracked.bool(True)
 #    process.TreesEle.doResol = cms.untracked.bool(True)
-    #    process.TreesEle.doTurnOn = cms.untracked.bool(False) 
-#    process.PathSysMu = cms.Path(
-#    process.HLTFilterMu *
-#    process.TreesMu
-#    )
-    process.TreesEle.doQCD = cms.untracked.bool(False)
+    process.TreesEle.doTurnOn = cms.untracked.bool(True) 
+    process.PathSysMu = cms.Path(
+    process.HLTFilterMu *
+    process.TreesMu
+    )
     process.PathSysEle = cms.Path(
     process.TreesEle
     )

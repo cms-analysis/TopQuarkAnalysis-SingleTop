@@ -16,6 +16,37 @@ HLTFilterMu = cms.EDFilter('SingleTopTriggers',
                            channel = cms.untracked.int32(2),#Useless now
                            )                         
 
+HLTFilterMuBTag = cms.EDFilter('SingleTopTriggers',
+                           HLTriggerResults = cms.InputTag("TriggerResults","",processNameData),
+                           isMC = cms.untracked.bool(False),
+                           triggerList = cms.vstring("HLT_IsoMu17_eta2p1_CentralJet30_BTagIP_v",
+                                                     ),
+                           runRangesList = cms.vint32(-1),
+                           
+                           channel = cms.untracked.int32(2),#Useless now
+                           )                         
+
+HLTFilterMuJet = cms.EDFilter('SingleTopTriggers',
+                           HLTriggerResults = cms.InputTag("TriggerResults","",processNameData),
+                           isMC = cms.untracked.bool(False),
+                           triggerList = cms.vstring("HLT_IsoMu17_eta2p1_CentralJet30_v",
+                                                     ),
+                           runRangesList = cms.vint32(-1),
+                           
+                           channel = cms.untracked.int32(2),#Useless now
+                           )                         
+
+
+HLTFilterEleMC = cms.EDFilter('SingleTopTriggers',
+                           HLTriggerResults = cms.InputTag("TriggerResults","",processNameData),
+                           isMC = cms.untracked.bool(False),
+                           triggerList = cms.vstring("HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v",
+                                                     ),
+                           runRangesList = cms.vint32(-1),
+                           
+                           channel = cms.untracked.int32(2),#Useless now
+                           )                         
+
 HLTFilterEle = cms.EDFilter('SingleTopTriggers',
                             HLTriggerResults = cms.InputTag("TriggerResults","",processNameData),
                             isMC = cms.untracked.bool(False),

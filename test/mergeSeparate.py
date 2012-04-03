@@ -7,11 +7,11 @@ import os,sys,re,shutil
 #inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/MC2011/Summer11/"
 inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/MC2011/Summer11/Sep04"
 inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/MC2011/Summer11/Aug30"
-#inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/MC2011/Summer11/Aug28"
-#inputDir = "/castor/cern.ch/user/m/mmerola/SingleTop_2011/MC2011/Summer11/Aug30"
-#inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/Run2011/Aug24/"
-#inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/Run2011/Aug30"
-
+inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2012/MC2011/Fall11/Jan29"
+inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2012/MC2011/Fall11/Jan30"
+#inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2012/MC2011/Fall11/Feb04"
+#inputDir = "/castor/cern.ch/user/m/mmerola/SingleTop_Moriond2012/Fall11/"
+#inputDir = "/castor/cern.ch/user/m/mmerola/SingleTop_Moriond2012/Summer11/"
 
 #Original config file
 #fName = "copyTemplate.py"
@@ -26,15 +26,58 @@ f = open(fName)
 
 #Channels to include
 channels = [
-#"TTBar",
+#"TbarChannel",
+#"TbarChannel_Q2Down",
+#"TbarChannel_Q2Up",
+#    "QCDMu_part_1",
+#    "QCDMu_part_2",
+#    "QCDMu_part_3",
+#    "QCDMu_part_4",
+#    "QCDMu_part_5",
+#    "QCDMu_part_6",
+#    "QCDMu_part_7",
+#"ZJets_part_1",
+#"ZJets_part_2",
+#"ZJets_part_3",
+#"ZJets_part_4",
+#"ZJets_part_5",
+#"ZJets_part_6",
+#"ZJets_part_7",
+#"TTbar",
 #"SChannel",
-#   "TWChannel",
-#    "TbarChannel",
+#"SbarChannel",
+#"TWChannel",
+#"TbarWChannel",
 #"WW",
 #"WZ",
 #"ZZ",
-#    "TWChannel",
-#    "TbarWChannel",
+#"QCD_Pt_20to30_EMEnriched",
+#"QCD_Pt_30to80_EMEnriched",
+#"QCD_Pt_80to170_EMEnriched",
+#"QCD_Pt_20to30_BCtoE",
+#"QCD_Pt_30to80_BCtoE",
+#"QCD_Pt_80to170_BCtoE",
+#"QCD_HT_200_GJets",
+#"QCD_HT_100_200_GJets",
+#"QCD_HT_40_100_GJets",
+#"ZJets",
+#"Mu_v4_part_1",
+#"Mu_v4_part_2",
+#"Mu_v4_part_3",
+#"Mu_v4_part_4",
+#"Mu_v4_part_5",
+#"EleHad_v4_part_1",
+#"EleHad_v4_part_2",
+#"EleHad_v4_part_3",
+#"EleHad_v4_part_4",
+#"EleHad_v4_part_5",
+#"Ele_May10",
+#"EleHad_Aug05",
+#"Mu_May10",
+#"Mu_Aug05",
+#   "TChannel",
+#    "TbarChannel",
+#   "TbarWChannel",
 #    "ZJets_part_1",
 #    "ZJets_part_2",
 #    "ZJets_part_3",
@@ -51,7 +94,7 @@ channels = [
 #"QCD_Pt_80to170_EMEnriched",
 #"WJets_Q2Down"
 #"QCD_Pt_20to30_BCtoE",
-"QCD_Pt_30to80_BCtoE",
+#"QCD_Pt_30to80_BCtoE",
 #"QCD_Pt_80to170_BCtoE",
 #     "ZJets",
 #    "QCDMu_part_1",
@@ -64,20 +107,28 @@ channels = [
 #     "Dataele",
 #     "QCDMu",
 #     "QCDEle",
-#     "WJets_part_1",
-#     "WJets_part_2",
-#     "WJets_part_3",
-#     "WJets_part_4",
-#     "WJets_part_5",
-#     "WJets_part_6",
-#     "WJets_part_7",
- #    "WJets_part_8",
-#     "WJets_part_9",
-#     "WJets_part_10",
-##     "WJets_part_11",
-#     "WJets_part_12",
-#     "WJets_part_13",
-#     "WJets_part_14",
+     "WJets_part_1",
+     "WJets_part_2",
+     "WJets_part_3",
+     "WJets_part_4",
+     "WJets_part_5",
+     "WJets_part_6",
+     "WJets_part_7",
+     "WJets_part_8",
+     "WJets_part_9",
+     "WJets_part_10",
+     "WJets_part_11",
+     "WJets_part_12",
+     "WJets_part_13",
+     "WJets_part_14",
+     "WJets_part_15",
+     "WJets_part_16",
+     "WJets_part_17",
+     "WJets_part_18",
+     "WJets_part_19",
+     "WJets_part_20",
+     "WJets_part_21",
+     "WJets_part_22",
 #    "Mu",
 #"Mu_v1",
 # "Mu_v4_part_1",
@@ -154,10 +205,10 @@ def appendInput(fileName,directory,channel,prefix,parts):
         print "split channel + number "+ channel + " , " + str(number)  
     print " outsude channel " + channel     
     inputRedirect = "rfdir "+directory +"/"+channel+"/ | grep " + prefix + " | cut -c68-200 > "+ channel+"_input.py"
-    if channel == "Data" or "QCDEle" in directory or "V2" in directory:
+    if channel == "Data" or "QCDEleNew" in directory or "V2" in directory:
         inputRedirect = "rfdir "+directory +"| grep " + prefix + " | cut  -c68-200 > "+ channel+"_input.py"
     if "HT_" in channel or "QCD_Pt" in channel:
-        inputRedirect = "rfdir "+directory +"/QCDEle | grep " + prefix + " | cut  -c68-200 > "+ channel+"_input.py"
+        inputRedirect = "rfdir "+directory +"/QCDEleNew | grep " + prefix + " | cut  -c68-200 > "+ channel+"_input.py"
     os.system(inputRedirect)
     
     tmp = open(channel+"_input.py","rw")
@@ -202,9 +253,9 @@ def appendInput(fileName,directory,channel,prefix,parts):
             #print "beginName is " + beginName +" word is "+ word
             if beginName in word:
                 #print " word ok , is it true? " + hasWord 
-                if channel != "Data" and not "QCDEle" in directory and not "V2" in directory:
+                if channel != "Data" and not "QCDEleNew" in directory and not "V2" in directory:
                     if "HT_" in channel or "QCD_Pt" in channel:
-                        line = "'"+line.replace(word,word.replace(beginName,"rfio:"+directory+"/QCDEle/"+beginName))
+                        line = "'"+line.replace(word,word.replace(beginName,"rfio:"+directory+"/QCDEleNew/"+beginName))
                     else:    
                         line = "'"+line.replace(word,word.replace(beginName,"rfio:"+directory+"/"+channel+"/"+beginName))
                 else:
@@ -234,7 +285,7 @@ def haddInput(directory,channel,prefix):
     if channel == "Data":
         inputRedirect = "rfdir "+directory +"| cut -c68-200 > "+ channel+"_input.py"
     if "HT_" in channel or "QCD_Pt" in channel:
-        inputRedirect = "rfdir "+directory +"/QCDEle | cut -c68-200 > "+ channel+"_input.py"
+        inputRedirect = "rfdir "+directory +"/QCDEleNew | cut -c68-200 > "+ channel+"_input.py"
     os.system(inputRedirect)
     tmp = open(channel+"_input.py")
     lines = tmp.readlines()
@@ -246,9 +297,9 @@ def haddInput(directory,channel,prefix):
             beginName = prefix+channel
             if beginName in word:
             #print " word ok , is it true? " + hasWord 
-                if channel != "Data" and not "QCDEle" in directory :
+                if channel != "Data" and not "QCDEleNew" in directory :
                     if "HT_" in channel or "QCD_Pt" in channel:
-                        line = line.replace(word,word.replace(beginName,"rfio:"+directory+"/QCDEle/"+beginName))
+                        line = line.replace(word,word.replace(beginName,"rfio:"+directory+"/QCDEleNew/"+beginName))
                     else:    
                         line = line.replace(word,word.replace(beginName,"rfio:"+directory+"/"+channel+"/"+beginName))
                 else:

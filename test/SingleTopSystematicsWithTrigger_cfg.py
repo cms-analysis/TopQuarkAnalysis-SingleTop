@@ -30,12 +30,13 @@ process.load ("RecoBTag.PerformanceDB.BTagPerformanceDB1107")
 
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(200000))
+# Process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(20000))
 
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
 
-'file:/tmp/oiorio/edmntuple_tchannel_big.root',
+#'file:/tmp/oiorio/edmntuple_tchannel_big.root',
+'file:/tmp/oiorio/TChannelMerged.root',
 
 ),
 duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
@@ -47,32 +48,21 @@ duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
 
 #from TChannel import *
 #process.source.fileNames = TChannel_ntuple
-
 process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/TChannelMerged.root")
-#process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/edmntuple_TWChannel_7_1_SXi.root")
-#process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/edmntuple_WJets_96_1_ClQ.root")
 
 #PileUpSync
 
-process.WeightProducer = cms.EDProducer("SingleTopPileUpWeighter",
-                                        syncPU = cms.InputTag("NVertices","PileUpSync"),
-                                        dataPUFile = cms.untracked.string("pileUpDistr.root"),
-                                        mcPUFile = cms.untracked.string("pileupdistr_TChannel.root"),
-                                        puHistoName = cms.untracked.string("pileUpDumper/PileUpTChannel"),
-                                        doPU = cms.untracked.bool(True),
-                                        #"file:/tmp/oiorio/pileupdistr_TChannel.root",
-                                        )
-
 #Output
 process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/TChannel.root"))
-#process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/TChannel_withQ2.root"))
+#process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/edmntuple_TTBar.root"))
 #process.TFileService = cms.Service("TFileService", fileName = cms.string("testNoPU.root"))
 
-process.load("SingleTopAnalyzers_cfi")
-process.load("SingleTopRootPlizer_cfi")
+#process.load("SingleTopAnalyzers_cfi")
 
+process.load("SingleTopRootPlizer_cfi")
 process.load("SingleTopFilters_cfi")
 #from SingleTopPSets_cfi import *
+#from SingleTopPSetsFall11_cfi import *
 from SingleTopPSetsSummer_cfi import *
 
 process.TreesEle.dataPUFile = cms.untracked.string("pileUpDistr.root")
@@ -82,19 +72,21 @@ process.TreesMu.dataPUFile = cms.untracked.string("pileUpDistr.root")
 
 process.TreesEle.channelInfo = TChannelEle
 process.TreesMu.channelInfo = TChannelMu
-process.PlotsEle.channelInfo = TChannelEle
-process.PlotsMu.channelInfo = TChannelMu
+#process.PlotsEle.channelInfo = TChannelEle
+#process.PlotsMu.channelInfo = TChannelMu
 #process.TreesMu.systematics = cms.untracked.vstring();
 
 
 #doPU = cms.untracked.bool(False)
 
-process.WeightProducer.doPU = cms.untracked.bool(False)
+#process.WeightProducer.doPU = cms.untracked.bool(False)
 #process.TreesMu.doQCD = cms.untracked.bool(False)
 #process.TreesEle.doQCD = cms.untracked.bool(False)
-process.TreesMu.doResol = cms.untracked.bool(False)
-process.TreesEle.doResol = cms.untracked.bool(False)
+#process.TreesMu.doResol = cms.untracked.bool(False)
+#process.TreesEle.doResol = cms.untracked.bool(False)
 
+#process.TreesMu.doPU = cms.untracked.bool(False)
+#process.TreesEle.doPU = cms.untracked.bool(False)
 
 
 channel_instruction = "channel_instruction" #SWITCH_INSTRUCTION
@@ -108,19 +100,20 @@ process.HLTFilterMuOrEle.isMC = MC_instruction
 process.HLTFilterMuOrEleMC.isMC = MC_instruction
     
 
-process.PUWeightsPath = cms.Path(
-    process.WeightProducer 
-)
+#process.PUWeightsPath = cms.Path(
+#    process.WeightProducer 
+#)
 
 if channel_instruction == "allmc":
-    #    process.TreesEle.doTurnOn = cms.untracked.bool(False) 
+    #    process.TreesMu.doResol = cms.untracked.bool(True)
+    #    process.TreesEle.doResol = cms.untracked.bool(True)
+    #    process.TreesEle.doTurnOn = cms.untracked.bool(True) 
     process.PathSysMu = cms.Path(
-    #    process.PlotsMu +
-    #    process.PlotsEle +
     process.HLTFilterMu *
     process.TreesMu
     )
     process.PathSysEle = cms.Path(
+    process.HLTFilterEleMC *
     process.TreesEle
     )
 
@@ -140,7 +133,6 @@ if channel_instruction == "mu":
     process.TreesMu.doPU = cms.untracked.bool(False) 
     process.TreesMu.doResol = cms.untracked.bool(False) 
     process.PathSysMu = cms.Path(
-    process.WeightProducer +    
     #    process.PlotsMu +
     #    process.PlotsEle +
     process.HLTFilterMu *
@@ -152,7 +144,6 @@ if channel_instruction == "ele":
     process.TreesEle.doPU = cms.untracked.bool(False) 
     process.TreesEle.doResol = cms.untracked.bool(False) 
     process.PathSysMu = cms.Path(
-    process.WeightProducer +    
     #    process.PlotsMu +
     #    process.PlotsEle +
     process.HLTFilterEle *

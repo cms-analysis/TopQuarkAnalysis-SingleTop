@@ -570,7 +570,8 @@ nTuplesSkim = cms.Sequence(
     nTupleElectrons +
     nTupleMuons +
     nTupleQCDElectrons +
-    nTupleQCDMuons 
+    nTupleQCDMuons +
+    nTupleVertices
     )
 
 saveNTuplesSkim = cms.untracked.vstring(
@@ -589,6 +590,7 @@ saveNTuplesSkim = cms.untracked.vstring(
     'keep *_nTuplePatType1METsPF_*_*',
     'keep *_UnclusteredType1METPF_*_*',
     'keep *_genJetsPF_*_*',
+    'keep *_nTupleVertices_*_*',
          )
 
 

@@ -2,7 +2,8 @@ import FWCore.ParameterSet.Config as cms
 
 TreesEle = cms.EDAnalyzer('SingleTopSystematicsTreesDumper',                              
 #General Info
-systematics = cms.untracked.vstring("BTagUp","BTagDown","MisTagUp","MisTagDown","JESUp","JESDown","UnclusteredMETUp","UnclusteredMETDown","PUUp","PUDown"),
+#systematics = cms.untracked.vstring("BTagUp","BTagDown","MisTagUp","MisTagDown","JESUp","JESDown","UnclusteredMETUp","UnclusteredMETDown","PUUp","PUDown"),
+systematics = cms.untracked.vstring("JESUp","JESDown","UnclusteredMETUp","UnclusteredMETDown"),
 #systematics = cms.untracked.vstring("JESUp","JESDown","UnclusteredMETUp","UnclusteredMETDown"),
 #systematics = cms.untracked.vstring(""),
 doBScan = cms.untracked.bool(True),
@@ -61,10 +62,10 @@ leptonsFlavour = cms.untracked.string("electron"),
 
 #Jets
 
-#genJetsPt =cms.InputTag("genJetsPF","genJetsPt"),  
-#genJetsEta =cms.InputTag("genJetsPF","genJetsEta"),  
-genJetsPt =cms.InputTag("nTupleTopJetsPF","topJetsPFPt"),  
-genJetsEta =cms.InputTag("nTupleTopJetsPF","topJetsPFEta"),  
+genJetsPt =cms.InputTag("genJetsPF","genJetsPt"),  
+genJetsEta =cms.InputTag("genJetsPF","genJetsEta"),  
+#genJetsPt =cms.InputTag("nTupleTopJetsPF","topJetsPFPt"),  
+#genJetsEta =cms.InputTag("nTupleTopJetsPF","topJetsPFEta"),  
 
 jetsPt = cms.InputTag("nTupleTopJetsPF","topJetsPFPt"),  
 jetsPhi = cms.InputTag("nTupleTopJetsPF","topJetsPFPhi"),  

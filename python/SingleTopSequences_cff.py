@@ -155,11 +155,11 @@ preselection = cms.Sequence(
 #Selection step: require 1 high pt muon/electron
 preselectionData = cms.Sequence(
     #    hltFilter +
-        PVFilter *
-            HBHENoiseFilter *
-            scrapingVeto *
-            countLeptons
-            )
+    PVFilter *
+    HBHENoiseFilter *
+    scrapingVeto *
+    countLeptons
+    )
 
 #Selection step: require 1 high pt muon/electron
 #process.preselection(

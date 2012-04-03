@@ -11,7 +11,7 @@ process.options = cms.untracked.PSet(
     FailPath = cms.untracked.vstring('ProductNotFound','Type Mismatch')
     )
 
-process.MessageLogger.cerr.FwkReport.reportEvery = 100
+process.MessageLogger.cerr.FwkReport.reportEvery = 10
 
 #from PhysicsTools.PatAlgos.tools.cmsswVersionTools import run36xOn35xInput
 
@@ -24,8 +24,8 @@ print "test "
 process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff") ### real data
-process.GlobalTag.globaltag = cms.string('START42_V13::All')
-
+process.GlobalTag.globaltag = cms.string('START42_V17::All')
+#process.GlobalTag.globaltag = cms.string('START42_V13::All')
 #process.GlobalTag.globaltag = cms.string('START311_V2::All')
 
 #from Configuration.PyReleaseValidation.autoCond import autoCond
@@ -202,24 +202,21 @@ process.ZeroIsoLeptonSequence = cms.Path(
 
 process.pfNoTau.enable = False
 
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(2000) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(502) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
-#'file:/tmp/oiorio/F81B1889-AF4B-DF11-85D3-001A64789DF4.root'
-#'file:/tmp/oiorio/EC0EE286-FA55-E011-B99B-003048F024F6.root'
-#'file:/tmp/oiorio/D0B32FD9-6D87-E011-8572-003048678098.root'
-#'file:/tmp/oiorio/149E3017-B799-E011-9FA9-003048F118C2.root'
 'file:/tmp/oiorio/FE4EF257-A3AB-E011-9698-00304867915A.root',
 'file:/tmp/oiorio/50A31B1A-8AAB-E011-835B-0026189438F5.root'
-#'file:/tmp/oiorio/WJetsSmallFile_1_1_nb1.root',
+#'file:/tmp/oiorio/TTJetsLocalFall11.root',
+#'file:/tmp/oiorio/',
 #'file:/tmp/oiorio/00012F91-72E5-DF11-A763-00261834B5F1.root',
 ),
 #eventsToProcess = cms.untracked.VEventRange('1:2807840-1:2807840'),
 duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 )
 
-ChannelName = "WJets";
+ChannelName = "SyncTest2";
 
 #process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/"+ChannelName+"_pt_bmode.root"))
 process.TFileService = cms.Service("TFileService", fileName = cms.string("pileupdistr_"+ChannelName+".root"))
@@ -241,7 +238,7 @@ process.hltFilter.TriggerResultsTag = cms.InputTag("TriggerResults","","HLT")
 process.hltFilter.HLTPaths = mytrigs
     
     
-process.countLeptons.doQCD = cms.untracked.bool(False)
+#process.countLeptons.doQCD = cms.untracked.bool(False)
 
 process.baseLeptonSequence = cms.Path(
 #    process.pileUpDumper +
@@ -279,6 +276,7 @@ savePatTupleSkimLoose = cms.untracked.vstring(
 
     'keep *_patElectronsZeroIso_*_*',
     'keep *_patMuonsZeroIso_*_*',
+    'keep *_kt6PFJets_*_*',
 
     'keep *_PVFilterProducer_*_*',
     
@@ -291,7 +289,6 @@ process.singleTopNTuple = cms.OutputModule("PoolOutputModule",
 #                                fileName = cms.untracked.string('rfio:/CST/cern.ch/user/o/oiorio/SingleTop/SubSkims/WControlSamples1.root'),
 #                   fileName = cms.untracked.Bstring('/tmp/oiorio/edmntuple_tchannel_big.root'),
                    fileName = cms.untracked.string('/tmp/oiorio/edmntuple_'+ChannelName+'.root'),
-                                             
                    SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('selection')),
                    outputCommands = saveNTuplesSkimLoose,
 )
@@ -301,7 +298,7 @@ process.singleTopPatTuple = cms.OutputModule("PoolOutputModule",
                    fileName = cms.untracked.string('/tmp/oiorio/pattuple_'+ChannelName+'.root'),
 
 
-                   SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('selection')),
+#                   SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('selection')),
                    outputCommands = savePatTupleSkimLoose
 )
 process.singleTopNTuple.dropMetaData = cms.untracked.string("ALL")

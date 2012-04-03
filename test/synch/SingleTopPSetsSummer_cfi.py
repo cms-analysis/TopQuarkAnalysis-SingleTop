@@ -9,8 +9,8 @@ import FWCore.ParameterSet.Config as cms
 lumiMu = cms.untracked.double(1)
 lumiEle = cms.untracked.double(1)
 
-lumiEle = cms.untracked.double(1299.)
-lumiMu = cms.untracked.double(1496.275-368.88+179.35)
+#lumiEle = cms.untracked.double(1299.)
+#lumiMu = cms.untracked.double(1496.275-368.88+179.35)
 
 
 wToLNuBranchingRatio = 0.108+0.1075+0.1125
