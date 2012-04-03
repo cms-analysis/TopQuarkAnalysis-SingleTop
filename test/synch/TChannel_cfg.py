@@ -90,6 +90,8 @@ process.TreesMu.channelInfo = TChannelMu
 #process.TreesEle.doQCD = cms.untracked.bool(False)
 process.TreesMu.doResol = cms.untracked.bool(False)
 process.TreesEle.doResol = cms.untracked.bool(False)
+process.TreesMu.doPU = cms.untracked.bool(False)
+process.TreesEle.doPU = cms.untracked.bool(False)
 
 process.TreesMu.doReCorrection = cms.untracked.bool(True)
 process.TreesEle.doReCorrection = cms.untracked.bool(True)

@@ -21,6 +21,11 @@ doResol  = cms.untracked.bool(True),
 #x1/x2
 x1 = cms.InputTag("PDFInfo","x1"),
 x2 = cms.InputTag("PDFInfo","x2"),
+id1 = cms.InputTag("PDFInfo","id1"),
+id2 = cms.InputTag("PDFInfo","id2"),
+scalePDF = cms.InputTag("PDFInfo","scalePDF"),
+doPDF =cms.untracked.bool(True),
+takeBTagSFFromDB = cms.untracked.bool(False),
 
 channelInfo = cms.PSet(
     crossSection = cms.untracked.double(20.93),
