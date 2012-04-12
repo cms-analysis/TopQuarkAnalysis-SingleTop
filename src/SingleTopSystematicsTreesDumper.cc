@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.14 2012/01/27 14:16:46 oiorio Exp $ 
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.15 2012/04/03 08:50:02 oiorio Exp $ 
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file 
 //
@@ -509,12 +509,12 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
   vParData->push_back(*ResJetParData);
     */
 
-  cout << "jec 2" << endl;
+    //cout << "jec 2" << endl;
   // JetCorrectorParameters *L3JetParMC = new JetCorrectorParameters(JEC_PATH+"JECs/STARTv17/START42_V17_AK5PF_L3Absolute.txt");
   //JetCorrectorParameters *L2JetParMC = new JetCorrectorParameters(JEC_PATH+"JECs/STARTv17/START42_V17_AK5PF_L2Relative.txt");
 
   //  JetCorrectorParameters L1JetParMC(JEC_PATH+"JECs/STARTv17/START42_V17_AK5PF_L1FastJet.txt");
-  cout << "jec 3" << endl;
+  //cout << "jec 3" << endl;
   //  vector<JetCorrectorParameters > vParTmp;
 
   //  vParMC.push_back(L1JetParMC);
@@ -523,7 +523,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
 
    //   vParMC->push_back(*L3JetParMC);
   
-  cout << "jec 4" << endl;
+    //cout << "jec 4" << endl;
   
   //   JetCorrectorData = new FactorizedJetCorrector(*vParData);
   //   JetCorrectorMC  = new FactorizedJetCorrector( vParTmp);
@@ -549,7 +549,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
   iEvent.getByLabel(jetsPhi_,jetsPhi);
 
   if(isFirstEvent && takeBTagSFFromDB_){
-    cout <<  "isfirst " << endl;
+    //cout <<  "isfirst " << endl;
     iSetup.get<BTagPerformanceRecord>().get("MISTAGTCHPT",perfMHP);
     iSetup.get<BTagPerformanceRecord>().get("MISTAGTCHPM",perfMHPM);
     iSetup.get<BTagPerformanceRecord>().get("MISTAGTCHEL",perfMHE);
@@ -654,7 +654,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     nQCDLeptons =0;
     nJets =0;
     //    nBJets =0;
-    cout <<" syst " << syst << endl;
+    //cout <<" syst " << syst << endl;
     //    nAntiBJets =0;
 
     //Here the weight of the event is the weight
@@ -741,7 +741,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     //Loops to apply systematics on jets-leptons
 
     
-    cout << " before leptons "<<endl;
+    //cout << " before leptons "<<endl;
     
     //Lepton loop
     if(!didLeptonLoop){
@@ -898,7 +898,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     
   //  cout << " test 1 "<<endl;
 
-    cout << " before met "<<endl;
+    //cout << " before met "<<endl;
 
   bool hasTurnOnWeight = false;
   double turnOnWeightValue =1;
@@ -958,7 +958,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     }
 
 
-    cout << " before jets "<<endl;
+    //cout << " before jets "<<endl;
    
     if(!gotJets){
       iEvent.getByLabel(jetsEta_,jetsEta);
@@ -1052,7 +1052,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	  if(syst=="noSyst"){ 
 	    ++nJetsNoSyst;
 	    jetsNoSyst[nJets-1]=jets[nJets-1]; }
-	  cout <<" jet no syst "<< nJets-1<<" pt "  <<jetsNoSyst[nJets-1].pt()<<endl;
+	  //cout <<" jet no syst "<< nJets-1<<" pt "  <<jetsNoSyst[nJets-1].pt()<<endl;
 	}
     
       //b tag thresholds 
@@ -1249,7 +1249,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       
       //Condition to find the highest/lowest b-tag 
       //according to algo 1 (tchp) 
-      cout << " i "<< i <<" jets size "<< nJets << " btag  "<< valueAlgo1<<endl;
+      //cout << " i "<< i <<" jets size "<< nJets << " btag  "<< valueAlgo1<<endl;
       if(jetsBTagAlgo->at(i) > highBTagTree){
 	highBTagTree=jetsBTagAlgo->at(i);
 	highBTagTreePosition=nJets-1;
@@ -1298,9 +1298,11 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 
     }
 
+    /*
         cout <<" syst "<< syst<< " njets "<< nJets << " nJetsNoSyst " << nJetsNoSyst << " nBJets "<< ntchpt_tags<< 
 	  " nBJetsNoSyst "<< nBJets<< " nb "<< nb << " nbNoSyst "<<nbNoSyst<< " lowBPos " <<lowBTagTreePosition << " lowBNoSyst " << 
 	  lowBTagTreePositionNoSyst<<endl;
+    */
 
     if( !flavourFilter(channel,nb,nc,nudsg) ) continue;
 
@@ -1358,7 +1360,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	      syst == "MisTagUp" || syst == "MisTagDown" ) bWeightTree = bTagSF(B);
       else bWeightTree = bWeightNoSyst;
 
-      cout << " before npv "<<endl;
+      //cout << " before npv "<<endl;
 
       if(doPU_){
 	if(!gotPU ){
@@ -1382,7 +1384,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       }
       else PUWeight=1;
 
-      cout << " before turnon "<<endl;
+      //cout << " before turnon "<<endl;
 
       
       if(leptonsFlavour_ == "electron" && doTurnOn_){
@@ -1464,7 +1466,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	turnOnWeightValue = turnOnWeight(jetprobs,1);
       }
       
-      cout << " before pdf "<<endl;
+      //cout << " before pdf "<<endl;
 
       if(syst== "noSyst" && doPDF_ ){
 	
@@ -1502,7 +1504,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       turnOnWeightTree = turnOnWeightValue;
       PUWeightTree = PUWeight;
 
-      cout << " before mtw "<<endl;
+      //cout << " before mtw "<<endl;
       
       metPt = sqrt(metPx*metPx+metPy*metPy);
       MTWValue =  sqrt((leptonPFour.pt()+metPt)*(leptonPFour.pt()+metPt)  -(leptonPFour.px()+metPx)*(leptonPFour.px()+metPx) -(leptonPFour.py()+metPy)*(leptonPFour.py()+metPy));
@@ -1555,13 +1557,13 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       mtwMassTree = MTWValue;
       
       if (nJets ==2){
-	cout << " B is "<< B<< " syst is "<<syst_name <<endl;
-	cout<< " tree name "<< trees2J[B][syst_name]->GetName() <<endl;
+	//	cout << " B is "<< B<< " syst is "<<syst_name <<endl;
+	//	cout<< " tree name "<< trees2J[B][syst_name]->GetName() <<endl;
 	trees2J[B][syst_name]->Fill();            
       }
       if (nJets ==3){
-	cout << " B is "<< B<< " syst is "<<syst_name <<endl;
-	cout << " tree name "<< trees3J[B][syst_name]->GetName() <<endl;
+	//	cout << " B is "<< B<< " syst is "<<syst_name <<endl;
+	//	cout << " tree name "<< trees3J[B][syst_name]->GetName() <<endl;
 	trees3J[B][syst_name]->Fill();            
       }
     }
@@ -2461,8 +2463,8 @@ void SingleTopSystematicsTreesDumper::InitializeTurnOnReWeight(string rootFile =
   ;}
 
 double SingleTopSystematicsTreesDumper::turnOnReWeight (double preWeight, double pt, double tchpt){
-  cout << "reweight pt"<<  pt << " tchpt "<<tchpt << " sf " ; 
-  cout << histoSFs.GetBinContent(histoSFs.FindFixBin(pt,tchpt))<<endl;
+  //  cout << "reweight pt"<<  pt << " tchpt "<<tchpt << " sf " ; 
+  //  cout << histoSFs.GetBinContent(histoSFs.FindFixBin(pt,tchpt))<<endl;
 
   return histoSFs.GetBinContent(histoSFs.FindFixBin(pt,tchpt));
   //  return 1;//preWeight;
