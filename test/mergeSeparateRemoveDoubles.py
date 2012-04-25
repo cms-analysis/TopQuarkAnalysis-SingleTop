@@ -28,7 +28,7 @@ fName = "copyFlavorSeparationTemplateSummer.py"
 fNameBsub = "mergeBsub.py"
 f = open(fName)
 
-
+nparts = 1
 
 #Channels to include
 channels = [
@@ -444,7 +444,7 @@ for channel in channels:
     
     cfg_file = changeChannel(tmpName,channelOld,channel,Switch,SuffixCfg)
     
-    cfg_file = appendInput("./"+channel+"_cfg.py",inputDir,channel,Prefix,1)
+    cfg_file = appendInput("./"+channel+"_cfg.py",inputDir,channel,Prefix,nparts)
 
     bsub_file = changeChannel(tmpNameBsub,channelOld,channel,Switch,SuffixBsub)
 
