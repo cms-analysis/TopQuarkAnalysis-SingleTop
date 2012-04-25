@@ -25,7 +25,7 @@ PileUpSeason = "SummerFlatTail11"
 
 TChannelMu = cms.PSet(
 #    crossSection = cms.untracked.double(41.92*wToLNuBranchingRatio),
-    crossSection = cms.untracked.double(41.92),
+    crossSection = cms.untracked.double(43.),
     channel = cms.untracked.string("TChannel"),
     originalEvents = cms.untracked.double(3900171),
     finalLumi = lumiMu,
@@ -39,7 +39,7 @@ TChannelMu = cms.PSet(
 
 TChannelEle = cms.PSet(
 #    crossSection = cms.untracked.double(41.92*wToLNuBranchingRatio),
-    crossSection = cms.untracked.double(41.92),
+    crossSection = cms.untracked.double(43.),
     channel = cms.untracked.string("TChannel"),
     originalEvents = cms.untracked.double(3900171),
 RelIsoCut = cms.untracked.double(relIsoCutElectrons),
@@ -51,7 +51,7 @@ RelIsoCut = cms.untracked.double(relIsoCutElectrons),
 
 TbarChannelMu = cms.PSet(
 #    crossSection = cms.untracked.double(22.65 *wToLNuBranchingRatio),
-    crossSection = cms.untracked.double(22.65),
+    crossSection = cms.untracked.double(22.9),
     channel = cms.untracked.string("TbarChannel"),
     originalEvents = cms.untracked.double(1944826),
     finalLumi = lumiMu,Season = cms.untracked.string(PileUpSeason),
@@ -65,7 +65,7 @@ TbarChannelMu = cms.PSet(
 
 TbarChannelEle = cms.PSet(
 #    crossSection = cms.untracked.double(22.65 *wToLNuBranchingRatio),
-    crossSection = cms.untracked.double(22.65),
+    crossSection = cms.untracked.double(22.9),
     channel = cms.untracked.string("TbarChannel"),
     originalEvents = cms.untracked.double(1944826),
 RelIsoCut = cms.untracked.double(relIsoCutElectrons),
@@ -129,7 +129,7 @@ RelIsoCut = cms.untracked.double(relIsoCutElectrons),
 
 SChannelMu = cms.PSet(
 #            crossSection = cms.untracked.double(4.63*wToLNuBranchingRatio),
-            crossSection = cms.untracked.double(3.19),
+            crossSection = cms.untracked.double(3.14),
                         channel = cms.untracked.string("SChannel"),
                         originalEvents = cms.untracked.double(494967),
             #                        originalEvents = cms.untracked.double(259971),
@@ -145,7 +145,7 @@ SChannelMu = cms.PSet(
 SChannelEle = cms.PSet(
 #            crossSection = cms.untracked.double(4.63*wToLNuBranchingRatio),
 #            crossSection = cms.untracked.double(3.19*wToLNuBranchingRatio),
-            crossSection = cms.untracked.double(3.19),
+            crossSection = cms.untracked.double(3.14),
 RelIsoCut = cms.untracked.double(relIsoCutElectrons),
                         channel = cms.untracked.string("SChannel"),
                         finalLumi = lumiEle,Season = cms.untracked.string(PileUpSeason),
@@ -159,7 +159,7 @@ RelIsoCut = cms.untracked.double(relIsoCutElectrons),
 
 
 SbarChannelMu = cms.PSet(
-            crossSection = cms.untracked.double(1.44),
+            crossSection = cms.untracked.double(1.42),
                         channel = cms.untracked.string("SbarChannel"),
                         originalEvents = cms.untracked.double(137980),
                         finalLumi = lumiMu,Season = cms.untracked.string(PileUpSeason),
@@ -171,11 +171,11 @@ SbarChannelMu = cms.PSet(
                         )
 
 SbarChannelEle = cms.PSet(
-            crossSection = cms.untracked.double(1.44),
-RelIsoCut = cms.untracked.double(relIsoCutElectrons),
-                        channel = cms.untracked.string("SbarChannel"),
-                        finalLumi = lumiEle,Season = cms.untracked.string(PileUpSeason),
-                        originalEvents = cms.untracked.double(137980),
+            crossSection = cms.untracked.double(1.42),
+            RelIsoCut = cms.untracked.double(relIsoCutElectrons),
+            channel = cms.untracked.string("SbarChannel"),
+            finalLumi = lumiEle,Season = cms.untracked.string(PileUpSeason),
+            originalEvents = cms.untracked.double(137980),
             mcPUFile = cms.untracked.string("pileupdistr_SChannel.root"),
         puHistoName = cms.untracked.string("pileUpDumper/PileUpSChannel"),
 
@@ -520,7 +520,7 @@ RelIsoCut = cms.untracked.double(relIsoCutElectrons),
     )
 
 TTBarMu = cms.PSet(
-    crossSection = cms.untracked.double(157.5),
+    crossSection = cms.untracked.double(165.),
     channel = cms.untracked.string("TTBar"),
     originalEvents = cms.untracked.double(3701947),#1089625
     finalLumi = lumiMu,Season = cms.untracked.string(PileUpSeason),
@@ -531,7 +531,7 @@ TTBarMu = cms.PSet(
     )
 
 TTBarEle = cms.PSet(
-    crossSection = cms.untracked.double(157.5),
+    crossSection = cms.untracked.double(165.),
 RelIsoCut = cms.untracked.double(relIsoCutElectrons),
     channel = cms.untracked.string("TTBar"),
     finalLumi = lumiEle,Season = cms.untracked.string(PileUpSeason),
@@ -839,7 +839,7 @@ RelIsoCut = cms.untracked.double(relIsoCutElectrons),
 
 
 TTBar_Q2DownMu = cms.PSet(
-    crossSection = cms.untracked.double(157.5),
+    crossSection = cms.untracked.double(165.),
     channel = cms.untracked.string("TTBar_Q2Down"),
     originalEvents = cms.untracked.double(967055),#3701947),#1089625
     finalLumi = lumiMu,Season = cms.untracked.string(PileUpSeason),
@@ -850,7 +850,7 @@ TTBar_Q2DownMu = cms.PSet(
     )
 
 TTBar_Q2DownEle = cms.PSet(
-    crossSection = cms.untracked.double(157.5),
+    crossSection = cms.untracked.double(165.),
 RelIsoCut = cms.untracked.double(relIsoCutElectrons),
     channel = cms.untracked.string("TTBar_Q2Down"),
     finalLumi = lumiEle,Season = cms.untracked.string(PileUpSeason),
@@ -862,7 +862,7 @@ RelIsoCut = cms.untracked.double(relIsoCutElectrons),
 
 
 TTBar_Q2UpMu = cms.PSet(
-    crossSection = cms.untracked.double(157.5),
+    crossSection = cms.untracked.double(165.),
     channel = cms.untracked.string("TTBar_Q2Up"),
     originalEvents = cms.untracked.double(930483),#3701947),#1089625
     finalLumi = lumiMu,Season = cms.untracked.string(PileUpSeason),
@@ -873,7 +873,7 @@ TTBar_Q2UpMu = cms.PSet(
     )
 
 TTBar_Q2UpEle = cms.PSet(
-    crossSection = cms.untracked.double(157.5),
+    crossSection = cms.untracked.double(165.),
 RelIsoCut = cms.untracked.double(relIsoCutElectrons),
     channel = cms.untracked.string("TTBar_Q2Up"),
     finalLumi = lumiEle,Season = cms.untracked.string(PileUpSeason),

@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  * 
  * Produces systematics histograms out of a standard Single Top n-tuple 
- * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.11 2012/01/17 15:44:38 oiorio Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.12 2012/04/03 08:50:25 oiorio Exp $
  */
 
 
@@ -144,6 +144,7 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   double turnOnReWeight (double preWeight, double pt, double tchpt);
   double jetprob(double pt,double tchp); 
   double jetprob(double pt,double tchp,double eta, string syst); 
+  double jetprobold(double pt,double tchp,double eta, string syst); 
   double jetprobpt(double pt); 
   double jetprobbtag(double tchp); 
 
@@ -299,10 +300,12 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
     bjets[10],
     antibjets[10]; 
   
-  float pdf_weights[44];
+  float pdf_weights[52];
+  float  pdf_weights_alternate_set_1,pdf_weights_alternate_set_2;
   //  float recorrection_weights[7][7];
   //  float pt_bin_extremes[8];
   //  float tchpt_bin_extremes[8];
+
   TH2D histoSFs; 
 
   math::PtEtaPhiELorentzVector leptonPFour;

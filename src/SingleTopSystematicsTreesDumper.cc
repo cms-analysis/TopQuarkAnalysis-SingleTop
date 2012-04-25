@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.15 2012/04/03 08:50:02 oiorio Exp $ 
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.16 2012/04/12 11:29:40 giamman Exp $ 
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file 
 //
@@ -339,11 +339,13 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
       trees2J[bj][syst]->Branch("lowBTag",&lowBTagTree);
       trees2J[bj][syst]->Branch("highBTag",&highBTagTree);
 
-      for(int p =1;p<=44;++p){
+      for(int p =1;p<=52;++p){
 	stringstream w_n;
 	w_n<<p;
 	trees2J[bj][syst]->Branch(("PDFWeight"+w_n.str()).c_str(),&pdf_weights[p-1]);
       }
+      trees2J[bj][syst]->Branch("PDFWeight_Alternate_Set_1",&pdf_weights_alternate_set_1);
+      trees2J[bj][syst]->Branch("PDFWeight_Alternate_Set_2",&pdf_weights_alternate_set_2);
 
       treename = (channel+"_3J_"+tags.str()+"_"+syst);
       
@@ -446,11 +448,15 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
       trees3J[bj][syst]->Branch("turnOnWeightBTagTrig3Up",&turnOnWeightTreeBTagTrig3Up);
       trees3J[bj][syst]->Branch("turnOnWeightBTagTrig3Down",&turnOnWeightTreeBTagTrig3Down);
 
-      for(int p =1;p<=44;++p){
+      for(int p =1;p<=52;++p){
 	stringstream w_n;
 	w_n<<p;
 	trees3J[bj][syst]->Branch(("PDFWeight"+w_n.str()).c_str(),&pdf_weights[p-1]);
       }
+				
+      trees2J[bj][syst]->Branch("PDFWeight_Alternate_Set_1",&pdf_weights_alternate_set_1);
+      trees2J[bj][syst]->Branch("PDFWeight_Alternate_Set_2",&pdf_weights_alternate_set_2);
+
     }
   
   }  
@@ -530,9 +536,12 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
    }
    InitializeEventScaleFactorMap();
    InitializeTurnOnReWeight("CentralJet30BTagIP_2ndSF_mu.root");
-   LHAPDF::initPDFSet(1, "cteq66.LHgrid");
-
-
+   //   LHAPDF::initPDFSet(1, "cteq66.LHgrid");
+   LHAPDF::initPDFSet(1, "CT10.LHgrid");
+   LHAPDF::initPDFSet(2, "MSTW2008nlo68cl.LHgrid");
+   LHAPDF::initPDFSet(3, "NNPDF21_100.LHgrid");
+   
+   
 
   //  //cout<< "I work for now but I do nothing. But again, if you gotta do nothing, you better do it right. To prove my good will I will provide you with somse numbers later."<<endl;
    isFirstEvent = true;
@@ -601,6 +610,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
   double PUWeightNoSyst =1;
   double bWeightNoSyst =1;
   double turnOnWeightValueNoSyst =1;
+  double turnOnReWeightTreeNoSyst =1;
 
   BinningPointByMap measurePoint;
   
@@ -896,7 +906,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 
 
     
-  //  cout << " test 1 "<<endl;
+    //  cout << " test 1 "<<endl;
 
     //cout << " before met "<<endl;
 
@@ -958,7 +968,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     }
 
 
-    //cout << " before jets "<<endl;
+    //    cout << " before jets "<<endl;
    
     if(!gotJets){
       iEvent.getByLabel(jetsEta_,jetsEta);
@@ -1055,7 +1065,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	  //cout <<" jet no syst "<< nJets-1<<" pt "  <<jetsNoSyst[nJets-1].pt()<<endl;
 	}
     
-      //b tag thresholds 
+	//b tag thresholds 
       
       double valueAlgo1 = jetsBTagAlgo->at(i);
       double valueAlgo2 = jetsAntiBTagAlgo->at(i);
@@ -1094,12 +1104,14 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	  double hptSFErr=0;
 	  double helSF=1;
 	  double helSFErr=0;
+	  
 	  double hpteff = EFFMap("TCHPT_C");
 	  double heleff = EFFMap("TCHEL_C");
 	  //double hpteff = EFFMapNew(valueAlgo1,"TCHP_C");
 	  //double heleff = EFFMapNew(valueAlgo2,"TCHE_C");
 	  
-	  
+	  if(abs(eta)>2.6){ hpteff =0;heleff=0; }
+
 	  if(  takeBTagSFFromDB_){
 	    hptSF = (perfBHP->getResult(PerformanceResult::BTAGBEFFCORR,measurePoint));
 	    helSF = (perfBHE->getResult(PerformanceResult::BTAGBEFFCORR,measurePoint));
@@ -1140,6 +1152,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	  
 	  double hpteff = EFFMap("TCHPT_B");
 	  double heleff = EFFMap("TCHEL_B");
+
+	  if(abs(eta)>2.6){ hpteff =0;heleff=0; }
 	  
 	  double hptSF=1;
 	  double hptSFErr=0;
@@ -1189,6 +1203,9 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	  double helSFErrDown=0;
 	  double hpteff = EFFMap("TCHPT_L");
 	  double heleff = EFFMap("TCHEL_L");
+
+
+	  if(abs(eta)>2.6){ hpteff =0;heleff=0; }
 
 	  if(  takeBTagSFFromDB_){
 	    hpteff =(perfMHP->getResult(PerformanceResult::BTAGLEFF,measurePoint));
@@ -1287,7 +1304,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       nudsg = nudsgNoSyst;
       for(size_t a =0; a < nJetsNoSyst;++a){
 	jets[a] = jetsNoSyst[a];
-	//	cout <<" jet no syst "<< a <<" pt "  <<jets[a].pt()<<endl;
+	//cout <<" jet no syst "<< a <<" pt "  <<jets[a].pt()<<endl;
       }
       highBTagTreePosition = highBTagTreePositionNoSyst;
       lowBTagTreePosition = lowBTagTreePositionNoSyst;
@@ -1299,7 +1316,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     }
 
     /*
-        cout <<" syst "<< syst<< " njets "<< nJets << " nJetsNoSyst " << nJetsNoSyst << " nBJets "<< ntchpt_tags<< 
+        //cout <<" syst "<< syst<< " njets "<< nJets << " nJetsNoSyst " << nJetsNoSyst << " nBJets "<< ntchpt_tags<< 
 	  " nBJetsNoSyst "<< nBJets<< " nb "<< nb << " nbNoSyst "<<nbNoSyst<< " lowBPos " <<lowBTagTreePosition << " lowBNoSyst " << 
 	  lowBTagTreePositionNoSyst<<endl;
     */
@@ -1364,7 +1381,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 
       if(doPU_){
 	if(!gotPU ){
-	  //  cout << " before npv "<<endl;
+	  //  //cout << " before npv "<<endl;
 	  iEvent.getByLabel(nm1_,nm1);
 	  iEvent.getByLabel(n0_,n0);
 	  iEvent.getByLabel(np1_,np1);
@@ -1384,7 +1401,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       }
       else PUWeight=1;
 
-      //cout << " before turnon "<<endl;
+      //cout << " before turnon loop"<<endl;
 
       
       if(leptonsFlavour_ == "electron" && doTurnOn_){
@@ -1409,6 +1426,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	    
 	    pushJetProbs(pt,btag,eta);
 	  }
+	  //cout << "right before turn on "<< endl;
 	  turnOnWeightValue = turnOnProbs("noSyst",1);
 	  turnOnWeightTreeJetTrig1Up = turnOnProbs("JetTrig1Up",1);
 	  turnOnWeightTreeJetTrig1Down = turnOnProbs("JetTrig1Down",1);
@@ -1425,34 +1443,49 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	  turnOnWeightTreeBTagTrig3Down = turnOnProbs("BTagTrig3Down",1);
 	  //	  turnOnWeightValue = turnOnWeight(jetprobs,1);
 	    if(syst == "noSyst") turnOnWeightValueNoSyst= turnOnWeightValue;  
-	    
+	    if(syst == "noSyst") turnOnReWeightTreeNoSyst = turnOnReWeight(turnOnWeightValue,jets[highBTagTreePosition].pt(),highBTagTree);
+	    //cout <<  " test right after loop " << endl;
 	}
-	  else{
-	    jetprobs.clear();
-	    for(size_t i = 0;i<jetsEta->size();++i){
-	      double eta = jetsEta->at(i);
-	      double btag = jetsBTagAlgo->at(i);
-	      double pt = jetsPt->at(i);
-	      if (fabs(eta)>2.6) jetprobs.push_back(0.);
-	      jetprobs.push_back(jetprob(pt,btag,eta,syst));
-	    }
-	    turnOnWeightValue = turnOnWeight(jetprobs,1);
-	    turnOnWeightTreeJetTrig1Up = turnOnWeightValue;
-	    turnOnWeightTreeJetTrig1Down = turnOnWeightValue;
-	    turnOnWeightTreeJetTrig2Up = turnOnWeightValue;
-	    turnOnWeightTreeJetTrig2Down = turnOnWeightValue;
-	    turnOnWeightTreeJetTrig3Up = turnOnWeightValue;
-	    turnOnWeightTreeJetTrig3Down = turnOnWeightValue;
-	    
-	    turnOnWeightTreeBTagTrig1Up = turnOnWeightValue;
-	    turnOnWeightTreeBTagTrig1Down = turnOnWeightValue;
-	    turnOnWeightTreeBTagTrig2Up = turnOnWeightValue;
-	    turnOnWeightTreeBTagTrig2Down = turnOnWeightValue;
-	    turnOnWeightTreeBTagTrig3Up = turnOnWeightValue;
-	    turnOnWeightTreeBTagTrig3Down = turnOnWeightValue;
+	else{
+	  //cout << "jetprobs @syst: " << syst << endl;
+	  
+	  jetprobs.clear();
+	  
+	  //cout << "jetprobs @syst: " << syst << " test 1" <<endl;
+	  for(size_t i = 0;i<jetsEta->size();++i){
+	    double eta = jetsEta->at(i);
+	    double btag = jetsBTagAlgo->at(i);
+	    double pt = jetsPt->at(i);
+	    if (fabs(eta)>2.6) jetprobs.push_back(0.);
+	    jetprobs.push_back(jetprob(pt,btag,eta,syst));
 	  }
+	  
+	  //cout << "jetprobs @syst: " << syst << " test 2" <<endl;
+
+	  turnOnWeightValue = turnOnWeight(jetprobs,1);
+	  turnOnWeightTreeJetTrig1Up = turnOnWeightValue;
+	  turnOnWeightTreeJetTrig1Down = turnOnWeightValue;
+	  turnOnWeightTreeJetTrig2Up = turnOnWeightValue;
+	  turnOnWeightTreeJetTrig2Down = turnOnWeightValue;
+	  turnOnWeightTreeJetTrig3Up = turnOnWeightValue;
+	  turnOnWeightTreeJetTrig3Down = turnOnWeightValue;
+	  
+	  turnOnWeightTreeBTagTrig1Up = turnOnWeightValue;
+	  turnOnWeightTreeBTagTrig1Down = turnOnWeightValue;
+	  turnOnWeightTreeBTagTrig2Up = turnOnWeightValue;
+	  turnOnWeightTreeBTagTrig2Down = turnOnWeightValue;
+	  turnOnWeightTreeBTagTrig3Up = turnOnWeightValue;
+	  turnOnWeightTreeBTagTrig3Down = turnOnWeightValue;
+	}
       
-	turnOnReWeightTree = turnOnReWeight(turnOnWeightValue,jets[highBTagTreePosition].pt(),highBTagTree);
+	//	//cout << "jetprobs @syst: " << syst << " test 3" <<endl;
+	////cout << " njets "<< nJets << " high b-tag " <<highBTagTree<< " high b-tag tree position" << highBTagTreePosition<<endl;
+
+	turnOnReWeightTree = 	turnOnReWeightTreeNoSyst;
+
+	////cout << "jet "<< jets[highBTagTreePosition].pt()<< " weight value "<< turnOnWeightValue <<endl;
+	//cout << "test after loop "<<endl;
+      
       }
       if(leptonsFlavour_ == "none" && doTurnOn_){
 	jetprobs.clear();
@@ -1466,7 +1499,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	turnOnWeightValue = turnOnWeight(jetprobs,1);
       }
       
-      //cout << " before pdf "<<endl;
+      ////cout << " before pdf "<<endl;
 
       if(syst== "noSyst" && doPDF_ ){
 	
@@ -1492,19 +1525,29 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	  double xpdf1 = LHAPDF::xfx(1, x1, scalePDF, id1);
 	  double xpdf2 = LHAPDF::xfx(1, x2, scalePDF, id2);
 	  double w0 = xpdf1 * xpdf2;
-	  for(int p=1; p <=44; ++p){
+	  for(int p=1; p <=52; ++p){
 	    LHAPDF::usePDFMember(1,p);
 	    double xpdf1_new = LHAPDF::xfx(1, x1, scalePDF, id1);
 	    double xpdf2_new = LHAPDF::xfx(1, x2, scalePDF, id2);
 	  double pweight = xpdf1_new * xpdf2_new / w0;
 	  pdf_weights[p-1]=pweight;
 	  }
+	  LHAPDF::usePDFMember(2,0);
+	  double xpdf1_new = LHAPDF::xfx(2, x1, scalePDF, id1);
+	  double xpdf2_new = LHAPDF::xfx(2, x2, scalePDF, id2);
+	  pdf_weights_alternate_set_1 = xpdf1_new * xpdf2_new / w0;
+	  xpdf1_new = LHAPDF::xfx(3, x1, scalePDF, id1);
+	  xpdf2_new = LHAPDF::xfx(3, x2, scalePDF, id2);
+	  pdf_weights_alternate_set_2 = xpdf1_new * xpdf2_new / w0;
+	  //	  pdf_weights_alternate_set_1 =pweight1;
+	  //	  pdf_weights_alternate_set_2 =pweight2;
+
 	}
       }
       turnOnWeightTree = turnOnWeightValue;
       PUWeightTree = PUWeight;
 
-      //cout << " before mtw "<<endl;
+      ////cout << " before mtw "<<endl;
       
       metPt = sqrt(metPx*metPx+metPy*metPy);
       MTWValue =  sqrt((leptonPFour.pt()+metPt)*(leptonPFour.pt()+metPt)  -(leptonPFour.px()+metPx)*(leptonPFour.px()+metPx) -(leptonPFour.py()+metPy)*(leptonPFour.py()+metPy));
@@ -1557,8 +1600,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       mtwMassTree = MTWValue;
       
       if (nJets ==2){
-	//	cout << " B is "<< B<< " syst is "<<syst_name <<endl;
-	//	cout<< " tree name "<< trees2J[B][syst_name]->GetName() <<endl;
+	//	//cout << " B is "<< B<< " syst is "<<syst_name <<endl;
+	//	//cout<< " tree name "<< trees2J[B][syst_name]->GetName() <<endl;
 	trees2J[B][syst_name]->Fill();            
       }
       if (nJets ==3){
@@ -1796,7 +1839,7 @@ void SingleTopSystematicsTreesDumper::endJob(){
 
   cout <<endl<< passingLepton<< " | "<< passingJets <<" | "<< passingMET <<" | "<< passingBJets << endl<<endl;
 
-  resetWeightsDoubles();
+  //  resetWeightsDoubles();
   /*  for(size_t i = 0; i < rate_systematics.size();++i){
     string syst = rate_systematics[i];
     string treename = (channel+"_"+syst);
@@ -2452,8 +2495,8 @@ void SingleTopSystematicsTreesDumper::InitializeTurnOnReWeight(string rootFile =
   TH2D *histSF = dynamic_cast<TH2D *>(f.Get("ScaleFactor"));
   
   histoSFs = *histSF;
-  
-
+  f.Close();
+  //  cout << " histo random test bin " <<histoSFs.FindFixBin(61,6.5)<< " content "<<histoSFs.GetBinContent(histoSFs.FindFixBin(61,6.5)) << endl; 
   //  for 
   //  recorrection_weights[7][7];
 
@@ -2463,21 +2506,155 @@ void SingleTopSystematicsTreesDumper::InitializeTurnOnReWeight(string rootFile =
   ;}
 
 double SingleTopSystematicsTreesDumper::turnOnReWeight (double preWeight, double pt, double tchpt){
-  //  cout << "reweight pt"<<  pt << " tchpt "<<tchpt << " sf " ; 
-  //  cout << histoSFs.GetBinContent(histoSFs.FindFixBin(pt,tchpt))<<endl;
-
-  return histoSFs.GetBinContent(histoSFs.FindFixBin(pt,tchpt));
+  cout << "reweight pt"<<  pt << " tchpt "<<tchpt << endl;
+  cout <<" bin "<< histoSFs.FindFixBin(pt,tchpt) << " sf "; 
+  cout << histoSFs.GetBinContent(histoSFs.FindFixBin(pt,tchpt))<<endl;
+  double a = histoSFs.GetBinContent(histoSFs.FindFixBin(pt,tchpt));
+  return a;
   //  return 1;//preWeight;
 }
 
 
 double SingleTopSystematicsTreesDumper::jetprob(double pt, double btag, double eta, string syst){
+  double prob =1.;
+  if (fabs(eta)>2.6) return 0.;
+
+  double a=0,b=1,c=1;
+  
+  if(syst=="BTagTrig1Up"){
+    if(btag <-10.){a=0.0142;b=-27.7;c=-0.128;};
+    if(btag >-10. && btag < -4) {a=0.0735;b=-4.24;c=-0.0615;};
+    if(btag >-4. && btag < 0.0) {a=0.0196;b=-7.71;c=-0.0647;};
+    if(btag >0. && btag < 1.0) {a=0.027;b=-16.3;c=-0.0933;};
+    if(btag >1. && btag < 2.0) {a=0.071;b=-50.;c=-0.138;};
+    if(btag >2. && btag < 2.4) {a=0.255;b=-109.4;c=-0.172;};
+    if(btag >2.4 && btag < 2.8){a=0.39;b=-112.;c=-0.168;};
+    if(btag >2.8 && btag < 3.2) {a=0.534;b=-113.;c=-0.166;};
+    if(btag >3.2 && btag < 3.6) {a=0.647;b=-69.3;c=-0.15;};
+    if(btag >3.6 && btag < 4.0) {a=0.734;b=-107;c=-0.164;};
+    if(btag >4.0 && btag < 5.0) {a=0.816;b=-102;c=-0.162;};
+    if(btag >5.0 && btag < 6.0) {a=0.868;b=-96.2;c=-0.158;};
+    if(btag >6.0 && btag < 7.0) {a=0.878;b=-111;c=-0.165;};
+    if(btag >7.0 && btag <10.0) {a=0.893;b=-83.9;c=-0.156;};
+    if(btag >10.0 ) {a=0.886;b=-59.6;c=-0.141;};
+  }
+  
+  else if(syst=="BTagTrig1Down"){
+    if(btag <-10.){a=0.0138;b=-45.4;c=-0.146;};
+    if(btag >-10. && btag < -4) {a=0.065;b=-14.6;c=-0.104;};
+    if(btag >-4. && btag < 0.0) {a=0.019;b=-9.33;c=-0.0719;};
+    if(btag >0. && btag < 1.0) {a=0.0266;b=-20.7;c=-0.0102;};
+    if(btag >1. && btag < 2.0) {a=0.0706;b=-65.1;c=-0.147;};
+    if(btag >2. && btag < 2.4) {a=0.253;b=-192.;c=-0.191;};
+    if(btag >2.4 && btag < 2.8){a=0.387;b=-192.;c=-0.186;};
+    if(btag >2.8 && btag < 3.2) {a=0.529;b=-188.;c=-0.183;};
+    if(btag >3.2 && btag < 3.6) {a=0.642;b=-106.;c=-0.164;};
+    if(btag >3.6 && btag < 4.0) {a=0.73;b=-161.;c=-0.179;};
+    if(btag >4.0 && btag < 5.0) {a=0.813;b=-129.;c=-0.17;};
+    if(btag >5.0 && btag < 6.0) {a=0.865;b=-123.;c=-0.166;};
+    if(btag >6.0 && btag < 7.0) {a=0.881;b=-151.;c=-0.176;};
+    if(btag >7.0 && btag <10.0) {a=0.891;b=-103.;c=-0.162;};
+    if(btag >10.0 ) {a=0.885;b=-70.6;c=-0.146;};
+  }
+  else if (syst=="BTagTrig2Up"){
+    if(btag <-10.){a=0.0141;b=-36.5;c=-0.136;};
+    if(btag >-10. && btag < -4) {a=0.0727;b=-9.42;c=-0.0797;};
+    if(btag >-4. && btag < 0.0) {a=0.0195;b=-8.52;c=-0.0677;};
+    if(btag >0. && btag < 1.0) {a=0.027;b=-18.5;c=-0.0969;};
+    if(btag >1. && btag < 2.0) {a=0.071;b=-57.5;c=-0.142;};
+    if(btag >2. && btag < 2.4) {a=0.256;b=-150.;c=-0.181;};
+    if(btag >2.4 && btag < 2.8){a=0.392;b=-152.;c=-0.176;};
+    if(btag >2.8 && btag < 3.2) {a=0.536;b=-151.;c=-0.174;};
+    if(btag >3.2 && btag < 3.6) {a=0.649;b=-87.5;c=-0.156;};
+    if(btag >3.6 && btag < 4.0) {a=0.737;b=-134.0;c=-0.171;};
+    if(btag >4.0 && btag < 5.0) {a=0.818;b=-115.;c=-0.166;};
+    if(btag >5.0 && btag < 6.0) {a=0.869;b=-110.;c=-0.162;};
+    if(btag >6.0 && btag < 7.0) {a=0.883;b=-131.;c=-0.171;};
+    if(btag >7.0 && btag <10.0) {a=0.894;b=-93.4;c=-0.159;};
+    if(btag >10.0 ) {a=0.887;b=-65.1;c=-0.144;};
+
+  }
+  else if (syst=="BTagTrig2Down"){
+    if(btag <-10.){a=0.0138;b=-36.5;c=-0.138;};
+    if(btag >-10. && btag < -4) {a=0.0658;b=-9.42;c=-0.0859;};
+    if(btag >-4. && btag < 0.0) {a=0.0191;b=-8.52;c=-0.0689;};
+    if(btag >0. && btag < 1.0) {a=0.0267;b=-18.5;c=-0.098;};
+    if(btag >1. && btag < 2.0) {a=0.0706;b=-57.5;c=-0.144;};
+    if(btag >2. && btag < 2.4) {a=0.252;b=-150;c=-0.182;};
+    if(btag >2.4 && btag < 2.8){a=0.384;b=-152.;c=-0.177;};
+    if(btag >2.8 && btag < 3.2) {a=0.527;b=-151.;c=-0.175;};
+    if(btag >3.2 && btag < 3.6) {a=0.639;b=-87.5;c=-0.157;};
+    if(btag >3.6 && btag < 4.0) {a=0.727;b=-134.0;c=-0.172;};
+    if(btag >4.0 && btag < 5.0) {a=0.812;b=-115.;c=-0.166;};
+    if(btag >5.0 && btag < 6.0) {a=0.863;b=-110.;c=-0.162;};
+    if(btag >6.0 && btag < 7.0) {a=0.877;b=-131.;c=-0.170;};
+    if(btag >7.0 && btag <10.0) {a=0.89;b=-93.4;c=-0.159;};
+    if(btag >10.0 ) {a=0.884;b=-65.1;c=-0.144;};
+
+  }
+  else if (syst=="BTagTrig3Up"){
+    if(btag <-10.){a=0.0139;b=-36.5;c=-0.137;};
+    if(btag >-10. && btag < -4) {a=0.0702;b=-9.42;c=-0.0839;};
+    if(btag >-4. && btag < 0.0) {a=0.0192;b=-8.52;c=-0.0683;};
+    if(btag >0. && btag < 1.0) {a=0.0267;b=-18.5;c=-0.0974;};
+    if(btag >1. && btag < 2.0) {a=0.0705;b=-57.5;c=-0.143;};
+    if(btag >2. && btag < 2.4) {a=0.254;b=-150.;c=-0.183;};
+    if(btag >2.4 && btag < 2.8){a=0.388;b=-152.;c=-0.178;};
+    if(btag >2.8 && btag < 3.2) {a=0.531;b=-151.;c=-0.175;};
+    if(btag >3.2 && btag < 3.6) {a=0.644;b=-87.5;c=-0.158;};
+    if(btag >3.6 && btag < 4.0) {a=0.732;b=-134.0;c=-0.172;};
+    if(btag >4.0 && btag < 5.0) {a=0.815;b=-115.;c=-0.166;};
+    if(btag >5.0 && btag < 6.0) {a=0.866;b=-110.;c=-0.163;};
+    if(btag >6.0 && btag < 7.0) {a=0.880;b=-131.;c=-0.171;};
+    if(btag >7.0 && btag <10.0) {a=0.892;b=-93.4;c=-0.160;};
+    if(btag >10.0 ) {a=0.886;b=-65.1;c=-0.144;};
+  }
+  else if (syst=="BTagTrig3Down"){
+    if(btag <-10.){a=0.0141;b=-36.5;c=-0.137;};
+    if(btag >-10. && btag < -4) {a=0.0683;b=-9.42;c=-0.0817;};
+    if(btag >-4. && btag < 0.0) {a=0.0194;b=-8.52;c=-0.0684;};
+    if(btag >0. && btag < 1.0) {a=0.027;b=-18.5;c=-0.0975;};
+    if(btag >1. && btag < 2.0) {a=0.0711;b=-57.5;c=-0.143;};
+    if(btag >2. && btag < 2.4) {a=0.253;b=-150.;c=-0.18;};
+    if(btag >2.4 && btag < 2.8){a=0.388;b=-152.;c=-0.176;};
+    if(btag >2.8 && btag < 3.2) {a=0.531;b=-151.;c=-0.174;};
+    if(btag >3.2 && btag < 3.6) {a=0.644;b=-87.5;c=-0.156;};
+    if(btag >3.6 && btag < 4.0) {a=0.732;b=-134.0;c=-0.171;};
+    if(btag >4.0 && btag < 5.0) {a=0.815;b=-115.;c=-0.165;};
+    if(btag >5.0 && btag < 6.0) {a=0.866;b=-110.;c=-0.162;};
+    if(btag >6.0 && btag < 7.0) {a=0.880;b=-131.;c=-0.170;};
+    if(btag >7.0 && btag <10.0) {a=0.892;b=-93.4;c=-0.159;};
+    if(btag >10.0 ) {a=0.886;b=-65.11;c=-0.143;};
+
+  }
+  else {
+    if(btag <-10.){a=0.014;b=-36.55;c=-0.137;};
+    if(btag >-10. && btag < -4) {a=0.069;b=-9.42;c=-0.083;};
+    if(btag >-4. && btag < 0.0) {a=0.019;b=-8.52;c=-0.068;};
+    if(btag >0. && btag < 1.0) {a=0.027;b=-18.51;c=-0.097;};
+    if(btag >1. && btag < 2.0) {a=0.071;b=-57.54;c=-0.143;};
+    if(btag >2. && btag < 2.4) {a=0.254;b=-150.48;c=-0.182;};
+    if(btag >2.4 && btag < 2.8){a=0.388;b=-151.97;c=-0.177;};
+    if(btag >2.8 && btag < 3.2) {a=0.531;b=-150.73;c=-0.175;};
+    if(btag >3.2 && btag < 3.6) {a=0.644;b=-87.52;c=-0.157;};
+    if(btag >3.6 && btag < 4.0) {a=0.732;b=-134.05;c=-0.172;};
+    if(btag >4.0 && btag < 5.0) {a=0.815;b=-115.25;c=-0.166;};
+    if(btag >5.0 && btag < 6.0) {a=0.866;b=-109.53;c=-0.162;};
+    if(btag >6.0 && btag < 7.0) {a=0.880;b=-130.84;c=-0.170;};
+    if(btag >7.0 && btag <10.0) {a=0.892;b=-93.41;c=-0.159;};
+    if(btag >10.0 ) {a=0.886;b=-65.11;c=-0.144;};
+  } 
+  prob = a*exp(b*exp(c*pt));
+  return prob;
+}
+
+double SingleTopSystematicsTreesDumper::jetprobold(double pt, double btag, double eta, string syst){
   double prob=1.;
 
   if (fabs(eta)>2.6) return 0.;
   //PT turnOn
   if(syst=="JetTrig1Up"){
-
+    
     if(eta<-1.4)prob = 0.981*exp(-37.49*exp(-0.158*pt));
     if(eta>-1.4&&eta<0)prob = 0.982*exp(-27.51*exp(-0.146*pt));
     if(eta<1.4&&eta>0)prob =0.982*exp(-26.63*exp(-0.145*pt));
@@ -2519,6 +2696,7 @@ double SingleTopSystematicsTreesDumper::jetprob(double pt, double btag, double e
     ;  }
   else prob=0.982*exp(-30.6*exp(-0.151*pt));
  
+
   //BTag turnOn
   if(syst=="BTagTrig1Up"){
     prob*=0.85*exp(-6.35*exp(-0.681*btag));  }
