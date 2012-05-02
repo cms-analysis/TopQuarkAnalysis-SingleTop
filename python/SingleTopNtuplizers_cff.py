@@ -508,7 +508,7 @@ nTuplePatType1METsPF = cms.EDProducer(
           "CandViewNtpProducer",
           src = cms.InputTag("patType1CorrectedPFMet"),
           lazyParser = cms.untracked.bool(True),
-          prefix = cms.untracked.string("patMETsPF"),
+          prefix = cms.untracked.string("patType1METsPF"),
           variables = cms.VPSet(
     
           cms.PSet(
@@ -563,6 +563,7 @@ nTuplesSkim = cms.Sequence(
     nTupleTopJetsPF +
     nTupleAllJets +
     nTuplePatMETsPF +
+    nTuplePatType1METsPF +
     nTupleAllElectrons +
     nTupleAllMuons +
     nTupleLooseElectrons +
@@ -587,7 +588,7 @@ saveNTuplesSkim = cms.untracked.vstring(
     'keep floats_nTupleTopJetsPF_*_*',
     'keep *_UnclusteredMETPF_*_*',
     'keep *_NVertices_*_*',
-    'keep *_nTuplePatType1METsPF_*_*',
+    'keep floats_nTuplePatType1METsPF_*_*',
     'keep *_UnclusteredType1METPF_*_*',
     'keep *_genJetsPF_*_*',
     'keep *_nTupleVertices_*_*',

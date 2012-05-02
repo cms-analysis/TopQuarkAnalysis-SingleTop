@@ -19,6 +19,7 @@ from TopQuarkAnalysis.SingleTop.simpleEleIdSequence_cff import *
 
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleTopJetsPF
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTuplePatMETsPF
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTuplePatType1METsPF
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleElectrons
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleMuons
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTuplesSkim
