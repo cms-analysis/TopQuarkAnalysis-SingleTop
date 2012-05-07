@@ -7,7 +7,7 @@ import os,sys,re,shutil
 #inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/MC2011/Summer11/"
 #inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/MC2011/Summer11/Sep04"
 #inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/MC2011/Summer11/Aug30"
-inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2012/MC2011/Summer11/Feb12"
+#inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2012/MC2011/Summer11/Feb12"
 #inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2012/MC2011/Summer11/Feb14"
 #inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2012/MC2011/Summer11/Feb17"
 #inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2012/MC2011/Summer11/Feb18"
@@ -17,7 +17,8 @@ inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2012/MC2011/Summer11/Feb12"
 #inputDir = "/castor/cern.ch/user/m/mmerola/SingleTop_Moriond2012/DataOldJECs/Correct/"
 #inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/Run2011/Aug24/"
 #inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/Run2011/Aug30"
-
+#inputDir = "/castor/cern.ch/user/m/mmerola/SingleTop_2012/Data_2011/"
+inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2012/MC2011/Summer11/JECv12/Apr30"
 
 #Original config file
 #fName = "copyTemplate.py"
@@ -28,11 +29,26 @@ fName = "copyFlavorSeparationTemplateSummer.py"
 fNameBsub = "mergeBsub.py"
 f = open(fName)
 
-nparts = 1
+nparts = 7
 
 #Channels to include
 channels = [
-#"Mu_Aug05_part_1",
+#"TChannel",
+#"TbarChannel",
+#"SChannel",
+#"SbarChannel",
+#"TWChannel",
+#"TbarWChannel",
+#"TTBar",
+#"WW",
+#"WZ",
+#"ZZ",
+#"QCD_HT_200_inf_GJets",
+#"QCD_HT_100_200_GJets",
+#"QCD_HT_40_100_GJets",
+#"QCD_Pt_30to80_EMEnriched",
+#"QCD_Pt_80to170_EMEnriched",
+#"Mu_aug05_part_1",
 #"Mu_Aug05_part_2",
 #"Mu_Aug05_part_3",
 #"Mu_May10_part_1",
@@ -40,6 +56,34 @@ channels = [
 #"Mu_May10_part_3",
 #"Mu_May10_part_4",
 #"Mu_May10_part_5",
+#"EleHad_PromptReco_v6_part_1",
+#"EleHad_PromptReco_v6_part_2",
+#"EleHad_PromptReco_v6_part_3",
+#"EleHad_PromptReco_v6_part_4",
+#"EleHad_PromptReco_v6_part_5",
+#"SingleElectron_PromptReco_v6_part_1",
+#"SingleElectron_PromptReco_v6_part_2",
+#"SingleElectron_PromptReco_v6_part_3",
+#"SingleElectron_PromptReco_v6_part_4",
+#"SingleElectron_PromptReco_v6_part_5",
+#"MuHad_PromptReco_v6_part_1",
+#"MuHad_PromptReco_v6_part_2",
+#"MuHad_PromptReco_v6_part_3",
+#"MuHad_PromptReco_v6_part_4",
+#"MuHad_PromptReco_v6_part_5",
+#"MuHad_PromptReco_v6_part_6",
+#"MuHad_PromptReco_v6_part_7",
+#"SingleMu_PromptReco_v6_part_1",
+#"SingleMu_PromptReco_v6_part_2",
+#"SingleMu_PromptReco_v6_part_3",
+#"SingleMu_PromptReco_v6_part_4",
+#"SingleMu_PromptReco_v6_part_5",
+#"SingleMu_PromptReco_v6_part_6",
+#"SingleMu_PromptReco_v6_part_7",
+#"EleHad_Aug05_part_2",
+#"EleHad_Aug05_part_3",
+#"EleHad_Aug05_part_4",
+#"EleHad_Aug05_part_5",
 #"EleHad_Aug05_part_1",
 #"EleHad_Aug05_part_2",
 #"EleHad_Aug05_part_3",
@@ -79,7 +123,7 @@ channels = [
 #"Mu_May10_part_3",
 #"EleHad_Aug05_v2",
 #    "TbarWChannel",
-    "ZJets_part_1",
+#   "ZJets_part_1",
 #    "ZJets_part_2",
 #    "ZJets_part_3",
 #    "SbarChannel",
@@ -136,7 +180,7 @@ channels = [
 #     "ZJets_part_7",
 #     "ZJets_part_8",
 #     "ZJets_part_9",
-#     "ZJets_part_10",
+#    "ZJets_part_10",
 #     "ZJets_part_11",
 #     "ZJets_part_12",
 #     "ZJets_part_13",
@@ -161,13 +205,13 @@ channels = [
 #     "ZJets_part_10",
 #     "ZJets_part_11",
 #     "ZJets_part_12",
-#    "QCDMu_part_1",
-#    "QCDMu_part_2",
-#    "QCDMu_part_3",
-#    "QCDMu_part_4",
-#    "QCDMu_part_5",
-#    "QCDMu_part_6",
-#    "QCDMu_part_7",
+    "QCDMu_part_1",
+    "QCDMu_part_2",
+    "QCDMu_part_3",
+    "QCDMu_part_4",
+    "QCDMu_part_5",
+    "QCDMu_part_6",
+    "QCDMu_part_7",
 #     "Dataele",
 #     "QCDMu",
 #     "QCDEle",
@@ -225,7 +269,7 @@ Switch = "None"
 #Choose if you want to do bsub, run or just prepare the configuration files
 #if none of those is chosen, it just produces the cfg files to run and bsub
 mode = ""
-#mode = "cmsRun"
+mode = "cmsRun"
 #mode = "bsub"
 #mode = "hadd"
 
