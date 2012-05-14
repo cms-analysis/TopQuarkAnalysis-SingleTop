@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.16 2012/04/12 11:29:40 giamman Exp $ 
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.17 2012/04/25 20:56:08 oiorio Exp $ 
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file 
 //
@@ -482,9 +482,9 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
   
   JEC_PATH = "./";
 
-  jecUnc  = new JetCorrectionUncertainty(JEC_PATH+"GR_R_42_V19_AK5PF_Uncertainty.txt");
+  //jecUnc  = new JetCorrectionUncertainty(JEC_PATH+"GR_R_42_V19_AK5PF_Uncertainty.txt");
   //  jecUnc  = new JetCorrectionUncertainty(JEC_PATH+"JEC11_V12_AK5PF_UncertaintySources.txt");
-  //jecUnc  = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JEC11_V12_AK5PF_UncertaintySources.txt", "Total")));
+  jecUnc  = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JEC11_V12_AK5PF_UncertaintySources.txt", "Total")));
   JES_SW = 0.015;
   JES_b_cut = 0.02;
   JES_b_overCut = 0.03;
@@ -1404,7 +1404,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       //cout << " before turnon loop"<<endl;
 
       
-      if(leptonsFlavour_ == "electron" && doTurnOn_){
+      if(//leptonsFlavour_ == "electron" &&
+	 doTurnOn_){
 	if(syst== "noSyst" && (B==1 || B==4)){
 	  jetprobs.clear();
 	  jetprobs_j1up.clear();
@@ -1556,9 +1557,9 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       if( syst=="noSyst" && nJets ==2){
 	//	++passingJets;
 	
-	if(leptonsFlavour_ == "muon" && MTWValue>40 ) {++passingMET;passesMet= true;}
-	if(leptonsFlavour_ == "electron" && metPt>35) {++passingMET;passesMet= true;}
-	
+	if(leptonsFlavour_ == "muon" && MTWValue>40 && B<3 ) {++passingMET;passesMet= true;}
+	if(leptonsFlavour_ == "electron" && metPt>35 && B<3) {++passingMET;passesMet= true;}
+ 	
 	
 	if( B==1 && passesMet)   
 	  ++passingBJets;
