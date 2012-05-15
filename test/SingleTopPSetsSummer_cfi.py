@@ -779,7 +779,7 @@ RelIsoCut = cms.untracked.double(relIsoCutElectrons),
 
 TbarChannel_Q2UpMu = cms.PSet(
 #    crossSection = cms.untracked.double(22.65 *wToLNuBranchingRatio),
-    crossSection = cms.untracked.double(22.65),
+    crossSection = cms.untracked.double(22.9),
     channel = cms.untracked.string("TbarChannel_Q2Up"),
     originalEvents = cms.untracked.double(565520),
     finalLumi = lumiMu,
@@ -794,7 +794,7 @@ TbarChannel_Q2UpMu = cms.PSet(
 
 TbarChannel_Q2UpEle = cms.PSet(
 #    crossSection = cms.untracked.double(22.65 *wToLNuBranchingRatio),
-    crossSection = cms.untracked.double(22.65),
+    crossSection = cms.untracked.double(22.9),
     channel = cms.untracked.string("TbarChannel_Q2Up"),
     originalEvents = cms.untracked.double(565520),
 RelIsoCut = cms.untracked.double(relIsoCutElectrons),
@@ -810,7 +810,7 @@ RelIsoCut = cms.untracked.double(relIsoCutElectrons),
 
 TbarChannel_Q2DownMu = cms.PSet(
 #    crossSection = cms.untracked.double(22.65 *wToLNuBranchingRatio),
-    crossSection = cms.untracked.double(22.65),
+    crossSection = cms.untracked.double(22.9),
     channel = cms.untracked.string("TbarChannel_Q2Down"),
     originalEvents = cms.untracked.double(565454),
     finalLumi = lumiMu,
@@ -825,9 +825,71 @@ TbarChannel_Q2DownMu = cms.PSet(
 
 TbarChannel_Q2DownEle = cms.PSet(
 #    crossSection = cms.untracked.double(22.65 *wToLNuBranchingRatio),
-    crossSection = cms.untracked.double(22.65),
+    crossSection = cms.untracked.double(22.9),
     channel = cms.untracked.string("TbarChannel_Q2Down"),
     originalEvents = cms.untracked.double(565454),
+RelIsoCut = cms.untracked.double(relIsoCutElectrons),
+    finalLumi = lumiEle,
+    MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
+    mcPUFile = cms.untracked.string("pileupdistr_TChannel.root"),
+    puHistoName = cms.untracked.string("pileUpDumper/PileUpTChannel"),
+    Season = cms.untracked.string(PileUpSeason),
+    )
+
+
+
+###
+TChannel_Q2UpMu = cms.PSet(
+#    crossSection = cms.untracked.double(22.65 *wToLNuBranchingRatio),
+    crossSection = cms.untracked.double(43.0),
+    channel = cms.untracked.string("TChannel_Q2Up"),
+    originalEvents = cms.untracked.double(1032197),
+    finalLumi = lumiMu,
+    MTWCut = cms.untracked.double(50.0),#Default 50.0 GeV
+    RelIsoCut = cms.untracked.double(relIsoCutMuons),
+
+    mcPUFile = cms.untracked.string("pileupdistr_TChannel.root"),
+    puHistoName = cms.untracked.string("pileUpDumper/PileUpTChannel"),
+    Season = cms.untracked.string(PileUpSeason),
+    )
+
+
+TChannel_Q2UpEle = cms.PSet(
+#    crossSection = cms.untracked.double(22.65 *wToLNuBranchingRatio),
+    crossSection = cms.untracked.double(43.0),
+    channel = cms.untracked.string("TChannel_Q2Up"),
+    originalEvents = cms.untracked.double(1032197),
+RelIsoCut = cms.untracked.double(relIsoCutElectrons),
+    finalLumi = lumiEle,
+    MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
+    mcPUFile = cms.untracked.string("pileupdistr_TChannel.root"),
+    puHistoName = cms.untracked.string("pileUpDumper/PileUpTChannel"),
+    Season = cms.untracked.string(PileUpSeason),
+    )
+
+
+
+
+TChannel_Q2DownMu = cms.PSet(
+#    crossSection = cms.untracked.double(22.65 *wToLNuBranchingRatio),
+    crossSection = cms.untracked.double(43.0),
+    channel = cms.untracked.string("TChannel_Q2Down"),
+    originalEvents = cms.untracked.double(1041924),
+    finalLumi = lumiMu,
+    MTWCut = cms.untracked.double(50.0),#Default 50.0 GeV
+    RelIsoCut = cms.untracked.double(relIsoCutMuons),
+
+    mcPUFile = cms.untracked.string("pileupdistr_TChannel.root"),
+    puHistoName = cms.untracked.string("pileUpDumper/PileUpTChannel"),
+    Season = cms.untracked.string(PileUpSeason),
+    )
+
+
+TChannel_Q2DownEle = cms.PSet(
+#    crossSection = cms.untracked.double(22.65 *wToLNuBranchingRatio),
+    crossSection = cms.untracked.double(43.0),
+    channel = cms.untracked.string("TChannel_Q2Down"),
+    originalEvents = cms.untracked.double(1041924),
 RelIsoCut = cms.untracked.double(relIsoCutElectrons),
     finalLumi = lumiEle,
     MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV

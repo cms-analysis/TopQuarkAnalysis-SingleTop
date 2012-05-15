@@ -19,6 +19,7 @@ import os,sys,re,shutil
 #inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2011/Run2011/Aug30"
 #inputDir = "/castor/cern.ch/user/m/mmerola/SingleTop_2012/Data_2011/"
 inputDir = "/castor/cern.ch/user/o/oiorio/SingleTop/2012/MC2011/Summer11/JECv12/Apr30"
+#inputDir = "/castor/cern.ch/user//m/mmerola/SingleTop_2012/Summer11"
 
 #Original config file
 #fName = "copyTemplate.py"
@@ -29,7 +30,7 @@ fName = "copyFlavorSeparationTemplateSummer.py"
 fNameBsub = "mergeBsub.py"
 f = open(fName)
 
-nparts = 7
+nparts = 1
 
 #Channels to include
 channels = [
@@ -56,6 +57,11 @@ channels = [
 #"Mu_May10_part_3",
 #"Mu_May10_part_4",
 #"Mu_May10_part_5",
+#"EleHad_Aug05_part_1",
+#"EleHad_Aug05_part_2",
+#"EleHad_Aug05_part_3",
+#"EleHad_Aug05_part_4",
+#"EleHad_Aug05_part_5",
 #"EleHad_PromptReco_v6_part_1",
 #"EleHad_PromptReco_v6_part_2",
 #"EleHad_PromptReco_v6_part_3",
@@ -109,10 +115,12 @@ channels = [
 #"EleHad_v4_part_9",
 #    "SChannel",
 #    "SbarChannel",
-#    "TTBar_Q2Down",
-#    "TTBar_Q2Up",
-#"TChannel",
-#"TbarChannel",
+"TTBar_Q2Down",
+"TTBar_Q2Up",
+"TChannel_Q2Down",
+"TbarChannel_Q2Down",
+"TChannel_Q2Up",
+"TbarChannel_Q2Up",
 #    "TTBar",
 ##"WW",
 #"WZ",
@@ -162,9 +170,9 @@ channels = [
 #     "WJets_part_11",
 #     "WJets_part_12",
 #     "WJets_part_13",
-#    "WJets_part_14",
+#     "WJets_part_14",
 #     "WJets_part_15",
-#    "WJets_part_16",
+#     "WJets_part_16",
 #     "WJets_part_17",
 #     "WJets_part_18",
 #     "WJets_part_19",
@@ -205,13 +213,13 @@ channels = [
 #     "ZJets_part_10",
 #     "ZJets_part_11",
 #     "ZJets_part_12",
-    "QCDMu_part_1",
-    "QCDMu_part_2",
-    "QCDMu_part_3",
-    "QCDMu_part_4",
-    "QCDMu_part_5",
-    "QCDMu_part_6",
-    "QCDMu_part_7",
+#    "QCDMu_part_1",
+#    "QCDMu_part_2",
+#    "QCDMu_part_3",
+#    "QCDMu_part_4",
+#    "QCDMu_part_5",
+#    "QCDMu_part_6",
+#    "QCDMu_part_7",
 #     "Dataele",
 #     "QCDMu",
 #     "QCDEle",
