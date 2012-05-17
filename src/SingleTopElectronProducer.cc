@@ -2,7 +2,7 @@
  *\Author: A. Orso M. Iorio 
  *
  *
- *\version  $Id: SingleTopElectronProducer.cc,v 1.6 2010/12/09 23:11:36 oiorio Exp $ 
+ *\version  $Id: SingleTopElectronProducer.cc,v 1.7 2011/03/24 15:58:06 oiorio Exp $ 
  */
 
 // Single Top producer: produces a top candidate made out of a Lepton, a B jet and a MET
@@ -62,11 +62,9 @@ SingleTopElectronProducer::SingleTopElectronProducer(const edm::ParameterSet& iC
 {
   src_                 = iConfig.getParameter<edm::InputTag>( "src" );
   cut_ = iConfig.getParameter< std::string >("cut"); 
-  isData_ = iConfig.getUntrackedParameter<bool>("isData",false); 
-  id_ = iConfig.getParameter<std::string> ("id"); 
-  useConversionVeto_ = iConfig.getUntrackedParameter<bool>("useConversionVeto",true);
-  useVertexVeto_ = iConfig.getUntrackedParameter<bool>("useVertexVeto",true);
-  
+  rho_ = iConfig.getParameter<edm::InputTag> ("rho");
+  deltaR_ = iConfig.getUntrackedParameter<double>         ( "deltaR",0.3 );
+
   produces<std::vector<pat::Electron> >();
 }
 
@@ -76,105 +74,37 @@ void SingleTopElectronProducer::produce(edm::Event & iEvent, const edm::EventSet
   ////std::cout << " mark 0 " << std::endl;
 
   ////std::cout << " mark 1 " << std::endl;
-  edm::Handle<edm::View<pat::Electron> > electrons;
+  //  edm::Handle<edm::View<pat::Electron> > electrons;
+  edm::Handle<std::vector<pat::Electron> > electrons;
   iEvent.getByLabel(src_,electrons);
-
+  iEvent.getByLabel(rho_,rho);
+  double energy_ = TMath::Pi()*deltaR_*deltaR_* (*rho);
+  
   Selector cut(cut_);
-  std::vector< pat::Electron > * finalElectrons = new std::vector<pat::Electron>;
+  std::auto_ptr< std::vector< pat::Electron > > finalElectrons (new std::vector<pat::Electron>(*electrons));
 
   ////std::cout << " mark 2 " << std::endl;
-
-  edm::Handle<reco::TrackCollection> ctfTracks;
-  iEvent.getByLabel("generalTracks",ctfTracks);  
-
-  edm::Handle<edm::View<reco::Vertex> > vertices;
-  iEvent.getByLabel("offlinePrimaryVertices",vertices);
-  //iEvent.getByLabel("PVFilterProducer",vertices);
-
-  ////std::cout << " mark 3 " << std::endl;
-  double bfield = 3.8;
-
-  if(isData_){
-    edm::Handle<DcsStatusCollection> dcsHandle;
-    //    iEvent.getByLabel(dcsTag_,dcsHandle);
-    iEvent.getByLabel("scalersRawToDigi",dcsHandle);
-    float currentScaleFactor =2.09237036221512717e-04;
-    float current = (*dcsHandle)[0].magnetCurrent();
-    bfield = current*currentScaleFactor;
-  }
-  else{
-  edm::ESHandle<MagneticField> magneticField;
-  iEventSetup.get<IdealMagneticFieldRecord>().get(magneticField);
-  bfield = magneticField->inTesla(GlobalPoint(0.,0.,0.)).z();
-  }
-
-
-  bool bit0 = true;
-
-  for(size_t i = 0; i < electrons->size(); ++i){
     
-    if(id_==std::string("cIso70")){
-      //      SimpleCutBasedElectronIDSelectionFunctor patSele(SimpleCutBasedElectronIDSelectionFunctor::cIso70,bfield,ctfTracks);
-      //      patSele.set("cIso_EB",100000.);
-      // patSele.set("cIso_EE",100000.);
-      // patSele.set("conversionRejection",0);
-      // patSele.set("maxNumberOfExpectedMissingHits",11);
-      //bit0 = bool(patSele(electrons->at(i)));
-      int eid = (int) electrons->at(i).electronID("simpleEleId70cIso");
-      bool hadId(eid & 0x1) ;
-      bit0 = hadId;
-    }
-    else if(id_ == std::string("cIso95")){
-      //SimpleCutBasedElectronIDSelectionFunctor patSele(SimpleCutBasedElectronIDSelectionFunctor::cIso95,bfield,ctfTracks);
-      //patSele.set("cIso_EB",100000.);
-      //patSele.set("cIso_EE",100000.);
-      //patSele.set("conversionRejection",0);
-      //patSele.set("maxNumberOfExpectedMissingHits",11);
-      //bit0 = bool(patSele(electrons->at(i)));
-      int eid = (int) electrons->at(i).electronID("simpleEleId95cIso");
-      bool hadId(eid & 0x1) ;
-      bit0 = hadId;
-    }else if(id_ == std::string("antiIso")){
-      //   SimpleCutBasedElectronIDSelectionFunctor patSele(SimpleCutBasedElectronIDSelectionFunctor::cIso95,bfield,ctfTracks);
-      SimpleCutBasedElectronIDSelectionFunctor patSele(SimpleCutBasedElectronIDSelectionFunctor::cIso95);
-    //    std::cout << "is anti iso"  <<std::endl;
-    patSele.set("cIso_EB",100000.);
-    patSele.set("cIso_EE",100000.);
-    patSele.set("conversionRejection",0);
-    bit0 = bool(patSele(electrons->at(i)));
-
-  }
-    ConversionFinder conv;
-    ConversionInfo convInfo= conv.getConversionInfo(electrons->at(i),ctfTracks,bfield);
+  
+  for(size_t i = 0; i < finalElectrons->size(); ++i){
     
-    double dist = convInfo.dist();
-    double dcot = convInfo.dcot();
-    //std::cout << " bit 0 producer "<< bit0 << " use conversion "<< useConversionVeto_ << " conversion " << (fabs(dist)<0.02&&fabs(dcot<0.02)) << std::endl;
-
-    if(!cut(electrons->at(i)))continue; 
+    pat::Electron & el = (*finalElectrons)[i];
+    el.addUserFloat("DeltaCorrectedIso",(el.chargedHadronIso() + std::max(0., el.neutralHadronIso() + el.photonIso() -0.5*el.puChargedHadronIso()))/el.et());
+    el.addUserFloat("RhoCorrectedIso",(el.chargedHadronIso() + std::max(0., el.neutralHadronIso() + el.photonIso() -energy_))/el.et());
+    
+    if(!cut(el)) finalElectrons->erase(finalElectrons->begin()+i) ; 
     
     //std::cout << " passes cut " << cut_ <<  std::endl;
     
-    if(!bit0) continue;
-    if(useConversionVeto_ && (fabs(dist) < 0.02 && fabs(dcot) < 0.02))continue;
-
-    bool goodVertexDist = true;
-    for(size_t v = 0; v < vertices->size(); ++v){
-      if(electrons->at(i).vertex().z()-vertices->at(0).z()>=1){goodVertexDist = false;break;}
-    }
-    if (useVertexVeto_ && !goodVertexDist)continue;
-    //std::cout << " pass all "<< std::endl;
-    finalElectrons->push_back(electrons->at(i));
-   
-    
+    //    finalElectrons->push_back(electrons->at(i));
   } 
  
   ////std::cout << " mark 7 " << std::endl;
 
-std::auto_ptr< std::vector< pat::Electron > > finalElectronsPtr(finalElectrons);
+  //std::auto_ptr< std::vector< pat::Electron > > finalElectronsPtr(finalElectrons);
  
 
-iEvent.put(finalElectronsPtr);
+iEvent.put(finalElectrons);
 
 }
 

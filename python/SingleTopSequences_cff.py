@@ -9,8 +9,6 @@ from PhysicsTools.PatAlgos.patSequences_cff import *
 from TopQuarkAnalysis.SingleTop.simpleEleIdSequence_cff import *
 
 
-
-
 #from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleTopJetsPF
 #from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTuplePatMETsPF
 #from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleElectrons
@@ -76,17 +74,28 @@ HBHENoiseFilterResultProducer.useTS4TS5 = cms.bool(True)
 nTuplePatMETsPF.src = cms.InputTag('patMETs')
 
 from RecoEgamma.ElectronIdentification.electronIdSequence_cff import *
+from EGamma.EGammaAnalysisTools.electronIdMVAProducer_cfi import *
+
+mvaID = cms.Sequence(  mvaTrigV0 + mvaNonTrigV0 )
 
 patElectronIDs = cms.Sequence(simpleEleIdSequence +
-                                                            eIdSequence)
+                              eIdSequence +
+                              mvaID
+                              )
+
+
 electronIDSources = cms.PSet(
-        simpleEleId60cIso = cms.InputTag("simpleEleId60cIso"),
-            simpleEleId70cIso = cms.InputTag("simpleEleId70cIso"),
-            simpleEleId95cIso = cms.InputTag("simpleEleId95cIso"),
-            eidRobustLoose= cms.InputTag("eidRobustLoose"),
-            eidRobustTight= cms.InputTag("eidRobustTight"),
-            eidRobustHighEnergy= cms.InputTag("eidRobustHighEnergy")
-            )
+    mvaTrigV0    = cms.InputTag("mvaTrigV0"),
+    mvaNonTrigV0    = cms.InputTag("mvaNonTrigV0"),
+#    simpleEleId60cIso = cms.InputTag("simpleEleId60cIso"),
+    simpleEleId70cIso = cms.InputTag("simpleEleId70cIso"),
+    simpleEleId80cIso = cms.InputTag("simpleEleId80cIso"),
+    simpleEleId90cIso = cms.InputTag("simpleEleId90cIso"),
+    simpleEleId95cIso = cms.InputTag("simpleEleId95cIso"),
+#    eidRobustLoose= cms.InputTag("eidRobustLoose"),
+#    eidRobustTight= cms.InputTag("eidRobustTight"),
+#    eidRobustHighEnergy= cms.InputTag("eidRobustHighEnergy")
+    )
 
 #cFlavorHistory
 
@@ -110,13 +119,14 @@ basePath = cms.Sequence(
        #   zVetoElectrons +
           topJetsPF +
           UnclusteredMETPF +
-          UnclusteredType1METPF +
+      #    UnclusteredType1METPF +
           genJetsPF +
           NVertices +
           tightMuonsZeroIso +
           tightElectronsZeroIso +
           tightMuons +
           tightElectrons +
+      #    tightZeroIsoRhoCorrectedRelIso+
        #  SingleTopMCProducer +
           PDFInfo
           )
@@ -129,12 +139,12 @@ basePathData = cms.Sequence(
           #   zVetoElectrons +
           topJetsPF +
           UnclusteredMETPF +
-          UnclusteredType1METPF +
+     #     UnclusteredType1METPF +
           #   NVertices +
           tightMuonsZeroIso +
           tightElectronsZeroIso +
           tightMuons +
-          tightElectrons
+          tightElectrons 
           #  SingleTopMCProducer +
           )
 

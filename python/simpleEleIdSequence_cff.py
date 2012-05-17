@@ -41,17 +41,18 @@ simpleEleId60cIso.electronQuality = '60cIso'
 
 
 
-simpleEleIdSequence = cms.Sequence(simpleEleId95relIso+
-                                   simpleEleId90relIso+
-                                   simpleEleId85relIso+
-                                   simpleEleId80relIso+
-                                   simpleEleId70relIso+
-                                   simpleEleId60relIso+
+simpleEleIdSequence = cms.Sequence(
+   # simpleEleId95relIso+
+   #                                simpleEleId90relIso+
+   #                                simpleEleId85relIso+
+   #                                simpleEleId80relIso+
+   #                                simpleEleId70relIso+
+   #                                simpleEleId60relIso+
                                    simpleEleId95cIso+
                                    simpleEleId90cIso+
-                                   simpleEleId85cIso+
+#                                   simpleEleId85cIso+
                                    simpleEleId80cIso+
-                                   simpleEleId70cIso+
-                                   simpleEleId60cIso
+                                   simpleEleId70cIso#+
+#                                   simpleEleId60cIso
                                    )
 

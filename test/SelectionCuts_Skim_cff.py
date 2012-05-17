@@ -16,8 +16,8 @@ from TopQuarkAnalysis.SingleTop.SingleTopSelectors_cff import *
 #eleLooseCut = cms.string("et > 15 & abs(eta) < 2.5")#RelIso < 0.2
 
 #With isolation requirements
-muLooseCut = cms.string("isGlobalMuon & pt > 10 & abs(eta) < 2.5 & (chargedHadronIso+ neutralHadronIso + photonIso )/pt <0.2")
-eleLooseCut = cms.string("et > 15 & abs(eta) < 2.5 & (chargedHadronIso+ neutralHadronIso + photonIso )/pt <0.2")
+muLooseCut = cms.string("isGlobalMuon & pt > 10 & abs(eta) < 2.5")# & (chargedHadronIso+ neutralHadronIso + photonIso )/pt <0.2")
+eleLooseCut = cms.string("et > 15 & abs(eta) < 2.5")# & (chargedHadronIso+ neutralHadronIso + photonIso )/pt <0.2")
 
 #eleZVetoCut = cms.string("et > 20 &  (abs(superCluster.eta)> 1.5660 || abs(superCluster.eta)<1.4442) & eta < 2.5 & (dr03TkSumPt + dr03EcalRecHitSumEt + dr03HcalTowerSumEt)/et < 0.1 & (electronID('simpleEleId95cIso')==1 || electronID('simpleEleId70cIso')==3 ||  electronID('simpleEleId70cIso')==5 ||  electronID('simpleEleId70cIso')==7)")
 # Require ID + or of all possible combinations
@@ -42,14 +42,14 @@ jetLooseCut = cms.string("numberOfDaughters()>1 & pt()> 20 && abs(eta())<5 & ((a
 
 #Requirement on the number of leptons in the event
 #Loose: at least 1 tight lepton
-minTightLeptons = cms.int32(1)
-maxTightLeptons = cms.int32(99)
+minTightLeptons = cms.untracked.int32(1)
+maxTightLeptons = cms.untracked.int32(99)
 
 #Number of leptons that survive loose cuts and do not overlap with tight leptons
 #Cannot apply as long as there is the extra z-vetoed electron
 #Loose: up to 1 extra loose lepton
-minLooseLeptons = cms.int32(0)
-maxLooseLeptons = cms.int32(99)
+minLooseLeptons = cms.untracked.int32(0)
+maxLooseLeptons = cms.untracked.int32(99)
 
 
 

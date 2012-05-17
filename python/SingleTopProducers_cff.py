@@ -2,17 +2,26 @@ import FWCore.ParameterSet.Config as cms
 
 
 #muon skim part
-looseMuons = cms.EDFilter("PATMuonSelector",
+
+looseMuons = cms.EDProducer("SingleTopMuonProducer",
   src = cms.InputTag("selectedPatMuons"),
-  cut = cms.string('pt > 10 & abs(eta) < 2.1 & isGlobalMuon'),
-  filter = cms.bool(False)                                
+  cut = cms.string('pt >  20 & abs(eta) < 2.4'),
+  rho = cms.InputTag("kt6PFJetsCentralNeutral:rho"),
 )
 
 #electron skim part
-looseElectrons = cms.EDFilter("PATElectronSelector",
+#looseElectrons = cms.EDFilter("PATElectronSelector",
+#  src = cms.InputTag("selectedPatElectrons"),
+#  cut = cms.string('pt >  20 & abs(eta) < 2.4'),
+#)
+
+looseElectrons = cms.EDProducer("SingleTopElectronProducer",
   src = cms.InputTag("selectedPatElectrons"),
   cut = cms.string('pt >  20 & abs(eta) < 2.4'),
+  rho = cms.InputTag("kt6PFJetsCentralNeutral:rho"),
 )
+
+
 
 #electrons for z veto part
 zVetoElectrons = cms.EDFilter("PATElectronSelector",
@@ -33,6 +42,7 @@ UnclusteredMETPF = cms.EDProducer("SingleTopUnclusteredMETProducer",
                                   electronsSource = cms.InputTag("selectedPatElectrons"),
                                   muonsSource = cms.InputTag("selectedPatMuons"),
                                   )
+
 
 UnclusteredType1METPF = cms.EDProducer("SingleTopUnclusteredMETProducer",
                                                                          metSource = cms.InputTag("patType1CorrectedPFMet"),
@@ -62,33 +72,33 @@ topJetsPF = cms.EDFilter("PATJetSelector",
                          checkOverlaps = cms.PSet(),
                            )
 
-tightMuons = cms.EDFilter("PATMuonSelector",
-                        preselection = cms.string(''),
-                        src = cms.InputTag("selectedPatMuons"),
-                        cut = cms.string(''),
-                        checkOverlaps = cms.PSet(),
-                        )
 
-tightElectrons = cms.EDFilter("PATElectronSelector",
-                        preselection = cms.string(''),
-                        src = cms.InputTag("selectedPatElectrons"),
-                        cut = cms.string(''),
-                        checkOverlaps = cms.PSet(),
-                         )
 
-tightElectronsZeroIso = cms.EDFilter("PATElectronSelector",
-                       preselection = cms.string(''),
-                       src = cms.InputTag("patElectronsZeroIso"),
-                       cut = cms.string(''),
-                       checkOverlaps = cms.PSet(),
-                                     )
+tightElectrons = cms.EDProducer("SingleTopElectronProducer",
+  src = cms.InputTag("selectedPatElectrons"),
+  cut = cms.string('pt >  20 & abs(eta) < 2.4'),
+  rho = cms.InputTag("kt6PFJetsCentralNeutral:rho"),
+)
 
-tightMuonsZeroIso = cms.EDFilter("PATMuonSelector",
-                                 preselection = cms.string(''),
-                                 src = cms.InputTag("patMuonsZeroIso"),
-                                 cut = cms.string(''),
-                                 checkOverlaps = cms.PSet(),
-                                 )
+tightElectronsZeroIso = cms.EDProducer("SingleTopElectronProducer",
+  src = cms.InputTag("patElectronsZeroIso"),
+  cut = cms.string('pt >  20 & abs(eta) < 2.4'),
+  rho = cms.InputTag("kt6PFJetsCentralNeutral:rho"),
+)
+
+
+
+tightMuons = cms.EDProducer("SingleTopMuonProducer",
+  src = cms.InputTag("selectedPatMuons"),
+  cut = cms.string('pt >  20 & abs(eta) < 2.4'),
+  rho = cms.InputTag("kt6PFJetsCentralNeutral:rho"),
+)
+
+tightMuonsZeroIso = cms.EDProducer("SingleTopMuonProducer",
+  src = cms.InputTag("patMuonsZeroIso"),
+  cut = cms.string('pt >  20 & abs(eta) < 2.4'),
+  rho = cms.InputTag("kt6PFJetsCentralNeutral:rho"),
+)
 
 #Met skim part
 preselectedMETs = cms.EDFilter("PATMETSelector",

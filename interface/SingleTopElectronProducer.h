@@ -9,7 +9,7 @@
  * \Author A. Orso M. Iorio
  * 
  *
- *\version  $Id: SingleTopElectronProducer.h,v 1.1 2010/09/10 01:06:37 oiorio Exp $
+ *\version  $Id: SingleTopElectronProducer.h,v 1.2 2010/12/09 23:11:35 oiorio Exp $
  *
  *
 */
@@ -78,9 +78,10 @@
     private:
     typedef StringCutObjectSelector<pat::Electron> Selector;
    
-    edm::InputTag src_;
-    bool isData_,useConversionVeto_,useVertexVeto_;
+    edm::InputTag src_,rho_;
     std::string cut_,id_;
+    double deltaR_;
+    edm::Handle< double > rho;
    //std::vector<std::string> triggernames;
       
   };

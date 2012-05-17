@@ -2,7 +2,7 @@
  *\Author: A. Orso M. Iorio 
  *
  *
- *\version  $Id SingleTopMuonProducer.cc,v 1.1 2010/11/17 10:25:21 oiorio Exp $ 
+ *\version  $Id: SingleTopMuonProducer.cc,v 1.7 2011/03/24 15:58:06 oiorio Exp $ 
  */
 
 // Single Top producer: produces a top candidate made out of a Lepton, a B jet and a MET
@@ -45,8 +45,6 @@
 
 #include "DataFormats/Scalers/interface/DcsStatus.h"
 #include "FWCore/Framework/interface/ESHandle.h"
-#include "RecoEgamma/EgammaTools/interface/ConversionFinder.h"
-#include "PhysicsTools/SelectorUtils/interface/SimpleCutBasedElectronIDSelectionFunctor.h"
 
 
 #include <vector>
@@ -61,63 +59,50 @@
 SingleTopMuonProducer::SingleTopMuonProducer(const edm::ParameterSet& iConfig)
 {
   src_                 = iConfig.getParameter<edm::InputTag>( "src" );
-  jetsSrc_                 = iConfig.getParameter<edm::InputTag>( "jetsSrc" );
-  useJetVeto_ = iConfig.getUntrackedParameter< bool >("useJetVeto",true);
-
-  
   cut_ = iConfig.getParameter< std::string >("cut"); 
-  
+  rho_ = iConfig.getParameter<edm::InputTag> ("rho");
+  deltaR_ = iConfig.getUntrackedParameter<double>         ( "deltaR",0.4 );
+
   produces<std::vector<pat::Muon> >();
 }
 
 void SingleTopMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iEventSetup){
 
+
+  ////std::cout << " mark 0 " << std::endl;
+
   ////std::cout << " mark 1 " << std::endl;
-  edm::Handle<edm::View<pat::Muon> > muons;
+  //  edm::Handle<edm::View<pat::Muon> > muons;
+  edm::Handle<std::vector<pat::Muon> > muons;
   iEvent.getByLabel(src_,muons);
-
-  edm::Handle<edm::View<pat::Jet > > jets;
-  iEvent.getByLabel(jetsSrc_,jets);
-
-  edm::Handle<edm::View<reco::Vertex> > vertices;
-  iEvent.getByLabel("offlinePrimaryVertices",vertices);
-
+  iEvent.getByLabel(rho_,rho);
+  double energy_ = TMath::Pi()*deltaR_*deltaR_* (*rho);
+  
   Selector cut(cut_);
-  std::vector< pat::Muon > * finalMuons = new std::vector<pat::Muon>;
+  std::auto_ptr< std::vector< pat::Muon > > finalMuons (new std::vector<pat::Muon>(*muons));
 
-  bool isIsolated = true;
-  for(size_t i = 0; i < muons->size(); ++i){
+  ////std::cout << " mark 2 " << std::endl;
     
-    if(!cut(muons->at(i)))continue; 
+  
+  for(size_t i = 0; i < finalMuons->size(); ++i){
+    
+    pat::Muon & mu = (*finalMuons)[i];
+    mu.addUserFloat("DeltaCorrectedIso",(mu.chargedHadronIso() + std::max(0., mu.neutralHadronIso() + mu.photonIso() -0.5*mu.puChargedHadronIso()))/mu.pt());
+    mu.addUserFloat("RhoCorrectedIso",(mu.chargedHadronIso() + std::max(0., mu.neutralHadronIso() + mu.photonIso() -energy_))/mu.pt());
+    
+    if(!cut(mu)) finalMuons->erase(finalMuons->begin()+i) ; 
     
     //std::cout << " passes cut " << cut_ <<  std::endl;
     
-    if(useJetVeto_){
-      for(size_t j = 0; j < jets->size(); ++j){
-	if(deltaR(muons->at(i),jets->at(j))<0.3) {
-	  isIsolated = false;
-	  break;
-	}
-      }
-    }
-
-    //    std::cout << "n vertices = "<<vertices->size() << std::endl; 
-    for(size_t v = 0; v < vertices->size(); ++v){
-      if(muons->at(i).vertex().z()-vertices->at(0).z()>=1) isIsolated = false;
-    }
-    
-    if(!isIsolated)continue;
-    
-    finalMuons->push_back(muons->at(i));
-    
+    //    finalMuons->push_back(muons->at(i));
   } 
  
   ////std::cout << " mark 7 " << std::endl;
 
-std::auto_ptr< std::vector< pat::Muon > > finalMuonsPtr(finalMuons);
+  //std::auto_ptr< std::vector< pat::Muon > > finalMuonsPtr(finalMuons);
  
 
-iEvent.put(finalMuonsPtr);
+iEvent.put(finalMuons);
 
 }
 

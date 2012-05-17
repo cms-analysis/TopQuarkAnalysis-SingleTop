@@ -57,11 +57,11 @@ countLeptonsNoOverlap = cms.EDFilter("CandOrCounterNoOverlap",
                             srcOverlap1 = cms.InputTag("looseMuons"),
                             srcOverlap2 = cms.InputTag("looseElectrons"),
                             
-                            minNumberTight = cms.int32(1),
-                            maxNumberTight = cms.int32(9999),
+                            minNumberTight = cms.untracked.int32(1),
+                            maxNumberTight = cms.untracked.int32(9999),
 
-                            minNumberLoose = cms.int32(1),
-                            maxNumberLoose = cms.int32(9999),
+                            minNumberLoose = cms.untracked.int32(1),
+                            maxNumberLoose = cms.untracked.int32(9999),
                             )
 
 

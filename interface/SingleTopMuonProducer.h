@@ -9,7 +9,7 @@
  * \Author A. Orso M. Iorio
  * 
  *
- *\version  $Id: SingleTopMuonProducer.h,v 1.1 2010/11/17 10:25:21 oiorio Exp $
+ *\version  $Id: SingleTopMuonProducer.h,v 1.2 2010/12/09 23:11:35 oiorio Exp $
  *
  *
 */
@@ -37,7 +37,7 @@
 #include "DataFormats/Common/interface/View.h"
 
 #include "DataFormats/PatCandidates/interface/Jet.h"
-#include "DataFormats/PatCandidates/interface/Electron.h"
+#include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
 
 #include "DataFormats/PatCandidates/interface/UserData.h"
@@ -45,7 +45,7 @@
 
 
 #include "DataFormats/PatCandidates/interface/Lepton.h"
-#include "DataFormats/PatCandidates/interface/Electron.h"
+#include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/PatCandidates/interface/CompositeCandidate.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
@@ -69,19 +69,20 @@
 
   class SingleTopMuonProducer : public edm::EDProducer {
 
-  public:
-    
-    explicit SingleTopMuonProducer(const edm::ParameterSet & iConfig);
-    ~SingleTopMuonProducer();
-    virtual void produce(edm::Event & iEvent, const edm::EventSetup & iSetup);
+    public:
+
+      explicit SingleTopMuonProducer(const edm::ParameterSet & iConfig);
+      ~SingleTopMuonProducer();
+      virtual void produce(edm::Event & iEvent, const edm::EventSetup & iSetup);
     //       static void fillDescriptions(edm::ConfigurationDescriptions & descriptions);
-  private:
+    private:
     typedef StringCutObjectSelector<pat::Muon> Selector;
-    
-    edm::InputTag src_,jetsSrc_;
+   
+    edm::InputTag src_,rho_;
     std::string cut_,id_;
-    bool useJetVeto_;
-    //std::vector<std::string> triggernames;
+    double deltaR_;
+    edm::Handle< double > rho;
+   //std::vector<std::string> triggernames;
       
   };
 //}

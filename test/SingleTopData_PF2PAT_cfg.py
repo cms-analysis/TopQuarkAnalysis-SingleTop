@@ -47,10 +47,10 @@ process.hltPhysicsDeclared.L1GtReadoutRecordTag = 'gtDigis'
 
 #dummy output
 
-process.out = cms.OutputModule("PoolOutputModule",
-                               fileName = cms.untracked.string('dummy.root'),
-                               outputCommands = cms.untracked.vstring(""),
-                               )
+#process.out = cms.OutputModule("PoolOutputModule",
+#                               fileName = cms.untracked.string('dummy.root'),
+#                               outputCommands = cms.untracked.vstring("drop *"),
+#                               )
 
 process.load("PhysicsTools.HepMCCandAlgos.flavorHistoryPaths_cfi")
 
@@ -76,8 +76,10 @@ process.patElectrons.usePV = cms.bool(False)
 # this function will modify the PAT sequences. It is currently 
 # not possible to run PF2PAT+PAT and standart PAT at the same time
 from PhysicsTools.PatAlgos.tools.pfTools import *
+Postfix = ""
 postfix = ""
-usePF2PAT(process,runPF2PAT=True, jetAlgo='AK5', runOnMC=False, postfix=postfix)
+#usePF2PAT(process,runPF2PAT=True, jetAlgo='AK5', runOnMC=False, postfix=Postfix,outputModules = None)
+usePF2PAT(process,runPF2PAT=True, jetAlgo='AK5', runOnMC=False, postfix=Postfix)
 process.pfPileUp.Enable = True
 process.pfPileUp.checkClosestZVertex = cms.bool(False)
 process.pfPileUp.Vertices = cms.InputTag('goodOfflinePrimaryVertices')
