@@ -9,8 +9,6 @@ cvs co -r V08-03-10 PhysicsTools/Utilities
 cvs co -r V00-04-11 RecoBTag/PerformanceDB
 cvs co -r V00-03-31 RecoEgamma/ElectronIdentification
 cvs co -r V03-03-05 RecoLuminosity/LumiDB
-cvs co -r V04-05-07 JetMETCorrections/Type1MET
-cvs co -r b4_2_X_cvMEtCorr_30Nov11 PhysicsTools/PatUtils
 cvs co -r V03-03-07 DataFormats/METReco
 
 cp ~oiorio/public/xMario/Lumi3DReWeighting.h PhysicsTools/Utilities/interface/Lumi3DReWeighting.h
@@ -26,6 +24,8 @@ cmsenv
 
 scram b -j 9 > & step1.log 
 
+cvs co -r b4_2_X_cvMEtCorr_30Nov11 PhysicsTools/PatUtils
+cvs co -r V04-05-07 JetMETCorrections/Type1MET
 cvs co -r V02-03-00 JetMETCorrections/Algorithms
 rm -f JetMETCorrections/Algorithms/interface/L1JPTOffsetCorrector.h
 rm -f JetMETCorrections/Algorithms/src/L1JPTOffsetCorrector.cc
