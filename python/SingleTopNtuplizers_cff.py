@@ -109,13 +109,17 @@ nTupleElectrons = cms.EDProducer(
     ),
     #Iso
     cms.PSet(
-    tag = cms.untracked.string("PFDeltaCorrRelIso"),
+    tag = cms.untracked.string("PFDeltaCorrectedRelIso"),
 #    quantity = cms.untracked.string('(chargedHadronIso+ max(0., neutralHadronIso + photonIso -0.5*puChargedHadronIso()))/pt'),
     quantity = cms.untracked.string("userFloat(\"DeltaCorrectedIso\")"),
     ),
     cms.PSet(
-    tag = cms.untracked.string("PFRhoCorrRelIso"),
+    tag = cms.untracked.string("PFRhoCorrectedRelIso"),
     quantity = cms.untracked.string("userFloat(\"RhoCorrectedIso\")"),
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("PVDxy"),
+    quantity = cms.untracked.string("userFloat(\"VertexDxy\")"),
     ),
     #ID and other parameters
     cms.PSet(
@@ -142,10 +146,10 @@ nTupleElectrons = cms.EDProducer(
     tag = cms.untracked.string("MvaTrigV0"),
     quantity = cms.untracked.string("electronID('mvaTrigV0')")
     ),
-    cms.PSet(
-    tag = cms.untracked.string("MvaNonTrigV0"),
-    quantity = cms.untracked.string("electronID('mvaNonTrigV0')")
-    ),
+#    cms.PSet(
+#    tag = cms.untracked.string("MvaNonTrigV0"),
+#    quantity = cms.untracked.string("electronID('mvaNonTrigV0')")
+#    ),
 #    cms.PSet(
 #    tag = cms.untracked.string("SuperClusterEta"),
 #    quantity = cms.untracked.string("superCluster.eta")
@@ -191,15 +195,23 @@ nTupleMuons = nTupleElectrons.clone(
     ),
     #Iso
     cms.PSet(
-    tag = cms.untracked.string("PFDeltaCorrRelIso"),
+    tag = cms.untracked.string("PFDeltaCorrectedRelIso"),
 #    quantity = cms.untracked.string('(chargedHadronIso+ max(0., neutralHadronIso + photonIso -0.5*puChargedHadronIso()))/pt'),
     quantity = cms.untracked.string("userFloat(\"DeltaCorrectedIso\")"),
     ),
     cms.PSet(
-    tag = cms.untracked.string("PFRhoCorrRelIso"),
+    tag = cms.untracked.string("PFRhoCorrectedRelIso"),
     quantity = cms.untracked.string("userFloat(\"RhoCorrectedIso\")"),
     ),
-    
+    cms.PSet(
+    tag = cms.untracked.string("PVDz"),
+    #    quantity = cms.untracked.string('(chargedHadronIso+ max(0., neutralHadronIso + photonIso -0.5*puChargedHadronIso()))/pt'),
+    quantity = cms.untracked.string("userFloat(\"VertexDz\")"),
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("PVDxy"),
+    quantity = cms.untracked.string("userFloat(\"VertexDxy\")"),
+    ),
     #ID and other parameters
 #    cms.PSet(
 #    tag = cms.untracked.string("IsGlobalMuonPromptTight"),
@@ -254,13 +266,22 @@ nTupleLooseMuons = nTupleMuons.clone(
     ),
     #Iso
     cms.PSet(
-    tag = cms.untracked.string("PFDeltaCorrRelIso"),
+    tag = cms.untracked.string("PFDeltaCorrectedRelIso"),
 #    quantity = cms.untracked.string('(chargedHadronIso+ max(0., neutralHadronIso + photonIso -0.5*puChargedHadronIso()))/pt'),
     quantity = cms.untracked.string("userFloat(\"DeltaCorrectedIso\")"),
     ),
     cms.PSet(
-    tag = cms.untracked.string("PFRhoCorrRelIso"),
+    tag = cms.untracked.string("PFRhoCorrectedRelIso"),
     quantity = cms.untracked.string("userFloat(\"RhoCorrectedIso\")"),
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("PVDz"),
+    #    quantity = cms.untracked.string('(chargedHadronIso+ max(0., neutralHadronIso + photonIso -0.5*puChargedHadronIso()))/pt'),
+    quantity = cms.untracked.string("userFloat(\"VertexDz\")"),
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("PVDxy"),
+    quantity = cms.untracked.string("userFloat(\"VertexDxy\")"),
     ),
     #ID and other parameters
 #    cms.PSet(
@@ -322,13 +343,17 @@ nTupleLooseElectrons = nTupleElectrons.clone(
     ),
     #Iso
     cms.PSet(
-    tag = cms.untracked.string("PFDeltaCorrRelIso"),
+    tag = cms.untracked.string("PFDeltaCorrectedRelIso"),
 #    quantity = cms.untracked.string('(chargedHadronIso+ max(0., neutralHadronIso + photonIso -0.5*puChargedHadronIso()))/pt'),
     quantity = cms.untracked.string("userFloat(\"DeltaCorrectedIso\")"),
     ),
     cms.PSet(
-    tag = cms.untracked.string("PFRhoCorrRelIso"),
+    tag = cms.untracked.string("PFRhoCorrectedRelIso"),
     quantity = cms.untracked.string("userFloat(\"RhoCorrectedIso\")"),
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("PVDxy"),
+    quantity = cms.untracked.string("userFloat(\"VertexDxy\")"),
     ),
     #ID and other parameters
     cms.PSet(

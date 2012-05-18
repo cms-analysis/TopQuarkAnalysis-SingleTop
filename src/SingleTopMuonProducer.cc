@@ -2,7 +2,7 @@
  *\Author: A. Orso M. Iorio 
  *
  *
- *\version  $Id: SingleTopMuonProducer.cc,v 1.7 2011/03/24 15:58:06 oiorio Exp $ 
+ *\version  $Id: SingleTopMuonProducer.cc,v 1.2.12.1 2012/05/17 17:05:00 oiorio Exp $ 
  */
 
 // Single Top producer: produces a top candidate made out of a Lepton, a B jet and a MET
@@ -68,10 +68,12 @@ SingleTopMuonProducer::SingleTopMuonProducer(const edm::ParameterSet& iConfig)
 
 void SingleTopMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iEventSetup){
 
+  edm::Handle<edm::View<reco::Vertex> > vertices;
+  iEvent.getByLabel("offlinePrimaryVertices",vertices);
 
-  ////std::cout << " mark 0 " << std::endl;
 
-  ////std::cout << " mark 1 " << std::endl;
+  //std::cout << " mark 0 " << std::endl;
+
   //  edm::Handle<edm::View<pat::Muon> > muons;
   edm::Handle<std::vector<pat::Muon> > muons;
   iEvent.getByLabel(src_,muons);
@@ -81,23 +83,63 @@ void SingleTopMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup &
   Selector cut(cut_);
   std::auto_ptr< std::vector< pat::Muon > > finalMuons (new std::vector<pat::Muon>(*muons));
 
-  ////std::cout << " mark 2 " << std::endl;
-    
-  
+   //std::cout << " mark 1 " << std::endl;
+ 
   for(size_t i = 0; i < finalMuons->size(); ++i){
+
+    //std::cout << " mark 2, i: "<< i << std::endl;
     
     pat::Muon & mu = (*finalMuons)[i];
     mu.addUserFloat("DeltaCorrectedIso",(mu.chargedHadronIso() + std::max(0., mu.neutralHadronIso() + mu.photonIso() -0.5*mu.puChargedHadronIso()))/mu.pt());
     mu.addUserFloat("RhoCorrectedIso",(mu.chargedHadronIso() + std::max(0., mu.neutralHadronIso() + mu.photonIso() -energy_))/mu.pt());
+
+    //std::cout << " mark 3, i: "<< i << std::endl;
     
-    if(!cut(mu)) finalMuons->erase(finalMuons->begin()+i) ; 
-    
+    double dz= 9900;
+    double dxy= 9900;
+
+    //std::cout << " mark 4, i: "<< i << std::endl;
+
+
+    if(vertices->size()>0) {
+      //      if(!(el.gsfTrack() == NULL)) 
+      //else //std::cout << "electron lost track ref!  Distance being set to an unphysical value (99 meters)."<<std::endl;
+      
+      //std::cout << " mark 5, i: "<< i << std::endl;
+
+      std::cout << " mark 6, i: "<< i << std::endl;
+
+      if( mu.isGlobalMuon() ){
+	
+	std::cout << " mark 7, i: "<< i << std::endl;
+
+	dz = fabs(mu.innerTrack()->dz(vertices->at(0).position()));
+	
+	std::cout << " mark 8, i: "<< i << std::endl;
+	
+	dxy = fabs(mu.innerTrack()->dxy(vertices->at(0).position()));
+
+      }
+
+      
+          //else{
+      //	dz = fabs(mu.vertex().z()- vertices->at(0).z());
+      //	dxy = sqrt( (mu.vertex().x() -vertices->at(0).x())*(mu.vertex().x() -vertices->at(0).x()) +
+      //		    (mu.vertex().y() -vertices->at(0).y())*(mu.vertex().y() -vertices->at(0).y()) );
+      // }
+    }
+    else std::cout<< "no offline primary vertex! Check again the collections. Distance DZ,DXY being set to an unphysical value (99 meters)."<<std::endl;    
     //std::cout << " passes cut " << cut_ <<  std::endl;
     
+    mu.addUserFloat("VertexDz",dz);
+    mu.addUserFloat("VertexDxy",dxy);
+  
+    if(!cut(mu)) finalMuons->erase(finalMuons->begin()+i) ; 
+
     //    finalMuons->push_back(muons->at(i));
   } 
  
-  ////std::cout << " mark 7 " << std::endl;
+  //std::cout << " mark 7 " << std::endl;
 
   //std::auto_ptr< std::vector< pat::Muon > > finalMuonsPtr(finalMuons);
  

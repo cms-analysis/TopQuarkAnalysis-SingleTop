@@ -16,8 +16,10 @@ from TopQuarkAnalysis.SingleTop.SingleTopSelectors_cff import *
 #eleLooseCut = cms.string("et > 15 & abs(eta) < 2.5")#RelIso < 0.2
 
 #With isolation requirements
-muLooseCut = cms.string("isGlobalMuon & pt > 10 & abs(eta) < 2.5")# & (chargedHadronIso+ neutralHadronIso + photonIso )/pt <0.2")
-eleLooseCut = cms.string("et > 15 & abs(eta) < 2.5")# & (chargedHadronIso+ neutralHadronIso + photonIso )/pt <0.2")
+muLooseCut = cms.string("isGlobalMuon & pt > 10 & abs(eta) < 2.5 && userFloat(\"DeltaCorrectedRelIso\") <0.2 ")# & (chargedHadronIso+ neutralHadronIso + photonIso )/pt <0.2")
+eleLooseCut = cms.string("et > 20 & abs(eta) < 2.5 && userFloat(\"DeltaCorrectedRelIso\") <0.2 && userFloat(\"RhoCorrectedRelIso\") <0.2" +
+                         "&& electronID('mvaTrigV0') >0.0 && (electronID('simpleEleId95cIso') == 1|| electronID('simpleEleId95cIso')==3 || "+
+                         "electronID('simpleEleId95cIso')==5 || electronID('simpleEleId95cIso')==7)")# & (chargedHadronIso+ neutralHadronIso + photonIso )/pt <0.2")
 
 #eleZVetoCut = cms.string("et > 20 &  (abs(superCluster.eta)> 1.5660 || abs(superCluster.eta)<1.4442) & eta < 2.5 & (dr03TkSumPt + dr03EcalRecHitSumEt + dr03HcalTowerSumEt)/et < 0.1 & (electronID('simpleEleId95cIso')==1 || electronID('simpleEleId70cIso')==3 ||  electronID('simpleEleId70cIso')==5 ||  electronID('simpleEleId70cIso')==7)")
 # Require ID + or of all possible combinations
@@ -26,9 +28,10 @@ eleLooseCut = cms.string("et > 15 & abs(eta) < 2.5")# & (chargedHadronIso+ neutr
 #No isolation or electronID requirement
 
 
-eleTightCut = cms.string("et>30  && abs(eta)<2.5  & ( abs(superCluster.eta)> 1.5660 || abs(superCluster.eta)<1.4442)")
-muTightCut = cms.string("pt > 20 & isGlobalMuon && isTrackerMuon & abs(eta) < 2.1 && numberOfMatches() > 1  && muonID('GlobalMuonPromptTight') > 0 & innerTrack.numberOfValidHits > 10 && innerTrack.hitPattern.pixelLayersWithMeasurement() >=1 ")
-
+eleTightCut = cms.string("et>30  && abs(eta)<2.5  & ( abs(superCluster.eta)> 1.5660 || abs(superCluster.eta)<1.4442) && passConversionVeto")
+muTightCut = cms.string("pt > 20 & isGlobalMuon && isPFMuon & abs(eta) < 2.1 && normChi2 < 10 && track.hitPattern.trackerLayersWithMeasurement>5 &&"+
+                        "numberOfMatchedStations() > 1 && innerTrack.hitPattern.numberOfValidPixelHits > 0 && " +
+                        "userFloat(\"VertexDz\")<1 && globalTrack.hitPattern.numberOfValidMuonHits > 0")
 
 #Isolation cones definitions
 #coneOpening = cms.double(0.4)

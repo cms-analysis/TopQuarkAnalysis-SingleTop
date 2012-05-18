@@ -2,7 +2,7 @@
  *\Author: A. Orso M. Iorio 
  *
  *
- *\version  $Id: SingleTopElectronProducer.cc,v 1.7 2011/03/24 15:58:06 oiorio Exp $ 
+ *\version  $Id: SingleTopElectronProducer.cc,v 1.7.12.1 2012/05/17 17:05:00 oiorio Exp $ 
  */
 
 // Single Top producer: produces a top candidate made out of a Lepton, a B jet and a MET
@@ -70,6 +70,9 @@ SingleTopElectronProducer::SingleTopElectronProducer(const edm::ParameterSet& iC
 
 void SingleTopElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & iEventSetup){
 
+  edm::Handle<edm::View<reco::Vertex> > vertices;
+  iEvent.getByLabel("offlinePrimaryVertices",vertices);
+
 
   ////std::cout << " mark 0 " << std::endl;
 
@@ -85,12 +88,27 @@ void SingleTopElectronProducer::produce(edm::Event & iEvent, const edm::EventSet
 
   ////std::cout << " mark 2 " << std::endl;
     
+  //  std::cout << "size before "<< finalElectrons->size()<< std::endl;
   
   for(size_t i = 0; i < finalElectrons->size(); ++i){
     
     pat::Electron & el = (*finalElectrons)[i];
     el.addUserFloat("DeltaCorrectedIso",(el.chargedHadronIso() + std::max(0., el.neutralHadronIso() + el.photonIso() -0.5*el.puChargedHadronIso()))/el.et());
     el.addUserFloat("RhoCorrectedIso",(el.chargedHadronIso() + std::max(0., el.neutralHadronIso() + el.photonIso() -energy_))/el.et());
+
+    double dxy= 9900;
+    if(vertices->size()>0) {
+      //      if(!(el.gsfTrack() == NULL)) 
+      //else std::cout << "electron lost track ref!  Distance being set to an unphysical value (99 meters)."<<std::endl;
+      dxy = fabs(el.gsfTrack()->dxy(vertices->at(0).position()));
+    }
+    else std::cout<< "no offline primary vertex! Check again the collections. Distance being set to an unphysical value (99 meters)."<<std::endl;
+    
+    el.addUserFloat("VertexDxy",dxy);
+    
+    //    std::cout << "corrreliso "<< el.userFloat("RhoCorrectedIso") << " cut: " << cut_ << " passes ? "<<  cut(el) <<  std::endl;
+    
+
     
     if(!cut(el)) finalElectrons->erase(finalElectrons->begin()+i) ; 
     
@@ -99,6 +117,7 @@ void SingleTopElectronProducer::produce(edm::Event & iEvent, const edm::EventSet
     //    finalElectrons->push_back(electrons->at(i));
   } 
  
+  //  std::cout << "size after "<< finalElectrons->size()<< std::endl;
   ////std::cout << " mark 7 " << std::endl;
 
   //std::auto_ptr< std::vector< pat::Electron > > finalElectronsPtr(finalElectrons);
