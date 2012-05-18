@@ -23,7 +23,7 @@ process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff") ### real data
 
-ChannelName = "Data"
+ChannelName = "TTBar"
 
 process.GlobalTag.globaltag = cms.string('START52_V9::All')
 #process.GlobalTag.globaltag = cms.string('START311_V2::All')
@@ -215,7 +215,8 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
 #'file:/tmp/oiorio/2E336374-1286-E111-AB01-001D09F24D67.root',
-"file:/tmp/oiorio/Sync_File_TTBar.root",
+"rfio:/castor/cern.ch/user/o/oiorio/SingleTop/2012/MC2012/Synch/TTBar/Sync_File_TTBar.root"
+#"file:/tmp/oiorio/Sync_File_TTBar.root",
 #'file:/tmp/oiorio/SingleEle.root',
 #'file:/tmp/oiorio/FE4EF257-A3AB-E011-9698-00304867915A.root',
 #'file:/tmp/oiorio/50A31B1A-8AAB-E011-835B-0026189438F5.root'

@@ -2,7 +2,7 @@
  *\Author: A. Orso M. Iorio 
  *
  *
- *\version  $Id: SingleTopMuonProducer.cc,v 1.2.12.1 2012/05/17 17:05:00 oiorio Exp $ 
+ *\version  $Id: SingleTopMuonProducer.cc,v 1.2.12.2 2012/05/18 02:22:32 oiorio Exp $ 
  */
 
 // Single Top producer: produces a top candidate made out of a Lepton, a B jet and a MET
@@ -103,19 +103,19 @@ void SingleTopMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup &
 
     if(vertices->size()>0) {
       //      if(!(el.gsfTrack() == NULL)) 
-      //else //std::cout << "electron lost track ref!  Distance being set to an unphysical value (99 meters)."<<std::endl;
+      //else std::cout << "electron lost track ref!  Distance being set to an unphysical value (99 meters)."<<std::endl;
       
       //std::cout << " mark 5, i: "<< i << std::endl;
 
-      std::cout << " mark 6, i: "<< i << std::endl;
+      //std::cout << " mark 6, i: "<< i << std::endl;
 
       if( mu.isGlobalMuon() ){
 	
-	std::cout << " mark 7, i: "<< i << std::endl;
+	//std::cout << " mark 7, i: "<< i << std::endl;
 
 	dz = fabs(mu.innerTrack()->dz(vertices->at(0).position()));
 	
-	std::cout << " mark 8, i: "<< i << std::endl;
+	//std::cout << " mark 8, i: "<< i << std::endl;
 	
 	dxy = fabs(mu.innerTrack()->dxy(vertices->at(0).position()));
 

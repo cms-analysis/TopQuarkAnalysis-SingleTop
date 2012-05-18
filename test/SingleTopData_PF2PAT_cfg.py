@@ -215,12 +215,8 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
 #'file:/tmp/oiorio/2E336374-1286-E111-AB01-001D09F24D67.root',
-'file:/tmp/oiorio/SingleEle.root',
-#'/tmp/oiorio/SingleMu.root',
-#'file:/tmp/oiorio/FE4EF257-A3AB-E011-9698-00304867915A.root',
-#'file:/tmp/oiorio/50A31B1A-8AAB-E011-835B-0026189438F5.root'
-#'file:/tmp/oiorio/WJetsSmallFile_1_1_nb1.root',
-#'file:/tmp/oiorio/00012F91-72E5-DF11-A763-00261834B5F1.root',
+"rfio:/castor/cern.ch/user/o/oiorio/SingleTop/2012/MC2012/Synch/Data/SingleMu.root"
+"rfio:/castor/cern.ch/user/o/oiorio/SingleTop/2012/MC2012/Synch/Data/SingleEle.root"
 ),
 duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 )
