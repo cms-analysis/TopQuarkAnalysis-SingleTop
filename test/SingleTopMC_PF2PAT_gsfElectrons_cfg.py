@@ -23,9 +23,9 @@ process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff") ### real data
 
-ChannelName = "Data"
+ChannelName = "TTBar"
 
-process.GlobalTag.globaltag = cms.string('GR_R_52_V7::All')
+process.GlobalTag.globaltag = cms.string('START52_V9::All')
 #process.GlobalTag.globaltag = cms.string('START311_V2::All')
 
 #from Configuration.PyReleaseValidation.autoCond import autoCond
@@ -38,6 +38,12 @@ process.load("SelectionCuts_Skim_cff")################<----------
 #run36xOn35xInput(process)
 #process.load("PhysicsTools.PatAlgos.patSequences_cff")
 
+process.out = cms.OutputModule("PoolOutputModule",
+                               fileName = cms.untracked.string('dummy.root'),
+                               outputCommands = cms.untracked.vstring(""),
+                               )
+
+
 # Get a list of good primary vertices, in 42x, these are DAF vertices
 from PhysicsTools.SelectorUtils.pvSelector_cfi import pvSelector
 process.goodOfflinePrimaryVertices = cms.EDFilter(
@@ -46,57 +52,16 @@ process.goodOfflinePrimaryVertices = cms.EDFilter(
     src=cms.InputTag('offlinePrimaryVertices')
     )
 
-# require physics declared
-#process.load('HLTrigger.special.hltPhysicsDeclared_cfi')
-#process.hltPhysicsDeclared.L1GtReadoutRecordTag = 'gtDigis'
 
-#dummy output
-
-process.out = cms.OutputModule("PoolOutputModule",
-                               fileName = cms.untracked.string('dummy.root'),
-                               outputCommands = cms.untracked.vstring(""),
-                               )
-
-#mytrigs=["HLT_Mu9"]
-mytrigs=["*"]
-print "test2"
-from HLTrigger.HLTfilters.hltHighLevel_cfi import *
-#if mytrigs is not None :
-#    process.hltSelection = hltHighLevel.clone(TriggerResultsTag = 'TriggerResults::HLT', HLTPaths = mytrigs)
-#    process.hltSelection.throw = False
-
-#
-#    getattr(process,"pfNoElectron"+postfix)*process.kt6PFJets 
-
-                                 
 
 # set the dB to the beamspot
 process.patMuons.usePV = cms.bool(False)
 process.patElectrons.usePV = cms.bool(False)
 
 print "test2.1"
-jetCorrections=['L1FastJet','L2Relative','L3Absolute','L2L3Residual']
-  
-# Configure PAT to use PF2PAT instead of AOD sources
-# this function will modify the PAT sequences. It is currently 
-# not possible to run PF2PAT+PAT and standart PAT at the same time
-from PhysicsTools.PatAlgos.tools.pfTools import *
-Postfix = ""
+jetCorrections=['L1FastJet','L2Relative','L3Absolute']
+
 postfix = ""
-runOnMC = False
-jetAlgoName = "AK5"
-print "test2.2"
-usePF2PAT(process, runPF2PAT=True, jetAlgo=jetAlgoName, runOnMC=runOnMC, postfix=Postfix,jetCorrections=('AK5PFchs', jetCorrections),outputModules = None)
-#useGsfElectrons(process,postfix)
-process.pfPileUp.Enable = True
-print "test2.3"
-process.pfPileUp.checkClosestZVertex = cms.bool(False)
-process.pfPileUp.Vertices = cms.InputTag('goodOfflinePrimaryVertices')
-process.pfJets.doAreaFastjet = True
-process.pfJets.doRhoFastjet = False
-
-
-#process.pfJets.Rho_EtaMax =  cms.double(4.4)
 
 
 #Compute the mean pt per unit area (rho) from the
@@ -107,52 +72,51 @@ process.kt6PFJets = kt4PFJets.clone(
     src = cms.InputTag('pfNoElectron'+postfix),
     doAreaFastjet = cms.bool(True),
     doRhoFastjet = cms.bool(True),
-#    voronoiRfact = cms.double(0.9),
-#    Rho_EtaMax =  cms.double(4.4)
     )
 
+  
+# Configure PAT to use PF2PAT instead of AOD sources
+# this function will modify the PAT sequences. It is currently 
+# not possible to run PF2PAT+PAT and standart PAT at the same time
+from PhysicsTools.PatAlgos.tools.pfTools import *
+Postfix = ""
+runOnMC = True
+jetAlgoName = "AK5"
+print "test2.2"
+usePF2PAT(process, runPF2PAT=True, jetAlgo=jetAlgoName, runOnMC=runOnMC, postfix=Postfix,jetCorrections=('AK5PFchs', jetCorrections),outputModules = None)
 
-print "test3"
+process.patElectrons.useParticleFlow = False
+process.eleIsoSequence = setupPFElectronIso(process, 'gsfElectrons', "PFIso"+postfix)
+adaptPFIsoElectrons( process, process.patElectrons, "PFIso"+postfix)
+getattr(process,'patDefaultSequence'+postfix).replace( getattr(process,"patElectrons"+postfix),
+                                                       process.pfParticleSelectionSequence +
+                                                       process.eleIsoSequence +
+                                                       getattr(process,"patElectrons"+postfix)
+                                                       )
+print "test 2.3"
+process.pfPileUp.Enable = True
+process.pfPileUp.checkClosestZVertex = cms.bool(False)
+process.pfPileUp.Vertices = cms.InputTag('goodOfflinePrimaryVertices')
+process.pfJets.doAreaFastjet = True
+process.pfJets.doRhoFastjet = False
+
+# set the dB to the beamspot
+process.patMuons.usePV = cms.bool(False)
+process.patElectrons.usePV = cms.bool(False)
 
 
-process.patJetCorrFactors.rho = cms.InputTag("kt6PFJets", "rho")
-
-coneOpening = cms.double(0.4)
-defaultIsolationCut = cms.double(0.2)
-
-#coneOpening = process.coneOpening
-#defaultIsolationCut = process.coneOpening
 
 #Muons
-#applyPostfix(process,"isoValMuonWithNeutral",postfix).deposits[0].deltaR = coneOpening
-#applyPostfix(process,"isoValMuonWithCharged",postfix).deposits[0].deltaR = coneOpening
-#applyPostfix(process,"isoValMuonWithPhotons",postfix).deposits[0].deltaR = coneOpening
-##electrons
+
+#Electrons
 process.pfIsolatedElectrons.isolationValueMapsCharged = cms.VInputTag( cms.InputTag("elPFIsoValueCharged03PFId"),    )
 process.pfIsolatedElectrons.isolationValueMapsNeutral = cms.VInputTag( cms.InputTag("elPFIsoValueNeutral03PFId"),  cms.InputTag("elPFIsoValueGamma03PFId")  )
 process.pfIsolatedElectrons.deltaBetaIsolationValueMap = cms.InputTag("elPFIsoValuePU03PFId")
-#applyPostfix(process,"isoValElectronWithNeutral",postfix).deposits[0].deltaR = coneOpening
-#applyPostfix(process,"isoValElectronWithCharged",postfix).deposits[0].deltaR = coneOpening
-#applyPostfix(process,"isoValElectronWithPhotons",postfix).deposits[0].deltaR = coneOpening
-#
-#applyPostfix(process,"pfIsolatedMuons",postfix).combinedIsolationCut = defaultIsolationCut
-#applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = defaultIsolationCut
-
-#applyPostfix(process,"pfIsolatedMuons",postfix).combinedIsolationCut = cms.double(0.125)
-#applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.double(0.125)
-
-#postfixQCD = "ZeroIso"
 
 
 print "test4"
 
-# Add the PV selector and KT6 producer to the sequence
-getattr(process,"patPF2PATSequence"+postfix).replace(
-    getattr(process,"pfNoElectron"+postfix),
-    getattr(process,"pfNoElectron"+postfix)*process.kt6PFJets )
-
 #Residuals (Data)
-#process.patPFJetMETtype1p2Corr.jetCorrLabel = 'L2L3Residual'
 print "test5"
 
 process.patseq = cms.Sequence(
@@ -164,18 +128,14 @@ process.patseq = cms.Sequence(
 #    getattr(process,"patPF2PATSequence"+postfixQCD) 
     )
 
-print "test6"
 
 process.pfIsolatedMuonsZeroIso = process.pfIsolatedMuons.clone(combinedIsolationCut =  cms.double(float("inf")))
 process.patMuonsZeroIso = process.patMuons.clone(pfMuonSource = cms.InputTag("pfIsolatedMuonsZeroIso"))#, genParticleMatch = cms.InputTag("muonMatchZeroIso"))
 # use pf isolation, but do not change matching
-#tmp = process.muonMatch.src
-#adaptPFMuons(process, process.patMuonsZeroIso, "")
-print "test7"
-#process.muonMatch.src = tmp
-#process.muonMatchZeroIso = process.muonMatch.clone(src = cms.InputTag("pfIsolatedMuonsZeroIso"))
-print "test8"
-
+tmp = process.muonMatch.src
+adaptPFMuons(process, process.patMuonsZeroIso, "")
+process.muonMatch.src = tmp
+process.muonMatchZeroIso = process.muonMatch.clone(src = cms.InputTag("pfIsolatedMuonsZeroIso"))
 
 process.pfIsolatedElectronsZeroIso = process.pfIsolatedElectrons.clone(combinedIsolationCut = cms.double(float("inf")))
 process.patElectronsZeroIso = process.patElectrons.clone(pfElectronSource = cms.InputTag("pfIsolatedElectronsZeroIso"))
@@ -221,8 +181,12 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
 #'file:/tmp/oiorio/2E336374-1286-E111-AB01-001D09F24D67.root',
-"rfio:/castor/cern.ch/user/o/oiorio/SingleTop/2012/MC2012/Synch/Data/SingleMu.root",
-"rfio:/castor/cern.ch/user/o/oiorio/SingleTop/2012/MC2012/Synch/Data/SingleEle.root"
+"file:/tmp/oiorio/Sync_File_TTBar.root",
+#'file:/tmp/oiorio/SingleEle.root',
+#'file:/tmp/oiorio/FE4EF257-A3AB-E011-9698-00304867915A.root',
+#'file:/tmp/oiorio/50A31B1A-8AAB-E011-835B-0026189438F5.root'
+#'file:/tmp/oiorio/WJetsSmallFile_1_1_nb1.root',
+#'file:/tmp/oiorio/00012F91-72E5-DF11-A763-00261834B5F1.root',
 ),
 duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 )
@@ -249,7 +213,7 @@ duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 
 process.baseLeptonSequence = cms.Path(
 #    process.pileUpDumper +
-    process.basePathData
+    process.basePath
     )
 #    
 process.selection = cms.Path (
