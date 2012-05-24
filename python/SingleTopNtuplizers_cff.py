@@ -563,7 +563,7 @@ nTuplesSkim = cms.Sequence(
     nTupleTopJetsPF +
     nTupleAllJets +
     nTuplePatMETsPF +
-    nTuplePatType1METsPF +
+#    nTuplePatType1METsPF +
     nTupleAllElectrons +
     nTupleAllMuons +
     nTupleLooseElectrons +

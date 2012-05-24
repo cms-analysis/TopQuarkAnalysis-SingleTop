@@ -110,7 +110,7 @@ basePath = cms.Sequence(
        #   zVetoElectrons +
           topJetsPF +
           UnclusteredMETPF +
-          UnclusteredType1METPF +
+#          UnclusteredType1METPF +
           genJetsPF +
           NVertices +
           tightMuonsZeroIso +
@@ -129,7 +129,7 @@ basePathData = cms.Sequence(
           #   zVetoElectrons +
           topJetsPF +
           UnclusteredMETPF +
-          UnclusteredType1METPF +
+#          UnclusteredType1METPF +
           #   NVertices +
           tightMuonsZeroIso +
           tightElectronsZeroIso +
