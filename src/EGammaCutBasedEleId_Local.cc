@@ -1,3 +1,9 @@
+/* Original : in the EGamma/EGammaAnalysisTools package 
+
+Copy-pasted in SingleTop package for convenience. 
+
+
+*/
 #include "EGamma/EGammaAnalysisTools/interface/EGammaCutBasedEleId.h"
 
 #include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
