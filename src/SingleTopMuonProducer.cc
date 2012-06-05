@@ -2,7 +2,7 @@
  *\Author: A. Orso M. Iorio 
  *
  *
- *\version  $Id: SingleTopMuonProducer.cc,v 1.2.12.2 2012/05/18 02:22:32 oiorio Exp $ 
+ *\version  $Id: SingleTopMuonProducer.cc,v 1.2.12.3 2012/05/18 09:22:04 oiorio Exp $ 
  */
 
 // Single Top producer: produces a top candidate made out of a Lepton, a B jet and a MET
@@ -81,15 +81,19 @@ void SingleTopMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup &
   double energy_ = TMath::Pi()*deltaR_*deltaR_* (*rho);
   
   Selector cut(cut_);
-  std::auto_ptr< std::vector< pat::Muon > > finalMuons (new std::vector<pat::Muon>(*muons));
+  std::auto_ptr< std::vector< pat::Muon > > initialMuons (new std::vector<pat::Muon>(*muons));
+  std::auto_ptr< std::vector< pat::Muon > > finalMuons (new std::vector<pat::Muon>());
 
+  
    //std::cout << " mark 1 " << std::endl;
  
-  for(size_t i = 0; i < finalMuons->size(); ++i){
+  for(size_t i = 0; i < initialMuons->size(); ++i){
+
+
 
     //std::cout << " mark 2, i: "<< i << std::endl;
     
-    pat::Muon & mu = (*finalMuons)[i];
+    pat::Muon & mu = (*initialMuons)[i];
     mu.addUserFloat("DeltaCorrectedIso",(mu.chargedHadronIso() + std::max(0., mu.neutralHadronIso() + mu.photonIso() -0.5*mu.puChargedHadronIso()))/mu.pt());
     mu.addUserFloat("RhoCorrectedIso",(mu.chargedHadronIso() + std::max(0., mu.neutralHadronIso() + mu.photonIso() -energy_))/mu.pt());
 
@@ -133,17 +137,21 @@ void SingleTopMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup &
     
     mu.addUserFloat("VertexDz",dz);
     mu.addUserFloat("VertexDxy",dxy);
-  
-    if(!cut(mu)) finalMuons->erase(finalMuons->begin()+i) ; 
+    
+    std::cout<<" i " <<i << "pt " <<mu.pt()<< " passes cut ? "<< cut(mu) << std::endl; 
+    
 
-    //    finalMuons->push_back(muons->at(i));
+    if(cut(mu)) finalMuons->push_back(mu);
+    //if(!cut(mu)) finalMuons->erase(finalMuons->begin()+i) ; 
+    //if(!cut(mu)) finalMuons->pop_back() ; 
+  
   } 
  
   //std::cout << " mark 7 " << std::endl;
 
   //std::auto_ptr< std::vector< pat::Muon > > finalMuonsPtr(finalMuons);
  
-
+  
 iEvent.put(finalMuons);
 
 }

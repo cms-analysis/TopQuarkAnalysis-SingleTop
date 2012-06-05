@@ -2,7 +2,7 @@
  *\Author: A. Orso M. Iorio 
  *
  *
- *\version  $Id: SingleTopElectronProducer.cc,v 1.7.12.1 2012/05/17 17:05:00 oiorio Exp $ 
+ *\version  $Id: SingleTopElectronProducer.cc,v 1.7.12.2 2012/05/18 02:22:32 oiorio Exp $ 
  */
 
 // Single Top producer: produces a top candidate made out of a Lepton, a B jet and a MET
@@ -29,6 +29,17 @@
 
 #include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+
+#include "DataFormats/EgammaCandidates/interface/Conversion.h"
+#include "DataFormats/RecoCandidate/interface/IsoDeposit.h"
+
+
+#include "EGamma/EGammaAnalysisTools/interface/EGammaCutBasedEleId.h"
+#include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
+#include "DataFormats/VertexReco/interface/Vertex.h"
+#include "DataFormats/VertexReco/interface/VertexFwd.h"
+#include "DataFormats/Common/interface/ValueMap.h"
+
 
 #include "DataFormats/Math/interface/deltaR.h"
 
@@ -57,6 +68,9 @@
 
 //using namespace pat;
 
+typedef std::vector< edm::Handle< edm::ValueMap<reco::IsoDeposit> > >   IsoDepositMaps;
+typedef std::vector< edm::Handle< edm::ValueMap<double> > >             IsoDepositVals;
+
 
 SingleTopElectronProducer::SingleTopElectronProducer(const edm::ParameterSet& iConfig)
 {
@@ -64,6 +78,9 @@ SingleTopElectronProducer::SingleTopElectronProducer(const edm::ParameterSet& iC
   cut_ = iConfig.getParameter< std::string >("cut"); 
   rho_ = iConfig.getParameter<edm::InputTag> ("rho");
   deltaR_ = iConfig.getUntrackedParameter<double>         ( "deltaR",0.3 );
+  category_ = iConfig.getUntrackedParameter<std::string>         ( "category","none");
+  
+  
 
   produces<std::vector<pat::Electron> >();
 }
@@ -81,36 +98,125 @@ void SingleTopElectronProducer::produce(edm::Event & iEvent, const edm::EventSet
   edm::Handle<std::vector<pat::Electron> > electrons;
   iEvent.getByLabel(src_,electrons);
   iEvent.getByLabel(rho_,rho);
+  double rhoD = *rho; 
   double energy_ = TMath::Pi()*deltaR_*deltaR_* (*rho);
   
+
+  edm::Handle<reco::ConversionCollection> conversions;
+  iEvent.getByLabel("allConversions", conversions);
+
+  // iso deposits
+  //IsoDepositVals isoVals(isoVals_.size());
+  //for (size_t j = 0; j < isoVals_.size(); ++j) {
+  //  iEvent.getByLabel(isoVals_[j], isoVals[j]);
+  //}
+
+  edm::Handle<reco::BeamSpot> beamspot;
+  iEvent.getByLabel("offlineBeamSpot", beamspot);
+  const reco::BeamSpot &beamSpot = *(beamspot.product());
+
+
   Selector cut(cut_);
-  std::auto_ptr< std::vector< pat::Electron > > finalElectrons (new std::vector<pat::Electron>(*electrons));
+  std::auto_ptr< std::vector< pat::Electron > > initialElectrons (new std::vector<pat::Electron>(*electrons));
+  std::auto_ptr< std::vector< pat::Electron > > finalElectrons (new std::vector<pat::Electron>());
 
   ////std::cout << " mark 2 " << std::endl;
     
-  //  std::cout << "size before "<< finalElectrons->size()<< std::endl;
+  //  std::cout << "size before "<< initialElectrons->size()<< std::endl;
   
-  for(size_t i = 0; i < finalElectrons->size(); ++i){
+  for(size_t i = 0; i < initialElectrons->size(); ++i){
     
-    pat::Electron & el = (*finalElectrons)[i];
+    bool passes = true;
+    
+    pat::Electron & el = (*initialElectrons)[i];
+    
+    /*
+   
+
+    double iso_ch =  (*(isoVals)[0])[(reco::GsfElectron)(el)];
+    double iso_em = (*(isoVals)[1])[(reco::GsfElectron)(el)];
+    double iso_nh = (*(isoVals)[2])[(reco::GsfElectron)(el)];
+    */
+    
+        
+   
+    //    bool veto = EgammaCutBasedEleId::PassWP(EgammaCutBasedEleId::VETO, 
+    //				    conversions, beamSpot, vertices, iso_ch, iso_em, iso_nh, rhoD);
+    //bool loose      = EgammaCutBasedEleId::PassWP(EgammaCutBasedEleId::LOOSE, el, conversions, beamspot, vertices, iso_ch, iso_em, iso_nh, rho);
+    //bool medium     = EgammaCutBasedEleId::PassWP(EgammaCutBasedEleId::MEDIUM, el, conversions, beamspot, vertices, iso_ch, iso_em, iso_nh, rho);
+    //bool tight      = EgammaCutBasedEleId::PassWP(EgammaCutBasedEleId::TIGHT, el, conversions, beamspot, vertices, iso_ch, iso_em, iso_nh, rho);
+    
+    
     el.addUserFloat("DeltaCorrectedIso",(el.chargedHadronIso() + std::max(0., el.neutralHadronIso() + el.photonIso() -0.5*el.puChargedHadronIso()))/el.et());
     el.addUserFloat("RhoCorrectedIso",(el.chargedHadronIso() + std::max(0., el.neutralHadronIso() + el.photonIso() -energy_))/el.et());
-
+    
     double dxy= 9900;
+    double dz= 9900;
     if(vertices->size()>0) {
       //      if(!(el.gsfTrack() == NULL)) 
       //else std::cout << "electron lost track ref!  Distance being set to an unphysical value (99 meters)."<<std::endl;
+      dz = fabs(el.gsfTrack()->dz(vertices->at(0).position()));
       dxy = fabs(el.gsfTrack()->dxy(vertices->at(0).position()));
     }
-    else std::cout<< "no offline primary vertex! Check again the collections. Distance being set to an unphysical value (99 meters)."<<std::endl;
+    //    else std::cout<< "no offline primary vertex! Check again the collections. Distance being set to an unphysical value (99 meters)."<<std::endl;
     
+    el.addUserFloat("VertexDz",dz);
     el.addUserFloat("VertexDxy",dxy);
     
+    
+    if(!cut(el)) passes = false;
+
+    // get the mask value
+
+    if(category_ == "veto" || category_ == "tight" || category_ == "loose" ){
+    double iso_ch = el.chargedHadronIso();
+    double iso_em = el.neutralHadronIso();
+    double iso_nh = el.photonIso();
+
+    bool isEB           = el.isEB() ? true : false;
+    float pt            = el.pt();
+    float eta           = el.superCluster()->eta();
+
+    // id variables                                                                                                                                                    
+    float dEtaIn        = el.deltaEtaSuperClusterTrackAtVtx();
+    float dPhiIn        = el.deltaPhiSuperClusterTrackAtVtx();
+    float sigmaIEtaIEta = el.sigmaIetaIeta();
+    float hoe           = el.hadronicOverEm();
+    float ooemoop       = (1.0/el.ecalEnergy() - el.eSuperClusterOverP()/el.ecalEnergy());
+    // conversion rejection variables
+    bool vtxFitConversion = ConversionTools::hasMatchedConversion(el, conversions, beamSpot.position());
+    float mHits = el.gsfTrack()->trackerExpectedHitsInner().numberOfHits(); 
+ 
+    //    std::cout << " test id: category "<< category_ << " isEB " << isEB << " pt " << pt << " eta "<< eta << 
+    //  " dEtaIn " << dEtaIn << " dPhiIn " << dPhiIn << " sigmaIEtaIEta " << sigmaIEtaIEta << " hoe "<< hoe <<
+    //  " ooemoop " << ooemoop << " dxy " << dxy  << " dz " << dz << " iso_ch " << iso_ch<< " iso_em " << iso_em<< " iso_nh "<< iso_nh <<
+    //  " vtxFitConversion " << vtxFitConversion << " mHits " << mHits << " rhoD " <<rhoD <<  std::endl;
+
+    if(category_ == "tight"){
+      bool id = EgammaCutBasedEleId::PassWP(EgammaCutBasedEleId::TIGHT, isEB, pt, eta, dEtaIn, dPhiIn, sigmaIEtaIEta, hoe, ooemoop, dxy, dz, iso_ch, iso_em, iso_nh, vtxFitConversion, mHits, rhoD);
+      passes = passes && id;
+    }
+    if(category_ == "loose"){
+      bool id = EgammaCutBasedEleId::PassWP(EgammaCutBasedEleId::LOOSE, isEB, pt, eta, dEtaIn, dPhiIn, sigmaIEtaIEta, hoe, ooemoop, dxy, dz, iso_ch, iso_em, iso_nh, vtxFitConversion, mHits, rhoD);
+      passes = passes && id;
+    }
+    if(category_ == "veto"){
+      bool id = EgammaCutBasedEleId::PassWP(EgammaCutBasedEleId::VETO, isEB, pt, eta, dEtaIn, dPhiIn, sigmaIEtaIEta, hoe, ooemoop, dxy, dz, iso_ch, iso_em, iso_nh, vtxFitConversion, mHits, rhoD);
+      passes = passes && id;
+    }
+   
+    }
+    //    if ( (mask & EgammaCutBasedEleId::PassAll)== PassAll)return true;
+
+
     //    std::cout << "corrreliso "<< el.userFloat("RhoCorrectedIso") << " cut: " << cut_ << " passes ? "<<  cut(el) <<  std::endl;
     
 
+
     
-    if(!cut(el)) finalElectrons->erase(finalElectrons->begin()+i) ; 
+ 
+
+    if(passes)finalElectrons->push_back(el);
     
     //std::cout << " passes cut " << cut_ <<  std::endl;
     
