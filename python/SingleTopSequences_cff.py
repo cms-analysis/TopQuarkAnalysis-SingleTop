@@ -32,6 +32,7 @@ from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleQCDMuons
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleAllJets
 
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleLooseElectrons
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleLooseElectronsEle
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleLooseMuons
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleVertices
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleZVetoElectrons
@@ -116,10 +117,11 @@ basePath = cms.Sequence(
           looseMuons +
           PVFilterProducer +
           looseElectrons +
+          looseElectronsEle +
        #   zVetoElectrons +
           topJetsPF +
           UnclusteredMETPF +
-      #    UnclusteredType1METPF +
+       #   UnclusteredType1METPF +
           genJetsPF +
           NVertices +
           tightMuonsZeroIso +
@@ -136,10 +138,11 @@ basePathData = cms.Sequence(
           looseMuons +
           PVFilterProducer +
           looseElectrons +
+          looseElectronsEle +
           #   zVetoElectrons +
           topJetsPF +
-          UnclusteredMETPF +
-     #     UnclusteredType1METPF +
+       UnclusteredMETPF +
+       #   UnclusteredType1METPF +
           #   NVertices +
           tightMuonsZeroIso +
           tightElectronsZeroIso +
@@ -156,19 +159,16 @@ flavorHistorySequence = cms.Sequence(
 
 #Selection step: require 1 high pt muon/electron
 preselection = cms.Sequence(
-    #    hltFilter +
-        PVFilter *
-        #    HBHENoiseFilter *
-        #    scrapingVeto *
-            countLeptons
-            )
+    PVFilter +
+    countLeptons
+    )
 
 #Selection step: require 1 high pt muon/electron
 preselectionData = cms.Sequence(
     #    hltFilter +
-    PVFilter *
-    HBHENoiseFilter *
-    scrapingVeto *
+    PVFilter +
+    HBHENoiseFilter +
+    scrapingVeto +
     countLeptons
     )
 

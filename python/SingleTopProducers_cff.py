@@ -7,6 +7,7 @@ looseMuons = cms.EDProducer("SingleTopMuonProducer",
   src = cms.InputTag("selectedPatMuons"),
   cut = cms.string('pt >  20 & abs(eta) < 2.4'),
   rho = cms.InputTag("kt6PFJetsCentralNeutral:rho"),
+                              
 )
 
 #electron skim part
@@ -19,6 +20,14 @@ looseElectrons = cms.EDProducer("SingleTopElectronProducer",
   src = cms.InputTag("selectedPatElectrons"),
   cut = cms.string('pt >  20 & abs(eta) < 2.4'),
   rho = cms.InputTag("kt6PFJetsCentralNeutral:rho"),
+  category = cms.untracked.string("veto"),
+)
+
+looseElectronsEle = cms.EDProducer("SingleTopElectronProducer",
+  src = cms.InputTag("selectedPatElectrons"),
+  cut = cms.string('pt >  20 & abs(eta) < 2.4'),
+  rho = cms.InputTag("kt6PFJetsCentralNeutral:rho"),
+  category = cms.untracked.string("veto"),
 )
 
 
@@ -78,12 +87,14 @@ tightElectrons = cms.EDProducer("SingleTopElectronProducer",
   src = cms.InputTag("selectedPatElectrons"),
   cut = cms.string('pt >  20 & abs(eta) < 2.4'),
   rho = cms.InputTag("kt6PFJetsCentralNeutral:rho"),
+  category = cms.untracked.string("tight"),
 )
 
 tightElectronsZeroIso = cms.EDProducer("SingleTopElectronProducer",
   src = cms.InputTag("patElectronsZeroIso"),
   cut = cms.string('pt >  20 & abs(eta) < 2.4'),
   rho = cms.InputTag("kt6PFJetsCentralNeutral:rho"),
+  category = cms.untracked.string("tight"),
 )
 
 
@@ -92,6 +103,11 @@ tightMuons = cms.EDProducer("SingleTopMuonProducer",
   src = cms.InputTag("selectedPatMuons"),
   cut = cms.string('pt >  20 & abs(eta) < 2.4'),
   rho = cms.InputTag("kt6PFJetsCentralNeutral:rho"),
+)
+
+tightMuonsTest = cms.EDFilter("PATMuonSelector",
+  src = cms.InputTag("selectedPatMuons"),
+  cut = cms.string('pt >  20 & abs(eta) < 2.4'),
 )
 
 tightMuonsZeroIso = cms.EDProducer("SingleTopMuonProducer",
