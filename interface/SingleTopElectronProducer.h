@@ -9,7 +9,7 @@
  * \Author A. Orso M. Iorio
  * 
  *
- *\version  $Id: SingleTopElectronProducer.h,v 1.2 2010/12/09 23:11:35 oiorio Exp $
+ *\version  $Id: SingleTopElectronProducer.h,v 1.2.12.1 2012/05/17 17:05:00 oiorio Exp $
  *
  *
 */
@@ -58,6 +58,7 @@
 #include "CommonTools/Utils/interface/StringCutObjectSelector.h"
 
 
+
 //#include "TLorentzVector.h"
 #include "TopQuarkAnalysis/SingleTop/interface/EquationSolver.h"
 
@@ -82,8 +83,17 @@
     std::string cut_,id_;
     double deltaR_;
     edm::Handle< double > rho;
+    std::string category_;
    //std::vector<std::string> triggernames;
-      
+    //    edm::InputTag               electronsInputTag_;
+    //edm::InputTag               rhoIsoInputTag;
+    //   edm::InputTag               primaryVertexInputTag_; 
+   
+    edm::InputTag               beamSpot_;
+    edm::InputTag               conversions_;
+    std::vector<edm::InputTag>  isoVals_;
+   
+
   };
 //}
 

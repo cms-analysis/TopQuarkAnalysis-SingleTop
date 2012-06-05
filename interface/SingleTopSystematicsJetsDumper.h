@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  * 
  * Produces systematics histograms out of a standard Single Top n-tuple 
- * \ version $Id: SingleTopSystematicsJetsDumper.h,v 1.11.2.11 2012/01/17 15:44:38 oiorio Exp $
+ * \ version $Id: SingleTopSystematicsJetsDumper.h,v 1.1.2.2 2012/04/03 08:50:25 oiorio Exp $
  */
 
 
@@ -311,7 +311,7 @@ class SingleTopSystematicsJetsDumper : public edm::EDAnalyzer {
   //Definition of trees
   
   map<string, TTree*> trees;
-
+  
 
   
   //Other variables definitions
