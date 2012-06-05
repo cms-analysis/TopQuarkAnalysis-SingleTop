@@ -11,6 +11,6 @@ cd EGamma/EGammaAnalysisTools/data
 cat download.url | xargs wget                      
 cp python/pfIsolation_fix.py ../../CommonTools/ParticleFlow/python/Tools/pfIsolation.py
 
-cd ../../
+cd ../../../
 
 scram b -j 9 > & step1.log &
