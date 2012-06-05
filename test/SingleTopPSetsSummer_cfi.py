@@ -17,8 +17,8 @@ wToLNuBranchingRatio = 0.108+0.1075+0.1125
 
 
 
-relIsoCutMuons = 0.15
-relIsoCutElectrons = 0.125
+relIsoCutMuons = 0.125
+relIsoCutElectrons = 0.12
 
 PileUpSeason = "SummerFlatTail11"
 

@@ -29,7 +29,19 @@ HLTFilterMuBTag = cms.EDFilter('SingleTopTriggers',
 HLTFilterMuJet = cms.EDFilter('SingleTopTriggers',
                            HLTriggerResults = cms.InputTag("TriggerResults","",processNameData),
                            isMC = cms.untracked.bool(False),
-                           triggerList = cms.vstring("HLT_IsoMu17_eta2p1_CentralJet30_v",
+#                           triggerList = cms.vstring("HLT_IsoMu17_eta2p1_TriCentralPFJet30_v",
+                           triggerList = cms.vstring("HLT_IsoMu20_eta2p1_TriCentralPFJet30_v",
+                                                     ),
+                           runRangesList = cms.vint32(-1),
+                           
+                           channel = cms.untracked.int32(2),#Useless now
+                           )                         
+
+
+HLTFilterEleJet = cms.EDFilter('SingleTopTriggers',
+                           HLTriggerResults = cms.InputTag("TriggerResults","",processNameData),
+                           isMC = cms.untracked.bool(False),
+                           triggerList = cms.vstring("LT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_v",
                                                      ),
                            runRangesList = cms.vint32(-1),
                            
@@ -56,7 +68,7 @@ HLTFilterEle = cms.EDFilter('SingleTopTriggers',
                                                       ),
                             runRangesList = cms.vint32(160404,163869,165970),
 
-                            channel = cms.untracked.int32(3),#Useless now
+                            channel = cms.untracked.int32(3),#Useless nowH
                             )
 
 HLTFilterMuOrEleMC = cms.EDFilter('SingleTopTriggers',
