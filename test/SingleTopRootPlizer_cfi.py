@@ -149,10 +149,10 @@ qcdLeptonsRhoCorrectedRelIso = cms.InputTag("nTupleMuons","tightMuonsPFRhoCorrec
 
 #qcdLeptonsID = cms.InputTag("nTupleMuons","tightMuonsSimpleEleId70cIso"),  
 
-#looseElectronsDeltaCorrectedRelIso = cms.InputTag("nTupleLooseElectrons","looseElectronsPFDeltaCorrectedRelIso"),  
+looseElectronsDeltaCorrectedRelIso = cms.InputTag("nTupleLooseElectrons","looseElectronsPFDeltaCorrectedRelIso"),  
 looseElectronsRhoCorrectedRelIso = cms.InputTag("nTupleLooseElectrons","looseElectronsPFRhoCorrectedRelIso"),  
 
-looseElectronsDeltaCorrectedRelIso = cms.InputTag("nTupleLooseElectronsEle","looseElectronsElePFDeltaCorrectedRelIso"),  
+#looseElectronsDeltaCorrectedRelIso = cms.InputTag("nTupleLooseElectronsEle","looseElectronsElePFDeltaCorrectedRelIso"),  
 
 
 looseMuonsDeltaCorrectedRelIso = cms.InputTag("nTupleLooseMuons","looseMuonsPFDeltaCorrectedRelIso"),  
