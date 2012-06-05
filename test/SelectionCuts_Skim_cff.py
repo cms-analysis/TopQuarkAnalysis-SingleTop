@@ -22,7 +22,7 @@ eleLooseCut = cms.string("et > 20 & abs(eta) < 2.5 && userFloat(\"DeltaCorrected
 #                         "electronID('simpleEleId95cIso')==5 || electronID('simpleEleId95cIso')==7)")# & (chargedHadronIso+ neutralHadronIso + photonIso )/pt <0.2")
 
 eleLooseCutEle = cms.string("abs(eta) < 2.5 && userFloat(\"DeltaCorrectedIso\") <0.2 && userFloat(\"RhoCorrectedIso\") <0.2" +
-                            "&& electronID('mvaTrigV0') >0.0"+
+                            "&& electronID('mvaTrigV0') >0.0 &&"+
                             " et > 30 &  (abs(superCluster.eta)> 1.5660 || abs(superCluster.eta)<1.4442) ")
 # && (electronID('simpleEleId95cIso') == 1|| electronID('simpleEleId95cIso')==3 || "+
 #                            "electronID('simpleEleId95cIso')==5 || electronID('simpleEleId95cIso')==7) &&" +

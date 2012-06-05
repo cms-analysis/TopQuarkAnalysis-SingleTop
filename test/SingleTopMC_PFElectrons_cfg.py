@@ -24,7 +24,7 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff") ### real data
 
 #ChannelName = "TTBarV4"
-ChannelName = "TTBarSynch"
+ChannelName = "TTBarSynch_PFElectrons"
 
 process.GlobalTag.globaltag = cms.string('START52_V9::All')
 #process.GlobalTag.globaltag = cms.string('START311_V2::All')
@@ -104,11 +104,6 @@ applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.d
 applyPostfix(process,"pfIsolatedMuons",postfix).isolationCut = cms.double(0.2)
 applyPostfix(process,"pfIsolatedElectrons",postfix).isolationCut = cms.double(0.2)
 #applyPostfix(process,"pfIsolatedElectrons",postfix).ut = cms.double(0.2)
-
-print "test4"
-
-#Residuals (Data)
-print "test5"
 
 process.patseq = cms.Sequence(
     process.goodOfflinePrimaryVertices *

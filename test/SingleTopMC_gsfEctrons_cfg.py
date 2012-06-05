@@ -24,7 +24,7 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff") ### real data
 
 #ChannelName = "TTBarV4"
-ChannelName = "TTBar_GSF"
+ChannelName = "TTBarSynch_GsfElectrons"
 
 process.GlobalTag.globaltag = cms.string('START52_V9::All')
 #process.GlobalTag.globaltag = cms.string('START311_V2::All')
@@ -141,8 +141,8 @@ process.ZeroIsoLeptonSequence = cms.Path(
          process.patElectronsZeroIso
          )
 
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
 "file:/tmp/oiorio/Sync_File_TTBar.root",
