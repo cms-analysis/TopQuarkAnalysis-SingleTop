@@ -24,7 +24,7 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff") ### real data
 
 #ChannelName = "TTBarV4"
-ChannelName = "TTBarSynch_GsfElectrons"
+ChannelName = "TTBar"
 
 process.GlobalTag.globaltag = cms.string('START52_V9::All')
 #process.GlobalTag.globaltag = cms.string('START311_V2::All')
@@ -49,6 +49,11 @@ process.goodOfflinePrimaryVertices = cms.EDFilter(
     src=cms.InputTag('offlinePrimaryVertices')
     )
 
+
+
+from RecoJets.JetProducers.kt4PFJets_cfi import *
+process.kt6PFJetsForIsolation = kt4PFJets.clone( rParam = 0.6, doRhoFastjet = True )
+process.kt6PFJetsForIsolation.Rho_EtaMax = cms.double(2.5)
 
 
 # set the dB to the beamspot
@@ -108,6 +113,7 @@ process.patseq = cms.Sequence(
 #    process.patElectronIDs +
     process.goodOfflinePrimaryVertices *
     process.patElectronIDs *
+    process.kt6PFJetsForIsolation *
     getattr(process,"patPF2PATSequence"+postfix) #*
 #    process.producePatPFMETCorrections
 #    getattr(process,"patPF2PATSequence"+postfixQCD) 
@@ -141,7 +147,7 @@ process.ZeroIsoLeptonSequence = cms.Path(
          process.patElectronsZeroIso
          )
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(300) )
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
@@ -151,7 +157,7 @@ process.source = cms.Source ("PoolSource",
 duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 )
 
-process.basePath += process.tightMuonsTest
+#process.basePath += process.tightMuonsTest
 
 
 process.baseLeptonSequence = cms.Path(

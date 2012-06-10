@@ -41,7 +41,7 @@ HLTFilterMuJet = cms.EDFilter('SingleTopTriggers',
 HLTFilterEleJet = cms.EDFilter('SingleTopTriggers',
                            HLTriggerResults = cms.InputTag("TriggerResults","",processNameData),
                            isMC = cms.untracked.bool(False),
-                           triggerList = cms.vstring("LT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_v",
+                           triggerList = cms.vstring("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFNoPUJet30_v",
                                                      ),
                            runRangesList = cms.vint32(-1),
                            

@@ -43,7 +43,8 @@ duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
 
 #from TChannel import *
 #process.source.fileNames = TChannel_ntuple
-process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/edmntuple_TTBarSynch_GsfElectrons.root")
+process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/edmntuple_TTBarTestGSFNoIso.root")
+process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/edmntuple_TTBarSynch_PFElectrons.root")
 
 #PileUpSync
 

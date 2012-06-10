@@ -2,7 +2,7 @@
  *\Author: A. Orso M. Iorio 
  *
  *
- *\version  $Id: SingleTopElectronProducer.cc,v 1.7.12.2 2012/05/18 02:22:32 oiorio Exp $ 
+ *\version  $Id: SingleTopElectronProducer.cc,v 1.7.12.3 2012/06/05 10:04:08 oiorio Exp $ 
  */
 
 // Single Top producer: produces a top candidate made out of a Lepton, a B jet and a MET
@@ -130,23 +130,6 @@ void SingleTopElectronProducer::produce(edm::Event & iEvent, const edm::EventSet
     
     pat::Electron & el = (*initialElectrons)[i];
     
-    /*
-   
-
-    double iso_ch =  (*(isoVals)[0])[(reco::GsfElectron)(el)];
-    double iso_em = (*(isoVals)[1])[(reco::GsfElectron)(el)];
-    double iso_nh = (*(isoVals)[2])[(reco::GsfElectron)(el)];
-    */
-    
-        
-   
-    //    bool veto = EgammaCutBasedEleId::PassWP(EgammaCutBasedEleId::VETO, 
-    //				    conversions, beamSpot, vertices, iso_ch, iso_em, iso_nh, rhoD);
-    //bool loose      = EgammaCutBasedEleId::PassWP(EgammaCutBasedEleId::LOOSE, el, conversions, beamspot, vertices, iso_ch, iso_em, iso_nh, rho);
-    //bool medium     = EgammaCutBasedEleId::PassWP(EgammaCutBasedEleId::MEDIUM, el, conversions, beamspot, vertices, iso_ch, iso_em, iso_nh, rho);
-    //bool tight      = EgammaCutBasedEleId::PassWP(EgammaCutBasedEleId::TIGHT, el, conversions, beamspot, vertices, iso_ch, iso_em, iso_nh, rho);
-    
-    
     el.addUserFloat("DeltaCorrectedIso",(el.chargedHadronIso() + std::max(0., el.neutralHadronIso() + el.photonIso() -0.5*el.puChargedHadronIso()))/el.et());
     el.addUserFloat("RhoCorrectedIso",(el.chargedHadronIso() + std::max(0., el.neutralHadronIso() + el.photonIso() -energy_))/el.et());
     
@@ -163,16 +146,14 @@ void SingleTopElectronProducer::produce(edm::Event & iEvent, const edm::EventSet
     el.addUserFloat("VertexDz",dz);
     el.addUserFloat("VertexDxy",dxy);
     
-    
     if(!cut(el)) passes = false;
 
     // get the mask value
-
     if(category_ == "veto" || category_ == "tight" || category_ == "loose" ){
     double iso_ch = el.chargedHadronIso();
-    double iso_em = el.neutralHadronIso();
-    double iso_nh = el.photonIso();
-
+    double iso_em = el.photonIso();
+    double iso_nh =  el.neutralHadronIso();
+    
     bool isEB           = el.isEB() ? true : false;
     float pt            = el.pt();
     float eta           = el.superCluster()->eta();
@@ -186,12 +167,12 @@ void SingleTopElectronProducer::produce(edm::Event & iEvent, const edm::EventSet
     // conversion rejection variables
     bool vtxFitConversion = ConversionTools::hasMatchedConversion(el, conversions, beamSpot.position());
     float mHits = el.gsfTrack()->trackerExpectedHitsInner().numberOfHits(); 
- 
+    
     //    std::cout << " test id: category "<< category_ << " isEB " << isEB << " pt " << pt << " eta "<< eta << 
     //  " dEtaIn " << dEtaIn << " dPhiIn " << dPhiIn << " sigmaIEtaIEta " << sigmaIEtaIEta << " hoe "<< hoe <<
     //  " ooemoop " << ooemoop << " dxy " << dxy  << " dz " << dz << " iso_ch " << iso_ch<< " iso_em " << iso_em<< " iso_nh "<< iso_nh <<
     //  " vtxFitConversion " << vtxFitConversion << " mHits " << mHits << " rhoD " <<rhoD <<  std::endl;
-
+    
     if(category_ == "tight"){
       bool id = EgammaCutBasedEleId::PassWP(EgammaCutBasedEleId::TIGHT, isEB, pt, eta, dEtaIn, dPhiIn, sigmaIEtaIEta, hoe, ooemoop, dxy, dz, iso_ch, iso_em, iso_nh, vtxFitConversion, mHits, rhoD);
       passes = passes && id;
@@ -206,16 +187,7 @@ void SingleTopElectronProducer::produce(edm::Event & iEvent, const edm::EventSet
     }
    
     }
-    //    if ( (mask & EgammaCutBasedEleId::PassAll)== PassAll)return true;
-
-
-    //    std::cout << "corrreliso "<< el.userFloat("RhoCorrectedIso") << " cut: " << cut_ << " passes ? "<<  cut(el) <<  std::endl;
     
-
-
-    
- 
-
     if(passes)finalElectrons->push_back(el);
     
     //std::cout << " passes cut " << cut_ <<  std::endl;
