@@ -26,7 +26,7 @@ process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cf
 #ChannelName = "TTBarV4"
 ChannelName = "TTBar"
 
-process.GlobalTag.globaltag = cms.string('START52_V9::All')
+process.GlobalTag.globaltag = cms.string('START52_V9B::All')
 #process.GlobalTag.globaltag = cms.string('START311_V2::All')
 
 #from Configuration.PyReleaseValidation.autoCond import autoCond
@@ -68,7 +68,7 @@ Postfix = ""
 runOnMC = True
 jetAlgoName = "AK5"
 print "test2.2"
-usePF2PAT(process, runPF2PAT=True, jetAlgo=jetAlgoName, runOnMC=runOnMC, postfix=Postfix, jetCorrections=('AK5PFchs',['L1FastJet','L2Relative','L3Absolute']), pvCollection=cms.InputTag('offlinePrimaryVertices'),  typeIMetCorrections=True, outputModules = None)
+usePF2PAT(process, runPF2PAT=True, jetAlgo=jetAlgoName, runOnMC=runOnMC, postfix=Postfix, jetCorrections=('AK5PFchs',['L1FastJet','L2Relative','L3Absolute']), pvCollection=cms.InputTag('offlinePrimaryVertices'),  typeIMetCorrections=True)
 #          jetCorrections=('AK5PFchs', jetCorrections)
 
 process.pfPileUp.Enable = True
@@ -108,11 +108,16 @@ process.pfIsolatedElectrons.deltaBetaIsolationValueMap = cms.InputTag("elPFIsoVa
 #    pfPhotons = cms.InputTag("elPFIsoValueGamma03PFId")
 #    )
 
-applyPostfix(process,"pfIsolatedMuons",postfix).combinedIsolationCut = cms.double(0.2)
-applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.double(0.2)
+print " test 0 " 
+process.pfIsolatedMuons.combinedIsolationCut = cms.double(0.2)
+process.pfIsolatedElectrons.combinedIsolationCut = cms.double(0.2)
 
-applyPostfix(process,"pfIsolatedMuons",postfix).isolationCut = cms.double(0.2)
-applyPostfix(process,"pfIsolatedElectrons",postfix).isolationCut = cms.double(0.2)
+process.pfIsolatedMuons.isolationCut = cms.double(0.2)
+process.pfIsolatedElectrons.isolationCut = cms.double(0.2)
+#applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.double(0.2)#
+
+#applyPostfix(process,"pfIsolatedMuons",postfix).isolationCut = cms.double(0.2)
+#applyPostfix(process,"pfIsolatedElectrons",postfix).isolationCut = cms.double(0.2)
 
 #
 process.patseq = cms.Sequence(
@@ -126,6 +131,7 @@ process.patseq = cms.Sequence(
     )
 
 
+print " test 1 " 
 process.pfIsolatedMuonsZeroIso = process.pfIsolatedMuons.clone(combinedIsolationCut =  cms.double(float("inf")),
                                                                isolationCut =  cms.double(float("inf")),
                                                                )
@@ -144,6 +150,7 @@ process.patElectronsZeroIso = process.patElectrons.clone(pfElectronSource = cms.
 #adaptPFElectrons(process, process.patElectronsZeroIso, "")
 
 
+print " test 2 " 
 
 process.pathPreselection = cms.Path(
         process.patseq + process.puJetIdSqeuence + process.puJetIdSqeuenceChs
@@ -158,6 +165,9 @@ process.ZeroIsoLeptonSequence = cms.Path(
          process.pfIsolatedElectronsZeroIso +
          process.patElectronsZeroIso
          )
+
+print " test 3 " 
+
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(300) )
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
@@ -179,6 +189,9 @@ process.selection = cms.Path (
     process.preselection + 
     process.nTuplesSkim
     )
+
+print " test 4 " 
+
 
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import saveNTuplesSkimLoose
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import saveNTuplesSkimMu
@@ -216,6 +229,8 @@ savePatTupleSkimLoose = cms.untracked.vstring(
     "keep *_puJetMvaChs_*_*" # final MVAs and working point flags
 
     )
+
+print " test 5 " 
 
 #process.out.extend(["keep *_puJetId_*_*", # input variables
 #                    "keep *_puJetMva_*_*" # final MVAs and working point flags

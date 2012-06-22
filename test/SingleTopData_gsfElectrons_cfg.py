@@ -26,7 +26,7 @@ process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cf
 #ChannelName = "TTBarV4"
 ChannelName = "Data"
 
-process.GlobalTag.globaltag = cms.string('GR_R_52_V7::All')
+process.GlobalTag.globaltag = cms.string('GR_R_52_V7C::All')
 #process.GlobalTag.globaltag = cms.string('START311_V2::All')
 
 #from Configuration.PyReleaseValidation.autoCond import autoCond
@@ -102,11 +102,12 @@ process.pfIsolatedElectrons.deltaBetaIsolationValueMap = cms.InputTag("elPFIsoVa
 #    pfPhotons = cms.InputTag("elPFIsoValueGamma03PFId")
 #    )
 
-applyPostfix(process,"pfIsolatedMuons",postfix).combinedIsolationCut = cms.double(0.2)
-applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.double(0.2)
 
-applyPostfix(process,"pfIsolatedMuons",postfix).isolationCut = cms.double(0.2)
-applyPostfix(process,"pfIsolatedElectrons",postfix).isolationCut = cms.double(0.2)
+process.pfIsolatedMuons.combinedIsolationCut = cms.double(0.2)
+process.pfIsolatedElectrons.combinedIsolationCut = cms.double(0.2)
+
+process.pfIsolatedMuons.isolationCut = cms.double(0.2)
+process.pfIsolatedElectrons.isolationCut = cms.double(0.2)
 
 #
 process.patseq = cms.Sequence(
