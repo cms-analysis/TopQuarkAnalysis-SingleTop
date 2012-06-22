@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  * 
  * Produces systematics histograms out of a standard Single Top n-tuple 
- * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13 2012/04/25 20:56:07 oiorio Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.1 2012/06/05 10:57:11 oiorio Exp $
  */
 
 
@@ -82,7 +82,8 @@
 #include "RecoBTag/PerformanceDB/interface/BtagPerformance.h"
 
 //#include "PhysicsTools/Utilities/interface/LumiReWeighting.h"
-#include "PhysicsTools/Utilities/interface/Lumi3DReWeighting.h"
+//#include "PhysicsTools/Utilities/interface/Lumi3DReWeighting.h"
+#include "TopQuarkAnalysis/SingleTop/interface/Lumi3DReWeighting.h"
                                            
 
 using namespace std;
@@ -137,6 +138,7 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
 
 
   bool flavourFilter(string c,int nb, int nc, int nl);
+  int eventFlavour(string c,int nb, int nc, int nl);
 
 
   //Weight and probabilities for TurnOn curves
@@ -396,10 +398,10 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
     turnOnWeightTreeBTagTrig2Down,
     turnOnWeightTreeBTagTrig3Down;
   
-  int nJ,nT;
-  double w1T,w2T;
+  int nJ,nTCHPT,nCSVT,nCSVM;
+  double w1TCHPT,w2TCHPT, w1CSVT,w2CSVT, w1CSVM, w2CSVM;
 
-  int runTree, eventTree,lumiTree,chargeTree,electronID,bJetFlavourTree, puZero;
+  int runTree, eventTree,lumiTree,chargeTree,electronID,bJetFlavourTree,fJetFlavourTree,eventFlavourTree, puZero;
   double lepPt,lepEta,lepPhi,lepRelIso,lepDeltaCorrectedRelIso,lepRhoCorrectedRelIso, fJetPhi,fJetPt,fJetEta,fJetE,bJetPt,bJetEta,bJetPhi,bJetE,metPt,metPhi,topPt,topPhi,topEta,topE,totalEnergy,totalMomentum,fJetBTag,bJetBTag;
 
   
@@ -427,7 +429,7 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   double leptonRelIsoQCDCutUpper,leptonRelIsoQCDCutLower;  
   bool gotLeptons,gotJets,gotMets,gotLooseLeptons,gotPU,gotQCDLeptons;
 
-  int nb,nc,nudsg,ntchpt_tags,
+  int nb,nc,nudsg,ntchpt_tags,ncsvm_tags,ncsvt_tags,
     nbNoSyst,ncNoSyst,nudsgNoSyst,
     ntchpt_antitags,ntchpm_tags,ntchel_tags,ntche_antitags;
 
@@ -446,6 +448,8 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   double TCHEL_LAntiMisTagUp,  TCHEL_BAntiBTagUp, TCHEL_CAntiBTagUp, TCHEL_LAntiMisTagDown, TCHEL_BAntiBTagDown, TCHEL_CAntiBTagDown;
   double TCHEL_C,  TCHEL_B, TCHEL_L;
   double TCHEL_CAnti,  TCHEL_BAnti, TCHEL_LAnti;
+
+  double facBTagErr;
 
   class BTagWeight 
   {
@@ -477,14 +481,38 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
     jsfshptNoSyst,jsfshelNoSyst;// bjs,cjs,ljs;
 
  
+  vector<BTagWeight::JetInfo> jsfscsvt,jsfscsvm,
+    jsfscsvt_b_tag_up,jsfscsvm_b_tag_up,
+    jsfscsvt_mis_tag_up,jsfscsvm_mis_tag_up,
+    jsfscsvt_b_tag_down,jsfscsvm_b_tag_down,
+    jsfscsvt_mis_tag_down,jsfscsvm_mis_tag_down,
+    jsfscsvtNoSyst,jsfscsvmNoSyst;// bjs,cjs,ljs;
+
+ 
+
   BTagWeight b_tchpt_0_tags,
     b_tchpt_1_tag,
-    b_tchpt_2_tags,
-    b_tchel_0_tags;
-  double b_weight_tchpt_0_tags, 
+    b_tchpt_2_tags;
+
+  BTagWeight b_csvm_0_tags,
+    b_csvm_1_tag,
+    b_csvm_2_tags;
+  
+  BTagWeight b_csvt_0_tags,
+    b_csvt_1_tag,
+    b_csvt_2_tags;
+
+    double b_weight_tchpt_0_tags, 
     b_weight_tchpt_1_tag, 
-    b_weight_tchpt_2_tags, 
-    b_weight_tchel_0_tags; 
+    b_weight_tchpt_2_tags; 
+
+  double b_weight_csvm_0_tags, 
+    b_weight_csvm_1_tag, 
+    b_weight_csvm_2_tags; 
+
+  double b_weight_csvt_0_tags, 
+    b_weight_csvt_1_tag, 
+    b_weight_csvt_2_tags; 
   
   float x1,x2,Q2,scalePDF;
   int id1,id2;

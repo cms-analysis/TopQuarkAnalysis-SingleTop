@@ -12,13 +12,34 @@ nTupleTopJetsPF = cms.EDProducer(
     tag = cms.untracked.string("TrackCountingHighPur"),
     quantity = cms.untracked.string("bDiscriminator('trackCountingHighPurBJetTags')"),
     ),
+    cms.PSet(
+    tag = cms.untracked.string("PUFullDiscriminant"),
+#    quantity = cms.untracked.string('(chargedHadronIso+ max(0., neutralHadronIso + photonIso -0.5*puChargedHadronIso()))/pt'),
+    quantity = cms.untracked.string("userFloat(\"PUFullDiscriminant\")"),
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("PUChargedDiscriminant"),
+#    quantity = cms.untracked.string('(chargedHadronIso+ max(0., neutralHadronIso + photonIso -0.5*puChargedHadronIso()))/pt'),
+    quantity = cms.untracked.string("userFloat(\"PUChargedDiscriminant\")"),
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("PUFullWorkingPoint"),
+#    quantity = cms.untracked.string('(chargedHadronIso+ max(0., neutralHadronIso + photonIso -0.5*puChargedHadronIso()))/pt'),
+    quantity = cms.untracked.string("userFloat(\"PUFullWorkingPoint\")"),
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("PUChargedWorkingPoint"),
+#    quantity = cms.untracked.string('(chargedHadronIso+ max(0., neutralHadronIso + photonIso -0.5*puChargedHadronIso()))/pt'),
+    quantity = cms.untracked.string("userFloat(\"PUChargedWorkingPoint\")"),
+    ),
+   
 #    cms.PSet(
 #    tag = cms.untracked.string("TrackCountingHighEff"),
 #    quantity = cms.untracked.string("bDiscriminator('trackCountingHighEffBJetTags')")
 #    ),
     cms.PSet(
     tag = cms.untracked.string("CombinedSecondaryVertexBJetTags"),
-    quantity = cms.untracked.string("bDiscriminator('CombinedSecondaryVertexBJetTags')"),
+    quantity = cms.untracked.string("bDiscriminator('combinedSecondaryVertexBJetTags')"),
     ),
 #    cms.PSet(
 #    tag = cms.untracked.string("SecondaryVertexHighPurBJetTags"),
@@ -464,7 +485,7 @@ nTupleAllJets = nTupleTopJetsPF.clone(
 #    ),
     cms.PSet(
     tag = cms.untracked.string("CombinedSecondaryVertexBJetTags"),
-    quantity = cms.untracked.string("bDiscriminator('CombinedSecondaryVertexBJetTags')"),
+    quantity = cms.untracked.string("bDiscriminator('combinedSecondaryVertexBJetTags')"),
     ),
 #    cms.PSet(
 #    tag = cms.untracked.string("SecondaryVertexHighPurBJetTags"),

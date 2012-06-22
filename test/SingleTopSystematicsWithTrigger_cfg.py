@@ -12,7 +12,7 @@ process.options = cms.untracked.PSet(
 
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff") ### real data
-process.GlobalTag.globaltag = cms.string("START39_V9::All")
+process.GlobalTag.globaltag = cms.string("START52_V9::All")
 
 
 
@@ -109,11 +109,11 @@ if channel_instruction == "allmc":
     #    process.TreesEle.doResol = cms.untracked.bool(True)
     #    process.TreesEle.doTurnOn = cms.untracked.bool(True) 
     process.PathSysMu = cms.Path(
-    process.HLTFilterMu *
+    process.HLTFilterMu2012 *
     process.TreesMu
     )
     process.PathSysEle = cms.Path(
-    process.HLTFilterEleMC *
+#    process.HLTFilterEleMC *
     process.TreesEle
     )
 
@@ -135,7 +135,7 @@ if channel_instruction == "mu":
     process.PathSysMu = cms.Path(
     #    process.PlotsMu +
     #    process.PlotsEle +
-    process.HLTFilterMu *
+    process.HLTFilterMu2012 *
     process.TreesMu 
     )
 

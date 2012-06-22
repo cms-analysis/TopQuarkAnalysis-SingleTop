@@ -16,6 +16,16 @@ HLTFilterMu = cms.EDFilter('SingleTopTriggers',
                            channel = cms.untracked.int32(2),#Useless now
                            )                         
 
+HLTFilterMu2012 = cms.EDFilter('SingleTopTriggers',
+                           HLTriggerResults = cms.InputTag("TriggerResults","",processNameData),
+                           isMC = cms.untracked.bool(False),
+                           triggerList = cms.vstring("HLT_IsoMu24_eta2p1_v",
+                                                     ),
+                           runRangesList = cms.vint32(-1),
+                           
+                           channel = cms.untracked.int32(2),#Useless now
+                           )                         
+
 HLTFilterMuBTag = cms.EDFilter('SingleTopTriggers',
                            HLTriggerResults = cms.InputTag("TriggerResults","",processNameData),
                            isMC = cms.untracked.bool(False),

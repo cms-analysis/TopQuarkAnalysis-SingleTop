@@ -12,40 +12,47 @@ fileName = "SingleTopSystematicsWithTrigger_cfg.py"
 
 #Channels to include
 channels = [
- "SChannel",
- "SbarChannel",
-# "TTBar_Q2Up",
-# "TTBar_Q2Down",
- "TChannel",
- "TbarChannel",
- "TTBar",
- "TbarWChannel",
- "TWChannel",
-# "TbarChannel_Q2Up",
-# "TbarChannel_Q2Down",
-# "Ele_May10",
- "QCD_HT_40_100_GJets",
- "QCD_HT_100_200_GJets",
- "QCD_HT_200_inf_GJets",
-#"QCD_Pt_30to80_BCtoE",
-#"QCD_Pt_80to170_BCtoE",
-"QCD_Pt_30to80_EMEnriched",
-"QCD_Pt_80to170_EMEnriched",
- "WW",
- "ZZ",
- "WZ",
+# "SChannel",
+# "SbarChannel",
+## "TTBar_Q2Up",
+## "TTBar_Q2Down",
+# "TChannel",
+# "TbarChannel",
+# "ZJets",
+# "TTBar_part_1",
+# "TTBar_part_2",
+# "TTBar_part_3",
+# "TTBar_part_4",
+# "TTBar_part_5",
+# "TTBar_part_6",
+# "TbarWChannel",
+# "TWChannel",
+## "TbarChannel_Q2Up",
+## "TbarChannel_Q2Down",
+## "Ele_May10",
+# "QCD_HT_40_100_GJets",
+# "QCD_HT_100_200_GJets",
+# "QCD_HT_200_inf_GJets",
+##"QCD_Pt_30to80_BCtoE",
+##"QCD_Pt_80to170_BCtoE",
+#"QCD_Pt_30to80_EMEnriched",
+#"QCD_Pt_80to170_EMEnriched",
+# "WW",
+# "ZZ",
+# "WZ",
 #"ZJets_wbb_part_13",
 #"ZJets_wlight_part_13",
 #  "DataMuHadMay10",
-#  "Mu_v4_part_1",
-#  "Mu_v4_part_2",
-#  "Mu_v4_part_3",
-#  "Mu_v4_part_4",
-#  "Mu_v4_part_5",
-#  "Mu_v4_part_6",
-#  "Mu_v4_part_7",
-#  "Mu_v4_part_8",
-#  "Mu_v4_part_9",
+#  "Mu_v1_part_1",
+#  "Mu_v1_part_2",
+#  "Mu_v1_part_3",
+#  "Mu_v1_part_4",
+#  "Mu_v1_part_5",
+#  "Mu_v1_part_6",
+#  "Mu_v1_part_7",
+#  "Mu_v1_part_8",
+#  "Mu_v1_part_9",
+#  "Mu_v1_part_10",
 #  "Mu_Aug05_part_1",
 #  "Mu_Aug05_part_2",
 #  "Mu_Aug05_part_3",
@@ -83,13 +90,13 @@ channels = [
 # "SChannel",
 # "SbarChannel",
 ####
-"QCDMu_part_1",
-"QCDMu_part_2",
-"QCDMu_part_3",
-"QCDMu_part_4",
-"QCDMu_part_5",
-"QCDMu_part_6",
-"QCDMu_part_7",
+#"QCDMu_part_1",
+#"QCDMu_part_2",
+#"QCDMu_part_3",
+#"QCDMu_part_4",
+#"QCDMu_part_5",
+#"QCDMu_part_6",
+#"QCDMu_part_7",
 ######
 #QCD_Pt_30to80_BCtoE",
 ## "QCD_Pt_20to30_BCtoE",
@@ -124,11 +131,21 @@ channels = [
 # "TChannel",
 # "SChannel",#
 ###
-#"WJets_wbb_part_11",
-#"WJets_wbb_part_12",
-#"WJets_wbb_part_13",
-#"WJets_wbb_part_14",
-#"WJets_wbb_part_15",
+#"WJets_wbb_part_1",
+#"WJets_wbb_part_2",
+#"WJets_wbb_part_3",
+#"WJets_wbb_part_4",
+#"WJets_wbb_part_5",
+#"WJets_wcc_part_1",
+#"WJets_wcc_part_2",
+#"WJets_wcc_part_3",
+#"WJets_wcc_part_4",
+#"WJets_wcc_part_5",
+"WJets_part_1",
+"WJets_part_2",
+"WJets_part_3",
+"WJets_part_4",
+"WJets_part_5",
 #"WJets_wbb_part_16",
 #"WJets_wbb_part_17",
 #"WJets_wbb_part_18",
@@ -235,6 +252,10 @@ def changeChannel(fileName,channelOld,channelNew,switch,isMC):
     #        channelToReplace = "TTBar"
     if "QCDMu" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
         channelToReplace = "QCDMu"
+    if "WJets" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
+        channelToReplace = "WJets"
+    if "TTBar" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
+        channelToReplace = "TTBar"
           #if channelNew=="DataEle":
        # channelNew_2 = "Data"
     file = open(fileName)
@@ -276,6 +297,12 @@ def changeChannel(fileName,channelOld,channelNew,switch,isMC):
         inputs = "process.source.fileNames = cms.untracked.vstring("
         inputs = inputs +"'"+dataPath+channel+"Merged.root',"
         inputs = inputs.replace(channelToReplace,"ZJets")
+        inputs = inputs +")"
+        o.write(inputs)
+    if "TTBar" in channelNew:# == "DataMu" or channelNew == "DataMuQCD":
+        inputs = "process.source.fileNames = cms.untracked.vstring("
+        inputs = inputs +"'"+dataPath+channel+"Merged.root',"
+        inputs = inputs.replace(channelToReplace,"TTBar")
         inputs = inputs +")"
         o.write(inputs)
     if "Mu" in channelNew or "Ele" in channelNew:# == "DataMu" or channelNew == "DataMuQCD":

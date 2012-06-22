@@ -24,9 +24,9 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff") ### real data
 
 #ChannelName = "TTBarV4"
-ChannelName = "TTBar"
+ChannelName = "Data"
 
-process.GlobalTag.globaltag = cms.string('START52_V9::All')
+process.GlobalTag.globaltag = cms.string('GR_R_52_V7::All')
 #process.GlobalTag.globaltag = cms.string('START311_V2::All')
 
 #from Configuration.PyReleaseValidation.autoCond import autoCond
@@ -65,15 +65,11 @@ postfix = ""
 # Configure PAT to use PF2PAT instead of AOD sources
 from PhysicsTools.PatAlgos.tools.pfTools import *
 Postfix = ""
-runOnMC = True
+runOnMC = False
 jetAlgoName = "AK5"
 print "test2.2"
-usePF2PAT(process, runPF2PAT=True, jetAlgo=jetAlgoName, runOnMC=runOnMC, postfix=Postfix, jetCorrections=('AK5PFchs',['L1FastJet','L2Relative','L3Absolute']), pvCollection=cms.InputTag('offlinePrimaryVertices'),  typeIMetCorrections=True, outputModules = None)
+usePF2PAT(process, runPF2PAT=True, jetAlgo=jetAlgoName, runOnMC=runOnMC, postfix=Postfix, jetCorrections=('AK5PFchs',['L1FastJet','L2Relative','L3Absolute','L2L3Residual']), pvCollection=cms.InputTag('offlinePrimaryVertices'),  typeIMetCorrections=True, outputModules = None)
 #          jetCorrections=('AK5PFchs', jetCorrections)
-
-process.pfPileUp.Enable = True
-process.load("CMGTools.External.pujetidsequence_cff")
-
 
 #Use gsfElectrons:
 process.patElectrons.useParticleFlow = False
@@ -85,8 +81,6 @@ getattr(process,'patDefaultSequence'+postfix).replace( getattr(process,"patElect
                                                        getattr(process,"patElectrons"+postfix)
                                                        )
 getattr(process,"pfNoTau"+postfix).enable = False
-
-
 
 # set the dB to the beamspot
 process.patMuons.usePV = cms.bool(False)
@@ -126,10 +120,7 @@ process.patseq = cms.Sequence(
     )
 
 
-process.pfIsolatedMuonsZeroIso = process.pfIsolatedMuons.clone(combinedIsolationCut =  cms.double(float("inf")),
-                                                               isolationCut =  cms.double(float("inf")),
-                                                               )
-
+process.pfIsolatedMuonsZeroIso = process.pfIsolatedMuons.clone(combinedIsolationCut =  cms.double(float("inf")))
 process.patMuonsZeroIso = process.patMuons.clone(pfMuonSource = cms.InputTag("pfIsolatedMuonsZeroIso"))#, genParticleMatch = cms.InputTag("muonMatchZeroIso"))
 # use pf isolation, but do not change matching
 tmp = process.muonMatch.src
@@ -137,17 +128,14 @@ adaptPFMuons(process, process.patMuonsZeroIso, "")
 process.muonMatch.src = tmp
 process.muonMatchZeroIso = process.muonMatch.clone(src = cms.InputTag("pfIsolatedMuonsZeroIso"))
 
-process.pfIsolatedElectronsZeroIso = process.pfIsolatedElectrons.clone(combinedIsolationCut = cms.double(float("inf")),
-                                                                       isolationCut =  cms.double(float("inf")),
-                                                                       )
+process.pfIsolatedElectronsZeroIso = process.pfIsolatedElectrons.clone(combinedIsolationCut = cms.double(float("inf")))
 process.patElectronsZeroIso = process.patElectrons.clone(pfElectronSource = cms.InputTag("pfIsolatedElectronsZeroIso"))
 #adaptPFElectrons(process, process.patElectronsZeroIso, "")
 
 
 
 process.pathPreselection = cms.Path(
-        process.patseq + process.puJetIdSqeuence + process.puJetIdSqeuenceChs
-        #+  process.producePatPFMETCorrections
+        process.patseq #+  process.producePatPFMETCorrections
         )
 
 
@@ -160,10 +148,10 @@ process.ZeroIsoLeptonSequence = cms.Path(
          )
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(300) )
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
-"file:/tmp/oiorio/Sync_File_TTBar.root",
+"file:/tmp/oiorio/SingleEle.root",
 ),
 #eventsToProcess = cms.untracked.VEventRange('1:65161675-1:65161677'),#1:95606867-1:95606869')
 duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
@@ -171,10 +159,13 @@ duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 
 #process.basePath += process.tightMuonsTest
 
+
 process.baseLeptonSequence = cms.Path(
-    process.basePath
+    process.basePathData
     )
-#    
+
+#process.preselection.remove(process.countLeptons)
+
 process.selection = cms.Path (
     process.preselection + 
     process.nTuplesSkim
@@ -210,16 +201,7 @@ savePatTupleSkimLoose = cms.untracked.vstring(
     
     'keep *_cFlavorHistoryProducer_*_*',
     'keep *_bFlavorHistoryProducer_*_*',
-    "keep *_puJetId_*_*", # input variables
-    "keep *_puJetMva_*_*", # final MVAs and working point flags
-    "keep *_puJetIdChs_*_*", # input variables
-    "keep *_puJetMvaChs_*_*" # final MVAs and working point flags
-
     )
-
-#process.out.extend(["keep *_puJetId_*_*", # input variables
-#                    "keep *_puJetMva_*_*" # final MVAs and working point flags
-#                    ])
 
 #process.saveNTuplesSkimLoose.append()
 

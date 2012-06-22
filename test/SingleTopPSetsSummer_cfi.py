@@ -22,6 +22,8 @@ relIsoCutElectrons = 0.12
 
 PileUpSeason = "SummerFlatTail11"
 
+PileUpSeason = "Summer12"
+
 
 TChannelMu = cms.PSet(
 #    crossSection = cms.untracked.double(41.92*wToLNuBranchingRatio),

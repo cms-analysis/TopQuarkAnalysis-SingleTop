@@ -77,11 +77,25 @@ NVertices = cms.EDProducer("SingleTopPileUpProducer")
 PDFInfo = cms.EDProducer("PDFInfoDumper",
                          )
 
-topJetsPF = cms.EDFilter("PATJetSelector",
-                         preselection = cms.string(''),
+#topJetsPF = cms.EDFilter("PATJetSelector",
+##                         preselection = cms.string(''),
+#                         src = cms.InputTag("selectedPatJets"),
+#                         cut = cms.string('pt >  20 & abs(eta) < 5.'),
+#                         checkOverlaps = cms.PSet(),
+#                           )
+
+
+
+topJetsPF = cms.EDProducer("SingleTopJetsProducer",
+#                         preselection = cms.string(''),
                          src = cms.InputTag("selectedPatJets"),
                          cut = cms.string('pt >  20 & abs(eta) < 5.'),
-                         checkOverlaps = cms.PSet(),
+                         puFullDiscriminant = cms.InputTag("puJetMva","fullDiscriminant"),
+                         puFullID  = cms.InputTag("puJetMva","fullId"),
+                         puChargedDiscriminant = cms.InputTag("puJetMvaChs","fullDiscriminant"),
+                         puChargedID  = cms.InputTag("puJetMvaChs","fullId"),
+
+                         #                         checkOverlaps = cms.PSet(),
                            )
 
 

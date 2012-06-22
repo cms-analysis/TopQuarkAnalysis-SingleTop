@@ -9,7 +9,7 @@
  * \Author A. Orso M. Iorio
  * 
  *
- *\version  $Id: SingleTopJetsProducer.h,v 1.1 2010/09/07 14:32:43 oiorio Exp $
+ *\version  $Id: SingleTopJetsProducer.h,v 1.2 2010/11/17 09:24:42 oiorio Exp $
  *
  *
 */
@@ -54,6 +54,10 @@
 
 #include "DataFormats/Candidate/interface/NamedCompositeCandidate.h"
 
+#include "CommonTools/Utils/interface/StringObjectFunction.h"
+#include "CommonTools/Utils/interface/StringCutObjectSelector.h"
+
+
 //#include "TLorentzVector.h"
 #include "TopQuarkAnalysis/SingleTop/interface/EquationSolver.h"
 
@@ -72,21 +76,21 @@
       virtual void produce(edm::Event & iEvent, const edm::EventSetup & iSetup);
     //       static void fillDescriptions(edm::ConfigurationDescriptions & descriptions);
     private:
+  
 
-    
-    edm::InputTag src_,eleSrc_,muSrc_;
-    bool isJPT;
-    bool isCalo;
-    bool isPF;
-    double ptCut_;
-    //typedef pat::helper::OverlapTest OverlapTest;
-    //boost::ptr_vector<OverlapTest> overlaps;
-    
-
-
-
-   //std::vector<std::string> triggernames;
+  
+    edm::InputTag src_,PUFullDiscriminant_,PUFullID_,PUChargedDiscriminant_,PUChargedID_;
+    std::string cut_;
       
+    typedef StringCutObjectSelector<pat::Jet> Selector;
+
+    edm::Handle<std::vector<pat::Jet> > jets;
+    edm::Handle<edm::View<pat::Jet> > vjets;
+
+    edm::Handle<edm::ValueMap<float> > puFullJetIdMVA;
+    edm::Handle<edm::ValueMap<int> > puFullJetIdFlag;
+    edm::Handle<edm::ValueMap<float> > puChargedJetIdMVA;
+    edm::Handle<edm::ValueMap<int> > puChargedJetIdFlag;
   };
 //}
 
