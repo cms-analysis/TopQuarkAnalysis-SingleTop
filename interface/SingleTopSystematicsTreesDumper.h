@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  * 
  * Produces systematics histograms out of a standard Single Top n-tuple 
- * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.1 2012/06/05 10:57:11 oiorio Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.2 2012/06/22 16:32:06 oiorio Exp $
  */
 
 
@@ -186,6 +186,9 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
     leptonsDZ_,
     leptonsMVAID_,
 
+    vertexZ_,
+
+
     leptonsDeltaCorrectedRelIso_,
     leptonsRhoCorrectedRelIso_,
 
@@ -218,6 +221,8 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
     jetsBTagAlgo_,
     jetsCorrTotal_,
     jetsAntiBTagAlgo_,
+    jetsPileUpID_,
+    jetsPileUpWP_,
     METPt_,
     METPhi_,
     jetsFlavour_,
@@ -248,7 +253,8 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
     leptonsMVAID,
     leptonsDB,
     leptonsDZ,
-    
+    vertexZ,
+
     qcdLeptonsPt,
     qcdLeptonsPhi,
     qcdLeptonsEta,
@@ -277,15 +283,20 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
    jetsAntiBTagAlgo,
    jetsFlavour,
    jetsCorrTotal,
+   jetsPileUpID,
+   jetsPileUpWP,
+
    METPhi,
    METPt;
  
-  edm::Handle<int > npv,n0,nm1,np1;
+  edm::Handle<int > n0,nm1,np1;
+  
+  int npv;
 
   int passingPreselection, passingLepton, passingMuonVeto, passingLeptonVeto, passingJets, passingBJets,passingMET;
   
 
-  int nVertices;
+  int nVertices,nGoodVertices;
 
   //Unclustered MET to take from the event
   edm::Handle< double > UnclMETPx,UnclMETPy,preWeights;
@@ -402,7 +413,7 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   double w1TCHPT,w2TCHPT, w1CSVT,w2CSVT, w1CSVM, w2CSVM;
 
   int runTree, eventTree,lumiTree,chargeTree,electronID,bJetFlavourTree,fJetFlavourTree,eventFlavourTree, puZero;
-  double lepPt,lepEta,lepPhi,lepRelIso,lepDeltaCorrectedRelIso,lepRhoCorrectedRelIso, fJetPhi,fJetPt,fJetEta,fJetE,bJetPt,bJetEta,bJetPhi,bJetE,metPt,metPhi,topPt,topPhi,topEta,topE,totalEnergy,totalMomentum,fJetBTag,bJetBTag;
+  double lepPt,lepEta,lepPhi,lepRelIso,lepDeltaCorrectedRelIso,lepRhoCorrectedRelIso, fJetPhi,fJetPt,fJetEta,fJetE,bJetPt,bJetEta,bJetPhi,bJetE,metPt,metPhi,topPt,topPhi,topEta,topE,totalEnergy,totalMomentum,fJetBTag,bJetBTag,vtxZ,fJetPUID,fJetPUWP,bJetPUID,bJetPUWP;
 
   
   //Not used anymore:
@@ -427,7 +438,7 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
     jetprobs_b3down ;
 
   double leptonRelIsoQCDCutUpper,leptonRelIsoQCDCutLower;  
-  bool gotLeptons,gotJets,gotMets,gotLooseLeptons,gotPU,gotQCDLeptons;
+  bool gotLeptons,gotJets,gotMets,gotLooseLeptons,gotPU,gotQCDLeptons,gotPV;
 
   int nb,nc,nudsg,ntchpt_tags,ncsvm_tags,ncsvt_tags,
     nbNoSyst,ncNoSyst,nudsgNoSyst,

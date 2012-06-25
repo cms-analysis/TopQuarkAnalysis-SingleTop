@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.1 2012/06/05 10:04:08 oiorio Exp $ 
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.2 2012/06/22 16:32:07 oiorio Exp $ 
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file 
 //
@@ -119,6 +119,10 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
   
   jetsBTagAlgo_ =  iConfig.getParameter< edm::InputTag >("jetsBTagAlgo");
   jetsAntiBTagAlgo_ =  iConfig.getParameter< edm::InputTag >("jetsAntiBTagAlgo");
+
+  jetsPileUpID_ =  iConfig.getParameter< edm::InputTag >("jetsPileUpDiscr");
+  jetsPileUpWP_ =  iConfig.getParameter< edm::InputTag >("jetsPileUpWP");
+
   jetsFlavour_ =  iConfig.getParameter< edm::InputTag >("jetsFlavour");
 
   //  genJetsPt_  = iConfig.getParameter< edm::InputTag >("genJetsPt");
@@ -157,14 +161,16 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
   np1_ = iConfig.getParameter< edm::InputTag >("nVerticesPlus");//,"PileUpSync"); 
   nm1_ = iConfig.getParameter< edm::InputTag >("nVerticesMinus");//,"PileUpSync"); 
   n0_ = iConfig.getParameter< edm::InputTag >("nVertices");//,"PileUpSync"); 
+
+  vertexZ_ = iConfig.getParameter< edm::InputTag >("vertexZ");//,"PileUpSync"); 
   
   doPU_ = iConfig.getUntrackedParameter< bool >("doPU",false);
   doResol_ = iConfig.getUntrackedParameter< bool >("doResol",false);
   doTurnOn_ = iConfig.getUntrackedParameter< bool >("doTurnOn",true);
-
+  
   doReCorrection_ = iConfig.getUntrackedParameter< bool >("doReCorrection",false);
   dataPUFile_ =  channelInfo.getUntrackedParameter< std::string >("Season","SummerMean11");
-
+  
   takeBTagSFFromDB_ = iConfig.getUntrackedParameter< bool >("takeBTagSFFromDB",true); 
   
   doJetTrees_ = iConfig.getUntrackedParameter< bool >("doJetTrees",true); 
@@ -190,7 +196,8 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
 					  std::string("pileup"));
     LumiWeightsUp_.weight3D_init(1.080);
     LumiWeightsDown_.weight3D_init(0.961);
-    LumiWeights_.weight3D_init(1.044);
+    //    LumiWeights_.weight3D_init(1.044);
+    LumiWeights_.weight3D_init(1.000);
 
     //    //cout << " built lumiWeights "<<endl;
   }
@@ -211,8 +218,6 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
   //}
 
   std::vector<std::string> all_syst = systematics;
-
-
 
   
   TFileDirectory SingleTopSystematics = fs->mkdir( "systematics_histograms" );
@@ -269,6 +274,8 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
       treesNJets[syst]->Branch("fJetPt",&fJetPt);
    
       treesNJets[syst]->Branch("nJ",&nJ);
+      treesNJets[syst]->Branch("nVertices",&nVertices);
+      treesNJets[syst]->Branch("nGoodVertices",&npv);
 
       treesNJets[syst]->Branch("nTCHPT",&ntchpt_tags);
       treesNJets[syst]->Branch("nCSVT",&ncsvt_tags);
@@ -369,6 +376,8 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
       trees2J[bj][syst]->Branch("fJetPhi",&fJetPhi);
       trees2J[bj][syst]->Branch("fJetBtag",&fJetBTag);
       trees2J[bj][syst]->Branch("fJetFlavour",&fJetFlavourTree);
+      trees2J[bj][syst]->Branch("fJetPUID",&fJetPUID);
+      trees2J[bj][syst]->Branch("fJetPUWP",&fJetPUWP);
       
       trees2J[bj][syst]->Branch("bJetPt",&bJetPt);
       trees2J[bj][syst]->Branch("bJetE",&bJetE);
@@ -376,6 +385,8 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
       trees2J[bj][syst]->Branch("bJetPhi",&bJetPhi);
       trees2J[bj][syst]->Branch("bJetBtag",&bJetBTag);
       trees2J[bj][syst]->Branch("bJetFlavour",&bJetFlavourTree);
+      trees2J[bj][syst]->Branch("bJetPUID",&bJetPUID);
+      trees2J[bj][syst]->Branch("bJetPUWP",&bJetPUWP);
 
       trees2J[bj][syst]->Branch("eventFlavour",&eventFlavourTree);
       
@@ -391,6 +402,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
       
       trees2J[bj][syst]->Branch("ID",&electronID);
       trees2J[bj][syst]->Branch("nVertices",&nVertices);
+      trees2J[bj][syst]->Branch("nGoodVertices",&npv);
       
       //      trees2J[bj][syst]->Branch("nVerticesReco",&nVerticesReco);
       
@@ -445,6 +457,8 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
       trees3J[bj][syst]->Branch("fJetPhi",&fJetPhi);
       trees3J[bj][syst]->Branch("fJetBtag",&fJetBTag);
       trees3J[bj][syst]->Branch("fJetFlavour",&fJetFlavourTree);
+      trees3J[bj][syst]->Branch("fJetPUID",&fJetPUID);
+      trees3J[bj][syst]->Branch("fJetPUWP",&fJetPUWP);
       
 
 
@@ -454,6 +468,9 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
       trees3J[bj][syst]->Branch("bJetPhi",&bJetPhi);
       trees3J[bj][syst]->Branch("fJetBtag",&bJetBTag);
       trees3J[bj][syst]->Branch("bJetFlavour",&bJetFlavourTree);
+      trees3J[bj][syst]->Branch("bJetPUID",&bJetPUID);
+      trees3J[bj][syst]->Branch("bJetPUWP",&bJetPUWP);
+
       
       trees3J[bj][syst]->Branch("eventFlavour",&eventFlavourTree);
 
@@ -468,7 +485,9 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
       
       trees3J[bj][syst]->Branch("ID",&electronID);
       trees3J[bj][syst]->Branch("nVertices",&nVertices);
+      trees3J[bj][syst]->Branch("nGoodVertices",&npv);
       
+
       trees3J[bj][syst]->Branch("totalEnergy",&totalEnergy);
       trees3J[bj][syst]->Branch("totalMomentum",&totalMomentum);
       
@@ -652,6 +671,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
   //  //cout << "test 0 "<<endl;
 
   gotLeptons=0;
+  gotPV=0;
   gotQCDLeptons=0;
   gotLooseLeptons=0;
   gotJets=0;
@@ -1011,6 +1031,11 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       passesLeptonStep = (passesLeptons || isQCD);
     }
     if(!passesLeptonStep)continue;
+    
+    if(!gotPV){
+      iEvent.getByLabel(vertexZ_,vertexZ);
+      npv = vertexZ->size();
+    }
 
     //Clear the vector of btags //NOT USED NOW 
     //    b_weight_tag_algo1.clear();
@@ -1108,10 +1133,13 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       iEvent.getByLabel(jetsBTagAlgo_,jetsBTagAlgo);
       iEvent.getByLabel(jetsAntiBTagAlgo_,jetsAntiBTagAlgo);
 
+      iEvent.getByLabel(jetsPileUpID_,jetsPileUpID);
+      iEvent.getByLabel(jetsPileUpWP_,jetsPileUpWP);
+
       iEvent.getByLabel(jetsFlavour_,jetsFlavour);
       iEvent.getByLabel(jetsCorrTotal_,jetsCorrTotal);
       if(doResol_)iEvent.getByLabel(genJetsPt_,genJetsPt);
-      
+
       /*      if(channel != "Data"){
       iEvent.getByLabel(x1_,x1h);
       iEvent.getByLabel(x2_,x2h);
@@ -1440,11 +1468,15 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	highBTagTree=jetsBTagAlgo->at(i);
 	highBTagTreePosition=nJets-1;
 	bJetFlavourTree = jetsFlavour->at(i);
+	bJetPUID = jetsPileUpID->at(i);
+	bJetPUWP = jetsPileUpWP->at(i);
       } 
       if(jetsBTagAlgo->at(i) < lowBTagTree){
 	lowBTagTree=jetsBTagAlgo->at(i);
 	lowBTagTreePosition=nJets-1;
 	fJetFlavourTree = jetsFlavour->at(i);
+	fJetPUID = jetsPileUpID->at(i);
+	fJetPUWP = jetsPileUpWP->at(i);
       }
       if(nJets>=10 )break;
       }

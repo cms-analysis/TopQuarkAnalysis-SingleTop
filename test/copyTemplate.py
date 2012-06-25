@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-process = cms.Process("SingleTopSkimMerge")
+process = cms.Process("SingleTopSkimMergeB")
 
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
@@ -20,8 +20,12 @@ duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 
-from Configuration.PyReleaseValidation.autoCond import autoCond
-process.GlobalTag.globaltag = autoCond['startup']
+process.GlobalTag.globaltag = cms.string('START52_V9B::All')
+
+
+process.pu = cms.EDProducer("SingleTopPileUpProducer")
+
+process.pathPu = cms.Path( process.pu    )
 
 
 process.skimwall = cms.OutputModule("PoolOutputModule",
@@ -34,4 +38,5 @@ process.skimwall = cms.OutputModule("PoolOutputModule",
 
 #Save the skims
 #process.outpath = cms.EndPath( process.skimlight + process.skimwcc + process.skimwbb )
+process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/TWChannelMerged.root")
 process.outpath = cms.EndPath( process.skimwall)

@@ -93,6 +93,10 @@ jetsPhi = cms.InputTag("nTupleTopJetsPF","topJetsPFPhi"),
 jetsEta = cms.InputTag("nTupleTopJetsPF","topJetsPFEta"),  
 jetsEnergy = cms.InputTag("nTupleTopJetsPF","topJetsPFE"),  
 
+jetsPileUpDiscr = cms.InputTag("nTupleTopJetsPF","topJetsPFPUFullDiscriminant"),  
+jetsPileUpWP = cms.InputTag("nTupleTopJetsPF","topJetsPFPUFullWorkingPoint"),  
+
+
 jetsBTagAlgo = cms.InputTag("nTupleTopJetsPF","topJetsPFTrackCountingHighPur"),  
 jetsAntiBTagAlgo =  cms.InputTag("nTupleTopJetsPF","topJetsPFCombinedSecondaryVertexBJetTags"),  
 jetsFlavour = cms.InputTag("nTupleTopJetsPF","topJetsPFFlavour"),   
@@ -108,6 +112,7 @@ UnclusteredMETPx = cms.InputTag("UnclusteredMETPF","UnclusteredMETPx"),
 UnclusteredMETPy = cms.InputTag("UnclusteredMETPF","UnclusteredMETPy"),
 
 #Vertices
+vertexZ = cms.InputTag("nTupleVertices","z"),  
 
 nVerticesPlus = cms.InputTag("NVertices","PileUpP1"),
 nVerticesMinus = cms.InputTag("NVertices","PileUpM1"),
