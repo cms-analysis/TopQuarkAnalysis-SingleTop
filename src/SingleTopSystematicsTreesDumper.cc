@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.2 2012/06/22 16:32:07 oiorio Exp $ 
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.3 2012/06/25 08:27:29 oiorio Exp $ 
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file 
 //
@@ -272,8 +272,19 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
 
       treesNJets[syst]->Branch("bJetPt",&bJetPt);
       treesNJets[syst]->Branch("fJetPt",&fJetPt);
+
+      treesNJets[syst]->Branch("fJetPUID",&fJetPUID);
+      treesNJets[syst]->Branch("fJetPUWP",&fJetPUWP);
    
       treesNJets[syst]->Branch("nJ",&nJ);
+      treesNJets[syst]->Branch("nJNoPU",&nJNoPU);
+
+      treesNJets[syst]->Branch("nJCentral",&nJCentral);
+      treesNJets[syst]->Branch("nJCentralNoPU",&nJCentralNoPU);
+
+      treesNJets[syst]->Branch("nJForward",&nJForward);
+      treesNJets[syst]->Branch("nJForwardNoPU",&nJForwardNoPU);
+
       treesNJets[syst]->Branch("nVertices",&nVertices);
       treesNJets[syst]->Branch("nGoodVertices",&npv);
 
@@ -741,6 +752,11 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
   size_t nLeptons = 0;//leptonsPt->size();
   size_t nQCDLeptons = 0;//leptonsPt->size();
   size_t nJets = 0;
+  size_t nJetsNoPU = 0;
+  size_t nJetsCentralNoPU = 0;
+ size_t nJetsCentral = 0;
+  size_t nJetsForwardNoPU = 0;
+ size_t nJetsForward = 0;
   size_t nJetsNoSyst = 0;
   size_t nBJets = 0;
   size_t nLooseBJets = 0;
@@ -778,6 +794,11 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     nLeptons =0;
     nQCDLeptons =0;
     nJets =0;
+    nJetsNoPU =0;
+    nJetsCentral =0;
+    nJetsCentralNoPU =0;
+    nJetsForward =0;
+    nJetsForwardNoPU =0;
     //    nBJets =0;
     //cout <<" syst " << syst << endl;
     //    nAntiBJets =0;
@@ -1216,6 +1237,13 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	bool passesPtCut = ptCorr>ptCut;
 	if(passesPtCut) {
 	  ++nJets;
+	  if( fabs(eta) < 2.5)++nJetsCentral;
+	  else ++nJetsForward;
+	  if( jetsPileUpWP->at(i) > 2.5){
+	    ++nJetsNoPU;
+	    if( fabs(eta) < 2.5)++nJetsCentralNoPU;
+	    else ++nJetsForwardNoPU;
+	  }
 	  jets[nJets-1]=math::PtEtaPhiELorentzVector(ptCorr,jetsEta->at(i), jetsPhi->at(i), energyCorr);
 	  if(syst=="noSyst"){ 
 	    ++nJetsNoSyst;
@@ -1562,8 +1590,16 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	w2CSVT = b_csvt_2_tags.weight(jsfscsvt,ncsvt_tags);
 	w1CSVM = b_csvm_1_tag.weight(jsfscsvt,ncsvm_tags);
 	w2CSVM = b_csvm_2_tags.weight(jsfscsvt,ncsvm_tags);
+
 	nJ = nJets;
-	//	nT = ntchpt_tags;
+	nJNoPU = nJetsNoPU;
+
+	nJCentralNoPU = nJetsCentralNoPU;
+	nJCentral = nJetsCentral;
+
+	nJForwardNoPU = nJetsForwardNoPU;
+	nJForward = nJetsForward;
+
 	treesNJets[syst]->Fill();
       }
       
