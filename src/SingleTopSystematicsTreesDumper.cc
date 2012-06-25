@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.3 2012/06/25 08:27:29 oiorio Exp $ 
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.4 2012/06/25 19:57:42 oiorio Exp $ 
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file 
 //
@@ -323,6 +323,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
     
       trees2J[bj][syst]->Branch("eta",&etaTree);
       trees2J[bj][syst]->Branch("costhetalj",&cosTree);
+      trees2J[bj][syst]->Branch("costhetalbl",&cosBLTree);
        trees2J[bj][syst]->Branch("mtwMass",&mtwMassTree);
       
       trees2J[bj][syst]->Branch("charge",&chargeTree);
@@ -440,6 +441,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
       
       trees3J[bj][syst]->Branch("eta",&etaTree);
       trees3J[bj][syst]->Branch("costhetalj",&cosTree);
+      trees3J[bj][syst]->Branch("costhetalbl",&cosBLTree);
       trees3J[bj][syst]->Branch("topMass",&topMassTree);
       trees3J[bj][syst]->Branch("mtwMass",&mtwMassTree);
       
@@ -1841,7 +1843,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       
       math::PtEtaPhiELorentzVector top = top4Momentum(leptonPFour,jets[highBTagTreePosition],metPx,metPy);
       float fCosThetaLJ =  cosThetaLJ(leptonPFour, jets[lowBTagTreePosition], top);
-      
+      cosBLTree =  cosTheta_eta_bl(leptonPFour, jets[lowBTagTreePosition], top);
+
       runTree = iEvent.eventAuxiliary().run();
       lumiTree = iEvent.eventAuxiliary().luminosityBlock();
       eventTree = iEvent.eventAuxiliary().event();
@@ -1905,6 +1908,26 @@ float SingleTopSystematicsTreesDumper::cosThetaLJ(math::PtEtaPhiELorentzVector l
   return  ROOT::Math::VectorUtil::CosTheta(boostedJet.Vect(),boostedLepton.Vect());
   
 }
+
+//CosTheta-lepton-beam-line, implementation by Joosep Pata 
+float SingleTopSystematicsTreesDumper::cosTheta_eta_bl(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, math::PtEtaPhiELorentzVector top){
+
+  double eta = jet.eta();
+  double z;
+  if (eta>0) {
+          z = 1.0;
+  }
+  else {
+    z = -1.0;
+  }
+  math::XYZTLorentzVector beamLine = math::XYZTLorentzVector(0.0, 0.0, z, 1.0);
+  math::PtEtaPhiELorentzVector boostedLepton = ROOT::Math::VectorUtil::boost(lepton, top.BoostToCM());
+  math::XYZTLorentzVector boostedBeamLine = ROOT::Math::VectorUtil::boost(beamLine, top.BoostToCM());
+  
+  return ROOT::Math::VectorUtil::CosTheta(boostedBeamLine.Vect(),boostedLepton.Vect());
+
+}
+
 
 //top quark 4-momentum given lepton, met and b-jet
 math::PtEtaPhiELorentzVector SingleTopSystematicsTreesDumper::top4Momentum(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, float metPx, float metPy){

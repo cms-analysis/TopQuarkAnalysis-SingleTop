@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  * 
  * Produces systematics histograms out of a standard Single Top n-tuple 
- * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.3 2012/06/25 08:27:29 oiorio Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.4 2012/06/25 19:57:42 oiorio Exp $
  */
 
 
@@ -110,6 +110,7 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   math::PtEtaPhiELorentzVector top4Momentum(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, float metPx, float metPy);
   math::XYZTLorentzVector NuMomentum(float leptonPx, float leptonPy, float leptonPz, float leptonPt, float leptonE, float metPx, float metPy );
   float cosThetaLJ(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, math::PtEtaPhiELorentzVector top);
+  float cosTheta_eta_bl(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, math::PtEtaPhiELorentzVector top);
 
   //B-weight generating functions
   double BScaleFactor(string algo,string syst_name); 
@@ -388,7 +389,7 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   //Variables to use as trees references
 
   //Variables to use as trees references
-  double etaTree,etaTree2,cosTree,topMassTree,totalWeightTree,weightTree,mtwMassTree,lowBTagTree,highBTagTree,maxPtTree,minPtTree,topMassLowBTagTree,topMassBestTopTree,topMassMeas,bWeightTree,PUWeightTree,turnOnWeightTree,limuWeightTree,turnOnReWeightTree,miscWeightTree;
+  double etaTree,etaTree2,cosTree,cosBLTree,topMassTree,totalWeightTree,weightTree,mtwMassTree,lowBTagTree,highBTagTree,maxPtTree,minPtTree,topMassLowBTagTree,topMassBestTopTree,topMassMeas,bWeightTree,PUWeightTree,turnOnWeightTree,limuWeightTree,turnOnReWeightTree,miscWeightTree;
   //Weights for systematics
   double bWeightTreeBTagUp,
     bWeightTreeMisTagUp,
