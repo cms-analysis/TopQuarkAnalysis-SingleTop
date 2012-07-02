@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  * 
  * Produces systematics histograms out of a standard Single Top n-tuple 
- * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.4 2012/06/25 19:57:42 oiorio Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.5 2012/06/25 20:46:14 oiorio Exp $
  */
 
 
@@ -81,9 +81,10 @@
 #include "CondFormats/PhysicsToolsObjects/interface/BinningPointByMap.h"
 #include "RecoBTag/PerformanceDB/interface/BtagPerformance.h"
 
-//#include "PhysicsTools/Utilities/interface/LumiReWeighting.h"
+#include "PhysicsTools/Utilities/interface/LumiReWeighting.h"
+
 //#include "PhysicsTools/Utilities/interface/Lumi3DReWeighting.h"
-#include "TopQuarkAnalysis/SingleTop/interface/Lumi3DReWeighting.h"
+//#include "TopQuarkAnalysis/SingleTop/interface/Lumi3DReWeighting.h"
                                            
 
 using namespace std;
@@ -112,6 +113,8 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   float cosThetaLJ(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, math::PtEtaPhiELorentzVector top);
   float cosTheta_eta_bl(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, math::PtEtaPhiELorentzVector top);
 
+  float muonHLTEff(float etaMu);
+
   //B-weight generating functions
   double BScaleFactor(string algo,string syst_name); 
   double MisTagScaleFactor(string algo,string syst_name,double sf, double eff, double sferr);
@@ -124,7 +127,7 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
 
   double EventAntiScaleFactor(string algo,string syst_name );
   double EventScaleFactor(string algo,string syst_name );
-  double SFMap(string);   double SFErrMap(string);   double EFFMap(string);   double EFFErrMap(string); 
+  double SFMap(string);   double SFErrMap(string);   double EFFMap(string); double EFFMap(string, string);  double EFFErrMap(string); 
 
   void InitializeEventScaleFactorMap();
   void InitializeTurnOnReWeight(string SFFile);
@@ -389,7 +392,7 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   //Variables to use as trees references
 
   //Variables to use as trees references
-  double etaTree,etaTree2,cosTree,cosBLTree,topMassTree,totalWeightTree,weightTree,mtwMassTree,lowBTagTree,highBTagTree,maxPtTree,minPtTree,topMassLowBTagTree,topMassBestTopTree,topMassMeas,bWeightTree,PUWeightTree,turnOnWeightTree,limuWeightTree,turnOnReWeightTree,miscWeightTree;
+  double etaTree,etaTree2,cosTree,cosBLTree,topMassTree,totalWeightTree,weightTree,mtwMassTree,lowBTagTree,highBTagTree,maxPtTree,minPtTree,topMassLowBTagTree,topMassBestTopTree,topMassMeas,bWeightTree,PUWeightTree,turnOnWeightTree,limuWeightTree,turnOnReWeightTree,miscWeightTree, lepEff ;
   //Weights for systematics
   double bWeightTreeBTagUp,
     bWeightTreeMisTagUp,
@@ -421,7 +424,7 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   double loosePtCut,resolScale ;
   bool doPU_,doTurnOn_, doResol_ ; 
  
-  edm::Lumi3DReWeighting LumiWeights_,LumiWeightsUp_,LumiWeightsDown_;
+  edm::LumiReWeighting LumiWeights_,LumiWeightsUp_,LumiWeightsDown_;
   std::string mcPUFile_,dataPUFile_,puHistoName_;
 
   std::vector<double> jetprobs,
@@ -443,7 +446,9 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
 
   int nb,nc,nudsg,ntchpt_tags,ncsvm_tags,ncsvt_tags,
     nbNoSyst,ncNoSyst,nudsgNoSyst,
-    ntchpt_antitags,ntchpm_tags,ntchel_tags,ntche_antitags;
+    ntchpt_antitags,ntchpm_tags,ntchel_tags,ntche_antitags, ntight_tags;
+
+  string algo_; 
 
   double TCHPM_LMisTagUp,  TCHPM_BBTagUp, TCHPM_CBTagUp, TCHPM_LMisTagDown, TCHPM_BBTagDown, TCHPM_CBTagDown;
   double TCHPM_LAntiMisTagUp,  TCHPM_BAntiBTagUp, TCHPM_CAntiBTagUp, TCHPM_LAntiMisTagDown, TCHPM_BAntiBTagDown, TCHPM_CAntiBTagDown;

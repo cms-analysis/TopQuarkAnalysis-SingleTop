@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.4 2012/06/25 19:57:42 oiorio Exp $ 
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.5 2012/06/25 20:46:14 oiorio Exp $ 
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file 
 //
@@ -175,29 +175,30 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
   
   doJetTrees_ = iConfig.getUntrackedParameter< bool >("doJetTrees",true); 
 
+  algo_ = iConfig.getUntrackedParameter< std::string >("algo","CSVT");
+
   string season = "Summer11";
   season = dataPUFile_;
   //  TString season = "Fall11";
   string distr="pileUpDistr"+season+".root";
   if(doPU_){
     //    //cout << " before lumIweightse "<<endl;
-
-    LumiWeights_ = edm::Lumi3DReWeighting(distr,
+    LumiWeights_ = edm::LumiReWeighting(distr,
 					  "pileUpDistr.root",
 					  std::string("pileup"),					
 					  std::string("pileup"));
-    LumiWeightsUp_ = edm::Lumi3DReWeighting(distr,
+    LumiWeightsUp_ = edm::LumiReWeighting(distr,
 					  "pileUpDistr.root",
 					  std::string("pileup"),					
 					  std::string("pileup"));
-    LumiWeightsDown_ = edm::Lumi3DReWeighting(distr,
+    LumiWeightsDown_ = edm::LumiReWeighting(distr,
 					  "pileUpDistr.root",
 					  std::string("pileup"),					
 					  std::string("pileup"));
-    LumiWeightsUp_.weight3D_init(1.080);
-    LumiWeightsDown_.weight3D_init(0.961);
+    //    LumiWeightsUp_.weight3D_init(1.080);
+    //LumiWeightsDown_.weight3D_init(0.961);
     //    LumiWeights_.weight3D_init(1.044);
-    LumiWeights_.weight3D_init(1.000);
+    //LumiWeights_.weight3D_init(1.000);
 
     //    //cout << " built lumiWeights "<<endl;
   }
@@ -266,6 +267,8 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
       treesNJets[syst]->Branch("leptonPhi",&lepPhi);
       treesNJets[syst]->Branch("leptonDeltaCorrectedRelIso",&lepDeltaCorrectedRelIso);
       treesNJets[syst]->Branch("leptonRhoCorrectedRelIso",&lepRhoCorrectedRelIso);
+
+      treesNJets[syst]->Branch("leptonEff",&lepEff);
       
       treesNJets[syst]->Branch("mtwMass",&mtwMassTree);
       treesNJets[syst]->Branch("metPt",&metPt);
@@ -381,7 +384,9 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
       trees2J[bj][syst]->Branch("leptonPhi",&lepPhi);
       trees2J[bj][syst]->Branch("leptonDeltaCorrectedRelIso",&lepDeltaCorrectedRelIso);
       trees2J[bj][syst]->Branch("leptonRhoCorrectedRelIso",&lepRhoCorrectedRelIso);
-      
+
+      trees2J[bj][syst]->Branch("leptonEff",&lepEff);      
+
       trees2J[bj][syst]->Branch("fJetPt",&fJetPt);
       trees2J[bj][syst]->Branch("fJetE",&fJetE);
       trees2J[bj][syst]->Branch("fJetEta",&fJetEta);
@@ -463,6 +468,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
       trees3J[bj][syst]->Branch("leptonDeltaCorrectedRelIso",&lepDeltaCorrectedRelIso);
       trees3J[bj][syst]->Branch("leptonRhoCorrectedRelIso",&lepRhoCorrectedRelIso);
 
+      trees3J[bj][syst]->Branch("leptonEff",&lepEff);      
      
       trees3J[bj][syst]->Branch("fJetPt",&fJetPt);
       trees3J[bj][syst]->Branch("fJetE",&fJetE);
@@ -604,7 +610,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
   bool  doGaussianResol = false;
   //  ptResol = new JetResolution(fileResolName, doGaussianResol);  
   
-  leptonRelIsoQCDCutUpper = 0.5,leptonRelIsoQCDCutLower=0.3;  
+  leptonRelIsoQCDCutUpper = 0.2,leptonRelIsoQCDCutLower=0.125;  
 
 
   topMassMeas = 172.9;
@@ -900,19 +906,43 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     //Lepton loop
     if(!didLeptonLoop){
       for(size_t i = 0;i < leptonsDeltaCorrectedRelIso->size();++i){
-	float leptonRelIsoDeltaCorr = leptonsDeltaCorrectedRelIso->at(i);
-	lepDeltaCorrectedRelIso= leptonRelIsoDeltaCorr;	
-	if(leptonRelIsoDeltaCorr>RelIsoCut)continue;
 	
+	if(leptonsFlavour_ == "muon") {
+	  float leptonRelIsoDeltaCorr = leptonsDeltaCorrectedRelIso->at(i);
+	  lepDeltaCorrectedRelIso= leptonRelIsoDeltaCorr;	
+	  if(leptonRelIsoDeltaCorr>RelIsoCut)continue;
+	}
+
+	if(leptonsFlavour_ == "electron") {
+	  iEvent.getByLabel(leptonsRhoCorrectedRelIso_,leptonsRhoCorrectedRelIso);
+	  float leptonRelIsoRhoCorr = leptonsRhoCorrectedRelIso->at(i);
+	  lepRhoCorrectedRelIso= leptonRelIsoRhoCorr;			
+	  if(leptonRelIsoRhoCorr>RelIsoCut)continue;
+	}
 	
+	float leptonPt = 0.;
+
+	//	if(leptonsFlavour_ == "muon" ) {
+	  iEvent.getByLabel(leptonsPt_,leptonsPt);
+	  leptonPt = leptonsPt->at(i);
+	  if ( leptonPt<26.) continue; 
+	  //	}
 	//Apply isolation cut
 	if(!gotLeptons){
-	  iEvent.getByLabel(leptonsRhoCorrectedRelIso_,leptonsRhoCorrectedRelIso);
+
+	  if(leptonsFlavour_ == "muon") {
+	    iEvent.getByLabel(leptonsRhoCorrectedRelIso_,leptonsRhoCorrectedRelIso);
+	    lepRhoCorrectedRelIso = leptonsRhoCorrectedRelIso->at(i);
+	  }
+	 
 	  
-	  float leptonRelIsoRhoCorr = leptonsRhoCorrectedRelIso->at(i);
-	  lepRhoCorrectedRelIso= leptonRelIsoRhoCorr;	
+
+	  //	  if(leptonsFlavour_ == "electron"){
+	  //  iEvent.getByLabel(leptonsPt_,leptonsPt);
+	  //  leptonPt = leptonsPt->at(i);
+	  // }
+
 	  iEvent.getByLabel(leptonsEta_,leptonsEta);
-	  iEvent.getByLabel(leptonsPt_,leptonsPt);
 	  iEvent.getByLabel(leptonsPhi_,leptonsPhi);
 	  iEvent.getByLabel(leptonsEnergy_,leptonsEnergy);
 	  iEvent.getByLabel(leptonsCharge_,leptonsCharge);
@@ -926,7 +956,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 
 	  float leptonRelIsoRhoCorr = leptonsRhoCorrectedRelIso->at(i);
 	  lepRhoCorrectedRelIso= leptonRelIsoRhoCorr;	
-	  if(leptonRelIsoRhoCorr>RelIsoCut)continue;
+	  //if(leptonRelIsoRhoCorr>RelIsoCut)continue;
 	  
 	  iEvent.getByLabel(leptonsMVAID_,leptonsMVAID);
 	  
@@ -949,7 +979,6 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	float leptonDB = leptonsDB->at(i);
 	if ( fabs(leptonDB) >0.02) continue;
 	
-	float leptonPt = leptonsPt->at(i);
 	float leptonPhi = leptonsPhi->at(i);
 	float leptonEta = leptonsEta->at(i);
 	float leptonE = leptonsEnergy->at(i);
@@ -984,11 +1013,20 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	iEvent.getByLabel(qcdLeptonsDeltaCorrectedRelIso_,qcdLeptonsDeltaCorrectedRelIso);
 	for(size_t i = 0;i<qcdLeptonsDeltaCorrectedRelIso->size();++i){
 
+	  float leptonPt = 0.;
+	  
+	  //	if(leptonsFlavour_ == "muon" ) {
+	  iEvent.getByLabel(qcdLeptonsPt_,qcdLeptonsPt);
+	  leptonPt = qcdLeptonsPt->at(i);
+	  if ( leptonPt<26.) continue; 
+	  
+
 	  float leptonRelIso = qcdLeptonsDeltaCorrectedRelIso->at(i);
 	  //  cout << "qcd lep " << i << "rel iso "<<leptonRelIso<<endl;
 
 	  float leptonQCDRelIso = leptonRelIso;
 	  //Use an anti-isolation requirement
+
 	  
 	  if(leptonsFlavour_ == "muon"){
 	    if( leptonQCDRelIso > leptonRelIsoQCDCutUpper )continue;
@@ -996,7 +1034,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	    
 	    if(!gotQCDLeptons){
 	      iEvent.getByLabel(qcdLeptonsEta_,qcdLeptonsEta);
-	      iEvent.getByLabel(qcdLeptonsPt_,qcdLeptonsPt);
+	      //iEvent.getByLabel(qcdLeptonsPt_,qcdLeptonsPt);
 	      iEvent.getByLabel(qcdLeptonsPhi_,qcdLeptonsPhi);
 	      iEvent.getByLabel(qcdLeptonsEnergy_,qcdLeptonsEnergy);
 	      iEvent.getByLabel(qcdLeptonsCharge_,qcdLeptonsCharge);
@@ -1020,11 +1058,12 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	    //Legenda for eleId : 0 fail, 1 ID only, 2 iso Only, 3 ID iso only, 4 conv rej, 5 conv rej and ID, 6 conv rej and iso, 7 all 
 	    QCDCondition = (!(leptonRelIso < 0.1) && !(beamspot<0.02))  || (!(leptonRelIso<0.1) && !isid) ||(!isid && !(beamspot<0.02));
 	    electronID = leptonID;
+	    
+
 	  
 	    if(!QCDCondition) continue;
 	    if(!gotQCDLeptons){
 	      iEvent.getByLabel(qcdLeptonsEta_,qcdLeptonsEta);
-	      iEvent.getByLabel(qcdLeptonsPt_,qcdLeptonsPt);
 	      iEvent.getByLabel(qcdLeptonsPhi_,qcdLeptonsPhi);
 	      iEvent.getByLabel(qcdLeptonsEnergy_,qcdLeptonsEnergy);
 	      iEvent.getByLabel(qcdLeptonsCharge_,qcdLeptonsCharge);
@@ -1071,6 +1110,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     ntchpt_tags=0;
     ncsvt_tags=0;
     ncsvm_tags=0;
+
+    ntight_tags=0;
 
     jsfshpt.clear();//  bjs.clear();cjs.clear();ljs.clear(); 
     jsfscsvt.clear();//  bjs.clear();cjs.clear();ljs.clear(); 
@@ -1260,9 +1301,11 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       
       bool passesTCHPT = jetsBTagAlgo->at(i)>3.41;//TCHPT Working point
       bool passesCSVT = jetsAntiBTagAlgo->at(i)>0.898;//TCHPT Working point
-      bool passesCSVM = jetsAntiBTagAlgo->at(i)>0.679;//TCHPT Working point
-      
+      bool passesCSVM = jetsAntiBTagAlgo->at(i)>0.244;//TCHPT Working point
 
+      double valueChosenAlgo = valueCSV;
+      if(algo_ == "TCHPT")valueChosenAlgo=valueTCHPT;
+      
       if(!passesPtCut) continue;
       
       //max pt position:
@@ -1298,8 +1341,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	  double csvmSFErr=0;
 
 	  double hpteff = EFFMap("TCHPT_C");
-	  double csvteff = EFFMap("CSVT_C");
-	  double csvmeff = EFFMap("CSVM_C");
+	  double csvteff = EFFMap("CSVT_C",channel);
+	  double csvmeff = EFFMap("CSVL_C",channel);
 
 	  //double hpteff = EFFMapNew(valueAlgo1,"TCHP_C");
 	  //double heleff = EFFMapNew(valueAlgo2,"TCHE_C");
@@ -1312,12 +1355,12 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	  }
 	  else {
 	    hptSF = BTagSFNew(ptCorr,"TCHPT");
-	    csvtSF = BTagSFNew(ptCorr,"TCHPT");
-	    csvmSF = BTagSFNew(ptCorr,"TCHPT");
+	    csvtSF = BTagSFNew(ptCorr,"CSVT");
+	    csvmSF = BTagSFNew(ptCorr,"CSVL");
 
 	    hptSFErr = BTagSFErrNew(ptCorr,"TCHPT")*facBTagErr;
-	    csvtSFErr = BTagSFErrNew(ptCorr,"TCHPT")*facBTagErr;
-	    csvmSFErr = BTagSFErrNew(ptCorr,"TCHPT")*facBTagErr;
+	    csvtSFErr = BTagSFErrNew(ptCorr,"CSVT")*facBTagErr;
+	    csvmSFErr = BTagSFErrNew(ptCorr,"CSVL");
 
 	    //hptSFErr = BTagSFErrNew(ptCorr,"TCHPT");
 	    //	    csvtSF = BTagSFErrNew(ptCorr,"TCHPT");
@@ -1361,8 +1404,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	  double csvmSFErr=0;
 
 	  double hpteff = EFFMap("TCHPT_C");
-	  double csvteff = EFFMap("CSVT_C");
-	  double csvmeff = EFFMap("CSVM_C");
+	  double csvteff = EFFMap("CSVT_C",channel);
+	  double csvmeff = EFFMap("CSVL_C",channel);
 
 	  //double hpteff = EFFMapNew(valueAlgo1,"TCHP_C");
 	  //double heleff = EFFMapNew(valueAlgo2,"TCHE_C");
@@ -1375,12 +1418,12 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	  }
 	  else {
 	    hptSF = BTagSFNew(ptCorr,"TCHPT");
-	    csvtSF = BTagSFNew(ptCorr,"TCHPT");
-	    csvmSF = BTagSFNew(ptCorr,"TCHPT");
+	    csvtSF = BTagSFNew(ptCorr,"CSVT");
+	    csvmSF = BTagSFNew(ptCorr,"CSVL");
 	    
 	    hptSFErr = BTagSFErrNew(ptCorr,"TCHPT")*facBTagErr;
-	    csvtSFErr = BTagSFErrNew(ptCorr,"TCHPT")*facBTagErr;
-	    csvmSFErr = BTagSFErrNew(ptCorr,"TCHPT")*facBTagErr;
+	    csvtSFErr = BTagSFErrNew(ptCorr,"CSVT")*facBTagErr;
+	    csvmSFErr = BTagSFErrNew(ptCorr,"CSVL");
 	    
 	  }
 	  
@@ -1426,8 +1469,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	  double csvmSFErrDown=0;
 	  
 	  double hpteff = EFFMap("TCHPT_L");
-	  double csvteff = EFFMap("CSVT_L");
-	  double csvmeff = EFFMap("CSVM_L");
+	  double csvteff = EFFMap("CSVT_L",channel);
+	  double csvmeff = EFFMap("CSVL_L",channel);
 	  
 
 	  if(abs(eta)>2.6){ hpteff =0;csvteff=0; csvmeff=0; }
@@ -1445,9 +1488,9 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	    hptSFErrUp=MisTagSFErrNewUp(ptCorr,eta,"TCHPT");
 	    hptSFErrDown=MisTagSFErrNewDown(ptCorr,eta,"TCHPT");
 
-	    csvmSF=MisTagSFNew(ptCorr,eta,"CSVM");
-	    csvmSFErrUp=MisTagSFErrNewUp(ptCorr,eta,"CSVM");
-	    csvmSFErrDown=MisTagSFErrNewDown(ptCorr,eta,"CSVM");
+	    csvmSF=MisTagSFNew(ptCorr,eta,"CSVL");
+	    csvmSFErrUp=MisTagSFErrNewUp(ptCorr,eta,"CSVL");
+	    csvmSFErrDown=MisTagSFErrNewDown(ptCorr,eta,"CSVL");
 
 	    csvtSF=MisTagSFNew(ptCorr,eta,"CSVT");
 	    csvtSFErrUp=MisTagSFErrNewUp(ptCorr,eta,"CSVT");
@@ -1457,6 +1500,14 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	  jsfshpt.push_back(BTagWeight::JetInfo(hpteff,hptSF));
 	  jsfshpt_b_tag_up.push_back(BTagWeight::JetInfo(hpteff,hptSF));
 	  jsfshpt_b_tag_down.push_back(BTagWeight::JetInfo(hpteff,hptSF));
+
+	  jsfscsvt.push_back(BTagWeight::JetInfo(csvteff,hptSF));
+	  jsfscsvt_b_tag_up.push_back(BTagWeight::JetInfo(csvteff,hptSF));
+	  jsfscsvt_b_tag_down.push_back(BTagWeight::JetInfo(csvteff,hptSF));
+
+	  jsfscsvm.push_back(BTagWeight::JetInfo(csvmeff,hptSF));
+	  jsfscsvm_b_tag_up.push_back(BTagWeight::JetInfo(csvmeff,hptSF));
+	  jsfscsvm_b_tag_down.push_back(BTagWeight::JetInfo(csvmeff,hptSF));
 	  
 	  if(syst == "noSyst"){
 	    jsfshpt_mis_tag_up.push_back(BTagWeight::JetInfo(hpteff,hptSFErrUp));
@@ -1486,23 +1537,29 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       }
       if(passesTCHPT) {
 	//Add to b-jet collection
+	++ntchpt_tags;
+      }
+      
+      bool passesAlgo = passesCSVT;
+      if(algo_=="TCHPT" ) passesAlgo = passesTCHPT;
+
+      if(passesAlgo){
 	if(syst=="noSyst" )  ++nBJets;
 	bjets[nBJets-1]=jets[nJets-1];
-	++ntchpt_tags;
       }
       
       //Condition to find the highest/lowest b-tag 
       //according to algo 1 (tchp) 
       //cout << " i "<< i <<" jets size "<< nJets << " btag  "<< valueAlgo1<<endl;
-      if(jetsBTagAlgo->at(i) > highBTagTree){
-	highBTagTree=jetsBTagAlgo->at(i);
+      if(valueChosenAlgo > highBTagTree){
+	highBTagTree = valueChosenAlgo;	
 	highBTagTreePosition=nJets-1;
 	bJetFlavourTree = jetsFlavour->at(i);
 	bJetPUID = jetsPileUpID->at(i);
 	bJetPUWP = jetsPileUpWP->at(i);
       } 
-      if(jetsBTagAlgo->at(i) < lowBTagTree){
-	lowBTagTree=jetsBTagAlgo->at(i);
+      if(valueChosenAlgo < lowBTagTree){
+	lowBTagTree=valueChosenAlgo;
 	lowBTagTreePosition=nJets-1;
 	fJetFlavourTree = jetsFlavour->at(i);
 	fJetPUID = jetsPileUpID->at(i);
@@ -1529,7 +1586,10 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
        || syst == "BTagUp" || syst == "BTagDown"
        || syst == "MisTagUp" || syst == "MisTagDown" )){
       nJets = nJetsNoSyst;
-      ntchpt_tags = nBJets; 
+      
+      ncsvt_tags = nBJets;
+      if(algo_=="TCHPT" ) ntchpt_tags = nBJets; 
+      
       ntchel_tags = nLooseBJets; 
       nb = nbNoSyst;
       nc = ncNoSyst;
@@ -1573,9 +1633,52 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     ///End of the standard lepton-jet loop 
     /////////
 
+      if(doPU_){
+	if(!gotPU ){
+	  //  //cout << " before npv "<<endl;
+	  //iEvent.getByLabel(nm1_,nm1);
+	  iEvent.getByLabel(n0_,n0);
+	  //iEvent.getByLabel(np1_,np1);
+	  nVertices = *n0;
+	  gotPU = true;
+	}
+	
+      }
+      else(nVertices = -1);
+      
+      if(doPU_){
+	if(syst == "noSyst"){ PUWeightNoSyst = pileUpSF(syst); PUWeight = PUWeightNoSyst;
+	  PUWeightTreePUUp = pileUpSF("PUUp");
+	  PUWeightTreePUDown = pileUpSF("PUDown");
+	}
+	else PUWeight = PUWeightNoSyst;
+      }
+      else PUWeight=1;
+      PUWeightTree = PUWeight;
+      weightTree = Weight;
+
+
     //Jet trees: 
-    if(doJetTrees_){
-      if(syst== "noSyst" ){
+
+      if(isQCD) {
+	leptonPFour = qcdLeptons[0];
+	chargeTree = qcdLeptonsCharge->at(0) ; 
+	//	cout << " b is "<< B << " lepton  charge "<< chargeTree<<  endl;
+      }
+      else {
+	leptonPFour = leptons[0];
+	chargeTree = leptonsCharge->at(0) ; 
+      }
+
+      metPt = sqrt(metPx*metPx+metPy*metPy);
+      MTWValue =  sqrt((leptonPFour.pt()+metPt)*(leptonPFour.pt()+metPt)  -(leptonPFour.px()+metPx)*(leptonPFour.px()+metPx) -(leptonPFour.py()+metPy)*(leptonPFour.py()+metPy));
+      mtwMassTree = MTWValue;
+      
+      bool passesMet= false;
+
+    
+    if(doJetTrees_ && !isQCD){
+      if(syst== "noSyst"){
 	jetprobs.clear();
 	for(size_t i = 0;i<jetsEta->size();++i){
 	  double eta = jetsEta->at(i);
@@ -1585,6 +1688,11 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	  jetprobs.push_back(jetprob(pt,btag,eta,syst));
 	}
 
+	if(leptonsFlavour_ == "muon" )lepEff = muonHLTEff(leptons[0].eta());
+	if(leptonsFlavour_ == "electron" )lepEff = 1;
+
+	lepPt = leptons[0].pt();
+	
 	turnOnWeightValue = turnOnProbs("noSyst",1);
 	w1TCHPT = b_tchpt_1_tag.weight(jsfshpt,ntchpt_tags);
 	w2TCHPT = b_tchpt_2_tags.weight(jsfshpt,ntchpt_tags);
@@ -1607,6 +1715,9 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       
     }
 
+
+    ntight_tags = ncsvt_tags;
+    if (algo_ == "TCHPT")ntight_tags = ntchpt_tags;
     if( nJets <2 )continue;
     if(nJets >3)continue;
 
@@ -1623,23 +1734,23 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     if(nJets == 2 || nJets == 3){
      
       int B;
-      if(ntchpt_tags == 0) B = 0 ;
-      else if(ntchpt_tags == 1)B=1;      
-      else if(ntchpt_tags == 2)B=2; 
+      if(ntight_tags == 0) B = 0 ;
+      else if(ntight_tags == 1)B=1;      
+      else if(ntight_tags == 2)B=2; 
       else continue; 
       
 
       
       if(isQCD) {
 	B +=3;
-	leptonPFour = qcdLeptons[0];
-	chargeTree = qcdLeptonsCharge->at(0) ; 
-	cout << " b is "<< B << " lepton  charge "<< chargeTree<<  endl;
+	//leptonPFour = qcdLeptons[0];
+	//	chargeTree = qcdLeptonsCharge->at(0) ; 
+		cout << " b is "<< B << " lepton  charge "<< chargeTree<<  endl;
       }
-      else {
-	leptonPFour = leptons[0];
-	chargeTree = leptonsCharge->at(0) ; 
-      }
+      //      else {
+	//	leptonPFour = leptons[0];
+	//chargeTree = leptonsCharge->at(0) ; 
+      //      }
 
       if( syst=="noSyst" && nJets ==2 && B < 3){	++passingJets;}
       
@@ -1651,6 +1762,14 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	bWeightTreeBTagDown = bTagSF(B,"BTagDown"); 
 	bWeightTreeMisTagUp = bTagSF(B,"MisTagUp"); 
 	bWeightTreeMisTagDown = bTagSF(B,"MisTagDown"); 
+	
+	/*
+	  vetoTree = vetoSF(B);
+	  vetoTreeBTagUp = vetoSF(B,"BTagUp"); 
+	  vetoTreeBTagDown = vetoSF(B,"BTagDown"); 
+	  vetoTreeMisTagUp = vetoSF(B,"MisTagUp"); 
+	  vetoTreeMisTagDown = vetoSF(B,"MisTagDown"); 
+	*/
       }
       else if(syst == "JESUp" || syst == "JESDown" || 
 	      syst == "JERUp" || syst == "JERDown" || 
@@ -1660,27 +1779,6 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       
       //cout << " before npv "<<endl;
       
-      if(doPU_){
-	if(!gotPU ){
-	  //  //cout << " before npv "<<endl;
-	  iEvent.getByLabel(nm1_,nm1);
-	  iEvent.getByLabel(n0_,n0);
-	  iEvent.getByLabel(np1_,np1);
-	  nVertices = *n0;
-	  gotPU = true;
-	}
-	
-      }
-      else(nVertices = -1);
-      
-      if(doPU_){
-	if(syst == "noSyst"){ PUWeightNoSyst = pileUpSF(syst); PUWeight = PUWeightNoSyst;
-	  PUWeightTreePUUp = pileUpSF("PUUp");
-	  PUWeightTreePUDown = pileUpSF("PUDown");
-	}
-	else PUWeight = PUWeightNoSyst;
-      }
-      else PUWeight=1;
       
       //cout << " before turnon loop"<<endl;
       
@@ -1822,14 +1920,9 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	}
       }
       turnOnWeightTree = turnOnWeightValue;
-      PUWeightTree = PUWeight;
 
       ////cout << " before mtw "<<endl;
       
-      metPt = sqrt(metPx*metPx+metPy*metPy);
-      MTWValue =  sqrt((leptonPFour.pt()+metPt)*(leptonPFour.pt()+metPt)  -(leptonPFour.px()+metPx)*(leptonPFour.px()+metPx) -(leptonPFour.py()+metPy)*(leptonPFour.py()+metPy));
-      bool passesMet= false;
-    
       if( syst=="noSyst" && nJets ==2){
 	//	++passingJets;
 	
@@ -1852,11 +1945,17 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       etaTree = fabs(jets[lowBTagTreePosition].eta());
       cosTree = fCosThetaLJ;
       topMassTree = top.mass();
-      mtwMassTree = MTWValue;
       
+
+
       lepPt = leptonPFour.pt();
       lepEta = leptonPFour.eta();
       lepPhi = leptonPFour.phi();
+
+      if(leptonsFlavour_ == "muon" )lepEff = muonHLTEff(lepEta);
+      if(leptonsFlavour_ == "electron" )lepEff = 1;
+
+
 
       bJetPt = jets[highBTagTreePosition].pt();
       bJetE = jets[highBTagTreePosition].energy();
@@ -1868,7 +1967,6 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       fJetEta = jets[lowBTagTreePosition].eta();
       fJetPhi = jets[lowBTagTreePosition].phi();
      
-      weightTree = Weight;
       totalWeightTree = bWeightTree*turnOnWeightValue*PUWeight*Weight;
       
       etaTree = fabs(jets[lowBTagTreePosition].eta());
@@ -1878,8 +1976,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       topEta = top.eta();
       topPhi = top.phi();
       topPt = top.pt();
-     
-      mtwMassTree = MTWValue;
+
       
       if (nJets ==2){
 	//	//cout << " B is "<< B<< " syst is "<<syst_name <<endl;
@@ -2134,6 +2231,19 @@ double SingleTopSystematicsTreesDumper::jetUncertainty(double eta, double ptCorr
   return sqrt(JES_b*JES_b + JES_PU*JES_PU +JES_SW*JES_SW + JetCorrection*JetCorrection);
 }
 
+float SingleTopSystematicsTreesDumper::muonHLTEff(float eta){
+  float eff = 0.87;
+  
+  if(eta< -1.1 && eta > -2.1) eff = 0.81;
+  if(eta> -1.1 && eta < -0.9) eff = 0.835;
+  if(eta> -0.9 && eta < -0.0) eff = 0.919;
+  if(eta> 0.0 && eta < 0.9) eff = 0.921;
+  if(eta> 0.9 && eta < 1.1) eff = 0.83;
+  if(eta> 1.1 && eta < 2.1) eff = 0.815;
+ 
+ return eff;
+}
+
 //EndJob filling rate systematics trees
 void SingleTopSystematicsTreesDumper::endJob(){
   
@@ -2196,6 +2306,9 @@ double SingleTopSystematicsTreesDumper::BTagSFNew(double pt, string algo){
   if(algo == "CSVM")return 0.6981*((1.+(0.414063*pt))/(1.+(0.300155*pt)));
   if(algo == "CSVT")return 0.901615*((1.+(0.552628*pt))/(1.+(0.547195*pt)));
   if(algo == "TCHPT")return 0.895596*((1.+(9.43219e-05*pt))/(1.+(-4.63927e-05*pt)));
+  if(algo == "CSVL") return 1.02658*((1.+(0.0195388*pt))/(1.+(0.0209145*pt)));
+ 
+
   return 1;
 }
 
@@ -2267,6 +2380,39 @@ double SingleTopSystematicsTreesDumper::BTagSFErrNew(double pt, string algo){
     if (pt >500 && pt <670)return 0.0866563;
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  if(algo == "CSVL"){
+    if (pt > 30 && pt < 40)return     0.0188743;
+    if (pt > 40 && pt < 50)return     0.0161816;
+    if (pt > 50 && pt < 60)return     0.0139824;
+    if (pt > 60 && pt < 70)return     0.0152644;
+    if (pt > 70 && pt < 80)return     0.0161226;
+    if (pt > 80 && pt <100)return     0.0157396;
+    if (pt >100 && pt <120)return     0.0161619;
+    if (pt >120 && pt <160)return     0.0168747;
+    if (pt >160 && pt <210)return     0.0257175;
+    if (pt >210 && pt <260)return     0.026424;
+    if (pt >260 && pt <320)return     0.0264928;
+    if (pt >320 && pt <400)return     0.0315127;
+    if (pt >400 && pt <500)return     0.030734;
+    if (pt >500 && pt <670)return     0.0438259 ;
+  }
+
+
   return 0;
 
 }
@@ -2275,18 +2421,32 @@ double SingleTopSystematicsTreesDumper::MisTagSFNew(double pt, double eta, strin
   if(algo == "TCHPT")return ((1.20711+(0.000681067*pt))+(-1.57062e-06*(pt*pt)))+(2.83138e-10*(pt*(pt*pt)))* (1.08376 + -0.000666189*pt + 1.01272e-06*pt*pt);
   if(algo == "CSVM")return ((1.20711+(0.000681067*pt))+(-1.57062e-06*(pt*pt)))+(2.83138e-10*(pt*(pt*pt)))* (1.10422 + -0.000523856*pt + 1.14251e-06*pt*pt);
   if(algo == "CSVT") return (1.10649*((1+(-9.00297e-05*pt))+(2.32185e-07*(pt*pt))))+(-4.04925e-10*(pt*(pt*(pt/(1+(-0.00051036*pt))))))*(1.19275 + -0.00191042*pt + 2.92205e-06*pt*pt);
+
+  if(algo == "CSVL")return ((1.0344+(0.000962994*pt))+(-3.65392e-06*(pt*pt)))+(3.23525e-09*(pt*(pt*pt)))*(0.979396 + 0.000205898*pt + 2.49868e-07*pt*pt);
+
   return 0;
 }
 
 double SingleTopSystematicsTreesDumper::MisTagSFErrNewUp(double pt, double eta, string algo){
+  double x = pt;
+
   if(algo == "TCHPT")return ((1.38002+(0.000933875*pt))+(-2.59821e-06*(pt*pt)))+(1.18434e-09*(pt*(pt*pt)));
   if(algo == "TCHEL")return (1.19751*((1+(-0.000114197*pt))+(3.08558e-07*(pt*pt))))+(-5.27598e-10*(pt*(pt*(pt/(1+(-0.000422372*pt)))))) ;
+
+  if(algo =="CSVT") return ((0.997077+(0.00473953*x))+(-1.34985e-05*(x*x)))+(1.0032e-08*(x*(x*x)));
+  if(algo == "CSVL")return ((1.11272+(0.00110104*x))+(-4.11956e-06*(x*x)))+(3.65263e-09*(x*(x*x)));
+
   return 0;
 }
 
 double SingleTopSystematicsTreesDumper::MisTagSFErrNewDown(double pt, double eta, string algo){
+  double x = pt;
   if(algo == "TCHPT")return ((1.03418+(0.000428273*pt))+(-5.43024e-07*(pt*pt)))+(-6.18061e-10*(pt*(pt*pt)));
   if(algo == "TCHEL")return (1.01541*((1+(-6.04627e-05*pt))+(1.38195e-07*(pt*pt))))+(-2.83043e-10*(pt*(pt*(pt/(1+(-0.000633609*pt))))));
+
+  if(algo =="CSVT") return ((0.899715+(0.00102278*x))+(-2.46335e-06*(x*x)))+(9.71143e-10*(x*(x*x)));
+  if(algo == "CSVL")return ((0.956023+(0.000825106*x))+(-3.18828e-06*(x*x)))+(2.81787e-09*(x*(x*x)));
+
   return 0;
 }
 
@@ -2582,18 +2742,77 @@ double SingleTopSystematicsTreesDumper::EFFMap(string algo ){
   if(algo == "TCHPT_C")return 0.0365;
   if(algo == "TCHPT_L")return 0.0017;
 
-  if(algo == "CSVT_B")return 0.365;
-  if(algo == "CSVT_C")return 0.0365;
-  if(algo == "CSVT_L")return 0.0017;
+  if(algo == "CSVT_B")return 0.5;
+  if(algo == "CSVT_C")return 0.05;
+  if(algo == "CSVT_L")return 0.003;
 
   if(algo == "CSVM_B")return 0.365;
   if(algo == "CSVM_C")return 0.0365;
   if(algo == "CSVM_L")return 0.0017;
 
+  if(algo == "CSVL_B")return 0.8;
+  if(algo == "CSVL_C")return 0.36;
+  if(algo == "CSVL_L")return 0.2;
+
   return 0.36;
 }
 
+double SingleTopSystematicsTreesDumper::EFFMap(string algo, string channel ){
 
+  if (channel == "TChannel" || channel == "TbarChannel" || channel == "SChannel" || channel == "SbarChannel" || channel == "TWChannel" || channel == "TbarWChannel") {
+    if(algo == "CSVT_B")return 0.54;
+    if(algo == "CSVT_C")return 0.037;
+    if(algo == "CSVT_L")return 0.002;
+    
+    if(algo == "CSVL_B")return 0.84;
+    if(algo == "CSVL_C")return 0.33;
+    if(algo == "CSVL_L")return 0.2;
+
+      }
+
+  if (channel == "TTBar"){
+    if(algo == "CSVT_B")return 0.66;
+    if(algo == "CSVT_C")return 0.052;
+    if(algo == "CSVT_L")return 0.047;
+    
+    if(algo == "CSVL_B")return 0.92;
+    if(algo == "CSVL_C")return 0.44;
+    if(algo == "CSVL_L")return 0.3;
+
+
+
+  }
+  
+  if (channel == "WJets"){
+    if(algo == "CSVT_B")return 0.31;
+    if(algo == "CSVT_C")return 0.046;
+    if(algo == "CSVT_L")return 0.0015;
+    
+    if(algo == "CSVL_B")return 0.63;
+    if(algo == "CSVL_C")return 0.40;
+    if(algo == "CSVL_L")return 0.14;
+
+
+  }
+
+  if (channel == "ZJets"){
+
+    if(algo == "CSVT_B")return 0.41;
+    if(algo == "CSVT_C")return 0.047;
+    if(algo == "CSVT_L")return 0.002;
+
+    if(algo == "CSVL_B")return 0.76;
+    if(algo == "CSVL_C")return 0.41;
+    if(algo == "CSVL_L")return 0.2;
+
+
+  }
+
+  
+
+  return EFFMap(algo);
+
+}
 
 double SingleTopSystematicsTreesDumper::EFFErrMap(string algo ){
   if(algo == "TCHPT_B")return 0.05;
@@ -3068,56 +3287,115 @@ double SingleTopSystematicsTreesDumper::bTagSF(int B){
   //  cout<< " B " << " ntchhpt "<<   ntchpt_tags << " jsfshpt size "<<
   //  jsfshpt.size() << " ntchel " << ntchel_tags<< " jsfshel size " << jsfshel.size()<<endl;
 
-  if (B==0 || B==3){
-    return b_tchpt_0_tags.weight(jsfshpt,ntchpt_tags);//*b_tchel_0_tags.weight(jsfshel,ntchel_tags);
+  if(algo_ == "TCHPT"){
+    if (B==0 || B==3){
+      return b_tchpt_0_tags.weight(jsfshpt,ntchpt_tags);//*b_tchel_0_tags.weight(jsfshel,ntchel_tags);
+    }
+    if (B==1 || B==4){
+      return b_tchpt_1_tag.weight(jsfshpt,ntchpt_tags);
+    }
+    if (B==2 || B==5){
+      return b_tchpt_2_tags.weight(jsfshpt,ntchpt_tags);
+    }
   }
-  if (B==1 || B==4){
-    return b_tchpt_1_tag.weight(jsfshpt,ntchpt_tags);
-  }
-  if (B==2 || B==5){
-    return b_tchpt_2_tags.weight(jsfshpt,ntchpt_tags);
+
+
+    
+    if (B==0 || B==3){
+      return b_csvt_0_tags.weight(jsfscsvt,ncsvt_tags);//*b_tchel_0_tags.weight(jsfshel,ntchel_tags);
+    }
+    if (B==1 || B==4){
+      return b_csvt_1_tag.weight(jsfscsvt,ncsvt_tags);
+    }
+    if (B==2 || B==5){
+      return b_csvt_2_tags.weight(jsfscsvt,ncsvt_tags);
   }
   return 1.;
 }
 
+
+/*double SingleTopSystematicsTreesDumper::vetoSF(int B, string syst){
+
+  if (B==1 || B==4){
+
+    return 1;
+  }
+  
+  return 1;
+  }*/
+
 double SingleTopSystematicsTreesDumper::bTagSF(int B, string syst){
   //  cout<< " B " << " ntchhpt "<<   ntchpt_tags << " jsfshpt size "<<
   // jsfshpt.size() << " ntchel " << ntchel_tags<< " jsfshel size " << jsfshel.size()<<endl;
-
-  if (B==0 || B==3){
-    if(syst == "BTagUp")    return b_tchpt_0_tags.weight(jsfshpt_b_tag_up,ntchpt_tags);//*b_tchel_0_tags.weight(jsfshel_b_tag_up,ntchel_tags);
-    if(syst == "BTagDown")    return b_tchpt_0_tags.weight(jsfshpt_b_tag_down,ntchpt_tags);//*b_tchel_0_tags.weight(jsfshel_b_tag_down,ntchel_tags);
-    if(syst == "MisTagUp")    return b_tchpt_0_tags.weight(jsfshpt_mis_tag_up,ntchpt_tags);//*b_tchel_0_tags.weight(jsfshel_mis_tag_up,ntchel_tags);
-    if(syst == "MisTagDown")    return b_tchpt_0_tags.weight(jsfshpt_mis_tag_down,ntchpt_tags);//*b_tchel_0_tags.weight(jsfshel_mis_tag_down,ntchel_tags);
-    return b_tchpt_0_tags.weight(jsfshpt,ntchpt_tags);//*b_tchel_0_tags.weight(jsfshel,ntchel_tags);
+  if(algo_ == "TCHPT"){
+    if (B==0 || B==3){
+      if(syst == "BTagUp")    return b_tchpt_0_tags.weight(jsfshpt_b_tag_up,ntchpt_tags);//*b_tchel_0_tags.weight(jsfshel_b_tag_up,ntchel_tags);
+      if(syst == "BTagDown")    return b_tchpt_0_tags.weight(jsfshpt_b_tag_down,ntchpt_tags);//*b_tchel_0_tags.weight(jsfshel_b_tag_down,ntchel_tags);
+      if(syst == "MisTagUp")    return b_tchpt_0_tags.weight(jsfshpt_mis_tag_up,ntchpt_tags);//*b_tchel_0_tags.weight(jsfshel_mis_tag_up,ntchel_tags);
+      if(syst == "MisTagDown")    return b_tchpt_0_tags.weight(jsfshpt_mis_tag_down,ntchpt_tags);//*b_tchel_0_tags.weight(jsfshel_mis_tag_down,ntchel_tags);
+      return b_tchpt_0_tags.weight(jsfshpt,ntchpt_tags);//*b_tchel_0_tags.weight(jsfshel,ntchel_tags);
+    }
+    if (B==1 || B==4){
+      
+      if(syst == "BTagUp")    return b_tchpt_1_tag.weight(jsfshpt_b_tag_up,ntchpt_tags);
+      if(syst == "BTagDown")    return b_tchpt_1_tag.weight(jsfshpt_b_tag_down,ntchpt_tags);
+      if(syst == "MisTagUp")    return b_tchpt_1_tag.weight(jsfshpt_mis_tag_up,ntchpt_tags);
+      if(syst == "MisTagDown")    return b_tchpt_1_tag.weight(jsfshpt_mis_tag_down,ntchpt_tags);
+      
+      return b_tchpt_1_tag.weight(jsfshpt,ntchpt_tags);
+    }
+    if (B==2 || B==5){
+      
+      if(syst == "BTagUp")    return b_tchpt_2_tags.weight(jsfshpt_b_tag_up,ntchpt_tags);
+      if(syst == "BTagDown")    return b_tchpt_2_tags.weight(jsfshpt_b_tag_down,ntchpt_tags);
+      if(syst == "MisTagUp")    return b_tchpt_2_tags.weight(jsfshpt_mis_tag_up,ntchpt_tags);
+      if(syst == "MisTagDown")    return b_tchpt_2_tags.weight(jsfshpt_mis_tag_down,ntchpt_tags);
+      
+      return b_tchpt_2_tags.weight(jsfshpt,ntchpt_tags);
+    }
   }
-  if (B==1 || B==4){
+  //Default case: use csvt
 
-    if(syst == "BTagUp")    return b_tchpt_1_tag.weight(jsfshpt_b_tag_up,ntchpt_tags);
-    if(syst == "BTagDown")    return b_tchpt_1_tag.weight(jsfshpt_b_tag_down,ntchpt_tags);
-    if(syst == "MisTagUp")    return b_tchpt_1_tag.weight(jsfshpt_mis_tag_up,ntchpt_tags);
-    if(syst == "MisTagDown")    return b_tchpt_1_tag.weight(jsfshpt_mis_tag_down,ntchpt_tags);
-
-    return b_tchpt_1_tag.weight(jsfshpt,ntchpt_tags);
+    if (B==0 || B==3){
+      if(syst == "BTagUp")    return b_csvt_0_tags.weight(jsfscsvt_b_tag_up,ncsvt_tags);//*b_tchel_0_tags.weight(jsfshel_b_tag_up,ntchel_tags);
+      if(syst == "BTagDown")    return b_csvt_0_tags.weight(jsfscsvt_b_tag_down,ncsvt_tags);//*b_tchel_0_tags.weight(jsfshel_b_tag_down,ntchel_tags);
+      if(syst == "MisTagUp")    return b_csvt_0_tags.weight(jsfscsvt_mis_tag_up,ncsvt_tags);//*b_tchel_0_tags.weight(jsfshel_mis_tag_up,ntchel_tags);
+      if(syst == "MisTagDown")    return b_csvt_0_tags.weight(jsfscsvt_mis_tag_down,ncsvt_tags);//*b_tchel_0_tags.weight(jsfshel_mis_tag_down,ntchel_tags);
+      return b_csvt_0_tags.weight(jsfscsvt,ncsvt_tags);//*b_tchel_0_tags.weight(jsfshel,ntchel_tags);
+    }
+    
+    if (B==1 || B==4){
+      
+      if(syst == "BTagUp")    return b_csvt_1_tag.weight(jsfscsvt_b_tag_up,ncsvt_tags);
+      if(syst == "BTagDown")    return b_csvt_1_tag.weight(jsfscsvt_b_tag_down,ncsvt_tags);
+      if(syst == "MisTagUp")    return b_csvt_1_tag.weight(jsfscsvt_mis_tag_up,ncsvt_tags);
+      if(syst == "MisTagDown")    return b_csvt_1_tag.weight(jsfscsvt_mis_tag_down,ncsvt_tags);
+      
+      return b_csvt_1_tag.weight(jsfscsvt,ncsvt_tags);
   }
   if (B==2 || B==5){
-
-    if(syst == "BTagUp")    return b_tchpt_2_tags.weight(jsfshpt_b_tag_up,ntchpt_tags);
-    if(syst == "BTagDown")    return b_tchpt_2_tags.weight(jsfshpt_b_tag_down,ntchpt_tags);
-    if(syst == "MisTagUp")    return b_tchpt_2_tags.weight(jsfshpt_mis_tag_up,ntchpt_tags);
-    if(syst == "MisTagDown")    return b_tchpt_2_tags.weight(jsfshpt_mis_tag_down,ntchpt_tags);
-
-    return b_tchpt_2_tags.weight(jsfshpt,ntchpt_tags);
+    
+    if(syst == "BTagUp")    return b_csvt_2_tags.weight(jsfscsvt_b_tag_up,ncsvt_tags);
+    if(syst == "BTagDown")    return b_csvt_2_tags.weight(jsfscsvt_b_tag_down,ncsvt_tags);
+    if(syst == "MisTagUp")    return b_csvt_2_tags.weight(jsfscsvt_mis_tag_up,ncsvt_tags);
+    if(syst == "MisTagDown")    return b_csvt_2_tags.weight(jsfscsvt_mis_tag_down,ncsvt_tags);
+    
+    return b_csvt_2_tags.weight(jsfscsvt,ncsvt_tags);
   }
+  
   return 1.;
 }
 
 
 double SingleTopSystematicsTreesDumper::pileUpSF(string syst){
 
-  if(syst=="PUUp" )return LumiWeightsUp_.weight3D( *nm1,*n0,*np1);
-  if(syst=="PUDown" )return LumiWeightsDown_.weight3D( *nm1,*n0,*np1);
-  return LumiWeights_.weight3D( *nm1,*n0,*np1);
+  //  if(syst=="PUUp" )return LumiWeightsUp_.weight3D( *nm1,*n0,*np1);
+  //if(syst=="PUDown" )return LumiWeightsDown_.weight3D( *nm1,*n0,*np1);
+  //return LumiWeights_.weight3D( *nm1,*n0,*np1);
+
+  if(syst=="PUUp" )return LumiWeightsUp_.weight( *n0);
+  if(syst=="PUDown" )return LumiWeightsDown_.weight( *n0);
+  return LumiWeights_.weight( *n0);
   
 
   

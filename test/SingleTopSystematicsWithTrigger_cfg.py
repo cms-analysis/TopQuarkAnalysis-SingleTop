@@ -72,6 +72,8 @@ process.TreesMu.dataPUFile = cms.untracked.string("pileUpDistr.root")
 
 process.TreesEle.channelInfo = TChannelEle
 process.TreesMu.channelInfo = TChannelMu
+
+
 #process.PlotsEle.channelInfo = TChannelEle
 #process.PlotsMu.channelInfo = TChannelMu
 #process.TreesMu.systematics = cms.untracked.vstring();
@@ -109,7 +111,7 @@ if channel_instruction == "allmc":
     #    process.TreesEle.doResol = cms.untracked.bool(True)
     #    process.TreesEle.doTurnOn = cms.untracked.bool(True) 
     process.PathSysMu = cms.Path(
-    process.HLTFilterMu2012 *
+#    process.HLTFilterMu2012 *
     process.TreesMu
     )
     process.PathSysEle = cms.Path(
@@ -135,7 +137,7 @@ if channel_instruction == "mu":
     process.PathSysMu = cms.Path(
     #    process.PlotsMu +
     #    process.PlotsEle +
-    process.HLTFilterMu2012 *
+   process.HLTFilterMu2012 *
     process.TreesMu 
     )
 

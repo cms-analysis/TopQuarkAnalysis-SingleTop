@@ -12,6 +12,8 @@ rateSystematics = cms.untracked.vstring(),
 doPU = cms.untracked.bool(True),
 #doResol  = cms.untracked.bool(False),
 
+algo  = cms.untracked.string("TCHPT"),
+
 doResol  = cms.untracked.bool(True),
 takeBTagSFFromDB = cms.untracked.bool(False),
 #dataPUFile = cms.untracked.string("pileUpDistr.root"),
@@ -116,7 +118,7 @@ vertexZ = cms.InputTag("nTupleVertices","z"),
 
 nVerticesPlus = cms.InputTag("NVertices","PileUpP1"),
 nVerticesMinus = cms.InputTag("NVertices","PileUpM1"),
-nVertices = cms.InputTag("NVertices","PileUp0"),
+nVertices = cms.InputTag("NVertices","PileUpTrue"),
 
 )
 
@@ -130,8 +132,8 @@ leptonsPhi = cms.InputTag("nTupleMuons","tightMuonsPhi"),
 leptonsEnergy = cms.InputTag("nTupleMuons","tightMuonsE"),  
 leptonsCharge = cms.InputTag("nTupleMuons","tightMuonsCharge"),  
 
-leptonsDeltaCorrectedRelIso = cms.InputTag("nTupleMuons","tightMuonsPFRelIso"),  
-#leptonsDeltaCorrectedRelIso = cms.InputTag("nTupleMuons","tightMuonsPFDeltaCorrectedRelIso"),  
+#leptonsDeltaCorrectedRelIso = cms.InputTag("nTupleMuons","tightMuonsPFRelIso"),  
+leptonsDeltaCorrectedRelIso = cms.InputTag("nTupleMuons","tightMuonsPFDeltaCorrectedRelIso"),  
 leptonsRhoCorrectedRelIso = cms.InputTag("nTupleMuons","tightMuonsPFRhoCorrectedRelIso"),  
 
 leptonsDB = cms.InputTag("nTupleMuons","tightMuonsPVDxy"),  

@@ -17,12 +17,13 @@ wToLNuBranchingRatio = 0.108+0.1075+0.1125
 
 
 
-relIsoCutMuons = 0.125
+relIsoCutMuons = 0.12
 relIsoCutElectrons = 0.12
 
 PileUpSeason = "SummerFlatTail11"
 
 PileUpSeason = "Summer12"
+PileUpSeasonV6 = "Summer12V6"
 
 
 TChannelMu = cms.PSet(
@@ -187,11 +188,10 @@ SbarChannelEle = cms.PSet(
 ZJetsMu = cms.PSet(
     crossSection = cms.untracked.double(3503.71),
     channel = cms.untracked.string("ZJets"),
-    finalLumi = lumiMu,Season = cms.untracked.string(PileUpSeason),
+    finalLumi = lumiMu,Season = cms.untracked.string(PileUpSeasonV6),
     originalEvents = cms.untracked.double(1913957),
     MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
-        RelIsoCut = cms.untracked.double(relIsoCutMuons),
-
+    RelIsoCut = cms.untracked.double(relIsoCutMuons),
     mcPUFile = cms.untracked.string("pileupdistr_ZJets.root"),
     puHistoName = cms.untracked.string("pileUpDumper/PileUpZJets"),
 )
@@ -201,7 +201,7 @@ ZJetsEle = cms.PSet(
     crossSection = cms.untracked.double(3503.71),
     channel = cms.untracked.string("ZJets"),
 RelIsoCut = cms.untracked.double(relIsoCutElectrons),
-    finalLumi = lumiEle,Season = cms.untracked.string(PileUpSeason),
+    finalLumi = lumiEle,Season = cms.untracked.string(PileUpSeasonV6),
     originalEvents = cms.untracked.double(1913957),#3 6 277 961
     mcPUFile = cms.untracked.string("pileupdistr_ZJets.root"),
     puHistoName = cms.untracked.string("pileUpDumper/PileUpZJets"),
@@ -681,7 +681,7 @@ QCD_HT_200_inf_GJetsMu = cms.PSet(
 
 
 QCDMuMu = cms.PSet(
-    crossSection = cms.untracked.double(84679.),
+    crossSection = cms.untracked.double(134680.),
     channel = cms.untracked.string("QCDMu"),
     finalLumi = lumiMu,Season = cms.untracked.string(PileUpSeason),
  RelIsoCut = cms.untracked.double(relIsoCutMuons),
@@ -692,7 +692,7 @@ QCDMuMu = cms.PSet(
 
 
 QCDMuEle = cms.PSet(
-    crossSection = cms.untracked.double(84679.),
+    crossSection = cms.untracked.double(134680.),
     channel = cms.untracked.string("QCDMu"),
 RelIsoCut = cms.untracked.double(relIsoCutElectrons),
     finalLumi = lumiEle,Season = cms.untracked.string(PileUpSeason),
