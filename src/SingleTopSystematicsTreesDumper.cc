@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.5 2012/06/25 20:46:14 oiorio Exp $ 
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.6 2012/07/02 10:01:23 oiorio Exp $ 
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file 
 //
@@ -1645,11 +1645,12 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	
       }
       else(nVertices = -1);
-      
+  
       if(doPU_){
 	if(syst == "noSyst"){ PUWeightNoSyst = pileUpSF(syst); PUWeight = PUWeightNoSyst;
 	  PUWeightTreePUUp = pileUpSF("PUUp");
 	  PUWeightTreePUDown = pileUpSF("PUDown");
+	  //	  cout<< "n0 " << nVertices <<   " weight = "<< PUWeightNoSyst<< " cross-check "  <<endl; 
 	}
 	else PUWeight = PUWeightNoSyst;
       }

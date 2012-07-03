@@ -37,6 +37,7 @@ TChannelMu = cms.PSet(
     mcPUFile = cms.untracked.string("pileupdistr_TChannel.root"),
     puHistoName = cms.untracked.string("pileUpDumper/PileUpTChannel"),
     Season = cms.untracked.string(PileUpSeason),
+#    Season = cms.untracked.string(""),
     )
 
 
