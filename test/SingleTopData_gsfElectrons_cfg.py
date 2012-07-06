@@ -70,7 +70,8 @@ jetAlgoName = "AK5"
 print "test2.2"
 usePF2PAT(process, runPF2PAT=True, jetAlgo=jetAlgoName, runOnMC=runOnMC, postfix=Postfix, jetCorrections=('AK5PFchs',['L1FastJet','L2Relative','L3Absolute','L2L3Residual']), pvCollection=cms.InputTag('offlinePrimaryVertices'),  typeIMetCorrections=True, outputModules = None)
 #          jetCorrections=('AK5PFchs', jetCorrections)
-
+process.pfPileUp.Enable = True
+process.load("CMGTools.External.pujetidsequence_cff")
 #Use gsfElectrons:
 process.patElectrons.useParticleFlow = False
 process.eleIsoSequence = setupPFElectronIso(process, 'gsfElectrons', "PFIso"+postfix)
@@ -136,7 +137,8 @@ process.patElectronsZeroIso = process.patElectrons.clone(pfElectronSource = cms.
 
 
 process.pathPreselection = cms.Path(
-        process.patseq #+  process.producePatPFMETCorrections
+        process.patseq + process.puJetIdSqeuence + process.puJetIdSqeuenceChs
+        #+  process.producePatPFMETCorrections
         )
 
 
