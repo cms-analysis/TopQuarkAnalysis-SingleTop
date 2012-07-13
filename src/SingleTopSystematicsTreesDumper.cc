@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.6 2012/07/02 10:01:23 oiorio Exp $ 
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.7 2012/07/03 10:17:16 oiorio Exp $ 
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file 
 //
@@ -273,8 +273,37 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
       treesNJets[syst]->Branch("mtwMass",&mtwMassTree);
       treesNJets[syst]->Branch("metPt",&metPt);
 
+      //First 3 jets: 
+      treesNJets[syst]->Branch("firstJetPt",&firstJetPt);
+      treesNJets[syst]->Branch("firstJetEta",&firstJetEta);
+      treesNJets[syst]->Branch("firstJetPhi",&firstJetPhi);
+      treesNJets[syst]->Branch("firstJetE",&firstJetE);
+      treesNJets[syst]->Branch("firstJetFlavour",&firstJetFlavourTree);
+      //      treesNJets[syst]->Branch("firstJetTCHPT",&firstJet);
+
+      treesNJets[syst]->Branch("thirdJetPt",&thirdJetPt);
+      treesNJets[syst]->Branch("thirdJetEta",&thirdJetEta);
+      treesNJets[syst]->Branch("thirdJetPhi",&thirdJetPhi);
+      treesNJets[syst]->Branch("thirdJetE",&thirdJetE);
+      treesNJets[syst]->Branch("thirdJetFlavour",&thirdJetFlavourTree);
+      //      treesNJets[syst]->Branch("thirdJetTCHPT",&thirdJetFlavour);
+
+      treesNJets[syst]->Branch("secondJetPt",&secondJetPt);
+      treesNJets[syst]->Branch("secondJetEta",&secondJetEta);
+      treesNJets[syst]->Branch("secondJetPhi",&secondJetPhi);
+      treesNJets[syst]->Branch("secondJetE",&secondJetE);
+      treesNJets[syst]->Branch("secondJetFlavour",&secondJetFlavourTree);
+      //      treesNJets[syst]->Branch("secondJetTCHPT",&secondJetFlavour);
+  
+
+  
+      //b jet and forward jet
       treesNJets[syst]->Branch("bJetPt",&bJetPt);
       treesNJets[syst]->Branch("fJetPt",&fJetPt);
+
+      treesNJets[syst]->Branch("fJetEta",&fJetEta);
+      treesNJets[syst]->Branch("bJetEta",&bJetEta);
+
 
       treesNJets[syst]->Branch("fJetPUID",&fJetPUID);
       treesNJets[syst]->Branch("fJetPUWP",&fJetPUWP);
@@ -405,12 +434,27 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
       trees2J[bj][syst]->Branch("bJetPUID",&bJetPUID);
       trees2J[bj][syst]->Branch("bJetPUWP",&bJetPUWP);
 
+      trees2J[bj][syst]->Branch("firstJetPt",&firstJetPt);
+      trees2J[bj][syst]->Branch("firstJetEta",&firstJetEta);
+      trees2J[bj][syst]->Branch("firstJetPhi",&firstJetPhi);
+      trees2J[bj][syst]->Branch("firstJetE",&firstJetE);
+      trees2J[bj][syst]->Branch("firstJetFlavour",&firstJetFlavourTree);
+
+      trees2J[bj][syst]->Branch("secondJetPt",&secondJetPt);
+      trees2J[bj][syst]->Branch("secondJetEta",&secondJetEta);
+      trees2J[bj][syst]->Branch("secondJetPhi",&secondJetPhi);
+      trees2J[bj][syst]->Branch("secondJetE",&secondJetE);
+      trees2J[bj][syst]->Branch("secondJetFlavour",&secondJetFlavourTree);
+
+
+
       trees2J[bj][syst]->Branch("eventFlavour",&eventFlavourTree);
       
       trees2J[bj][syst]->Branch("metPt",&metPt);
       trees2J[bj][syst]->Branch("metPhi",&metPhi);
       
      trees2J[bj][syst]->Branch("topMass",&topMassTree);
+     trees2J[bj][syst]->Branch("topMtw",&topMtwTree);
 
       trees2J[bj][syst]->Branch("topPt",&topPt);
       trees2J[bj][syst]->Branch("topPhi",&topPhi);
@@ -448,6 +492,9 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
       trees3J[bj][syst]->Branch("costhetalj",&cosTree);
       trees3J[bj][syst]->Branch("costhetalbl",&cosBLTree);
       trees3J[bj][syst]->Branch("topMass",&topMassTree);
+
+      trees3J[bj][syst]->Branch("topMtw",&topMtwTree);
+
       trees3J[bj][syst]->Branch("mtwMass",&mtwMassTree);
       
       trees3J[bj][syst]->Branch("charge",&chargeTree);
@@ -489,6 +536,27 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
       trees3J[bj][syst]->Branch("bJetFlavour",&bJetFlavourTree);
       trees3J[bj][syst]->Branch("bJetPUID",&bJetPUID);
       trees3J[bj][syst]->Branch("bJetPUWP",&bJetPUWP);
+
+
+      trees3J[bj][syst]->Branch("firstJetPt",&firstJetPt);
+      trees3J[bj][syst]->Branch("firstJetEta",&firstJetEta);
+      trees3J[bj][syst]->Branch("firstJetPhi",&firstJetPhi);
+      trees3J[bj][syst]->Branch("firstJetE",&firstJetE);
+      trees3J[bj][syst]->Branch("firstJetFlavour",&firstJetFlavourTree);
+
+      trees3J[bj][syst]->Branch("secondJetPt",&secondJetPt);
+      trees3J[bj][syst]->Branch("secondJetEta",&secondJetEta);
+      trees3J[bj][syst]->Branch("secondJetPhi",&secondJetPhi);
+      trees3J[bj][syst]->Branch("secondJetE",&secondJetE);
+      trees3J[bj][syst]->Branch("secondJetFlavour",&secondJetFlavourTree);
+
+      trees3J[bj][syst]->Branch("thirdJetPt",&thirdJetPt);
+      trees3J[bj][syst]->Branch("thirdJetEta",&thirdJetEta);
+      trees3J[bj][syst]->Branch("thirdJetPhi",&thirdJetPhi);
+      trees3J[bj][syst]->Branch("thirdJetE",&thirdJetE);
+      trees3J[bj][syst]->Branch("thirdJetFlavour",&thirdJetFlavourTree);
+
+
 
       
       trees3J[bj][syst]->Branch("eventFlavour",&eventFlavourTree);
@@ -790,10 +858,16 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 
   if(channel=="Data")WeightLumi=1;
 
+ int secondPtPosition=-1;
+ int thirdPtPosition=-1;
+
+ double secondPt=-1;
+ double thirdPt=-1;
+
   int lowBTagTreePositionNoSyst=-1;
   int highBTagTreePositionNoSyst=-1;
   int maxPtTreePositionNoSyst=-1;
-  int minPtTreePositionNoSyst=-1;
+   int minPtTreePositionNoSyst=-1;
   
   for(size_t s = 0; s < systematics.size();++s){
     string syst_name =  systematics.at(s);
@@ -873,6 +947,11 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
     
     int minPtTreePosition=-1;
     minPtTree = 99999;
+
+    secondPt=-1;
+    thirdPt=-1;
+    secondPtPosition = -1;
+    thirdPtPosition = -1;
 
     //Taking the unclustered met previously evaluated 
     //and already present in the n-tuples
@@ -989,7 +1068,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	//  leptons.push_back(math::PtEtaPhiELorentzVector(leptonPt,leptonEta,leptonPhi,leptonE));
 	if(nLeptons >= 3) break;      
 
-	cout<< " lepton number " << nLeptons << " pt "<< leptonPt << " eta " << fabs(leptonEta)<< endl;
+	//	cout<< " lepton number " << nLeptons << " pt "<< leptonPt << " eta " << fabs(leptonEta)<< endl;
       }
       
       bool passesLeptons = (nLeptons ==1);
@@ -1044,7 +1123,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	      iEvent.getByLabel(qcdLeptonsDB_,qcdLeptonsDB);
 	      gotQCDLeptons=true;
 
-	      cout << " qcd lep "<< endl;
+	      //	      cout << " qcd lep "<< endl;
 	    }
 	  }
 	  
@@ -1288,6 +1367,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	    else ++nJetsForwardNoPU;
 	  }
 	  jets[nJets-1]=math::PtEtaPhiELorentzVector(ptCorr,jetsEta->at(i), jetsPhi->at(i), energyCorr);
+	  flavours[nJets-1]= flavour;
 	  if(syst=="noSyst"){ 
 	    ++nJetsNoSyst;
 	    jetsNoSyst[nJets-1]=jets[nJets-1]; }
@@ -1308,12 +1388,20 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       
       if(!passesPtCut) continue;
       
+
+
+            
       //max pt position:
       int pos =nJets-1;
+      //cout << " pos " << pos << " j pt " << ptCorr << endl; 
       if(ptCorr > maxPtTree){ 
 	maxPtTreePosition = nJets-1;
 	maxPtTree = ptCorr;
+	firstJetFlavourTree = flavour;
+	//cout << " first jet pos " << maxPtTreePosition  << " pt "<< maxPtTree <<endl ;
       }
+      
+      
       //min pt position:
       if(ptCorr < minPtTree){ 
 	minPtTreePosition = nJets-1;
@@ -1403,9 +1491,9 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 	  double csvmSF=1;
 	  double csvmSFErr=0;
 
-	  double hpteff = EFFMap("TCHPT_C");
-	  double csvteff = EFFMap("CSVT_C",channel);
-	  double csvmeff = EFFMap("CSVL_C",channel);
+	  double hpteff = EFFMap("TCHPT_B");
+	  double csvteff = EFFMap("CSVT_B",channel);
+	  double csvmeff = EFFMap("CSVL_B",channel);
 
 	  //double hpteff = EFFMapNew(valueAlgo1,"TCHP_C");
 	  //double heleff = EFFMapNew(valueAlgo2,"TCHE_C");
@@ -1677,7 +1765,89 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       
       bool passesMet= false;
 
+      
+      for (size_t J_ = 0; J_< nJets;++J_ ){
+	double ptCorr = jets[J_].pt();
+	if(ptCorr > secondPt &&  ptCorr < maxPtTree) {
+	  secondPt = ptCorr; 
+	  secondPtPosition = nJets-1; 
+	  secondJetFlavourTree = flavours[J_];
+	  //cout << " second jet pos " <<secondPtPosition << " pt "<<secondPt <<endl ;
+	}
+      }
+      
+      for (size_t J_ = 0; J_< nJets;++J_ ){
+	double ptCorr = jets[J_].pt();
+	if(ptCorr > thirdPt &&  ptCorr < secondPt) {
+	  thirdPt = ptCorr; 
+	  thirdPtPosition = nJets-1; 
+	  thirdJetFlavourTree = flavours[J_];
+	  //cout << " third jet pos " << thirdPtPosition << " pt "<< thirdPt <<endl ;
+	}
+      }
+
+      if(thirdPt > secondPt ) cout << "  sanity check: Pt3 > Pt2 at event" << eventTree << endl;
+      if(secondPt > maxPtTree ) cout << "  sanity check: Pt2 > Pt1 at event" << eventTree << endl;
+      if(thirdPt > maxPtTree ) cout << "  sanity check: Pt3 > Pt1 at event" << eventTree << endl;
+      
+      if(nJets > 0) {
+	
+	firstJetPt = jets[maxPtTreePosition].pt();
+	firstJetE = jets[maxPtTreePosition].energy();
+	firstJetEta = jets[maxPtTreePosition].eta();
+	firstJetPhi = jets[maxPtTreePosition].phi();
+	
+	
+
+	if(nJets>1){
     
+	  secondJetPt = jets[secondPtPosition].pt();
+	  secondJetE = jets[secondPtPosition].energy();
+	  secondJetEta = jets[secondPtPosition].eta();
+	  secondJetPhi = jets[secondPtPosition].phi();
+
+	}
+	
+	if(nJets>2){
+	  thirdJetPt = jets[thirdPtPosition].pt();
+	  thirdJetE = jets[thirdPtPosition].energy();
+	  thirdJetEta = jets[thirdPtPosition].eta();
+	  thirdJetPhi = jets[thirdPtPosition].phi();
+	
+	  //	  cout << " first jet pt "<< firstJetPt <<endl ;
+	  //cout << "second jet pt "<<secondPt <<endl ;
+	  //cout << " third jet pt "<< thirdPt <<endl ;
+	}
+      }
+      else{
+	firstJetFlavourTree = 0;
+	secondJetFlavourTree = 0;
+	thirdJetFlavourTree = 0;
+
+	firstJetPt = 0;
+	firstJetE = 0;
+	firstJetEta = -99;
+	firstJetPhi = -99;
+
+	secondJetPt = 0;
+	secondJetE = 0;
+	secondJetEta = -99;
+	secondJetPhi = -99;
+
+	thirdJetPt = 0;
+	thirdJetE = 0;
+	thirdJetEta = -99;
+	thirdJetPhi = -99;
+
+	
+      }
+      
+      runTree = iEvent.eventAuxiliary().run();
+      lumiTree = iEvent.eventAuxiliary().luminosityBlock();
+      eventTree = iEvent.eventAuxiliary().event();
+
+
+
     if(doJetTrees_ && !isQCD){
       if(syst== "noSyst"){
 	jetprobs.clear();
@@ -1710,6 +1880,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
 
 	nJForwardNoPU = nJetsForwardNoPU;
 	nJForward = nJetsForward;
+
+	//	if(nJ > 2) cout << " nJ>3 check "<<  nJets << " third pt "<< thirdPt<<endl; 
 
 	treesNJets[syst]->Fill();
       }
@@ -1939,14 +2111,12 @@ void SingleTopSystematicsTreesDumper::analyze(const Event& iEvent, const EventSe
       float fCosThetaLJ =  cosThetaLJ(leptonPFour, jets[lowBTagTreePosition], top);
       cosBLTree =  cosTheta_eta_bl(leptonPFour, jets[lowBTagTreePosition], top);
 
-      runTree = iEvent.eventAuxiliary().run();
-      lumiTree = iEvent.eventAuxiliary().luminosityBlock();
-      eventTree = iEvent.eventAuxiliary().event();
       
       etaTree = fabs(jets[lowBTagTreePosition].eta());
       cosTree = fCosThetaLJ;
       topMassTree = top.mass();
       
+      topMtwTree = topMtw(leptonPFour,jets[highBTagTreePosition],metPx,metPy);
 
 
       lepPt = leptonPFour.pt();
@@ -2026,6 +2196,15 @@ float SingleTopSystematicsTreesDumper::cosTheta_eta_bl(math::PtEtaPhiELorentzVec
 
 }
 
+
+double SingleTopSystematicsTreesDumper::topMtw(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, float metPx, float metPy){
+  math::PtEtaPhiELorentzVector lb = lepton + jet;
+  double mlb2 = lb.mass()*lb.mass();
+  double etlb = sqrt(mlb2 + lb.pt()*lb.pt());
+  double metPT = sqrt(metPx*metPx +metPy*metPy);
+  
+  return sqrt( mlb2 + 2*( etlb*metPT - lb.px()*metPx -lb.py()*metPy ) );  
+}
 
 //top quark 4-momentum given lepton, met and b-jet
 math::PtEtaPhiELorentzVector SingleTopSystematicsTreesDumper::top4Momentum(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, float metPx, float metPy){
@@ -2739,7 +2918,7 @@ double SingleTopSystematicsTreesDumper::SFErrMap(string algo ){
 }
 
 double SingleTopSystematicsTreesDumper::EFFMap(string algo ){
-  if(algo == "TCHPT_B")return 0.365;
+  if(algo == "TCHPT_B")return 0.365*1.;
   if(algo == "TCHPT_C")return 0.0365;
   if(algo == "TCHPT_L")return 0.0017;
 

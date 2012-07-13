@@ -115,6 +115,7 @@ if channel_instruction == "allmc":
     process.TreesMu
     )
     process.PathSysEle = cms.Path(
+    process.HLTFilterEle2012 *
 #    process.HLTFilterEleMC *
     process.TreesEle
     )
@@ -148,7 +149,7 @@ if channel_instruction == "ele":
     process.PathSysMu = cms.Path(
     #    process.PlotsMu +
     #    process.PlotsEle +
-    process.HLTFilterEle *
+    process.HLTFilterEle2012 *
     process.TreesEle 
     )
 

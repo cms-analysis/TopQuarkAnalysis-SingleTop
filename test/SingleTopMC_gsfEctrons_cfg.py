@@ -84,7 +84,7 @@ getattr(process,'patDefaultSequence'+postfix).replace( getattr(process,"patElect
                                                        process.eleIsoSequence +
                                                        getattr(process,"patElectrons"+postfix)
                                                        )
-getattr(process,"pfNoTau"+postfix).enable = False
+#getattr(process,"pfNoTau"+postfix).enable = False
 
 
 

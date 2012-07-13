@@ -26,6 +26,16 @@ HLTFilterMu2012 = cms.EDFilter('SingleTopTriggers',
                            channel = cms.untracked.int32(2),#Useless now
                            )                         
 
+HLTFilterEle2012 = cms.EDFilter('SingleTopTriggers',
+                           HLTriggerResults = cms.InputTag("TriggerResults","",processNameData),
+                           isMC = cms.untracked.bool(False),
+                           triggerList = cms.vstring("HLT_Ele27_WP80_v",
+                                                     ),
+                           runRangesList = cms.vint32(-1),
+                           
+                           channel = cms.untracked.int32(2),#Useless now
+                           )                         
+
 HLTFilterMuBTag = cms.EDFilter('SingleTopTriggers',
                            HLTriggerResults = cms.InputTag("TriggerResults","",processNameData),
                            isMC = cms.untracked.bool(False),

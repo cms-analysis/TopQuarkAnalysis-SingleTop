@@ -45,11 +45,14 @@ duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
 #process.source.fileNames = TChannel_ntuple
 process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/edmntuple_TTBarTestGSFNoIso.root")
 process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/edmntuple_TTBarSynch_PFElectrons.root")
+process.source.fileNames = cms.untracked.vstring("file:/afs/cern.ch/work/j/jpata/public/stpol/sync2012/edmntuple_T_t_deltaBetaOff.root")
+process.source.fileNames = cms.untracked.vstring("file:/afs/cern.ch/work/j/jpata/public/stpol/sync2012/edmntuple_T_t_deltaBetaOn.root")
 
 #PileUpSync
 
 #Output
-process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/TTBarSynch.root"))
+process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/Tbar_deltaBetaOff.root"))
+process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/Tbar_deltaBetaOn.root"))
 
 
 #process.load("SingleTopAnalyzers_cfi")
@@ -103,7 +106,8 @@ if channel_instruction == "allmc":
     #    process.TreesEle.doResol = cms.untracked.bool(True)
     #    process.TreesEle.doTurnOn = cms.untracked.bool(True) 
     process.PathSysMu = cms.Path(
-    process.HLTFilterMuJet *
+    process.HLTFilterMu2012 *
+#    process.HLTFilterMuJet *
     process.TreesMu
     )
     process.PathSysEle = cms.Path(

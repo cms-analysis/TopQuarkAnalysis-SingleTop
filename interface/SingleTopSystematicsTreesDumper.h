@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  * 
  * Produces systematics histograms out of a standard Single Top n-tuple 
- * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.5 2012/06/25 20:46:14 oiorio Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.6 2012/07/02 10:01:22 oiorio Exp $
  */
 
 
@@ -112,6 +112,8 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   math::XYZTLorentzVector NuMomentum(float leptonPx, float leptonPy, float leptonPz, float leptonPt, float leptonE, float metPx, float metPy );
   float cosThetaLJ(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, math::PtEtaPhiELorentzVector top);
   float cosTheta_eta_bl(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, math::PtEtaPhiELorentzVector top);
+
+  double topMtw(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, float metPx, float metPy);
 
   float muonHLTEff(float etaMu);
 
@@ -341,6 +343,7 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
     jetsNoSyst[10],
     bjets[10],
     antibjets[10]; 
+  int flavours[10]; 
   
   float pdf_weights[52];
   float  pdf_weights_alternate_set_1,pdf_weights_alternate_set_2;
@@ -392,7 +395,7 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   //Variables to use as trees references
 
   //Variables to use as trees references
-  double etaTree,etaTree2,cosTree,cosBLTree,topMassTree,totalWeightTree,weightTree,mtwMassTree,lowBTagTree,highBTagTree,maxPtTree,minPtTree,topMassLowBTagTree,topMassBestTopTree,topMassMeas,bWeightTree,PUWeightTree,turnOnWeightTree,limuWeightTree,turnOnReWeightTree,miscWeightTree, lepEff ;
+  double etaTree,etaTree2,cosTree,cosBLTree,topMassTree,totalWeightTree,weightTree,mtwMassTree,lowBTagTree,highBTagTree,maxPtTree,minPtTree,topMassLowBTagTree,topMassBestTopTree,topMassMeas,bWeightTree,PUWeightTree,turnOnWeightTree,limuWeightTree,turnOnReWeightTree,miscWeightTree, lepEff, topMtwTree ;
   //Weights for systematics
   double bWeightTreeBTagUp,
     bWeightTreeMisTagUp,
@@ -416,8 +419,9 @@ class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer {
   int nJ,nJNoPU,nJCentral,nJCentralNoPU,nJForward,nJForwardNoPU,nTCHPT,nCSVT,nCSVM;
   double w1TCHPT,w2TCHPT, w1CSVT,w2CSVT, w1CSVM, w2CSVM;
 
-  int runTree, eventTree,lumiTree,chargeTree,electronID,bJetFlavourTree,fJetFlavourTree,eventFlavourTree, puZero;
-  double lepPt,lepEta,lepPhi,lepRelIso,lepDeltaCorrectedRelIso,lepRhoCorrectedRelIso, fJetPhi,fJetPt,fJetEta,fJetE,bJetPt,bJetEta,bJetPhi,bJetE,metPt,metPhi,topPt,topPhi,topEta,topE,totalEnergy,totalMomentum,fJetBTag,bJetBTag,vtxZ,fJetPUID,fJetPUWP,bJetPUID,bJetPUWP;
+  int runTree, eventTree,lumiTree,chargeTree,electronID,bJetFlavourTree,fJetFlavourTree,eventFlavourTree, puZero,firstJetFlavourTree,secondJetFlavourTree,thirdJetFlavourTree;
+
+  double lepPt,lepEta,lepPhi,lepRelIso,lepDeltaCorrectedRelIso,lepRhoCorrectedRelIso, fJetPhi,fJetPt,fJetEta,fJetE,bJetPt,bJetEta,bJetPhi,bJetE,metPt,metPhi,topPt,topPhi,topEta,topE,totalEnergy,totalMomentum,fJetBTag,bJetBTag,vtxZ,fJetPUID,fJetPUWP,bJetPUID,bJetPUWP,firstJetPt,firstJetEta,firstJetPhi,firstJetE, secondJetPt,secondJetEta,secondJetPhi,secondJetE, thirdJetPt,thirdJetEta,thirdJetPhi,thirdJetE; 
 
   
   //Not used anymore:
