@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  *
  * Produces systematics histograms out of a standard Single Top n-tuple
- * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.7 2012/07/13 15:33:18 oiorio Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.8 2012/07/20 12:26:51 jpata Exp $
  */
 
 
@@ -232,6 +232,9 @@ private:
         jetsAntiBTagAlgo_,
         jetsPileUpID_,
         jetsPileUpWP_,
+        jetsBeta_,
+        jetsDZ_,
+        jetsRMS_,
         METPt_,
         METPhi_,
         jetsFlavour_,
@@ -294,6 +297,11 @@ private:
         jetsCorrTotal,
         jetsPileUpID,
         jetsPileUpWP,
+
+        jetsBeta,
+        jetsDZ,
+        jetsRMS,
+
 
         METPhi,
         METPt;
@@ -399,7 +407,7 @@ private:
     //Variables to use as trees references
 
     //Variables to use as trees references
-    double etaTree, etaTree2, cosTree, cosBLTree, topMassTree, totalWeightTree, weightTree, mtwMassTree, lowBTagTree, highBTagTree, maxPtTree, minPtTree, topMassLowBTagTree, topMassBestTopTree, topMassMeas, bWeightTree, PUWeightTree, turnOnWeightTree, limuWeightTree, turnOnReWeightTree, miscWeightTree, lepEff, topMtwTree ;
+  double etaTree, etaTree2, cosTree, cosBLTree, topMassTree, totalWeightTree, weightTree, mtwMassTree, lowBTagTree, highBTagTree, maxPtTree, minPtTree, topMassLowBTagTree, topMassBestTopTree, topMassMeas, bWeightTree, PUWeightTree, turnOnWeightTree, limuWeightTree, turnOnReWeightTree, miscWeightTree, lepEff, topMtwTree, HT ;
     //Weights for systematics
     double bWeightTreeBTagUp,
            bWeightTreeMisTagUp,
@@ -425,7 +433,7 @@ private:
 
     int runTree, eventTree, lumiTree, chargeTree, electronID, bJetFlavourTree, fJetFlavourTree, eventFlavourTree, puZero, firstJetFlavourTree, secondJetFlavourTree, thirdJetFlavourTree;
 
-    double lepPt, lepEta, lepPhi, lepRelIso, lepDeltaCorrectedRelIso, lepRhoCorrectedRelIso, fJetPhi, fJetPt, fJetEta, fJetE, bJetPt, bJetEta, bJetPhi, bJetE, metPt, metPhi, topPt, topPhi, topEta, topE, totalEnergy, totalMomentum, fJetBTag, bJetBTag, vtxZ, fJetPUID, fJetPUWP, bJetPUID, bJetPUWP, firstJetPt, firstJetEta, firstJetPhi, firstJetE, secondJetPt, secondJetEta, secondJetPhi, secondJetE, thirdJetPt, thirdJetEta, thirdJetPhi, thirdJetE;
+  double lepPt, lepEta, lepPhi, lepRelIso, lepDeltaCorrectedRelIso, lepRhoCorrectedRelIso, fJetPhi, fJetPt, fJetEta, fJetE, bJetPt, bJetEta, bJetPhi, bJetE, metPt, metPhi, topPt, topPhi, topEta, topE, totalEnergy, totalMomentum, fJetBTag, bJetBTag, vtxZ, fJetPUID, fJetPUWP, bJetPUID, bJetPUWP, firstJetPt, firstJetEta, firstJetPhi, firstJetE, secondJetPt, secondJetEta, secondJetPhi, secondJetE, thirdJetPt, thirdJetEta, thirdJetPhi, thirdJetE,fJetBeta,fJetDZ,fJetRMS;
 
 
     //Not used anymore:

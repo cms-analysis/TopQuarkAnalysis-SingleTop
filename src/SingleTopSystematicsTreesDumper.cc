@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.8 2012/07/13 15:33:28 oiorio Exp $
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.9 2012/07/20 12:26:49 jpata Exp $
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file
 //
@@ -124,6 +124,10 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
     jetsPileUpID_ =  iConfig.getParameter< edm::InputTag >("jetsPileUpDiscr");
     jetsPileUpWP_ =  iConfig.getParameter< edm::InputTag >("jetsPileUpWP");
 
+    jetsBeta_ =  iConfig.getParameter< edm::InputTag >("jetsBeta");
+    jetsDZ_ =  iConfig.getParameter< edm::InputTag >("jetsDZ");
+    jetsRMS_ =  iConfig.getParameter< edm::InputTag >("jetsRMS");
+ 
     jetsFlavour_ =  iConfig.getParameter< edm::InputTag >("jetsFlavour");
 
     //  genJetsPt_  = iConfig.getParameter< edm::InputTag >("genJetsPt");
@@ -262,7 +266,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             treesNJets[syst]->Branch("nGoodVertices", &npv);
             treesNJets[syst]->Branch("nTCHPT", &ntchpt_tags);
             treesNJets[syst]->Branch("nCSVT", &ncsvt_tags);
-            treesNJets[syst]->Branch("nCSVM", &ncsvm_tags);
+            treesNJets[syst]->Branch("nCSVL", &ncsvm_tags);
             treesNJets[syst]->Branch("secondJetFlavour", &secondJetFlavourTree);
             treesNJets[syst]->Branch("firstJetFlavour", &firstJetFlavourTree);
             treesNJets[syst]->Branch("thirdJetFlavour", &thirdJetFlavourTree);
@@ -272,8 +276,8 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             treesNJets[syst]->Branch("w2TCHPT", &w2TCHPT);
             treesNJets[syst]->Branch("w1CSVT", &w1CSVT);
             treesNJets[syst]->Branch("w2CSVT", &w2CSVT);
-            treesNJets[syst]->Branch("w1CSVM", &w1CSVM);
-            treesNJets[syst]->Branch("w2CSVM", &w2CSVM);
+            treesNJets[syst]->Branch("w1CSVL", &w1CSVM);
+            treesNJets[syst]->Branch("w2CSVL", &w2CSVM);
             treesNJets[syst]->Branch("PUWeight", &PUWeightTree);
             treesNJets[syst]->Branch("turnOnWeight", &turnOnWeightTree);
             treesNJets[syst]->Branch("turnOnReWeight", &turnOnReWeightTree);
@@ -285,6 +289,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             treesNJets[syst]->Branch("leptonEff", &lepEff);
             treesNJets[syst]->Branch("mtwMass", &mtwMassTree);
             treesNJets[syst]->Branch("metPt", &metPt);
+            treesNJets[syst]->Branch("HT", &HT);
             treesNJets[syst]->Branch("firstJetPt", &firstJetPt);
             treesNJets[syst]->Branch("firstJetEta", &firstJetEta);
             treesNJets[syst]->Branch("firstJetPhi", &firstJetPhi);
@@ -409,6 +414,10 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             trees2J[bj][syst]->Branch("fJetPUID", &fJetPUID);
             trees2J[bj][syst]->Branch("fJetPUWP", &fJetPUWP);
 
+            trees2J[bj][syst]->Branch("fJetBeta", &fJetBeta);
+            trees2J[bj][syst]->Branch("fJetDZ", &fJetDZ);
+            trees2J[bj][syst]->Branch("fJetRMS", &fJetRMS);
+
             trees2J[bj][syst]->Branch("bJetPt", &bJetPt);
             trees2J[bj][syst]->Branch("bJetE", &bJetE);
             trees2J[bj][syst]->Branch("bJetEta", &bJetEta);
@@ -437,6 +446,8 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             trees2J[bj][syst]->Branch("metPt", &metPt);
             trees2J[bj][syst]->Branch("metPhi", &metPhi);
 
+            trees2J[bj][syst]->Branch("HT", &HT);
+	    
             trees2J[bj][syst]->Branch("topMass", &topMassTree);
             trees2J[bj][syst]->Branch("topMtw", &topMtwTree);
 
@@ -480,6 +491,8 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
 
             trees3J[bj][syst]->Branch("topMtw", &topMtwTree);
 
+            trees3J[bj][syst]->Branch("HT", &HT);
+
             trees3J[bj][syst]->Branch("mtwMass", &mtwMassTree);
 
             trees3J[bj][syst]->Branch("charge", &chargeTree);
@@ -511,6 +524,9 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             trees3J[bj][syst]->Branch("fJetPUID", &fJetPUID);
             trees3J[bj][syst]->Branch("fJetPUWP", &fJetPUWP);
 
+            trees3J[bj][syst]->Branch("fJetBeta", &fJetBeta);
+            trees3J[bj][syst]->Branch("fJetDZ", &fJetDZ);
+            trees3J[bj][syst]->Branch("fJetRMS", &fJetRMS);
 
 
             trees3J[bj][syst]->Branch("bJetPt", &bJetPt);
@@ -664,7 +680,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
     bool  doGaussianResol = false;
     //  ptResol = new JetResolution(fileResolName, doGaussianResol);
 
-    leptonRelIsoQCDCutUpper = 0.2, leptonRelIsoQCDCutLower = 0.125;
+    leptonRelIsoQCDCutUpper = 0.5, leptonRelIsoQCDCutLower = 0.3;
 
 
     topMassMeas = 172.9;
@@ -885,6 +901,9 @@ void SingleTopSystematicsTreesDumper::initBranchVars()
 void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSetup &iSetup)
 {
 
+  //  if()
+  //
+
     initBranchVars();
 
     //cout <<" test 1 "<<endl;
@@ -1046,6 +1065,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
         Weight = WeightLumi;
         //    Weight *= PUWeight;
 
+	HT = 0;
 
         bool is_btag_relevant = ((syst_name == "noSyst" || syst_name == "BTagUp" || syst_name == "BTagDown"
                                   || syst_name == "MisTagUp" || syst_name == "MisTagDown"
@@ -1210,7 +1230,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                     //Legenda for eleId : 0 fail, 1 ID only, 2 iso Only, 3 ID iso only, 4 conv rej, 5 conv rej and ID, 6 conv rej and iso, 7 all
                     //Require Full ID selection
 
-                    if ((leptonID != 7) && leptonID != 5)continue;
+                    //if ((leptonID != 7) && leptonID != 5)continue;
                     electronID = leptonID;
                     //This is to require conv rejection and ID but do not make requests on iso from id
                     //  if (!(leptonID==5 || leptonID ==7))continue;
@@ -1456,6 +1476,10 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
             iEvent.getByLabel(jetsPileUpID_, jetsPileUpID);
             iEvent.getByLabel(jetsPileUpWP_, jetsPileUpWP);
 
+            iEvent.getByLabel(jetsBeta_, jetsBeta);
+            iEvent.getByLabel(jetsDZ_, jetsDZ);
+            iEvent.getByLabel(jetsRMS_, jetsRMS);
+
             iEvent.getByLabel(jetsFlavour_, jetsFlavour);
             iEvent.getByLabel(jetsCorrTotal_, jetsCorrTotal);
             if (doResol_)iEvent.getByLabel(genJetsPt_, genJetsPt);
@@ -1494,7 +1518,6 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                 float genpt = -1.;
                 if (doResol_)genpt = genJetsPt->at(i);
                 float rndm = 0.1;
-
 
                 //If systematics JES up/down we need to change the pt of the jet
                 //consider if it passes the threshold or not
@@ -1537,6 +1560,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                 }
 
 
+		HT+= (math::PtEtaPhiELorentzVector(ptCorr, jetsEta->at(i), jetsPhi->at(i), energyCorr)).Et();
+		
                 //Pt cut
                 bool passesPtCut = ptCorr > ptCut;
                 if (passesPtCut)
@@ -1567,7 +1592,10 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
 
                 bool passesTCHPT = jetsBTagAlgo->at(i) > 3.41; //TCHPT Working point
                 bool passesCSVT = jetsAntiBTagAlgo->at(i) > 0.898; //TCHPT Working point
-                bool passesCSVM = jetsAntiBTagAlgo->at(i) > 0.679;
+
+		bool passesCSVM = jetsAntiBTagAlgo->at(i)>0.244;//ACTUALLY IT IS LOOSE WORKING POINT 
+		
+		//		bool passesCSVM = jetsAntiBTagAlgo->at(i) > 0.679;
 
                 double valueChosenAlgo = valueCSV;
                 if (algo_ == "TCHPT")valueChosenAlgo = valueTCHPT;
@@ -1876,6 +1904,10 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                     fJetFlavourTree = jetsFlavour->at(i);
                     fJetPUID = jetsPileUpID->at(i);
                     fJetPUWP = jetsPileUpWP->at(i);
+
+                    fJetBeta = jetsBeta->at(i);
+                    fJetDZ = jetsDZ->at(i);
+                    fJetRMS = jetsRMS->at(i);
                 }
                 if (nJets >= 10 )break;
             }
@@ -2005,6 +2037,11 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
         bool passesMet = false;
 
 
+        runTree = iEvent.eventAuxiliary().run();
+        lumiTree = iEvent.eventAuxiliary().luminosityBlock();
+        eventTree = iEvent.eventAuxiliary().event();
+
+
         for (size_t J_ = 0; J_ < nJets; ++J_ )
         {
             double ptCorr = jets[J_].pt();
@@ -2029,9 +2066,9 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
             }
         }
 
-        if (thirdPt > secondPt ) cout << "  sanity check: Pt3 > Pt2 at event" << eventTree << endl;
-        if (secondPt > maxPtTree ) cout << "  sanity check: Pt2 > Pt1 at event" << eventTree << endl;
-        if (thirdPt > maxPtTree ) cout << "  sanity check: Pt3 > Pt1 at event" << eventTree << endl;
+	//        if (thirdPt > secondPt ) cout << "  sanity check: Pt3 > Pt2 at event" << eventTree << " njets "<< nJets <<endl;
+        //if (secondPt > maxPtTree ) cout << "  sanity check: Pt2 > Pt1 at event" << eventTree <<" njets "<< nJets <<endl;
+        //if (thirdPt > maxPtTree ) cout << "  sanity check: Pt3 > Pt1 at event" << eventTree << " njets "<< nJets <<endl;
 
         if (nJets > 0)
         {
@@ -2089,9 +2126,6 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
 
         }
 
-        runTree = iEvent.eventAuxiliary().run();
-        lumiTree = iEvent.eventAuxiliary().luminosityBlock();
-        eventTree = iEvent.eventAuxiliary().event();
 
 
 
