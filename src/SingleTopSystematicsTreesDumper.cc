@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.9 2012/07/20 12:26:49 jpata Exp $
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.10 2012/07/23 01:15:10 oiorio Exp $
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file
 //
@@ -127,7 +127,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
     jetsBeta_ =  iConfig.getParameter< edm::InputTag >("jetsBeta");
     jetsDZ_ =  iConfig.getParameter< edm::InputTag >("jetsDZ");
     jetsRMS_ =  iConfig.getParameter< edm::InputTag >("jetsRMS");
- 
+
     jetsFlavour_ =  iConfig.getParameter< edm::InputTag >("jetsFlavour");
 
     //  genJetsPt_  = iConfig.getParameter< edm::InputTag >("genJetsPt");
@@ -219,7 +219,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
     facBTagErr = 1.5;
 
     systematics.insert(systematics.begin(), "noSyst");
-
+    
     //  for(size_t i = 0; i < systematics.size();++i){
     //  if(systematics.at(i)=="")
     //}
@@ -229,11 +229,11 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
 
     TFileDirectory SingleTopSystematics = fs->mkdir( "systematics_histograms" );
     TFileDirectory SingleTopTrees = fs->mkdir( "systematics_trees" );
-
-
+    
+    
     for (size_t i = 0; i < rate_systematics.size(); ++i)
     {
-        all_syst.push_back(rate_systematics.at(i));
+      all_syst.push_back(rate_systematics.at(i));
     }
 
 
@@ -309,39 +309,48 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             treesNJets[syst]->Branch("fJetPUID", &fJetPUID);
             treesNJets[syst]->Branch("fJetPUWP", &fJetPUWP);
             //58 lines
+            treesNJets[syst]->Branch("fJetBeta", &fJetBeta);
+            treesNJets[syst]->Branch("fJetDZ", &fJetDZ);
+            treesNJets[syst]->Branch("fJetRMS", &fJetRMS);
+
+            treesNJets[syst]->Branch("bJetBeta", &bJetBeta);
+            treesNJets[syst]->Branch("bJetDZ", &bJetDZ);
+            treesNJets[syst]->Branch("bJetRMS", &bJetRMS);
+
+
 
         }
-
+	
         for (int bj = 0; bj <= 5; ++bj)
         {
-
+	  
             stringstream tags;
             int ntagss = bj;
             if (ntagss > 2 )
-            {
-
+	      {
+		
                 ntagss = ntagss - 3;
                 tags << ntagss;
                 tags <<  "T_QCD";
-            }
+	      }
             else
-            {
+	      {
                 tags << ntagss << "T";
-            }
-            //2J1T
-
+	      }
+           //2J1T
+	    
             string treename = (channel + "_2J_" + tags.str() + "_" + syst);
-
+	    
             //if(bj==0 )treename = (channel+"_"+syst+"WSample");
             //      if(bj==3 )treename = (channel+"_"+syst+"WSampleQCD");
-
+	    
             //      if(bj==1 )treename = (channel+"_"+syst);
             //      if(bj==4 )treename = (channel+"_"+syst+"QCD");
-
+	    
             trees2J[bj][syst] = new TTree(treename.c_str(), treename.c_str());
-
+	    
             //quantities for the analysis
-
+	    
             trees2J[bj][syst]->Branch("eta", &etaTree);
             trees2J[bj][syst]->Branch("costhetalj", &cosTree);
             trees2J[bj][syst]->Branch("costhetalbl", &cosBLTree);
@@ -417,6 +426,10 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             trees2J[bj][syst]->Branch("fJetBeta", &fJetBeta);
             trees2J[bj][syst]->Branch("fJetDZ", &fJetDZ);
             trees2J[bj][syst]->Branch("fJetRMS", &fJetRMS);
+
+            trees2J[bj][syst]->Branch("bJetBeta", &bJetBeta);
+            trees2J[bj][syst]->Branch("bJetDZ", &bJetDZ);
+            trees2J[bj][syst]->Branch("bJetRMS", &bJetRMS);
 
             trees2J[bj][syst]->Branch("bJetPt", &bJetPt);
             trees2J[bj][syst]->Branch("bJetE", &bJetE);
@@ -528,6 +541,9 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             trees3J[bj][syst]->Branch("fJetDZ", &fJetDZ);
             trees3J[bj][syst]->Branch("fJetRMS", &fJetRMS);
 
+            trees3J[bj][syst]->Branch("bJetBeta", &bJetBeta);
+            trees3J[bj][syst]->Branch("bJetDZ", &bJetDZ);
+            trees3J[bj][syst]->Branch("bJetRMS", &bJetRMS);
 
             trees3J[bj][syst]->Branch("bJetPt", &bJetPt);
             trees3J[bj][syst]->Branch("bJetE", &bJetE);
@@ -1581,9 +1597,10 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                     {
                         ++nJetsNoSyst;
                         jetsNoSyst[nJets - 1] = jets[nJets - 1];
-                    }
-                    //cout <<" jet no syst "<< nJets-1<<" pt "  <<jetsNoSyst[nJets-1].pt()<<endl;
-                }
+			//			cout <<" jet no syst "<< nJets-1<<" pt "  <<jetsNoSyst[nJets-1].pt()<<endl;
+			
+		    }
+		}
 
                 //b tag thresholds
 
@@ -1896,6 +1913,11 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                     bJetFlavourTree = jetsFlavour->at(i);
                     bJetPUID = jetsPileUpID->at(i);
                     bJetPUWP = jetsPileUpWP->at(i);
+
+                    bJetBeta = jetsBeta->at(i);
+                    bJetDZ = jetsDZ->at(i);
+                    bJetRMS = jetsRMS->at(i);
+
                 }
                 if (valueChosenAlgo < lowBTagTree)
                 {
@@ -1915,8 +1937,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
 
         if (syst == "noSyst")
         {
-            highBTagTreePositionNoSyst = highBTagTreePosition;
-            lowBTagTreePositionNoSyst = lowBTagTreePosition;
+	  highBTagTreePositionNoSyst = highBTagTreePosition;
+	  lowBTagTreePositionNoSyst = lowBTagTreePosition;
             maxPtTreePositionNoSyst = maxPtTreePosition;
             minPtTreePositionNoSyst = minPtTreePosition;
             nbNoSyst = nb;
@@ -1943,7 +1965,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
             for (size_t a = 0; a < nJetsNoSyst; ++a)
             {
                 jets[a] = jetsNoSyst[a];
-                //cout <<" jet no syst "<< a <<" pt "  <<jets[a].pt()<<endl;
+		//		cout <<" jet no syst "<< a <<" pt "  <<jets[a].pt()<<endl;
             }
             highBTagTreePosition = highBTagTreePositionNoSyst;
             lowBTagTreePosition = lowBTagTreePositionNoSyst;
@@ -2040,7 +2062,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
         runTree = iEvent.eventAuxiliary().run();
         lumiTree = iEvent.eventAuxiliary().luminosityBlock();
         eventTree = iEvent.eventAuxiliary().event();
-
+	
+	//	cout << " syst " << syst << endl;
 
         for (size_t J_ = 0; J_ < nJets; ++J_ )
         {
@@ -2048,9 +2071,9 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
             if (ptCorr > secondPt &&  ptCorr < maxPtTree)
             {
                 secondPt = ptCorr;
-                secondPtPosition = nJets - 1;
+                secondPtPosition = J_ ;
                 secondJetFlavourTree = flavours[J_];
-                //cout << " second jet pos " <<secondPtPosition << " pt "<<secondPt <<endl ;
+		//      cout << " second jet pos " <<secondPtPosition << " pt "<<secondPt <<endl ;
             }
         }
 
@@ -2060,15 +2083,16 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
             if (ptCorr > thirdPt &&  ptCorr < secondPt)
             {
                 thirdPt = ptCorr;
-                thirdPtPosition = nJets - 1;
+                thirdPtPosition = J_;
                 thirdJetFlavourTree = flavours[J_];
-                //cout << " third jet pos " << thirdPtPosition << " pt "<< thirdPt <<endl ;
+		// cout << " third jet pos " << thirdPtPosition << " pt "<< thirdPt <<endl ;
             }
         }
 
 	//        if (thirdPt > secondPt ) cout << "  sanity check: Pt3 > Pt2 at event" << eventTree << " njets "<< nJets <<endl;
         //if (secondPt > maxPtTree ) cout << "  sanity check: Pt2 > Pt1 at event" << eventTree <<" njets "<< nJets <<endl;
         //if (thirdPt > maxPtTree ) cout << "  sanity check: Pt3 > Pt1 at event" << eventTree << " njets "<< nJets <<endl;
+
 
         if (nJets > 0)
         {
@@ -2126,7 +2150,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
 
         }
 
-
+	
 
 
         if (doJetTrees_ && !isQCD)
@@ -2169,7 +2193,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
 
                 treesNJets[syst]->Fill();
             }
-
+	    
         }
 
 
