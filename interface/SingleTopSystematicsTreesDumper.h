@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  *
  * Produces systematics histograms out of a standard Single Top n-tuple
- * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.8 2012/07/20 12:26:51 jpata Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.9 2012/07/23 01:15:25 oiorio Exp $
  */
 
 
@@ -433,7 +433,7 @@ private:
 
     int runTree, eventTree, lumiTree, chargeTree, electronID, bJetFlavourTree, fJetFlavourTree, eventFlavourTree, puZero, firstJetFlavourTree, secondJetFlavourTree, thirdJetFlavourTree;
 
-  double lepPt, lepEta, lepPhi, lepRelIso, lepDeltaCorrectedRelIso, lepRhoCorrectedRelIso, fJetPhi, fJetPt, fJetEta, fJetE, bJetPt, bJetEta, bJetPhi, bJetE, metPt, metPhi, topPt, topPhi, topEta, topE, totalEnergy, totalMomentum, fJetBTag, bJetBTag, vtxZ, fJetPUID, fJetPUWP, bJetPUID, bJetPUWP, firstJetPt, firstJetEta, firstJetPhi, firstJetE, secondJetPt, secondJetEta, secondJetPhi, secondJetE, thirdJetPt, thirdJetEta, thirdJetPhi, thirdJetE,fJetBeta,fJetDZ,fJetRMS;
+  double lepPt, lepEta, lepPhi, lepRelIso, lepDeltaCorrectedRelIso, lepRhoCorrectedRelIso, fJetPhi, fJetPt, fJetEta, fJetE, bJetPt, bJetEta, bJetPhi, bJetE, metPt, metPhi, topPt, topPhi, topEta, topE, totalEnergy, totalMomentum, fJetBTag, bJetBTag, vtxZ, fJetPUID, fJetPUWP, bJetPUID, bJetPUWP, firstJetPt, firstJetEta, firstJetPhi, firstJetE, secondJetPt, secondJetEta, secondJetPhi, secondJetE, thirdJetPt, thirdJetEta, thirdJetPhi, thirdJetE,fJetBeta,fJetDZ,fJetRMS,bJetBeta,bJetDZ,bJetRMS;
 
 
     //Not used anymore:

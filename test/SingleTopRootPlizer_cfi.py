@@ -95,6 +95,15 @@ jetsPhi = cms.InputTag("nTupleTopJetsPF","topJetsPFPhi"),
 jetsEta = cms.InputTag("nTupleTopJetsPF","topJetsPFEta"),  
 jetsEnergy = cms.InputTag("nTupleTopJetsPF","topJetsPFE"),  
 
+jetsDZ = cms.InputTag("nTupleTopJetsPF","topJetsPFdZ"),  
+jetsBeta = cms.InputTag("nTupleTopJetsPF","topJetsPFBeta"),  
+jetsRMS = cms.InputTag("nTupleTopJetsPF","topJetsPFRMS"),  
+
+#jetsDZ = cms.InputTag("nTupleTopJetsPF","topJetsPFPt"),  
+#jetsBeta = cms.InputTag("nTupleTopJetsPF","topJetsPFPt"),  
+#jetsRMS = cms.InputTag("nTupleTopJetsPF","topJetsPFPt"),  
+
+
 jetsPileUpDiscr = cms.InputTag("nTupleTopJetsPF","topJetsPFPUFullDiscriminant"),  
 jetsPileUpWP = cms.InputTag("nTupleTopJetsPF","topJetsPFPUFullWorkingPoint"),  
 
