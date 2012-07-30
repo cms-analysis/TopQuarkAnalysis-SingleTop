@@ -68,7 +68,8 @@ Postfix = ""
 runOnMC = True
 jetAlgoName = "AK5"
 print "test2.2"
-usePF2PAT(process, runPF2PAT=True, jetAlgo=jetAlgoName, runOnMC=runOnMC, postfix=Postfix, jetCorrections=('AK5PFchs',['L1FastJet','L2Relative','L3Absolute']), pvCollection=cms.InputTag('offlinePrimaryVertices'),  typeIMetCorrections=True)
+usePF2PAT(process, runPF2PAT=True, jetAlgo=jetAlgoName, runOnMC=runOnMC, postfix=Postfix, jetCorrections=('AK5PFchs',['L1FastJet','L2Relative','L3Absolute']), pvCollection=cms.InputTag('goodOfflinePrimaryVertices'),  typeIMetCorrections=True)
+#usePF2PAT(process, runPF2PAT=True, jetAlgo=jetAlgoName, runOnMC=runOnMC, postfix=Postfix, jetCorrections=('AK5PFchs',['L1FastJet','L2Relative','L3Absolute']), pvCollection=cms.InputTag('offlinePrimaryVertices'),  typeIMetCorrections=True)
 #          jetCorrections=('AK5PFchs', jetCorrections)
 
 process.pfPileUp.Enable = True
@@ -169,11 +170,13 @@ process.ZeroIsoLeptonSequence = cms.Path(
 print " test 3 " 
 
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(300) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(400) )
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
-"file:/tmp/oiorio/Sync_File_TTBar.root",
+#"file:/tmp/oiorio/Sync_File_TTBar.root",
+"file:/tmp/oiorio/Synch_File_TbarChannel.root",
+#"file:/tmp/oiorio/edmntuple_sync2012_T_t_withPVCleaning.root"
 ),
 #eventsToProcess = cms.untracked.VEventRange('1:65161675-1:65161677'),#1:95606867-1:95606869')
 duplicateCheckMode = cms.untracked.string('noDuplicateCheck')

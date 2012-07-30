@@ -451,8 +451,8 @@ RelIsoCut = cms.untracked.double(relIsoCutElectrons),
 TTBarMu = cms.PSet(
     crossSection = cms.untracked.double(234.),
     channel = cms.untracked.string("TTBar"),
-    originalEvents = cms.untracked.double(6736135),#1089625
-    finalLumi = lumiMu,Season = cms.untracked.string(PileUpSeason),
+    originalEvents = cms.untracked.double(7619888),#1089625
+    finalLumi = lumiMu,Season = cms.untracked.string(PileUpSeasonV6),
     MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
    RelIsoCut = cms.untracked.double(relIsoCutMuons),
     mcPUFile = cms.untracked.string("pileupdistr_TTBar.root"),
@@ -463,8 +463,8 @@ TTBarEle = cms.PSet(
     crossSection = cms.untracked.double(234.),
 RelIsoCut = cms.untracked.double(relIsoCutElectrons),
     channel = cms.untracked.string("TTBar"),
-    finalLumi = lumiEle,Season = cms.untracked.string(PileUpSeason),
-    originalEvents = cms.untracked.double(6736135),#1089625
+    finalLumi = lumiEle,Season = cms.untracked.string(PileUpSeasonV6),
+    originalEvents = cms.untracked.double(7619888),#1089625
     mcPUFile = cms.untracked.string("pileupdistr_TTBar.root"),
     puHistoName = cms.untracked.string("pileUpDumper/PileUpTTBar"),
     )

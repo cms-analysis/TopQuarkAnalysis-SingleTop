@@ -12,18 +12,23 @@ fileName = "SingleTopSystematicsWithTrigger_cfg.py"
 
 #Channels to include
 channels = [
-"QCDMu",
-#"WJets_part_1","WJets_part_2","WJets_part_3","WJets_part_4","WJets_part_5","WJets_part_6","WJets_part_7","WJets_part_8","WJets_part_9","WJets_part_10",
+#"TChannel",
+#"ZJets",
+#"QCDMu",
+#"WJets_part_1","WJets_part_2","WJets_part_3","WJets_part_4","WJets_part_5","WJets_part_6","WJets_part_7","WJets_part_8","WJets_part_9",#"WJets_part_10",
 #"TChannel", "TbarChannel",
 #"SChannel", "SbarChannel",
 ## "TTBar_Q2Up",# "TTBar_Q2Down",
-# "TChannel", "TbarChannel",
-# "TWChannel", "TbarWChannel",
-#"TTBar_part_1", "TTBar_part_2","TTBar_part_3","TTBar_part_4", "TTBar_part_5", "TTBar_part_6",
-# "Mu_v1_A_part_1", "Mu_v1_A_part_2", "Mu_v1_A_part_3", "Mu_v1_A_part_4", "Mu_v1_A_part_5", "Mu_v1_A_part_6",
-# "Mu_v1_B1_part_1", "Mu_v1_B1_part_2", "Mu_v1_B1_part_3", "Mu_v1_B1_part_4", "Mu_v1_B1_part_5", "Mu_v1_B1_part_6", "Mu_v1_B1_part_7", "Mu_v1_B1_part_8", "Mu_v1_B1_part_9", 
-# "Mu_v1_B2_part_1", "Mu_v1_B2_part_2", "Mu_v1_B2_part_3", "Mu_v1_B2_part_4", "Mu_v1_B2_part_5", "Mu_v1_B2_part_6", "Mu_v1_B2_part_7", "Mu_v1_B2_part_8", "Mu_v1_B2_part_9",
-#"ZJets",
+#"WW","WZ","ZZ"
+#"TChannel", "TbarChannel",
+#"TWChannel", "TbarWChannel",
+"TTBar_part_1", "TTBar_part_2","TTBar_part_3","TTBar_part_4", "TTBar_part_5", "TTBar_part_6", "TTBar_part_7",
+#"Mu_v1_A_part_1", "Mu_v1_A_part_2", "Mu_v1_A_part_3", "Mu_v1_A_part_4", "Mu_v1_A_part_5", "Mu_v1_A_part_6", "Mu_v1_A_part_7",
+
+#"Mu_v1_B1_part_1", "Mu_v1_B1_part_2", "Mu_v1_B1_part_3", "Mu_v1_B1_part_4", "Mu_v1_B1_part_5", "Mu_v1_B1_part_6", "Mu_v1_B1_part_7", "Mu_v1_B1_part_8", "Mu_v1_B1_part_9","Mu_v1_B1_part_11", "Mu_v1_B1_part_12", "Mu_v1_B1_part_13", "Mu_v1_B1_part_14", "Mu_v1_B1_part_15", "Mu_v1_B1_part_16", "Mu_v1_B1_part_17", "Mu_v1_B1_part_18", "Mu_v1_B1_part_10", "Mu_v1_B1_part_20",
+# "Mu_v1_B1_part_10", "Mu_v1_B1_part_11",
+
+#"Ele_v1_A_part_1", "Ele_v1_A_part_2", "Ele_v1_A_part_3", "Ele_v1_A_part_4", "Ele_v1_A_part_5", "Ele_v1_A_part_6", "Ele_v1_A_part_7"
 # "Ele_v1_B2_part_1", "Ele_v1_B2_part_2", "Ele_v1_B2_part_3", "Ele_v1_B2_part_4", "Ele_v1_B2_part_5", "Ele_v1_B2_part_6", "Ele_v1_B2_part_7", "Ele_v1_B2_part_8", "Ele_v1_B2_part_9",
 # "TbarWChannel", "TWChannel",
 # "TbarChannel_Q2Up", "TbarChannel_Q2Down",

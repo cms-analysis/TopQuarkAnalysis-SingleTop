@@ -94,6 +94,7 @@ topJetsPF = cms.EDProducer("SingleTopJetsProducer",
                          puFullID  = cms.InputTag("puJetMva","fullId"),
                          puChargedDiscriminant = cms.InputTag("puJetMvaChs","fullDiscriminant"),
                          puChargedID  = cms.InputTag("puJetMvaChs","fullId"),
+                         puIDVariables  = cms.InputTag("puJetId"),
 
                          #                         checkOverlaps = cms.PSet(),
                            )

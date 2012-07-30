@@ -14,37 +14,73 @@ nTupleTopJetsPF = cms.EDProducer(
     ),
     cms.PSet(
     tag = cms.untracked.string("PUFullDiscriminant"),
-#    quantity = cms.untracked.string('(chargedHadronIso+ max(0., neutralHadronIso + photonIso -0.5*puChargedHadronIso()))/pt'),
     quantity = cms.untracked.string("userFloat(\"PUFullDiscriminant\")"),
     ),
     cms.PSet(
     tag = cms.untracked.string("PUChargedDiscriminant"),
-#    quantity = cms.untracked.string('(chargedHadronIso+ max(0., neutralHadronIso + photonIso -0.5*puChargedHadronIso()))/pt'),
     quantity = cms.untracked.string("userFloat(\"PUChargedDiscriminant\")"),
     ),
     cms.PSet(
     tag = cms.untracked.string("PUFullWorkingPoint"),
-#    quantity = cms.untracked.string('(chargedHadronIso+ max(0., neutralHadronIso + photonIso -0.5*puChargedHadronIso()))/pt'),
     quantity = cms.untracked.string("userFloat(\"PUFullWorkingPoint\")"),
     ),
     cms.PSet(
     tag = cms.untracked.string("PUChargedWorkingPoint"),
-#    quantity = cms.untracked.string('(chargedHadronIso+ max(0., neutralHadronIso + photonIso -0.5*puChargedHadronIso()))/pt'),
     quantity = cms.untracked.string("userFloat(\"PUChargedWorkingPoint\")"),
     ),
-   
-#    cms.PSet(
-#    tag = cms.untracked.string("TrackCountingHighEff"),
-#    quantity = cms.untracked.string("bDiscriminator('trackCountingHighEffBJetTags')")
-#    ),
+    cms.PSet(
+    tag = cms.untracked.string("Beta"),
+    quantity = cms.untracked.string("userFloat(\"beta\")"),
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("dZ"),
+    quantity = cms.untracked.string("userFloat(\"dZ\")"),
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("BetaStar"),
+    quantity = cms.untracked.string("userFloat(\"betaStar\")"),
+    ),
+
+    cms.PSet(
+    tag = cms.untracked.string("ChargedMultiplicity"),
+    quantity = cms.untracked.string("chargedMultiplicity"),
+     ),
+
+   cms.PSet(
+    tag = cms.untracked.string("NeutralMultiplicity"),
+    quantity = cms.untracked.string("neutralMultiplicity"),
+     ),
+ 
+    
+    cms.PSet(
+    tag = cms.untracked.string("RMS"),
+    quantity = cms.untracked.string("userFloat(\"RMS\")"),
+    ),
+
+    cms.PSet(
+    tag = cms.untracked.string("NeuHadEn"),
+    quantity = cms.untracked.string("neutralHadronEnergyFraction"),
+    ),
+
+    cms.PSet(
+    tag = cms.untracked.string("NeuEmEn"),
+    quantity = cms.untracked.string("neutralEmEnergyFraction"),
+    ),
+
+    cms.PSet(
+    tag = cms.untracked.string("CHEmEn"),
+    quantity = cms.untracked.string("chargedEmEnergyFraction"),
+    ),
+
+    cms.PSet(
+    tag = cms.untracked.string("CHHadEn"),
+    quantity = cms.untracked.string("chargedHadronEnergyFraction"),
+    ),
+
     cms.PSet(
     tag = cms.untracked.string("CombinedSecondaryVertexBJetTags"),
     quantity = cms.untracked.string("bDiscriminator('combinedSecondaryVertexBJetTags')"),
     ),
-#    cms.PSet(
-#    tag = cms.untracked.string("SecondaryVertexHighPurBJetTags"),
-#    quantity = cms.untracked.string("bDiscriminator('CombinedSecondaryVertexHighPurBJetTags')"),
-#    ),
     ##    4-momentum
     cms.PSet(
     tag = cms.untracked.string("Pt"),

@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.10 2012/07/23 01:15:10 oiorio Exp $
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.11 2012/07/24 13:36:32 oiorio Exp $
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file
 //
@@ -1293,6 +1293,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
             if (doQCD_ && isQCD)
             {
                 iEvent.getByLabel(qcdLeptonsDeltaCorrectedRelIso_, qcdLeptonsDeltaCorrectedRelIso);
+		iEvent.getByLabel(qcdLeptonsRhoCorrectedRelIso_, qcdLeptonsRhoCorrectedRelIso);
+
                 for (size_t i = 0; i < qcdLeptonsDeltaCorrectedRelIso->size(); ++i)
                 {
 
@@ -1307,9 +1309,12 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                     float leptonRelIso = qcdLeptonsDeltaCorrectedRelIso->at(i);
                     //  cout << "qcd lep " << i << "rel iso "<<leptonRelIso<<endl;
 
-                    float leptonQCDRelIso = leptonRelIso;
+		    		    
+		    float leptonQCDRelIso = leptonRelIso;
                     //Use an anti-isolation requirement
 
+		    lepDeltaCorrectedRelIso = leptonRelIso;
+		    lepRhoCorrectedRelIso = qcdLeptonsRhoCorrectedRelIso->at(i) ;
 
                     if (leptonsFlavour_ == "muon")
                     {

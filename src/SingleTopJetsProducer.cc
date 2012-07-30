@@ -2,7 +2,7 @@
  *\Author: A. Orso M. Iorio 
  *
  *
- *\version  $Id: SingleTopJetsProducer.cc,v 1.5 2010/12/09 23:11:36 oiorio Exp $ 
+ *\version  $Id: SingleTopJetsProducer.cc,v 1.5.12.1 2012/06/22 16:32:07 oiorio Exp $ 
  */
 
 // Single Top producer: produces a top candidate made out of a Lepton, a B jet and a MET
@@ -40,6 +40,8 @@
 #include "FWCore/ParameterSet/interface/ParameterSetDescription.h"
 #include "CMGTools/External/interface/PileupJetIdentifier.h"
 
+#include "CMGTools/External/interface/PileupJetIdentifier.h"
+
 #include "FWCore/Framework/interface/Selector.h"
 
 
@@ -64,6 +66,8 @@ SingleTopJetsProducer::SingleTopJetsProducer(const edm::ParameterSet& iConfig)
 
   PUChargedDiscriminant_  = iConfig.getParameter<edm::InputTag>	      ( "puChargedDiscriminant" );
   PUChargedID_                 = iConfig.getParameter<edm::InputTag>	      ( "puChargedID" );
+
+  PUIDVariables_                 = iConfig.getParameter<edm::InputTag>	      ( "puIDVariables" );
 
   cut_ = iConfig.getParameter< std::string >("cut"); 
   
@@ -94,6 +98,9 @@ void SingleTopJetsProducer::produce(edm::Event & iEvent, const edm::EventSetup &
   iEvent.getByLabel(PUFullID_,puFullJetIdFlag);  
   iEvent.getByLabel(PUChargedDiscriminant_,puChargedJetIdMVA);
   iEvent.getByLabel(PUChargedID_,puChargedJetIdFlag);  
+
+  iEvent.getByLabel(PUIDVariables_, puIDVariables);  
+
   
   for(size_t i = 0; i < jets->size(); ++i){
     //    pat::Jet & jet = (*initialJets)[i];
@@ -102,9 +109,17 @@ void SingleTopJetsProducer::produce(edm::Event & iEvent, const edm::EventSetup &
     Selector cut(cut_);
     if(!cut(jet))continue; 
 
+    
+
     jet.addUserFloat("PUFullDiscriminant", (*puFullJetIdMVA)[(vjets->refAt(i))]);
     jet.addUserFloat("PUChargedDiscriminant", (*puChargedJetIdMVA)[(vjets->refAt(i))]);
 
+
+    jet.addUserFloat("beta", ((*puIDVariables)[(vjets->refAt(i))]).beta());
+    jet.addUserFloat("betaStar", ((*puIDVariables)[(vjets->refAt(i))]).betaStar());
+    jet.addUserFloat("RMS", ((*puIDVariables)[(vjets->refAt(i))]).RMS());
+    jet.addUserFloat("dZ", ((*puIDVariables)[(vjets->refAt(i))]).dZ());
+    
     int wp = 0;
     
     int idflag = (*puFullJetIdFlag)[ (vjets->refAt(i))];

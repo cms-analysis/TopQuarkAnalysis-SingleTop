@@ -9,7 +9,7 @@
  * \Author A. Orso M. Iorio
  * 
  *
- *\version  $Id: SingleTopJetsProducer.h,v 1.2 2010/11/17 09:24:42 oiorio Exp $
+ *\version  $Id: SingleTopJetsProducer.h,v 1.2.12.1 2012/06/22 16:32:06 oiorio Exp $
  *
  *
 */
@@ -61,6 +61,7 @@
 //#include "TLorentzVector.h"
 #include "TopQuarkAnalysis/SingleTop/interface/EquationSolver.h"
 
+#include "CMGTools/External/interface/PileupJetIdentifier.h"
 
 //class JetFlavourIdentifier;
 
@@ -79,13 +80,15 @@
   
 
   
-    edm::InputTag src_,PUFullDiscriminant_,PUFullID_,PUChargedDiscriminant_,PUChargedID_;
+    edm::InputTag src_,PUFullDiscriminant_,PUFullID_,PUChargedDiscriminant_,PUChargedID_,PUIDVariables_;
     std::string cut_;
       
     typedef StringCutObjectSelector<pat::Jet> Selector;
 
     edm::Handle<std::vector<pat::Jet> > jets;
     edm::Handle<edm::View<pat::Jet> > vjets;
+
+    edm::Handle<edm::ValueMap<StoredPileupJetIdentifier> > puIDVariables;
 
     edm::Handle<edm::ValueMap<float> > puFullJetIdMVA;
     edm::Handle<edm::ValueMap<int> > puFullJetIdFlag;
