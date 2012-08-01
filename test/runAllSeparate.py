@@ -16,7 +16,7 @@ channels = [
 #"ZJets",
 #"QCDMu",
 #"WJets_part_1","WJets_part_2","WJets_part_3","WJets_part_4","WJets_part_5","WJets_part_6","WJets_part_7","WJets_part_8","WJets_part_9",#"WJets_part_10",
-#"TChannel", "TbarChannel",
+"TChannel", "TbarChannel",
 #"SChannel", "SbarChannel",
 ## "TTBar_Q2Up",# "TTBar_Q2Down",
 #"WW","WZ","ZZ"

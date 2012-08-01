@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.11 2012/07/24 13:36:32 oiorio Exp $
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.12 2012/07/30 14:43:10 oiorio Exp $
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file
 //
@@ -287,6 +287,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             treesNJets[syst]->Branch("leptonDeltaCorrectedRelIso", &lepDeltaCorrectedRelIso);
             treesNJets[syst]->Branch("leptonRhoCorrectedRelIso", &lepRhoCorrectedRelIso);
             treesNJets[syst]->Branch("leptonEff", &lepEff);
+            treesNJets[syst]->Branch("leptonEffB", &lepEffB);
             treesNJets[syst]->Branch("mtwMass", &mtwMassTree);
             treesNJets[syst]->Branch("metPt", &metPt);
             treesNJets[syst]->Branch("HT", &HT);
@@ -413,6 +414,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             trees2J[bj][syst]->Branch("leptonRhoCorrectedRelIso", &lepRhoCorrectedRelIso);
 
             trees2J[bj][syst]->Branch("leptonEff", &lepEff);
+            trees2J[bj][syst]->Branch("leptonEffB", &lepEffB);
 
             trees2J[bj][syst]->Branch("fJetPt", &fJetPt);
             trees2J[bj][syst]->Branch("fJetE", &fJetE);
@@ -527,6 +529,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             trees3J[bj][syst]->Branch("leptonRhoCorrectedRelIso", &lepRhoCorrectedRelIso);
 
             trees3J[bj][syst]->Branch("leptonEff", &lepEff);
+            trees3J[bj][syst]->Branch("leptonEffB", &lepEffB);
 
             trees3J[bj][syst]->Branch("fJetPt", &fJetPt);
             trees3J[bj][syst]->Branch("fJetE", &fJetE);
@@ -685,7 +688,8 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
 
     //jecUnc  = new JetCorrectionUncertainty(JEC_PATH+"GR_R_42_V19_AK5PF_Uncertainty.txt");
     //  jecUnc  = new JetCorrectionUncertainty(JEC_PATH+"JEC11_V12_AK5PF_UncertaintySources.txt");
-    jecUnc  = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JEC11_V12_AK5PF_UncertaintySources.txt", "Total")));
+    //    jecUnc  = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JEC11_V12_AK5PF_UncertaintySources.txt", "Total")));
+    jecUnc  = new JetCorrectionUncertainty(*(new JetCorrectorParameters("Summer12_V2_DATA_AK5PF_UncertaintySources.txt", "Total")));
     JES_SW = 0.015;
     JES_b_cut = 0.02;
     JES_b_overCut = 0.03;
@@ -864,6 +868,7 @@ void SingleTopSystematicsTreesDumper::initBranchVars()
     lepDeltaCorrectedRelIso = DOUBLE_NAN;
     lepRhoCorrectedRelIso = DOUBLE_NAN;
     lepEff = DOUBLE_NAN;
+    lepEffB = DOUBLE_NAN;
     fJetPt = DOUBLE_NAN;
     fJetE = DOUBLE_NAN;
     fJetEta = DOUBLE_NAN;
@@ -1566,6 +1571,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                 if (syst_name == "JESUp")
                 {
                     unc = jetUncertainty( eta,  ptCorr, flavour);
+		    //		    cout << syst << "  "<< unc << endl; 
                     ptCorr = ptCorr * (1 + unc);
                     energyCorr = energyCorr * (1 + unc);
                     metPx -= (jetsPt->at(i) * cos(jetsPhi->at(i))) * unc;
@@ -1695,7 +1701,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
 
                             hptSFErr = BTagSFErrNew(ptCorr, "TCHPT") * facBTagErr;
                             csvtSFErr = BTagSFErrNew(ptCorr, "CSVT") * facBTagErr;
-                            csvmSFErr = BTagSFErrNew(ptCorr, "CSVL");
+                            csvmSFErr = BTagSFErrNew(ptCorr, "CSVL") * facBTagErr;
 
                             //hptSFErr = BTagSFErrNew(ptCorr,"TCHPT");
                             //      csvtSF = BTagSFErrNew(ptCorr,"TCHPT");
@@ -1768,7 +1774,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
 
                             hptSFErr = BTagSFErrNew(ptCorr, "TCHPT") * facBTagErr;
                             csvtSFErr = BTagSFErrNew(ptCorr, "CSVT") * facBTagErr;
-                            csvmSFErr = BTagSFErrNew(ptCorr, "CSVL");
+                            csvmSFErr = BTagSFErrNew(ptCorr, "CSVL") * facBTagErr;
 
                         }
 
@@ -1839,17 +1845,17 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                             //      hpteff = EFFMapNew(valueAlgo1,"TCHP_L");
                             //      heleff = EFFMapNew(valueAlgo2,"TCHE_L");
 
-                            hptSF = MisTagSFNew(ptCorr, eta, "TCHPT");
-                            hptSFErrUp = MisTagSFErrNewUp(ptCorr, eta, "TCHPT");
-                            hptSFErrDown = MisTagSFErrNewDown(ptCorr, eta, "TCHPT");
+			  hptSF = MisTagSFNew(ptCorr, eta, "TCHPT");
+			  hptSFErrUp = MisTagSFErrNewUp(ptCorr, eta, "TCHPT")* facBTagErr;
+			  hptSFErrDown = MisTagSFErrNewDown(ptCorr, eta, "TCHPT")* facBTagErr;
 
-                            csvmSF = MisTagSFNew(ptCorr, eta, "CSVL");
-                            csvmSFErrUp = MisTagSFErrNewUp(ptCorr, eta, "CSVL");
-                            csvmSFErrDown = MisTagSFErrNewDown(ptCorr, eta, "CSVL");
-
-                            csvtSF = MisTagSFNew(ptCorr, eta, "CSVT");
-                            csvtSFErrUp = MisTagSFErrNewUp(ptCorr, eta, "CSVT");
-                            csvtSFErrDown = MisTagSFErrNewDown(ptCorr, eta, "CSVT");
+			  csvmSF = MisTagSFNew(ptCorr, eta, "CSVL");
+			  csvmSFErrUp = MisTagSFErrNewUp(ptCorr, eta, "CSVL");
+			  csvmSFErrDown = MisTagSFErrNewDown(ptCorr, eta, "CSVL");
+			  
+			  csvtSF = MisTagSFNew(ptCorr, eta, "CSVT");
+			  csvtSFErrUp = MisTagSFErrNewUp(ptCorr, eta, "CSVT")* facBTagErr;
+			  csvtSFErrDown = MisTagSFErrNewDown(ptCorr, eta, "CSVT")* facBTagErr;
                         }
 
                         jsfshpt.push_back(BTagWeight::JetInfo(hpteff, hptSF));
@@ -2172,7 +2178,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                     jetprobs.push_back(jetprob(pt, btag, eta, syst));
                 }
 
-                if (leptonsFlavour_ == "muon" )lepEff = muonHLTEff(leptons[0].eta());
+                if (leptonsFlavour_ == "muon" )lepEff = muonHLTEff(leptons[0].eta(),"Mu2012A");
+                if (leptonsFlavour_ == "muon" )lepEffB = muonHLTEff(leptons[0].eta(),"Mu2012B");
                 if (leptonsFlavour_ == "electron" )lepEff = 1;
 
                 lepPt = leptons[0].pt();
@@ -2462,8 +2469,10 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
             lepEta = leptonPFour.eta();
             lepPhi = leptonPFour.phi();
 
-            if (leptonsFlavour_ == "muon" )lepEff = muonHLTEff(lepEta);
-            if (leptonsFlavour_ == "electron" )lepEff = 1;
+	    if (leptonsFlavour_ == "muon" )lepEff = muonHLTEff(lepEta,"Mu2012A");
+	    if (leptonsFlavour_ == "muon" )lepEffB = muonHLTEff(lepEta,"Mu2012B");
+
+	    if (leptonsFlavour_ == "electron" )lepEff = 1;
 
 
 
@@ -2772,18 +2781,31 @@ double SingleTopSystematicsTreesDumper::jetUncertainty(double eta, double ptCorr
     }
     //    float JESUncertaintyTmp = sqrt(JESUncertainty*JESUncertainty + JetCorrection*JetCorrection);
     return sqrt(JES_b * JES_b + JES_PU * JES_PU + JES_SW * JES_SW + JetCorrection * JetCorrection);
+    return JetCorrection;
 }
 
-float SingleTopSystematicsTreesDumper::muonHLTEff(float eta)
+float SingleTopSystematicsTreesDumper::muonHLTEff(float eta, string period)
 {
     float eff = 0.87;
 
+    if(period == "Mu2012A"){
     if (eta < -1.1 && eta > -2.1) eff = 0.81;
     if (eta > -1.1 && eta < -0.9) eff = 0.835;
     if (eta > -0.9 && eta < -0.0) eff = 0.919;
     if (eta > 0.0 && eta < 0.9) eff = 0.921;
     if (eta > 0.9 && eta < 1.1) eff = 0.83;
     if (eta > 1.1 && eta < 2.1) eff = 0.815;
+    }
+
+
+    if(period == "Mu2012B"){
+    if (eta < -1.1 && eta > -2.1) eff = 0.81;
+    if (eta > -1.1 && eta < -0.9) eff = 0.841;
+    if (eta > -0.9 && eta < -0.0) eff = 0.938;
+    if (eta > 0.0 && eta < 0.9) eff = 0.940;
+    if (eta > 0.9 && eta < 1.1) eff = 0.84;
+    if (eta > 1.1 && eta < 2.1) eff = 0.821;
+    }
 
     return eff;
 }
