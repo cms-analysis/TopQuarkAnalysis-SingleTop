@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.12 2012/07/30 14:43:10 oiorio Exp $
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.13 2012/08/01 15:37:20 oiorio Exp $
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file
 //
@@ -181,6 +181,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
     doJetTrees_ = iConfig.getUntrackedParameter< bool >("doJetTrees", true);
 
     algo_ = iConfig.getUntrackedParameter< std::string >("algo", "CSVT");
+    doLooseBJetVeto_ = iConfig.getUntrackedParameter< bool >("doLooseBJetVeto", false);
 
     string season = "Summer11";
     season = dataPUFile_;
@@ -190,15 +191,15 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
     {
         //    //cout << " before lumIweightse "<<endl;
         LumiWeights_ = edm::LumiReWeighting(distr,
-                                            "pileUpDistr.root",
+                                            "pileUpData.root",
                                             std::string("pileup"),
                                             std::string("pileup"));
         LumiWeightsUp_ = edm::LumiReWeighting(distr,
-                                              "pileUpDistr.root",
+                                              "pileUpDataUp.root",
                                               std::string("pileup"),
                                               std::string("pileup"));
         LumiWeightsDown_ = edm::LumiReWeighting(distr,
-                                                "pileUpDistr.root",
+                                                "pileUpDataDown.root",
                                                 std::string("pileup"),
                                                 std::string("pileup"));
         //    LumiWeightsUp_.weight3D_init(1.080);
@@ -700,7 +701,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
     bool  doGaussianResol = false;
     //  ptResol = new JetResolution(fileResolName, doGaussianResol);
 
-    leptonRelIsoQCDCutUpper = 0.5, leptonRelIsoQCDCutLower = 0.3;
+    leptonRelIsoQCDCutUpper = 0.9, leptonRelIsoQCDCutLower = 0.2;
 
 
     topMassMeas = 172.9;
@@ -1271,7 +1272,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                 ++nLeptons;
 
                 leptons[nLeptons - 1] = math::PtEtaPhiELorentzVector(leptonPt, leptonEta, leptonPhi, leptonE);
-                //  leptons.push_back(math::PtEtaPhiELorentzVector(leptonPt,leptonEta,leptonPhi,leptonE));
+                //  Leptons.push_back(math::PtEtaPhiELorentzVector(leptonPt,leptonEta,leptonPhi,leptonE));
                 if (nLeptons >= 3) break;
 
                 //  cout<< " lepton number " << nLeptons << " pt "<< leptonPt << " eta " << fabs(leptonEta)<< endl;
@@ -1303,16 +1304,16 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                 for (size_t i = 0; i < qcdLeptonsDeltaCorrectedRelIso->size(); ++i)
                 {
 
-                    float leptonPt = 0.;
-
-                    //  if(leptonsFlavour_ == "muon" ) {
+		  float leptonPt = 0.;
+		  
+		  //  if(leptonsFlavour_ == "muon" ) {
                     iEvent.getByLabel(qcdLeptonsPt_, qcdLeptonsPt);
                     leptonPt = qcdLeptonsPt->at(i);
                     if ( leptonPt < 26.) continue;
 
 
                     float leptonRelIso = qcdLeptonsDeltaCorrectedRelIso->at(i);
-                    //  cout << "qcd lep " << i << "rel iso "<<leptonRelIso<<endl;
+		    //		    cout << "qcd lep " << i << "rel iso "<<leptonRelIso<<endl;
 
 		    		    
 		    float leptonQCDRelIso = leptonRelIso;
@@ -1325,7 +1326,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                     {
                         if ( leptonQCDRelIso > leptonRelIsoQCDCutUpper )continue;
                         if ( leptonQCDRelIso < leptonRelIsoQCDCutLower )continue;
-
+			
                         if (!gotQCDLeptons)
                         {
                             iEvent.getByLabel(qcdLeptonsEta_, qcdLeptonsEta);
@@ -1339,7 +1340,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                             iEvent.getByLabel(qcdLeptonsDB_, qcdLeptonsDB);
                             gotQCDLeptons = true;
 
-                            //        cout << " qcd lep "<< endl;
+			    //			    cout << " qcd lep "<< endl;
                         }
                     }
 
@@ -1367,7 +1368,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                             gotQCDLeptons = true;
                         }
                     }
-
+		    
                     lepRelIso = leptonRelIso;
 
                     float qcdLeptonPt = qcdLeptonsPt->at(i);
@@ -1384,11 +1385,12 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                 }
             }
             didLeptonLoop = true;
-
-            isQCD = (nQCDLeptons == 1 && !passesLeptons);
-
+	    
+	    isQCD = (nQCDLeptons == 1 && !passesLeptons);
+	    
             passesLeptonStep = (passesLeptons || isQCD);
-        }
+	    //cout << " nqcd lep "<<nQCDLeptons<< " passes leptons? " <<passesLeptons<<endl;
+	}
         if (!passesLeptonStep)continue;
 
         if (!gotPV)
@@ -1406,6 +1408,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
         //    b_discriminator_value_antitag_algo2.clear();
 
         ntchpt_tags = 0;
+        ncsvl_tags = 0;
         ncsvt_tags = 0;
         ncsvm_tags = 0;
 
@@ -1906,8 +1909,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                 }
 
                 bool passesAlgo = passesCSVT;
+		if(passesCSVM) ++ncsvl_tags;
                 if (algo_ == "TCHPT" ) passesAlgo = passesTCHPT;
-
                 if (passesAlgo)
                 {
                     if (syst == "noSyst" )  ++nBJets;
@@ -2240,7 +2243,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                 B += 3;
                 //leptonPFour = qcdLeptons[0];
                 //  chargeTree = qcdLeptonsCharge->at(0) ;
-                cout << " b is " << B << " lepton  charge " << chargeTree <<  endl;
+                //cout << " b is " << B << " lepton  charge " << chargeTree <<  endl;
             }
             //      else {
             //  leptonPFour = leptons[0];
@@ -2252,7 +2255,9 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                 ++passingJets;
             }
 
-            if ( (B == 0 || B == 3 ) && (ntchel_tags != 0  || lowBTagTreePosition < 0 || lowBTagTreePosition == highBTagTreePosition) ) continue; //Sample A condition, ok for now
+            if ( (B == 0 || B == 3 ) && (ntchpt_tags != 0  || lowBTagTreePosition < 0 || lowBTagTreePosition == highBTagTreePosition) ) continue; //Sample A condition, ok for now
+	    
+	    if(doLooseBJetVeto_)if(nJets==2 && (B == 1 || B==4))if( ncsvl_tags != 1 )continue;
 
 
             if (syst == "noSyst")
@@ -2499,13 +2504,13 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
 
             if (nJets == 2)
             {
-                //  //cout << " B is "<< B<< " syst is "<<syst_name <<endl;
+	      //cout << " B is "<< B<< " syst is "<<syst_name <<endl;
                 //  //cout<< " tree name "<< trees2J[B][syst_name]->GetName() <<endl;
                 trees2J[B][syst_name]->Fill();
             }
             if (nJets == 3)
             {
-                //  cout << " B is "<< B<< " syst is "<<syst_name <<endl;
+	      //cout << " B is "<< B<< " syst is "<<syst_name <<endl;
                 //  cout << " tree name "<< trees3J[B][syst_name]->GetName() <<endl;
                 trees3J[B][syst_name]->Fill();
             }
@@ -2788,7 +2793,7 @@ float SingleTopSystematicsTreesDumper::muonHLTEff(float eta, string period)
 {
     float eff = 0.87;
 
-    if(period == "Mu2012A"){
+    /*    if(period == "Mu2012A"){
     if (eta < -1.1 && eta > -2.1) eff = 0.81;
     if (eta > -1.1 && eta < -0.9) eff = 0.835;
     if (eta > -0.9 && eta < -0.0) eff = 0.919;
@@ -2805,8 +2810,29 @@ float SingleTopSystematicsTreesDumper::muonHLTEff(float eta, string period)
     if (eta > 0.0 && eta < 0.9) eff = 0.940;
     if (eta > 0.9 && eta < 1.1) eff = 0.84;
     if (eta > 1.1 && eta < 2.1) eff = 0.821;
-    }
+    }OLD
+    */
 
+
+    if(period == "Mu2012A"){
+      if (eta < -1.2 && eta > -2.1) eff = 0.8083;
+      if (eta > -1.2 && eta < -0.9) eff = 0.8339;
+      if (eta > -0.9 && eta < -0.0) eff = 0.9151;
+      if (eta > 0.0 && eta < 0.9) eff = 0.9151;
+      if (eta > 0.9 && eta < 1.2) eff = 0.8339;
+      if (eta > 1.2 && eta < 2.1) eff = 0.8083;
+    }
+    
+    
+    if(period == "Mu2012B"){
+      if (eta < -1.2 && eta > -2.1) eff = 0.8047;
+      if (eta > -1.2 && eta < -0.9) eff = 0.8394;
+      if (eta > -0.9 && eta < -0.0) eff = 0.9326;
+      if (eta > 0.0 && eta < 0.9) eff = 0.9326;
+      if (eta > 0.9 && eta < 1.2) eff = 0.8394;
+      if (eta > 1.2 && eta < 2.1) eff = 0.8047;
+    }
+    
     return eff;
 }
 
@@ -3756,9 +3782,9 @@ void SingleTopSystematicsTreesDumper::InitializeTurnOnReWeight(string rootFile =
 
 double SingleTopSystematicsTreesDumper::turnOnReWeight (double preWeight, double pt, double tchpt)
 {
-    cout << "reweight pt" <<  pt << " tchpt " << tchpt << endl;
-    cout << " bin " << histoSFs.FindFixBin(pt, tchpt) << " sf ";
-    cout << histoSFs.GetBinContent(histoSFs.FindFixBin(pt, tchpt)) << endl;
+  //    cout << "reweight pt" <<  pt << " tchpt " << tchpt << endl;
+  //  cout << " bin " << histoSFs.FindFixBin(pt, tchpt) << " sf ";
+  //    cout << histoSFs.GetBinContent(histoSFs.FindFixBin(pt, tchpt)) << endl;
     double a = histoSFs.GetBinContent(histoSFs.FindFixBin(pt, tchpt));
     return a;
     //  return 1;//preWeight;
@@ -4545,6 +4571,9 @@ double SingleTopSystematicsTreesDumper::bTagSF(int B)
         }
     }
 
+    if(doLooseBJetVeto_){
+     if(B==1 || B == 4) return b_csvt_1_tag.weightWithVeto(jsfscsvt,ncsvt_tags,jsfscsvm,ncsvl_tags);
+    }
 
 
     if (B == 0 || B == 3)
@@ -4608,17 +4637,34 @@ double SingleTopSystematicsTreesDumper::bTagSF(int B, string syst)
             return b_tchpt_2_tags.weight(jsfshpt, ntchpt_tags);
         }
     }
+
+    //Loose jet veto:
+    if(doLooseBJetVeto_){
+      if (B == 1 || B == 4)
+	{
+	  //	  if(syst ) return b_csvt_1_tag.weightWithVeto(jsfscsvt,ncsvt_tags,jsfscsvm,ncsvl_tags);	  
+	  if (syst == "BTagUp")    return b_csvt_1_tag.weightWithVeto(jsfscsvt_b_tag_up, ncsvt_tags,jsfscsvm_b_tag_up, ncsvl_tags);
+	  if (syst == "BTagDown")    return b_csvt_1_tag.weightWithVeto(jsfscsvt_b_tag_down, ncsvt_tags,jsfscsvm_b_tag_down, ncsvl_tags);
+	  if (syst == "MisTagUp")    return b_csvt_1_tag.weightWithVeto(jsfscsvt_mis_tag_up, ncsvt_tags,jsfscsvm_mis_tag_up, ncsvl_tags);
+	  if (syst == "MisTagDown")    return b_csvt_1_tag.weightWithVeto(jsfscsvt_mis_tag_down, ncsvt_tags,jsfscsvm_mis_tag_down, ncsvl_tags);
+
+	  return b_csvt_1_tag.weightWithVeto(jsfscsvt,ncsvt_tags,jsfscsvm,ncsvl_tags);	  
+	
+	}
+    }
+
+
     //Default case: use csvt
 
     if (B == 0 || B == 3)
     {
-        if (syst == "BTagUp")    return b_csvt_0_tags.weight(jsfscsvt_b_tag_up, ncsvt_tags); //*b_tchel_0_tags.weight(jsfshel_b_tag_up,ntchel_tags);
-        if (syst == "BTagDown")    return b_csvt_0_tags.weight(jsfscsvt_b_tag_down, ncsvt_tags); //*b_tchel_0_tags.weight(jsfshel_b_tag_down,ntchel_tags);
-        if (syst == "MisTagUp")    return b_csvt_0_tags.weight(jsfscsvt_mis_tag_up, ncsvt_tags); //*b_tchel_0_tags.weight(jsfshel_mis_tag_up,ntchel_tags);
-        if (syst == "MisTagDown")    return b_csvt_0_tags.weight(jsfscsvt_mis_tag_down, ncsvt_tags); //*b_tchel_0_tags.weight(jsfshel_mis_tag_down,ntchel_tags);
-        return b_csvt_0_tags.weight(jsfscsvt, ncsvt_tags); //*b_tchel_0_tags.weight(jsfshel,ntchel_tags);
+      if (syst == "BTagUp")    return b_csvt_0_tags.weight(jsfscsvt_b_tag_up, ncsvt_tags); //*b_tchel_0_tags.weight(jsfshel_b_tag_up,ntchel_tags);
+      if (syst == "BTagDown")    return b_csvt_0_tags.weight(jsfscsvt_b_tag_down, ncsvt_tags); //*b_tchel_0_tags.weight(jsfshel_b_tag_down,ntchel_tags);
+      if (syst == "MisTagUp")    return b_csvt_0_tags.weight(jsfscsvt_mis_tag_up, ncsvt_tags); //*b_tchel_0_tags.weight(jsfshel_mis_tag_up,ntchel_tags);
+      if (syst == "MisTagDown")    return b_csvt_0_tags.weight(jsfscsvt_mis_tag_down, ncsvt_tags); //*b_tchel_0_tags.weight(jsfshel_mis_tag_down,ntchel_tags);
+      return b_csvt_0_tags.weight(jsfscsvt, ncsvt_tags); //*b_tchel_0_tags.weight(jsfshel,ntchel_tags);
     }
-
+    
     if (B == 1 || B == 4)
     {
 
@@ -4722,6 +4768,54 @@ float SingleTopSystematicsTreesDumper::BTagWeight::weight(vector<JetInfo> jets, 
     if (pMC == 0) return 0;
     return pData / pMC;
 }
+
+
+
+float SingleTopSystematicsTreesDumper::BTagWeight::weightWithVeto(vector<JetInfo> jetsTags, int tags, vector<JetInfo> jetsVetoes, int vetoes)
+{//This function takes into account cases where you have n b-tags and m vetoes, but they have different thresholds. 
+    if (!filter(tags))
+    {
+        //   std::cout << "nThis event should not pass the selection, what is it doing here?" << std::endl;
+        return 0;
+    }
+    int njets = jetsTags.size();
+    if(njets != (int)(jetsVetoes.size()))return 0;//jets tags and vetoes must have same size!
+    int comb = 1 << njets;
+    float pMC = 0;
+    float pData = 0;
+    for (int i = 0; i < comb; i++)
+    {
+        float mc = 1.;
+        float data = 1.;
+        int ntagged = 0;
+        for (int j = 0; j < njets; j++)
+        {
+            bool tagged = ((i >> j) & 0x1) == 1;
+            if (tagged)
+            {
+                ntagged++;
+                mc *= jetsTags[j].eff;
+                data *= jetsTags[j].eff * jetsTags[j].sf;
+            }
+            else
+            {
+                mc *= (1. - jetsVetoes[j].eff);
+                data *= (1. - jetsVetoes[j].eff * jetsVetoes[j].sf);
+            }
+        }
+
+        if (filter(ntagged))
+        {
+            //  std::cout << mc << " " << data << endl;
+            pMC += mc;
+            pData += data;
+        }
+    }
+
+    if (pMC == 0) return 0;
+    return pData / pMC;
+}
+
 
 void SingleTopSystematicsTreesDumper::resetWeightsDoubles()
 {

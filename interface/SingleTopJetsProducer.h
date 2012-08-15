@@ -9,7 +9,7 @@
  * \Author A. Orso M. Iorio
  * 
  *
- *\version  $Id: SingleTopJetsProducer.h,v 1.2.12.1 2012/06/22 16:32:06 oiorio Exp $
+ *\version  $Id: SingleTopJetsProducer.h,v 1.2.12.2 2012/07/30 14:43:08 oiorio Exp $
  *
  *
 */
@@ -80,13 +80,16 @@
   
 
   
-    edm::InputTag src_,PUFullDiscriminant_,PUFullID_,PUChargedDiscriminant_,PUChargedID_,PUIDVariables_;
+    edm::InputTag src_,PUFullDiscriminant_,PUFullID_,PUChargedDiscriminant_,PUChargedID_,PUIDVariables_,electronsSrc_;
     std::string cut_;
       
     typedef StringCutObjectSelector<pat::Jet> Selector;
 
+    bool removeOverlap_;
+
     edm::Handle<std::vector<pat::Jet> > jets;
     edm::Handle<edm::View<pat::Jet> > vjets;
+    edm::Handle<std::vector<pat::Electron> > electrons;
 
     edm::Handle<edm::ValueMap<StoredPileupJetIdentifier> > puIDVariables;
 

@@ -87,15 +87,16 @@ PDFInfo = cms.EDProducer("PDFInfoDumper",
 
 
 topJetsPF = cms.EDProducer("SingleTopJetsProducer",
-#                         preselection = cms.string(''),
+#                        preselection = cms.string(''),
+                         electronsSrc = cms.InputTag("selectedPatElectrons"),
                          src = cms.InputTag("selectedPatJets"),
                          cut = cms.string('pt >  20 & abs(eta) < 5.'),
                          puFullDiscriminant = cms.InputTag("puJetMva","fullDiscriminant"),
                          puFullID  = cms.InputTag("puJetMva","fullId"),
                          puChargedDiscriminant = cms.InputTag("puJetMvaChs","fullDiscriminant"),
                          puChargedID  = cms.InputTag("puJetMvaChs","fullId"),
-                         puIDVariables  = cms.InputTag("puJetId"),
-
+                           puIDVariables  = cms.InputTag("puJetId"),
+                           removeOverlap = cms.untracked.bool(False),
                          #                         checkOverlaps = cms.PSet(),
                            )
 

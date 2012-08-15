@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  *
  * Produces systematics histograms out of a standard Single Top n-tuple
- * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.10 2012/07/24 13:37:29 oiorio Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.11 2012/08/01 15:37:19 oiorio Exp $
  */
 
 
@@ -428,7 +428,7 @@ private:
            turnOnWeightTreeBTagTrig2Down,
            turnOnWeightTreeBTagTrig3Down;
 
-    int nJ, nJNoPU, nJCentral, nJCentralNoPU, nJForward, nJForwardNoPU, nTCHPT, nCSVT, nCSVM;
+  int nJ, nJNoPU, nJCentral, nJCentralNoPU, nJForward, nJForwardNoPU, nTCHPT, nCSVT, nCSVM;
     double w1TCHPT, w2TCHPT, w1CSVT, w2CSVT, w1CSVM, w2CSVM;
 
     int runTree, eventTree, lumiTree, chargeTree, electronID, bJetFlavourTree, fJetFlavourTree, eventFlavourTree, puZero, firstJetFlavourTree, secondJetFlavourTree, thirdJetFlavourTree;
@@ -460,7 +460,7 @@ private:
     double leptonRelIsoQCDCutUpper, leptonRelIsoQCDCutLower;
     bool gotLeptons, gotJets, gotMets, gotLooseLeptons, gotPU, gotQCDLeptons, gotPV;
 
-    int nb, nc, nudsg, ntchpt_tags, ncsvm_tags, ncsvt_tags,
+  int nb, nc, nudsg, ntchpt_tags, ncsvm_tags, ncsvt_tags,ncsvl_tags,
         nbNoSyst, ncNoSyst, nudsgNoSyst,
         ntchpt_antitags, ntchpm_tags, ntchel_tags, ntche_antitags, ntight_tags;
 
@@ -501,8 +501,9 @@ private:
         BTagWeight(int jmin, int jmax) :
             maxTags(jmax), minTags(jmin) {}
 
-        bool filter(int t);
-        float weight(vector<JetInfo> jets, int tags);
+      bool filter(int t);
+      float weight(vector<JetInfo> jets, int tags);
+      float weightWithVeto(vector<JetInfo> jetsTags, int tags, vector<JetInfo> jetsVetoes, int vetoes);
     private:
         int maxTags;
         int minTags;
@@ -554,7 +555,7 @@ private:
     float x1, x2, Q2, scalePDF;
     int id1, id2;
 
-    bool isFirstEvent, doReCorrection_;
+  bool isFirstEvent, doReCorrection_, doLooseBJetVeto_;
 
     vector<JetCorrectorParameters > *vParData;
     FactorizedJetCorrector *JetCorrectorData;

@@ -1,5 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
+
 nTupleTopJetsPF = cms.EDProducer(
     "CandViewNtpProducer",
     src = cms.InputTag("topJetsPF"),
@@ -723,6 +724,7 @@ saveNTuplesSkim = cms.untracked.vstring(
     'keep *_UnclusteredType1METPF_*_*',
     'keep *_genJetsPF_*_*',
     'keep *_nTupleVertices_*_*',
+    'keep *_kt6PFJetsForIsolation_rho_*',
          )
 
 

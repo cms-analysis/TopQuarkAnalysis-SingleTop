@@ -2,7 +2,7 @@
  *\Author: A. Orso M. Iorio 
  *
  *
- *\version  $Id: SingleTopJetsProducer.cc,v 1.5.12.1 2012/06/22 16:32:07 oiorio Exp $ 
+ *\version  $Id: SingleTopJetsProducer.cc,v 1.5.12.2 2012/07/30 14:43:10 oiorio Exp $ 
  */
 
 // Single Top producer: produces a top candidate made out of a Lepton, a B jet and a MET
@@ -69,13 +69,17 @@ SingleTopJetsProducer::SingleTopJetsProducer(const edm::ParameterSet& iConfig)
 
   PUIDVariables_                 = iConfig.getParameter<edm::InputTag>	      ( "puIDVariables" );
 
-  cut_ = iConfig.getParameter< std::string >("cut"); 
   
 
-produces<std::vector<pat::Jet> >();
-//produces<std::vector<pat::Jet> >();
+  cut_ = iConfig.getParameter< std::string >("cut"); 
+  
+  removeOverlap_ = iConfig.getUntrackedParameter< bool >("removeOverlap",true); 
+  electronsSrc_ = iConfig.getParameter<edm::InputTag>("electronsSrc");
 
-//edm::ParameterSet overlapPSet = iConfig.getParameter<edm::ParameterSet>("leptonsSrc");
+  produces<std::vector<pat::Jet> >();
+  //produces<std::vector<pat::Jet> >();
+
+ 
   //  std::vector<edm::InputTag> names = overlapPSet.getParameterNamesForType< edm::InputTag >
 
 }
@@ -101,10 +105,23 @@ void SingleTopJetsProducer::produce(edm::Event & iEvent, const edm::EventSetup &
 
   iEvent.getByLabel(PUIDVariables_, puIDVariables);  
 
+  if(removeOverlap_)iEvent.getByLabel(electronsSrc_,electrons);
+
   
   for(size_t i = 0; i < jets->size(); ++i){
     //    pat::Jet & jet = (*initialJets)[i];
     pat::Jet & jet = (*initialJets)[i];
+    
+    bool isOverlapped = false;
+    if(removeOverlap_){
+      for(size_t e = 0; e < electrons->size(); ++e){
+	if(deltaR(jets->at(i),electrons->at(e))<0.3) {
+	  isOverlapped = true;
+	  break;
+	}
+      }
+    }
+    if( isOverlapped)continue;
 
     Selector cut(cut_);
     if(!cut(jet))continue; 
@@ -152,7 +169,7 @@ void SingleTopJetsProducer::produce(edm::Event & iEvent, const edm::EventSetup &
     jet.addUserFloat("PUChargedWorkingPoint",wpchs);
     
     
-
+  
 
     finalJets->push_back(jet);
 
