@@ -89,27 +89,6 @@ getattr(process,'patDefaultSequence'+postfix).replace( getattr(process,"patElect
 #getattr(process,"pfNoTau"+postfix).enable = False
 
 
-"""from PhysicsTools.PatAlgos.cleaningLayer1.jetCleaner_cfi import *
-
-process.cleanPatJets.checkOverlaps = cms.PSet(
-    electrons = cms.PSet(
-    src       = cms.InputTag("selectedPatElectrons"),
-    algorithm = cms.string("byDeltaR"),
-    preselection        = cms.string(""),
-    deltaR              = cms.double(0.3),
-    checkRecoComponents = cms.bool(False), # don't check if they share some AOD object ref
-    pairCut             = cms.string(""),
-    requireNoOverlaps   = cms.bool(False), # overlaps don't cause the jet to be discared
-    ),
-    )
- 
- 
-getattr(process,'patDefaultSequence'+postfix).replace(getattr(process,"selectedPatJets"),
-                                                      getattr(process,"selectedPatJets")+
-                                                      process.cleanPatJets
- )
-"""
-
 # set the dB to the beamspot
 process.patMuons.usePV = cms.bool(False)
 process.patElectrons.usePV = cms.bool(False)
