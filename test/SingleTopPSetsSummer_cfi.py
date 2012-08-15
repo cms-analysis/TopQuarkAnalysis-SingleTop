@@ -30,7 +30,7 @@ TChannelMu = cms.PSet(
 #    crossSection = cms.untracked.double(41.92*wToLNuBranchingRatio),
     crossSection = cms.untracked.double(56.4),
     channel = cms.untracked.string("TChannel"),
-    originalEvents = cms.untracked.double(27770),
+    originalEvents = cms.untracked.double(23777),
     finalLumi = lumiMu,
     MTWCut = cms.untracked.double(50.0),#Default 50.0 GeV
     RelIsoCut = cms.untracked.double(relIsoCutMuons),
@@ -39,14 +39,14 @@ TChannelMu = cms.PSet(
     Season = cms.untracked.string(PileUpSeason),
 #    Season = cms.untracked.string(""),
     )
-
-
+    
+    
 TChannelEle = cms.PSet(
 #    crossSection = cms.untracked.double(41.92*wToLNuBranchingRatio),
     crossSection = cms.untracked.double(56.4),
     channel = cms.untracked.string("TChannel"),
-    originalEvents = cms.untracked.double(27770),
-RelIsoCut = cms.untracked.double(relIsoCutElectrons),
+    originalEvents = cms.untracked.double(23777),
+    RelIsoCut = cms.untracked.double(relIsoCutElectrons),
     finalLumi = lumiEle,Season = cms.untracked.string(PileUpSeason),
     MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
     mcPUFile = cms.untracked.string("pileupdistr_TChannel.root"),
@@ -57,7 +57,8 @@ TbarChannelMu = cms.PSet(
 #    crossSection = cms.untracked.double(22.65 *wToLNuBranchingRatio),
     crossSection = cms.untracked.double(30.7),
     channel = cms.untracked.string("TbarChannel"),
-    originalEvents = cms.untracked.double(1935072),
+#    originalEvents = cms.untracked.double(1935072),
+    originalEvents = cms.untracked.double(1550000),
     finalLumi = lumiMu,Season = cms.untracked.string(PileUpSeason),
     MTWCut = cms.untracked.double(50.0),#Default 50.0 GeV
     RelIsoCut = cms.untracked.double(relIsoCutMuons),
@@ -71,8 +72,9 @@ TbarChannelEle = cms.PSet(
 #    crossSection = cms.untracked.double(22.65 *wToLNuBranchingRatio),
     crossSection = cms.untracked.double(30.7),
     channel = cms.untracked.string("TbarChannel"),
-    originalEvents = cms.untracked.double(1935072),
-RelIsoCut = cms.untracked.double(relIsoCutElectrons),
+#    originalEvents = cms.untracked.double(1935072),
+    originalEvents = cms.untracked.double(1550000),
+    RelIsoCut = cms.untracked.double(relIsoCutElectrons),
     finalLumi = lumiEle,Season = cms.untracked.string(PileUpSeason),
     MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
     mcPUFile = cms.untracked.string("pileupdistr_TChannel.root"),

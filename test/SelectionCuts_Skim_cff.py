@@ -16,12 +16,12 @@ from TopQuarkAnalysis.SingleTop.SingleTopSelectors_cff import *
 #eleLooseCut = cms.string("et > 15 & abs(eta) < 2.5")#RelIso < 0.2
 
 #With isolation requirements
-muLooseCut = cms.string("isPFMuon & ( isGlobalMuon || isTrackerMuon ) & pt > 10 & abs(eta) < 2.5 && userFloat(\"DeltaCorrectedIso\") <0.2 ")# & (chargedHadronIso+ neutralHadronIso + photonIso )/pt <0.2")
-eleLooseCut = cms.string("et > 20 & abs(eta) < 2.5 && userFloat(\"DeltaCorrectedIso\") <0.2 && userFloat(\"RhoCorrectedIso\") <0.2" +
+muLooseCut = cms.string(" (isGlobalMuon || isTrackerMuon)  & pt > 10 & abs(eta) < 2.5 && userFloat(\"DeltaCorrectedIso\") <0.2 ")# & (chargedHadronIso+ neutralHadronIso + photonIso )/pt <0.2")
+eleLooseCut = cms.string("et > 20 & abs(eta) < 2.5 && userFloat(\"RhoCorrectedIso\") <0.2" +
                          "&& electronID('mvaTrigV0') >0.0")# && (electronID('simpleEleId95cIso') == 1|| electronID('simpleEleId95cIso')==3 || "+
 #                         "electronID('simpleEleId95cIso')==5 || electronID('simpleEleId95cIso')==7)")# & (chargedHadronIso+ neutralHadronIso + photonIso )/pt <0.2")
 
-eleLooseCutEle = cms.string("abs(eta) < 2.5 && userFloat(\"DeltaCorrectedIso\") <0.2 && userFloat(\"RhoCorrectedIso\") <0.2" +
+eleLooseCutEle = cms.string("abs(eta) < 2.5 && userFloat(\"RhoCorrectedIso\") <0.2" +
                             "&& electronID('mvaTrigV0') >0.0 &&"+
                             " et > 30 &  (abs(superCluster.eta)> 1.5660 || abs(superCluster.eta)<1.4442) ")
 # && (electronID('simpleEleId95cIso') == 1|| electronID('simpleEleId95cIso')==3 || "+
@@ -38,7 +38,6 @@ muTightCut = cms.string("pt > 26 & isGlobalMuon && isPFMuon & abs(eta) < 2.1 && 
 #Isolation cones definitions
 #coneOpening = cms.double(0.4)
 #defaultIsolationCut = cms.double(0.2)
-
 
 #eJet definition
 jetLooseCut = cms.string("numberOfDaughters()>1 & pt()> 20 && abs(eta())<5 " +

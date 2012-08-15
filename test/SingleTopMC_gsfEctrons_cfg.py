@@ -24,7 +24,7 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff") ### real data
 
 #ChannelName = "TTBarV4"
-ChannelName = "TTBar"
+ChannelName = "TbarChannel_NoOvRemoval"
 
 process.GlobalTag.globaltag = cms.string('START52_V9B::All')
 #process.GlobalTag.globaltag = cms.string('START311_V2::All')
@@ -33,6 +33,7 @@ process.GlobalTag.globaltag = cms.string('START52_V9B::All')
 #process.GlobalTag.globaltag = autoCond['startup']
 process.load("TopQuarkAnalysis.SingleTop.SingleTopSequences_cff") 
 process.load("SelectionCuts_Skim_cff")################<----------
+
 
 process.out = cms.OutputModule("PoolOutputModule",
                                fileName = cms.untracked.string('dummy.root'),
@@ -88,6 +89,26 @@ getattr(process,'patDefaultSequence'+postfix).replace( getattr(process,"patElect
 #getattr(process,"pfNoTau"+postfix).enable = False
 
 
+"""from PhysicsTools.PatAlgos.cleaningLayer1.jetCleaner_cfi import *
+
+process.cleanPatJets.checkOverlaps = cms.PSet(
+    electrons = cms.PSet(
+    src       = cms.InputTag("selectedPatElectrons"),
+    algorithm = cms.string("byDeltaR"),
+    preselection        = cms.string(""),
+    deltaR              = cms.double(0.3),
+    checkRecoComponents = cms.bool(False), # don't check if they share some AOD object ref
+    pairCut             = cms.string(""),
+    requireNoOverlaps   = cms.bool(False), # overlaps don't cause the jet to be discared
+    ),
+    )
+ 
+ 
+getattr(process,'patDefaultSequence'+postfix).replace(getattr(process,"selectedPatJets"),
+                                                      getattr(process,"selectedPatJets")+
+                                                      process.cleanPatJets
+ )
+"""
 
 # set the dB to the beamspot
 process.patMuons.usePV = cms.bool(False)
@@ -170,8 +191,8 @@ process.ZeroIsoLeptonSequence = cms.Path(
 print " test 3 " 
 
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(400) )
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(400) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
 #"file:/tmp/oiorio/Sync_File_TTBar.root",
@@ -187,7 +208,9 @@ duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 process.baseLeptonSequence = cms.Path(
     process.basePath
     )
-#    
+#
+process.topJetsPF.removeOverlap = cms.untracked.bool(False)
+
 process.selection = cms.Path (
     process.preselection + 
     process.nTuplesSkim
@@ -209,6 +232,8 @@ savePatTupleSkimLoose = cms.untracked.vstring(
     'keep *_patPFMet_*_*',
     'keep *_patType1CorrectedPFMet_*_*',
     'keep *_PVFilterProducer_*_*',
+
+    'keep *_kt6PFJetsForIsolation_rho_*',
 
     'keep patJets_topJetsPF_*_*',
     'keep patMuons_looseMuons_*_*',

@@ -13,6 +13,7 @@ doPU = cms.untracked.bool(True),
 #doResol  = cms.untracked.bool(False),
 
 algo  = cms.untracked.string("TCHPT"),
+#algo  = cms.untracked.string("CSVT"),doLooseBJetVeto= cms.untracked.bool(True),
 
 doResol  = cms.untracked.bool(True),
 takeBTagSFFromDB = cms.untracked.bool(False),
@@ -160,8 +161,8 @@ qcdLeptonsCharge = cms.InputTag("nTupleQCDMuons","QCDMuonsCharge"),
 qcdLeptonsDB = cms.InputTag("nTupleQCDMuons","QCDMuonsPVDxy"),  
 qcdLeptonsDZ = cms.InputTag("nTupleQCDMuons","QCDMuonsPVDz"),  
 
-qcdLeptonsDeltaCorrectedRelIso = cms.InputTag("nTupleMuons","tightMuonsPFDeltaCorrectedRelIso"),  
-qcdLeptonsRhoCorrectedRelIso = cms.InputTag("nTupleMuons","tightMuonsPFRhoCorrectedRelIso"),  
+qcdLeptonsDeltaCorrectedRelIso = cms.InputTag("nTupleQCDMuons","QCDMuonsPFDeltaCorrectedRelIso"),  
+qcdLeptonsRhoCorrectedRelIso = cms.InputTag("nTupleQCDMuons","QCDMuonsPFRhoCorrectedRelIso"),  
 
 #qcdLeptonsID = cms.InputTag("nTupleMuons","tightMuonsSimpleEleId70cIso"),  
 

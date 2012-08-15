@@ -12,23 +12,25 @@ fileName = "SingleTopSystematicsWithTrigger_cfg.py"
 
 #Channels to include
 channels = [
-#"TChannel",
-#"ZJets",
+#"TbarChannel",
+"TChannel",
+"ZJets",
 #"QCDMu",
 #"WJets_part_1","WJets_part_2","WJets_part_3","WJets_part_4","WJets_part_5","WJets_part_6","WJets_part_7","WJets_part_8","WJets_part_9",#"WJets_part_10",
-"TChannel", "TbarChannel",
-#"SChannel", "SbarChannel",
-## "TTBar_Q2Up",# "TTBar_Q2Down",
-#"WW","WZ","ZZ"
 #"TChannel", "TbarChannel",
+"SChannel", "SbarChannel",
+## "TTBar_Q2Up",# "TTBar_Q2Down",
+"WW_part_1","WW_part_2","WW_part_3",
+"WZ","ZZ",
 #"TWChannel", "TbarWChannel",
-"TTBar_part_1", "TTBar_part_2","TTBar_part_3","TTBar_part_4", "TTBar_part_5", "TTBar_part_6", "TTBar_part_7",
+#"TTBar_part_1", "TTBar_part_2","TTBar_part_3","TTBar_part_4", "TTBar_part_5", "TTBar_part_6", "TTBar_part_7", "TTBar_part_11", "TTBar_part_10", "TTBar_part_8", "TTBar_part_9",
 #"Mu_v1_A_part_1", "Mu_v1_A_part_2", "Mu_v1_A_part_3", "Mu_v1_A_part_4", "Mu_v1_A_part_5", "Mu_v1_A_part_6", "Mu_v1_A_part_7",
 
-#"Mu_v1_B1_part_1", "Mu_v1_B1_part_2", "Mu_v1_B1_part_3", "Mu_v1_B1_part_4", "Mu_v1_B1_part_5", "Mu_v1_B1_part_6", "Mu_v1_B1_part_7", "Mu_v1_B1_part_8", "Mu_v1_B1_part_9","Mu_v1_B1_part_11", "Mu_v1_B1_part_12", "Mu_v1_B1_part_13", "Mu_v1_B1_part_14", "Mu_v1_B1_part_15", "Mu_v1_B1_part_16", "Mu_v1_B1_part_17", "Mu_v1_B1_part_18", "Mu_v1_B1_part_10", "Mu_v1_B1_part_20",
-# "Mu_v1_B1_part_10", "Mu_v1_B1_part_11",
+#"Mu_v1_B1_part_1", "Mu_v1_B1_part_2", "Mu_v1_B1_part_3", "Mu_v1_B1_part_4", "Mu_v1_B1_part_5", "Mu_v1_B1_part_6", "Mu_v1_B1_part_7", "Mu_v1_B1_part_8", "Mu_v1_B1_part_9","Mu_v1_B1_part_11", "Mu_v1_B1_part_12", "Mu_v1_B1_part_13", "Mu_v1_B1_part_14", "Mu_v1_B1_part_15", "Mu_v1_B1_part_16", "Mu_v1_B1_part_17", "Mu_v1_B1_part_18", "Mu_v1_B1_part_10", "Mu_v1_B1_part_20","Mu_v1_B1_part_19","Mu_v1_B1_part_21",
 
 #"Ele_v1_A_part_1", "Ele_v1_A_part_2", "Ele_v1_A_part_3", "Ele_v1_A_part_4", "Ele_v1_A_part_5", "Ele_v1_A_part_6", "Ele_v1_A_part_7"
+# "Mu_v1_B2_part_1", "Mu_v1_B2_part_2", "Mu_v1_B2_part_3", "Mu_v1_B2_part_4", "Mu_v1_B2_part_5", "Mu_v1_B2_part_6", "Mu_v1_B2_part_7", "Mu_v1_B2_part_8", "Mu_v1_B2_part_9","Mu_v1_B2_part_10","Mu_v1_B2_part_11",
+
 # "Ele_v1_B2_part_1", "Ele_v1_B2_part_2", "Ele_v1_B2_part_3", "Ele_v1_B2_part_4", "Ele_v1_B2_part_5", "Ele_v1_B2_part_6", "Ele_v1_B2_part_7", "Ele_v1_B2_part_8", "Ele_v1_B2_part_9",
 # "TbarWChannel", "TWChannel",
 # "TbarChannel_Q2Up", "TbarChannel_Q2Down",
@@ -78,6 +80,8 @@ def changeChannel(fileName,channelOld,channelNew,switch,isMC):
         channelToReplace = "WJets"
     if "TTBar" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
         channelToReplace = "TTBar"
+    if "WW" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
+        channelToReplace = "WW"
           #if channelNew=="DataEle":
        # channelNew_2 = "Data"
     file = open(fileName)
@@ -125,6 +129,12 @@ def changeChannel(fileName,channelOld,channelNew,switch,isMC):
         inputs = "process.source.fileNames = cms.untracked.vstring("
         inputs = inputs +"'"+dataPath+channel+"Merged.root',"
         inputs = inputs.replace(channelToReplace,"TTBar")
+        inputs = inputs +")"
+        o.write(inputs)
+    if "WW" in channelNew:# == "DataMu" or channelNew == "DataMuQCD":
+        inputs = "process.source.fileNames = cms.untracked.vstring("
+        inputs = inputs +"'"+dataPath+channel+"Merged.root',"
+        inputs = inputs.replace(channelToReplace,"WW")
         inputs = inputs +")"
         o.write(inputs)
     if "Mu" in channelNew or "Ele" in channelNew:# == "DataMu" or channelNew == "DataMuQCD":
