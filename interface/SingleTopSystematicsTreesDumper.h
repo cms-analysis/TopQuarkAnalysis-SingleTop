@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  *
  * Produces systematics histograms out of a standard Single Top n-tuple
- * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.11 2012/08/01 15:37:19 oiorio Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.12 2012/08/15 09:36:37 oiorio Exp $
  */
 
 
@@ -83,6 +83,7 @@
 
 #include "PhysicsTools/Utilities/interface/LumiReWeighting.h"
 
+#include "ReWeighting.h"
 //#include "PhysicsTools/Utilities/interface/Lumi3DReWeighting.h"
 //#include "TopQuarkAnalysis/SingleTop/interface/Lumi3DReWeighting.h"
 
@@ -90,7 +91,6 @@
 using namespace std;
 using namespace edm;
 using namespace reco;
-
 
 
 class SingleTopSystematicsTreesDumper : public edm::EDAnalyzer
@@ -127,6 +127,7 @@ private:
     double AntiMisTagScaleFactor(string algo, string syst_name, double sf, double eff, double sferr);
     double resolSF(double eta, string syst);
     double pileUpSF(string syst);
+    double pileUpSFNew();
     double bTagSF(int B);
     double bTagSF(int B, string syst);
 
@@ -407,7 +408,10 @@ private:
     //Variables to use as trees references
 
     //Variables to use as trees references
-  double etaTree, etaTree2, cosTree, cosBLTree, topMassTree, totalWeightTree, weightTree, mtwMassTree, lowBTagTree, highBTagTree, maxPtTree, minPtTree, topMassLowBTagTree, topMassBestTopTree, topMassMeas, bWeightTree, PUWeightTree, turnOnWeightTree, limuWeightTree, turnOnReWeightTree, miscWeightTree, lepEff, lepEffB, topMtwTree, HT ;
+  
+    double etaTree, etaTree2, cosTree, cosBLTree, topMassTree, totalWeightTree, weightTree, mtwMassTree, lowBTagTree, highBTagTree, maxPtTree, minPtTree, topMassLowBTagTree, topMassBestTopTree, topMassMeas, bWeightTree, PUWeightTree, turnOnWeightTree, limuWeightTree, turnOnReWeightTree, miscWeightTree, lepEff, lepEffB, topMtwTree, HT ;
+    double PUWeightTreeNew;
+
     //Weights for systematics
     double bWeightTreeBTagUp,
            bWeightTreeMisTagUp,
@@ -442,6 +446,9 @@ private:
 
     edm::LumiReWeighting LumiWeights_, LumiWeightsUp_, LumiWeightsDown_;
     std::string mcPUFile_, dataPUFile_, puHistoName_;
+
+    edm::ReWeighting NewPUWeights_;
+    std::string PUFileNew_;
 
     std::vector<double> jetprobs,
         jetprobs_j1up,
@@ -507,8 +514,6 @@ private:
     private:
         int maxTags;
         int minTags;
-
-
     };
 
     vector<BTagWeight::JetInfo> jsfshpt, jsfshel,

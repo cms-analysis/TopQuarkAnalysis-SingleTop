@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.13 2012/08/01 15:37:20 oiorio Exp $
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.14 2012/08/15 09:36:38 oiorio Exp $
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file
 //
@@ -32,6 +32,7 @@
 #include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
 #include "TopQuarkAnalysis/SingleTop/interface/EquationSolver.h"
 
+#include "../interface/ReWeighting.h"
 
 namespace LHAPDF
 {
@@ -166,7 +167,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
     np1_ = iConfig.getParameter< edm::InputTag >("nVerticesPlus");//,"PileUpSync");
     nm1_ = iConfig.getParameter< edm::InputTag >("nVerticesMinus");//,"PileUpSync");
     n0_ = iConfig.getParameter< edm::InputTag >("nVertices");//,"PileUpSync");
-
+    
     vertexZ_ = iConfig.getParameter< edm::InputTag >("vertexZ");//,"PileUpSync");
 
     doPU_ = iConfig.getUntrackedParameter< bool >("doPU", false);
@@ -175,7 +176,9 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
 
     doReCorrection_ = iConfig.getUntrackedParameter< bool >("doReCorrection", false);
     dataPUFile_ =  channelInfo.getUntrackedParameter< std::string >("Season", "SummerMean11");
-
+    
+    PUFileNew_ =  channelInfo.getUntrackedParameter< std::string >("PUFileNew", "pileUpDistrNewWJets");
+    
     takeBTagSFFromDB_ = iConfig.getUntrackedParameter< bool >("takeBTagSFFromDB", true);
 
     doJetTrees_ = iConfig.getUntrackedParameter< bool >("doJetTrees", true);
@@ -208,9 +211,14 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
         //LumiWeights_.weight3D_init(1.000);
 
         //    //cout << " built lumiWeights "<<endl;
+        
+        NewPUWeights_ = edm::ReWeighting(PUFileNew_+".root",
+            PUFileNew_+"Data.root",
+            std::string("c1"),
+            std::string("c1"));
     }
-
-    //  preWeights_ =  iConfig.getParameter< edm::InputTag >("preWeights");
+    
+    
 
 
     Service<TFileService> fs;
@@ -220,7 +228,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
     facBTagErr = 1.5;
 
     systematics.insert(systematics.begin(), "noSyst");
-    
+
     //  for(size_t i = 0; i < systematics.size();++i){
     //  if(systematics.at(i)=="")
     //}
@@ -230,8 +238,8 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
 
     TFileDirectory SingleTopSystematics = fs->mkdir( "systematics_histograms" );
     TFileDirectory SingleTopTrees = fs->mkdir( "systematics_trees" );
-    
-    
+
+
     for (size_t i = 0; i < rate_systematics.size(); ++i)
     {
       all_syst.push_back(rate_systematics.at(i));
@@ -279,7 +287,9 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             treesNJets[syst]->Branch("w2CSVT", &w2CSVT);
             treesNJets[syst]->Branch("w1CSVL", &w1CSVM);
             treesNJets[syst]->Branch("w2CSVL", &w2CSVM);
+            treesNJets[syst]->Branch("bWeight",&bWeightTree);
             treesNJets[syst]->Branch("PUWeight", &PUWeightTree);
+            treesNJets[syst]->Branch("PUWeightNew", &PUWeightTreeNew);
             treesNJets[syst]->Branch("turnOnWeight", &turnOnWeightTree);
             treesNJets[syst]->Branch("turnOnReWeight", &turnOnReWeightTree);
             treesNJets[syst]->Branch("leptonPt", &lepPt);
@@ -318,19 +328,17 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             treesNJets[syst]->Branch("bJetBeta", &bJetBeta);
             treesNJets[syst]->Branch("bJetDZ", &bJetDZ);
             treesNJets[syst]->Branch("bJetRMS", &bJetRMS);
-
-
-
+            
         }
-	
+
         for (int bj = 0; bj <= 5; ++bj)
         {
-	  
+
             stringstream tags;
             int ntagss = bj;
             if (ntagss > 2 )
 	      {
-		
+
                 ntagss = ntagss - 3;
                 tags << ntagss;
                 tags <<  "T_QCD";
@@ -340,19 +348,19 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
                 tags << ntagss << "T";
 	      }
            //2J1T
-	    
+
             string treename = (channel + "_2J_" + tags.str() + "_" + syst);
-	    
+
             //if(bj==0 )treename = (channel+"_"+syst+"WSample");
             //      if(bj==3 )treename = (channel+"_"+syst+"WSampleQCD");
-	    
+
             //      if(bj==1 )treename = (channel+"_"+syst);
             //      if(bj==4 )treename = (channel+"_"+syst+"QCD");
-	    
+
             trees2J[bj][syst] = new TTree(treename.c_str(), treename.c_str());
-	    
+
             //quantities for the analysis
-	    
+
             trees2J[bj][syst]->Branch("eta", &etaTree);
             trees2J[bj][syst]->Branch("costhetalj", &cosTree);
             trees2J[bj][syst]->Branch("costhetalbl", &cosBLTree);
@@ -381,6 +389,8 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
 
             trees2J[bj][syst]->Branch("PUWeightPUUp", &PUWeightTreePUUp);
             trees2J[bj][syst]->Branch("PUWeightPUDown", &PUWeightTreePUDown);
+
+            trees2J[bj][syst]->Branch("PUWeightNew", &PUWeightTreeNew);
 
             //Systematics turn on weights
             trees2J[bj][syst]->Branch("turnOnWeight", &turnOnWeightTree);
@@ -463,7 +473,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             trees2J[bj][syst]->Branch("metPhi", &metPhi);
 
             trees2J[bj][syst]->Branch("HT", &HT);
-	    
+
             trees2J[bj][syst]->Branch("topMass", &topMassTree);
             trees2J[bj][syst]->Branch("topMtw", &topMtwTree);
 
@@ -618,6 +628,8 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
 
             trees3J[bj][syst]->Branch("PUWeightPUUp", &PUWeightTreePUUp);
             trees3J[bj][syst]->Branch("PUWeightPUDown", &PUWeightTreePUDown);
+            
+            trees3J[bj][syst]->Branch("PUWeightNew", &PUWeightTreeNew);
 
             //Systematics turn on weights
             trees3J[bj][syst]->Branch("turnOnWeight", &turnOnWeightTree);
@@ -791,6 +803,7 @@ void SingleTopSystematicsTreesDumper::initBranchVars()
     w1CSVM = DOUBLE_NAN;
     w2CSVM = DOUBLE_NAN;
     PUWeightTree = DOUBLE_NAN;
+    PUWeightTreeNew = DOUBLE_NAN;
     turnOnWeightTree = DOUBLE_NAN;
     turnOnReWeightTree = DOUBLE_NAN;
     lepPt = DOUBLE_NAN;
@@ -1008,6 +1021,9 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
     double bWeightNoSyst = 1;
     double turnOnWeightValueNoSyst = 1;
     double turnOnReWeightTreeNoSyst = 1;
+
+    double PUWeightNew = 1;
+    double PUWeightNewNoSyst = 1;
 
     BinningPointByMap measurePoint;
 
@@ -1298,8 +1314,16 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
             //Loop for the qcd leptons
             if (doQCD_ && isQCD)
             {
+                iEvent.getByLabel(looseMuonsDeltaCorrectedRelIso_, looseMuonsDeltaCorrectedRelIso);
+                iEvent.getByLabel(looseElectronsDeltaCorrectedRelIso_, looseElectronsDeltaCorrectedRelIso);
+                
+                bool hasLooseElectrons = looseElectronsDeltaCorrectedRelIso->size() != 0;
+                bool hasLooseMuons =  looseMuonsDeltaCorrectedRelIso->size() != 0;
+
+                if (hasLooseElectrons or hasLooseMuons) continue;
+            
                 iEvent.getByLabel(qcdLeptonsDeltaCorrectedRelIso_, qcdLeptonsDeltaCorrectedRelIso);
-		iEvent.getByLabel(qcdLeptonsRhoCorrectedRelIso_, qcdLeptonsRhoCorrectedRelIso);
+        		iEvent.getByLabel(qcdLeptonsRhoCorrectedRelIso_, qcdLeptonsRhoCorrectedRelIso);
 
                 for (size_t i = 0; i < qcdLeptonsDeltaCorrectedRelIso->size(); ++i)
                 {
@@ -1316,11 +1340,11 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
 		    //		    cout << "qcd lep " << i << "rel iso "<<leptonRelIso<<endl;
 
 		    		    
-		    float leptonQCDRelIso = leptonRelIso;
-                    //Use an anti-isolation requirement
+        		    float leptonQCDRelIso = leptonRelIso;
+                            //Use an anti-isolation requirement
 
-		    lepDeltaCorrectedRelIso = leptonRelIso;
-		    lepRhoCorrectedRelIso = qcdLeptonsRhoCorrectedRelIso->at(i) ;
+        		    lepDeltaCorrectedRelIso = leptonRelIso;
+        		    lepRhoCorrectedRelIso = qcdLeptonsRhoCorrectedRelIso->at(i) ;
 
                     if (leptonsFlavour_ == "muon")
                     {
@@ -1591,7 +1615,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
 
 
 		HT+= (math::PtEtaPhiELorentzVector(ptCorr, jetsEta->at(i), jetsPhi->at(i), energyCorr)).Et();
-		
+
                 //Pt cut
                 bool passesPtCut = ptCorr > ptCut;
                 if (passesPtCut)
@@ -1612,7 +1636,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                         ++nJetsNoSyst;
                         jetsNoSyst[nJets - 1] = jets[nJets - 1];
 			//			cout <<" jet no syst "<< nJets-1<<" pt "  <<jetsNoSyst[nJets-1].pt()<<endl;
-			
+
 		    }
 		}
 
@@ -1624,8 +1648,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                 bool passesTCHPT = jetsBTagAlgo->at(i) > 3.41; //TCHPT Working point
                 bool passesCSVT = jetsAntiBTagAlgo->at(i) > 0.898; //TCHPT Working point
 
-		bool passesCSVM = jetsAntiBTagAlgo->at(i)>0.244;//ACTUALLY IT IS LOOSE WORKING POINT 
-		
+		bool passesCSVM = jetsAntiBTagAlgo->at(i)>0.244;//ACTUALLY IT IS LOOSE WORKING POINT
+
 		//		bool passesCSVM = jetsAntiBTagAlgo->at(i) > 0.679;
 
                 double valueChosenAlgo = valueCSV;
@@ -2030,6 +2054,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                 iEvent.getByLabel(n0_, n0);
                 //iEvent.getByLabel(np1_,np1);
                 nVertices = *n0;
+                
                 gotPU = true;
             }
 
@@ -2044,14 +2069,22 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                 PUWeightTreePUUp = pileUpSF("PUUp");
                 PUWeightTreePUDown = pileUpSF("PUDown");
                 //    cout<< "n0 " << nVertices <<   " weight = "<< PUWeightNoSyst<< " cross-check "  <<endl;
+                
+                PUWeightNewNoSyst = pileUpSFNew(); PUWeightNew = PUWeightNewNoSyst;
             }
-            else PUWeight = PUWeightNoSyst;
+            else {
+               PUWeight = PUWeightNoSyst;
+               PUWeightNew = PUWeightNewNoSyst;
+            }
         }
-        else PUWeight = 1;
+        else {
+            PUWeight = 1;
+            PUWeightNew = 1;
+        }
         PUWeightTree = PUWeight;
         weightTree = Weight;
 
-
+        PUWeightTreeNew = PUWeightNew;
         //Jet trees:
 
         if (isQCD)
@@ -2076,7 +2109,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
         runTree = iEvent.eventAuxiliary().run();
         lumiTree = iEvent.eventAuxiliary().luminosityBlock();
         eventTree = iEvent.eventAuxiliary().event();
-	
+
 	//	cout << " syst " << syst << endl;
 
         for (size_t J_ = 0; J_ < nJets; ++J_ )
@@ -2164,7 +2197,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
 
         }
 
-	
+
 
 
         if (doJetTrees_ && !isQCD)
@@ -2208,10 +2241,9 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
 
                 treesNJets[syst]->Fill();
             }
-	    
+
         }
-
-
+        
         ntight_tags = ncsvt_tags;
         if (algo_ == "TCHPT")ntight_tags = ntchpt_tags;
         if ( nJets < 2 )continue;
@@ -4704,6 +4736,12 @@ double SingleTopSystematicsTreesDumper::pileUpSF(string syst)
 
 
 }
+
+double SingleTopSystematicsTreesDumper::pileUpSFNew()
+{
+   return NewPUWeights_.weight(npv);
+}
+
 
 double SingleTopSystematicsTreesDumper::resolSF(double eta, string syst)
 {
