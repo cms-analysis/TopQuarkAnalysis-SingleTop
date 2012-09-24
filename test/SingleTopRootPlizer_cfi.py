@@ -125,10 +125,16 @@ UnclusteredMETPy = cms.InputTag("UnclusteredMETPF","UnclusteredMETPy"),
 
 #Vertices
 vertexZ = cms.InputTag("nTupleVertices","z"),  
+#rho = cms.InputTag("UnclusteredMETPF","UnclusteredMETPx"),
+rho = cms.InputTag("kt6PFJetsForIsolation", "rho"),
+#rho = cms.InputTag("kt6PFJetsForIsolation", "double_kt6PFJetsForIsolation_rho_SingleTop.obj"),
+#rhoasd = cms.InputTag("kt6PFJetsForIsolation", "rho", "SingleTop"),
+
 
 nVerticesPlus = cms.InputTag("NVertices","PileUpP1"),
 nVerticesMinus = cms.InputTag("NVertices","PileUpM1"),
 nVertices = cms.InputTag("NVertices","PileUpTrue"),
+
 
 )
 

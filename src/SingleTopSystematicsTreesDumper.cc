@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.14 2012/08/15 09:36:38 oiorio Exp $
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.15 2012/08/23 13:37:22 atiko Exp $
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file
 //
@@ -167,9 +167,10 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
     np1_ = iConfig.getParameter< edm::InputTag >("nVerticesPlus");//,"PileUpSync");
     nm1_ = iConfig.getParameter< edm::InputTag >("nVerticesMinus");//,"PileUpSync");
     n0_ = iConfig.getParameter< edm::InputTag >("nVertices");//,"PileUpSync");
-    
     vertexZ_ = iConfig.getParameter< edm::InputTag >("vertexZ");//,"PileUpSync");
 
+    rho_ = iConfig.getParameter< edm::InputTag >("rho");
+    
     doPU_ = iConfig.getUntrackedParameter< bool >("doPU", false);
     doResol_ = iConfig.getUntrackedParameter< bool >("doResol", false);
     doTurnOn_ = iConfig.getUntrackedParameter< bool >("doTurnOn", true);
@@ -328,7 +329,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             treesNJets[syst]->Branch("bJetBeta", &bJetBeta);
             treesNJets[syst]->Branch("bJetDZ", &bJetDZ);
             treesNJets[syst]->Branch("bJetRMS", &bJetRMS);
-            
+            treesNJets[syst]->Branch("rho", &rho);
         }
 
         for (int bj = 0; bj <= 5; ++bj)
@@ -494,6 +495,8 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             trees2J[bj][syst]->Branch("lowBTag", &lowBTagTree);
             trees2J[bj][syst]->Branch("highBTag", &highBTagTree);
 
+            trees2J[bj][syst]->Branch("rho", &rho);
+
             for (int p = 1; p <= 52; ++p)
             {
                 stringstream w_n;
@@ -653,6 +656,8 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
 
             trees3J[bj][syst]->Branch("turnOnWeightBTagTrig3Up", &turnOnWeightTreeBTagTrig3Up);
             trees3J[bj][syst]->Branch("turnOnWeightBTagTrig3Down", &turnOnWeightTreeBTagTrig3Down);
+
+            trees3J[bj][syst]->Branch("rho", &rho);
 
             for (int p = 1; p <= 52; ++p)
             {
@@ -838,6 +843,8 @@ void SingleTopSystematicsTreesDumper::initBranchVars()
     cosTree = DOUBLE_NAN;
     cosBLTree = DOUBLE_NAN;
     mtwMassTree = DOUBLE_NAN;
+
+    rho = DOUBLE_NAN;
 
     chargeTree = INT_NAN;
     runTree = INT_NAN;
@@ -2061,6 +2068,9 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
         }
         else(nVertices = -1);
 
+        iEvent.getByLabel(rho_, rhoHandle);
+        rho = *rhoHandle;
+         
         if (doPU_)
         {
             if (syst == "noSyst")
@@ -4739,7 +4749,7 @@ double SingleTopSystematicsTreesDumper::pileUpSF(string syst)
 
 double SingleTopSystematicsTreesDumper::pileUpSFNew()
 {
-   return NewPUWeights_.weight(npv);
+   return NewPUWeights_.weight(rho);
 }
 
 

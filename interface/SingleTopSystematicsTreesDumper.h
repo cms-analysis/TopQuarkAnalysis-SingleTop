@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  *
  * Produces systematics histograms out of a standard Single Top n-tuple
- * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.12 2012/08/15 09:36:37 oiorio Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.13 2012/08/23 13:37:21 atiko Exp $
  */
 
 
@@ -244,6 +244,7 @@ private:
         npv_,
         n0_,
         np1_,
+        rho_,
         nm1_,
         preWeights_,
         x1_,
@@ -302,7 +303,7 @@ private:
         jetsBeta,
         jetsDZ,
         jetsRMS,
-
+         
 
         METPhi,
         METPt;
@@ -318,8 +319,10 @@ private:
 
     //Unclustered MET to take from the event
     edm::Handle< double > UnclMETPx, UnclMETPy, preWeights;
+    edm::Handle< double > rhoHandle;
     edm::Handle< std::vector<double> > genJetsPt;
     edm::Handle< float > x1h, x2h, scalePDFh;
+   
     edm::Handle< int > id1h, id2h;
     std::string leptonsFlavour_, mode_;
 
@@ -409,7 +412,7 @@ private:
 
     //Variables to use as trees references
   
-    double etaTree, etaTree2, cosTree, cosBLTree, topMassTree, totalWeightTree, weightTree, mtwMassTree, lowBTagTree, highBTagTree, maxPtTree, minPtTree, topMassLowBTagTree, topMassBestTopTree, topMassMeas, bWeightTree, PUWeightTree, turnOnWeightTree, limuWeightTree, turnOnReWeightTree, miscWeightTree, lepEff, lepEffB, topMtwTree, HT ;
+    double etaTree, etaTree2, cosTree, cosBLTree, topMassTree, totalWeightTree, weightTree, mtwMassTree, lowBTagTree, highBTagTree, maxPtTree, minPtTree, topMassLowBTagTree, topMassBestTopTree, topMassMeas, bWeightTree, PUWeightTree, turnOnWeightTree, limuWeightTree, turnOnReWeightTree, miscWeightTree, lepEff, lepEffB, topMtwTree, HT;
     double PUWeightTreeNew;
 
     //Weights for systematics
@@ -437,7 +440,7 @@ private:
 
     int runTree, eventTree, lumiTree, chargeTree, electronID, bJetFlavourTree, fJetFlavourTree, eventFlavourTree, puZero, firstJetFlavourTree, secondJetFlavourTree, thirdJetFlavourTree;
 
-  double lepPt, lepEta, lepPhi, lepRelIso, lepDeltaCorrectedRelIso, lepRhoCorrectedRelIso, fJetPhi, fJetPt, fJetEta, fJetE, bJetPt, bJetEta, bJetPhi, bJetE, metPt, metPhi, topPt, topPhi, topEta, topE, totalEnergy, totalMomentum, fJetBTag, bJetBTag, vtxZ, fJetPUID, fJetPUWP, bJetPUID, bJetPUWP, firstJetPt, firstJetEta, firstJetPhi, firstJetE, secondJetPt, secondJetEta, secondJetPhi, secondJetE, thirdJetPt, thirdJetEta, thirdJetPhi, thirdJetE,fJetBeta,fJetDZ,fJetRMS,bJetBeta,bJetDZ,bJetRMS;
+  double lepPt, lepEta, lepPhi, lepRelIso, lepDeltaCorrectedRelIso, lepRhoCorrectedRelIso, fJetPhi, fJetPt, fJetEta, fJetE, bJetPt, bJetEta, bJetPhi, bJetE, metPt, metPhi, topPt, topPhi, topEta, topE, totalEnergy, totalMomentum, fJetBTag, bJetBTag, vtxZ, fJetPUID, fJetPUWP, bJetPUID, bJetPUWP, firstJetPt, firstJetEta, firstJetPhi, firstJetE, secondJetPt, secondJetEta, secondJetPhi, secondJetE, thirdJetPt, thirdJetEta, thirdJetPhi, thirdJetE,fJetBeta,fJetDZ,fJetRMS,bJetBeta,bJetDZ,bJetRMS, rho;
 
 
     //Not used anymore:

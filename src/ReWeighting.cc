@@ -91,6 +91,11 @@ double ReWeighting::weight( float npv ) {
   return weights_->GetBinContent( bin );
 }
 
+double ReWeighting::weight( double npv ) {
+  int bin = weights_->GetXaxis()->FindBin( npv );
+  return weights_->GetBinContent( bin );
+}
+
 double ReWeighting::weight3BX( float ave_npv ) {
   int bin = weights_->GetXaxis()->FindBin( ave_npv );
   return weights_->GetBinContent( bin );
