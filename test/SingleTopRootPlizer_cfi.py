@@ -12,8 +12,8 @@ rateSystematics = cms.untracked.vstring(),
 doPU = cms.untracked.bool(True),
 #doResol  = cms.untracked.bool(False),
 
-algo  = cms.untracked.string("TCHPT"),
-#algo  = cms.untracked.string("CSVT"),doLooseBJetVeto= cms.untracked.bool(True),
+#algo  = cms.untracked.string("TCHPT"),
+algo  = cms.untracked.string("CSVT"),#doLooseBJetVeto= cms.untracked.bool(True),
 
 doResol  = cms.untracked.bool(True),
 takeBTagSFFromDB = cms.untracked.bool(False),

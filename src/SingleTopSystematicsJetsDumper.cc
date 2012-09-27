@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsJetsDumper.cc,v 1.12.2.14 2012/01/27 14:16:46 oiorio Exp $ 
+*\version  $Id: SingleTopSystematicsJetsDumper.cc,v 1.1.2.2 2012/04/03 08:50:02 oiorio Exp $ 
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file 
 //
@@ -165,16 +165,19 @@ SingleTopSystematicsJetsDumper::SingleTopSystematicsJetsDumper(const edm::Parame
 
     LumiWeights_ = edm::Lumi3DReWeighting(distr,
 					  "pileUpDistr.root",
-					  std::string("pileup"),					
-					  std::string("pileup"));
+					  std::string("pileup"),
+					  std::string("pileup"),
+					  "");
     LumiWeightsUp_ = edm::Lumi3DReWeighting(distr,
 					  "pileUpDistr.root",
-					  std::string("pileup"),					
-					  std::string("pileup"));
+					  std::string("pileup"),
+					  std::string("pileup"),
+					  "");
     LumiWeightsDown_ = edm::Lumi3DReWeighting(distr,
 					  "pileUpDistr.root",
-					  std::string("pileup"),					
-					  std::string("pileup"));
+					  std::string("pileup"),
+					  std::string("pileup"),
+					  "");
     LumiWeightsUp_.weight3D_init(1.080);
     LumiWeightsDown_.weight3D_init(0.961);
     LumiWeights_.weight3D_init(1.044);

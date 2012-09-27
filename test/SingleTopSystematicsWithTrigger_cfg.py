@@ -48,12 +48,12 @@ duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
 
 #from TChannel import *
 #process.source.fileNames = TChannel_ntuple
-process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/TChannelMerged.root")
+process.source.fileNames = cms.untracked.vstring("file:edmntuple_tWTest.root")
 
 #PileUpSync
 
 #Output
-process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/TChannel.root"))
+process.TFileService = cms.Service("TFileService", fileName = cms.string("edmntuple_tWTest_OUTPUT.root"))
 #process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/edmntuple_TTBar.root"))
 #process.TFileService = cms.Service("TFileService", fileName = cms.string("testNoPU.root"))
 
@@ -91,10 +91,10 @@ process.TreesMu.channelInfo = TChannelMu
 #process.TreesEle.doPU = cms.untracked.bool(False)
 
 
-channel_instruction = "channel_instruction" #SWITCH_INSTRUCTION
-#channel_instruction = "allmc" #SWITCH_INSTRUCTION
+#channel_instruction = "channel_instruction" #SWITCH_INSTRUCTION
+channel_instruction = "allmc" #SWITCH_INSTRUCTION
 
-MC_instruction = False #TRIGGER_INSTRUCTION
+MC_instruction = True # False #TRIGGER_INSTRUCTION
 
 process.HLTFilterMu.isMC = MC_instruction
 process.HLTFilterEle.isMC = MC_instruction

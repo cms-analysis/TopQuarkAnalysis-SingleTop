@@ -21,6 +21,8 @@
 <use   name="TrackingTools/IPTools"/>
 <use   name="TrackingTools/TransientTrack"/>
 <use   name="DataFormats/METReco"/>
+<use   name="EGamma/EGammaAnalysisTools"/>
+<use   name="RecoParticleFlow/PFProducer"/>
 <use   name="lhapdf"/>
 <flags   EDM_PLUGIN="1"/>
 <flags   CXXFLAGS="-g"/>
