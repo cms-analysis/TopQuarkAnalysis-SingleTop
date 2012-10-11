@@ -29,8 +29,8 @@ process.GlobalTag.globaltag = cms.string('START53_V7::All')
 
 #from Configuration.PyReleaseValidation.autoCond import autoCond
 #process.GlobalTag.globaltag = autoCond['startup']
-process.load("TopQuarkAnalysis.SingleTop.SingleTopSequences_cff") 
-process.load("SelectionCuts_tW_Skim_cff")################<----------
+process.load("TopQuarkAnalysis.SingleTop.SingleTopSequences_tW_cff") 
+######process.load("SelectionCuts_tW_Skim_cff")################<----------
 
 
 
@@ -174,7 +174,7 @@ process.ZeroIsoLeptonSequence = cms.Path(
 print " test 3 " 
 
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (

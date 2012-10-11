@@ -742,16 +742,16 @@ saveNTuplesSkimEle.append('keep floats_nTupleElectrons_*_*')
 saveNTuplesSkimLoose.append('keep floats_nTupleMuons_*_*')
 saveNTuplesSkimLoose.append('keep floats_nTupleElectrons_*_*')
 
-saveNTuplesSkimLoose.append('keep floats_nTupleAllMuons_*_*')
-saveNTuplesSkimLoose.append('keep floats_nTupleAllElectrons_*_*')
+# saveNTuplesSkimLoose.append('keep floats_nTupleAllMuons_*_*')
+# saveNTuplesSkimLoose.append('keep floats_nTupleAllElectrons_*_*')
 
-saveNTuplesSkimLoose.append('keep floats_nTupleLooseMuons_*_*')
-saveNTuplesSkimLoose.append('keep floats_nTupleLooseElectrons_*_*')
-saveNTuplesSkimLoose.append('keep floats_nTupleLooseElectronsEle_*_*')
+# saveNTuplesSkimLoose.append('keep floats_nTupleLooseMuons_*_*')
+# saveNTuplesSkimLoose.append('keep floats_nTupleLooseElectrons_*_*')
+# saveNTuplesSkimLoose.append('keep floats_nTupleLooseElectronsEle_*_*')
 #saveNTuplesSkimLoose.append('keep floats_nTupleZVetoElectrons_*_*')
 
-saveNTuplesSkimLoose.append('keep floats_nTupleQCDMuons_*_*')
-saveNTuplesSkimLoose.append('keep floats_nTupleQCDElectrons_*_*')
+# saveNTuplesSkimLoose.append('keep floats_nTupleQCDMuons_*_*')
+# saveNTuplesSkimLoose.append('keep floats_nTupleQCDElectrons_*_*')
   
 
 saveNTuplesSkimLoose.append('keep *_TriggerResults_*_*')
