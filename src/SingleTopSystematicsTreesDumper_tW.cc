@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper_tW.cc,v 1.12.2.18.2.15 2012/08/23 13:37:22 atiko Exp $
+*\version  $Id: SingleTopSystematicsTreesDumper_tW.cc,v 1.1.2.1 2012/10/11 19:21:21 dnoonan Exp $
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file
 //
@@ -81,6 +81,8 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
     electronsEleId80cIso_ =  iConfig.getParameter< edm::InputTag >("electronsEleId80cIso");
     electronsEleId90cIso_ =  iConfig.getParameter< edm::InputTag >("electronsEleId90cIso");
     electronsEleId95cIso_ =  iConfig.getParameter< edm::InputTag >("electronsEleId95cIso");
+    electronsTrackerExpectedInnerHits_ =  iConfig.getParameter< edm::InputTag >("electronsTrackerExpectedInnerHits");
+    electronsSuperClusterEta_ =  iConfig.getParameter< edm::InputTag >("electronsSuperClusterEta");
 
     //Muons
     muonsPt_ =  iConfig.getParameter< edm::InputTag >("muonsPt");
@@ -261,6 +263,8 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
 	trees[syst]->Branch("electronEleId80cIso", &_electronEleId80cIso_);
 	trees[syst]->Branch("electronEleId90cIso", &_electronEleId90cIso_);
 	trees[syst]->Branch("electronEleId95cIso", &_electronEleId95cIso_);
+	trees[syst]->Branch("electronTrackerExpectedInnerHits", &_electronTrackerExpectedInnerHits_);
+	trees[syst]->Branch("electronSuperClusterEta", &_electronSuperClusterEta_);
 
 	trees[syst]->Branch("jetPt", &_jetPt_);
 	trees[syst]->Branch("jetEta", &_jetEta_);
@@ -448,6 +452,8 @@ void SingleTopSystematicsTreesDumper_tW::initBranchVars()
     _electronEleId80cIso_.clear();
     _electronEleId90cIso_.clear();
     _electronEleId95cIso_.clear();
+    _electronTrackerExpectedInnerHits_.clear();
+    _electronSuperClusterEta_.clear();
     
     _jetPt_.clear();
     _jetEta_.clear();
@@ -689,6 +695,8 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
     iEvent.getByLabel(electronsEleId80cIso_, electronsEleId80cIso);
     iEvent.getByLabel(electronsEleId90cIso_, electronsEleId90cIso);
     iEvent.getByLabel(electronsEleId95cIso_, electronsEleId95cIso);
+    iEvent.getByLabel(electronsTrackerExpectedInnerHits_, electronsTrackerExpectedInnerHits);
+    iEvent.getByLabel(electronsSuperClusterEta_, electronsSuperClusterEta);
 
     iEvent.getByLabel(vertexZ_,vertexZ);
     iEvent.getByLabel(vertexrho_,vertexrho);
@@ -902,6 +910,8 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
       _electronEleId80cIso_.push_back(electronsEleId80cIso->at(i));
       _electronEleId90cIso_.push_back(electronsEleId90cIso->at(i));
       _electronEleId95cIso_.push_back(electronsEleId95cIso->at(i));
+      _electronTrackerExpectedInnerHits_.push_back(electronsTrackerExpectedInnerHits->at(i));
+      _electronSuperClusterEta_.push_back(electronsSuperClusterEta->at(i));
     }
 
     //    cout << "Jets" << endl;

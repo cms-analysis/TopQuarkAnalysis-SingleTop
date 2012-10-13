@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  *
  * Produces systematics histograms out of a standard Single Top n-tuple
- * \ version $Id: SingleTopSystematicsTreesDumper_tW.h,v 1.11.2.13.2.13 2012/08/23 13:37:21 atiko Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper_tW.h,v 1.1.2.1 2012/10/11 19:21:20 dnoonan Exp $
  */
 
 
@@ -214,6 +214,8 @@ private:
         electronsEleId80cIso_,
         electronsEleId90cIso_,
         electronsEleId95cIso_,
+        electronsTrackerExpectedInnerHits_,
+        electronsSuperClusterEta_,
 
         vertexZ_,
         vertexrho_,
@@ -290,6 +292,8 @@ private:
         electronsEleId80cIso,
         electronsEleId90cIso,
         electronsEleId95cIso,
+        electronsTrackerExpectedInnerHits,
+        electronsSuperClusterEta,
 
         jetsPt,
         jetsEta,
@@ -449,6 +453,8 @@ private:
     std::vector<double> _electronEleId80cIso_;
     std::vector<double> _electronEleId90cIso_;
     std::vector<double> _electronEleId95cIso_;
+    std::vector<double> _electronTrackerExpectedInnerHits_;
+    std::vector<double> _electronSuperClusterEta_;
     
     std::vector<double> _jetPt_;
     std::vector<double> _jetEta_;
