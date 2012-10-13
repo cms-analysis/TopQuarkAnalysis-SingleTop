@@ -61,6 +61,8 @@ electronsEleId80cIso = cms.InputTag("nTupleElectrons","tightElectronsSimpleEleId
 electronsEleId90cIso = cms.InputTag("nTupleElectrons","tightElectronsSimpleEleId90cIso"),  
 electronsEleId95cIso = cms.InputTag("nTupleElectrons","tightElectronsSimpleEleId95cIso"),  
 electronsMVAID = cms.InputTag("nTupleElectrons","tightElectronsMvaTrigV0"),  
+electronsTrackerExpectedInnerHits = cms.InputTag("nTupleElectrons","tightElectronsTrackerExpectedInnerHits"),  
+electronsSuperClusterEta = cms.InputTag("nTupleElectrons","tightElectronsSuperClusterEta"),  
 
 #Muons
 muonsPt = cms.InputTag("nTupleMuons","tightMuonsPt"),  

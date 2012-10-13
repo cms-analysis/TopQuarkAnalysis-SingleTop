@@ -23,14 +23,14 @@ process.load("Configuration.Geometry.GeometryIdeal_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff") ### real data
 
-ChannelName = "tWTest"
+ChannelName = "tW"
 
 process.GlobalTag.globaltag = cms.string('START53_V7::All')
 
 #from Configuration.PyReleaseValidation.autoCond import autoCond
 #process.GlobalTag.globaltag = autoCond['startup']
 process.load("TopQuarkAnalysis.SingleTop.SingleTopSequences_tW_cff") 
-######process.load("SelectionCuts_tW_Skim_cff")################<----------
+##############process.load("SelectionCuts_tW_Skim_cff")################<----------
 
 
 
@@ -174,7 +174,7 @@ process.ZeroIsoLeptonSequence = cms.Path(
 print " test 3 " 
 
 
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
@@ -250,14 +250,14 @@ print " test 5 "
 
 ## Output module configuration
 process.singleTopNTuple = cms.OutputModule("PoolOutputModule",
-                   fileName = cms.untracked.string('edmntuple_'+ChannelName+'.root'),
+                   fileName = cms.untracked.string('edmntuple.root'),
                                              
                    SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('selection')),
                    outputCommands = saveNTuplesSkimLoose,
 )
 
 process.singleTopPatTuple = cms.OutputModule("PoolOutputModule",
-                   fileName = cms.untracked.string('pattuple_'+ChannelName+'.root'),
+                   fileName = cms.untracked.string('pattuple.root'),
 
 
                    SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('selection')),

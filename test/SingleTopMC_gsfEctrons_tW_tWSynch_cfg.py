@@ -29,8 +29,8 @@ process.GlobalTag.globaltag = cms.string('START53_V7::All')
 
 #from Configuration.PyReleaseValidation.autoCond import autoCond
 #process.GlobalTag.globaltag = autoCond['startup']
-process.load("TopQuarkAnalysis.SingleTop.SingleTopSequences_cff") 
-process.load("SelectionCuts_tW_Skim_cff")################<----------
+process.load("TopQuarkAnalysis.SingleTop.SingleTopSequences_tW_cff") 
+##############process.load("SelectionCuts_tW_Skim_cff")################<----------
 
 
 
