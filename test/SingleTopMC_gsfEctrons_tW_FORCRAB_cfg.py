@@ -127,6 +127,7 @@ process.pfIsolatedElectrons.isolationCut = cms.double(0.2)
 process.patseq = cms.Sequence(
 #    process.patElectronIDs +
     process.goodOfflinePrimaryVertices *
+    process.PVFilter *
     process.patElectronIDs *
     process.kt6PFJetsForIsolation *
     getattr(process,"patPF2PATSequence"+postfix) #*
@@ -164,6 +165,7 @@ process.pathPreselection = cms.Path(
 
 
 process.ZeroIsoLeptonSequence = cms.Path(
+         process.PVFilter + 
          process.pfIsolatedMuonsZeroIso +
 #         process.muonMatchZeroIso +
          process.patMuonsZeroIso +
@@ -188,6 +190,7 @@ duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 #process.basePath += process.tightMuonsTest
 
 process.baseLeptonSequence = cms.Path(
+    process.PVFilter +
     process.basePath
     )
 #

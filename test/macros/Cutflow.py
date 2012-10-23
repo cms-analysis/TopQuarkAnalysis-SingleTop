@@ -2,9 +2,18 @@
 
 from ROOT import *
 
-#filenames = ['edmntuple_tWTest_OUTPUT.root']
+import sys
 
-fileName = TFile('ntuple_SysTrees_TWChannel.root')
+dumpEvtNum = False
+
+if len(sys.argv) > 1:
+    if '-evtDump' in sys.argv:
+        print 'Dumping event numbers'
+        dumpEvtNum = True
+
+#filenames = ['../output/ntuple_SystTrees_TWChannel.root']
+
+fileName = TFile('../output/ntuple_SysTrees_TWChannel.root')
 
 fileName.cd('TreesDileptontW')
 
@@ -22,7 +31,39 @@ HtCut = [0,0,0]
 
 print tWtree.GetEntries()
 
+emuStart = 0
+mumuStart = 0
+eeStart = 0
+
+if dumpEvtNum:
+    lepSelDump = [open('eventDumps/lepSelDump_emu.txt','w'),open('eventDumps/lepSelDump_mumu.txt','w'),open('eventDumps/lepSelDump_ee.txt','w')]
+    lepVetoDump = [open('eventDumps/lepVetoDump_emu.txt','w'),open('eventDumps/lepVetoDump_mumu.txt','w'),open('eventDumps/lepVetoDump_ee.txt','w')]
+    mllCutDump = [open('eventDumps/mllCutDump_emu.txt','w'),open('eventDumps/mllCutDump_mumu.txt','w'),open('eventDumps/mllCutDump_ee.txt','w')]
+    metCutDump = [open('eventDumps/metCutDump_emu.txt','w'),open('eventDumps/metCutDump_mumu.txt','w'),open('eventDumps/metCutDump_ee.txt','w')]
+    oneJetDump = [open('eventDumps/oneJetDump_emu.txt','w'),open('eventDumps/oneJetDump_mumu.txt','w'),open('eventDumps/oneJetDump_ee.txt','w')]
+
+
+evtCount = 0.
+percent = 0.0
+progSlots = 25.
+nEvents = tWtree.GetEntries()*1.
+
+
 for event in tWtree:
+
+    evtCount += 1.
+    if evtCount/nEvents > percent:
+        i = int(percent*progSlots)
+        progress = '0%[' + '-' * i + ' ' * (int(progSlots)-i) + ']100%\r'
+        sys.stdout.write(progress)
+        sys.stdout.flush()
+        percent += 1./progSlots
+
+    
+    runNum = event.runNum
+    lumiNum = event.lumiNum
+    eventNum = event.eventNum
+
     #Get Muon objects
     muonPt = event.muonPt
     muonEta = event.muonEta
@@ -38,11 +79,19 @@ for event in tWtree:
     electronE = event.electronE
     electronCharge = event.electronCharge
     electronRelIso = event.electronRelIso
+    electronRhoCorrectedRelIso = event.electronRhoCorrectedRelIso
     electronPVDz = event.electronPVDz
     electronPVDxy = event.electronPVDxy
     electronMVATrigV0 = event.electronMVATrigV0
     electronTrackerExpectedInnerHits = event.electronTrackerExpectedInnerHits
     electronSuperClusterEta = event.electronSuperClusterEta
+
+    if len(electronPt) > 0 and len(muonPt) > 0:
+        emuStart += 1
+    if len(electronPt) > 1:
+        eeStart += 1
+    if len(muonPt) > 1:
+        mumuStart += 1
 
     goodMuonidx = list()
     goodEleidx = list()
@@ -68,14 +117,20 @@ for event in tWtree:
 
     for i in range(len(electronPt)):
         isTightElectron = False
-        if electronPt[i] > 10:
+#         if electronPt[i] > 20:
+#             if abs(electronEta[i]) < 2.5:
+#                 if electronPVDxy[i] < 0.04:
+#                     if electronMVATrigV0[i] >= 0. and electronMVATrigV0[i] <= 1.0:
+#                         if electronRhoCorrectedRelIso[i] < 0.15:
+#                             if electronTrackerExpectedInnerHits[i] <= 1:
+#                                 goodEleidx.append(i)
+#                                 isTightElectron = True
+        if electronPt[i] > 20:
             if abs(electronEta[i]) < 2.5:
-                if electronPVDxy[i] < 0.04:
-                    if electronMVATrigV0[i] >= 0. and electronMVATrigV0[i] <= 1.0:
-                        if electronRelIso[i] < 0.15:
-                            if electronTrackerExpectedInnerHits[i] <= 1:
-                                goodEleidx.append(i)
-                                isTightElectron = True
+                if electronPVDxy[i] < 0.02:
+                    if electronRhoCorrectedRelIso[i] < 0.15:
+                        goodEleidx.append(i)
+                        isTightElectron = True
         if not isTightElectron:
             if electronPt[i] > 10:
                 if abs(electronEta[i]) < 2.5:
@@ -90,7 +145,8 @@ for event in tWtree:
     lepton0 = TLorentzVector()
     lepton1 = TLorentzVector()
 
-    print len(goodMuonidx), len(goodEleidx), ModeIdx
+#     if (len(goodMuonidx)+len(goodEleidx)) != 2:
+#         print "muons",len(goodMuonidx),"electrons", len(goodEleidx)
 
     if len(goodMuonidx) == 1 and len(goodEleidx) == 1:
         ModeIdx = 0
@@ -122,11 +178,16 @@ for event in tWtree:
     
     LepSelection[ModeIdx] += 1
 
+    if dumpEvtNum:
+        lepSelDump[ModeIdx].write(str(runNum) + " " + str(lumiNum) + " " + str(eventNum) +"\n")
     
     if nLooseLeptons != 0:
         continue
 
     LepVeto[ModeIdx] += 1
+
+    if dumpEvtNum:
+        lepVetoDump[ModeIdx].write(str(runNum) + " " + str(lumiNum) + " " + str(eventNum) +"\n")
 
 
     mll = (lepton0 + lepton1).M()
@@ -141,6 +202,10 @@ for event in tWtree:
     
     mllCut[ModeIdx] += 1
 
+    if dumpEvtNum:
+        mllCutDump[ModeIdx].write(str(runNum) + " " + str(lumiNum) + " " + str(eventNum) +"\n")
+
+
     MetPt = event.MetPt
     MetPhi = event.MetPhi
 
@@ -148,6 +213,10 @@ for event in tWtree:
         continue
 
     MetCut[ModeIdx] += 1
+
+    if dumpEvtNum:
+        metCutDump[ModeIdx].write(str(runNum) + " " + str(lumiNum) + " " + str(eventNum) +"\n")
+
 
     MET = TLorentzVector()
     MET.SetPtEtaPhiE(MetPt, 0, MetPhi, MetPt)
@@ -171,6 +240,10 @@ for event in tWtree:
 
     OneJet[ModeIdx] += 1
 
+    if dumpEvtNum:
+        oneJetDump[ModeIdx].write(str(runNum) + " " + str(lumiNum) + " " + str(eventNum) +"\n")
+
+
     jetIdx = goodJetIdx[0]
 
     if jetCSV[jetIdx] < 0.679:
@@ -182,7 +255,9 @@ for event in tWtree:
     jet = TLorentzVector()
     jet.SetPtEtaPhiE(jetPt[jetIdx],jetEta[jetIdx], jetPhi[jetIdx], jetE[jetIdx])
 
-    Ht = (lepton0 + lepton1 + MET + jet).Pt()
+    Ptsys = (lepton0 + lepton1 + MET + jet).Pt()
+
+    Ht = lepton0.Pt() + lepton1.Pt() + MET.Pt() + jet.Pt()
 
     if ModeIdx == 0 and Ht< 150:
         continue
@@ -204,3 +279,7 @@ for i in range(3):
     print 'Ht Cut           '+ str(HtCut[i])
 
 print '----------------------------'
+
+print emuStart
+print mumuStart
+print eeStart

@@ -2,7 +2,7 @@
  *\Author: A. Orso M. Iorio 
  *
  *
- *\version  $Id: SingleTopMuonProducer.cc,v 1.2.12.3 2012/05/18 09:22:04 oiorio Exp $ 
+ *\version  $Id: SingleTopMuonProducer.cc,v 1.2.12.4 2012/06/05 10:04:08 oiorio Exp $ 
  */
 
 // Single Top producer: produces a top candidate made out of a Lepton, a B jet and a MET
@@ -138,7 +138,7 @@ void SingleTopMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup &
     mu.addUserFloat("VertexDz",dz);
     mu.addUserFloat("VertexDxy",dxy);
     
-    std::cout<<" i " <<i << "pt " <<mu.pt()<< " passes cut ? "<< cut(mu) << std::endl; 
+    //    std::cout<<" i " <<i << "pt " <<mu.pt()<< " passes cut ? "<< cut(mu) << std::endl; 
     
 
     if(cut(mu)) finalMuons->push_back(mu);

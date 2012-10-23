@@ -524,7 +524,7 @@ RelIsoCut = cms.untracked.double(relIsoCutElectrons),
 
 TWChannelDilepton = cms.PSet(
         crossSection = cms.untracked.double(11.1),
-        channel = cms.untracked.string("TWChannel"),
+        channel = cms.untracked.string("TWChannelDilepton"),
 #            originalEvents = cms.untracked.double(494961),
         originalEvents = cms.untracked.double(2976510),
         finalLumi = lumiMu,Season = cms.untracked.string(PileUpSeason),
@@ -538,7 +538,7 @@ TWChannelDilepton = cms.PSet(
 
 TbarWChannelDilepton = cms.PSet(
         crossSection = cms.untracked.double(11.1),
-        channel = cms.untracked.string("TbarWChannel"),
+        channel = cms.untracked.string("TWChannelDilepton"),
 #            originalEvents = cms.untracked.double(494961),
         originalEvents = cms.untracked.double(2971482),
         finalLumi = lumiMu,Season = cms.untracked.string(PileUpSeason),
@@ -549,10 +549,21 @@ TbarWChannelDilepton = cms.PSet(
         puHistoName = cms.untracked.string("pileUpDumper/PileUpTWChannel"),
         )
 
-TTBarDileptons = cms.PSet(
+TTBarDilepton = cms.PSet(
     crossSection = cms.untracked.double(234.),
-    channel = cms.untracked.string("TTBar"),
+    channel = cms.untracked.string("TTBarDilepton"),
     originalEvents = cms.untracked.double(10783509),#1089625
+    finalLumi = lumiMu,Season = cms.untracked.string(PileUpSeasonV6),
+    MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
+    RelIsoCut = cms.untracked.double(relIsoCutMuons),
+    mcPUFile = cms.untracked.string("pileupdistr_TTBar.root"),
+    puHistoName = cms.untracked.string("pileUpDumper/PileUpTTBar"),
+    )
+
+TestSample = cms.PSet(
+    crossSection = cms.untracked.double(1.),
+    channel = cms.untracked.string("TestSample"),
+    originalEvents = cms.untracked.double(1.),#1089625
     finalLumi = lumiMu,Season = cms.untracked.string(PileUpSeasonV6),
     MTWCut = cms.untracked.double(40.0),#Default 50.0 GeV
     RelIsoCut = cms.untracked.double(relIsoCutMuons),

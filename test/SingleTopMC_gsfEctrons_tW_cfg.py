@@ -23,7 +23,7 @@ process.load("Configuration.Geometry.GeometryIdeal_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff") ### real data
 
-ChannelName = "tWTest"
+ChannelName = "tWTestNoEleConvRej"
 
 process.GlobalTag.globaltag = cms.string('START53_V7::All')
 
@@ -45,7 +45,9 @@ from PhysicsTools.SelectorUtils.pvSelector_cfi import pvSelector
 
 process.goodOfflinePrimaryVertices = cms.EDFilter(
     "PrimaryVertexObjectFilter",
-    filterParams = pvSelector.clone( minNdof = cms.double(4.0), maxZ = cms.double(24.0), maxRho = cms.double(2.)  ),
+#    filterParams = pvSelector.clone( minNdof = cms.double(4.0), maxZ = cms.double(24.0), maxRho = cms.double(2.)  ),
+    filterParams = cms.PSet( minNdof = cms.double( 4. ) , maxZ = cms.double( 24. ) , maxRho = cms.double( 2. ) ) ,
+    filter = cms.bool( True) ,
     src=cms.InputTag('offlinePrimaryVertices')
     )
 
@@ -123,6 +125,9 @@ process.pfIsolatedElectrons.isolationCut = cms.double(0.2)
 #applyPostfix(process,"pfIsolatedMuons",postfix).isolationCut = cms.double(0.2)
 #applyPostfix(process,"pfIsolatedElectrons",postfix).isolationCut = cms.double(0.2)
 
+process.tightElectrons.cut = cms.string("et>10  && abs(eta)<2.5")
+
+
 #
 process.patseq = cms.Sequence(
 #    process.patElectronIDs +
@@ -143,7 +148,7 @@ process.pfIsolatedMuonsZeroIso = process.pfIsolatedMuons.clone(combinedIsolation
 process.patMuonsZeroIso = process.patMuons.clone(pfMuonSource = cms.InputTag("pfIsolatedMuonsZeroIso"))#, genParticleMatch = cms.InputTag("muonMatchZeroIso"))
 # use pf isolation, but do not change matching
 tmp = process.muonMatch.src
-adaptPFIsoMuons(process, process.patMuonsZeroIso, "")
+adaptPFMuons(process, process.patMuonsZeroIso, "")
 process.patMuonsZeroIso.pfMuonSource = cms.InputTag("pfIsolatedMuons")
 process.muonMatch.src = tmp
 process.muonMatchZeroIso = process.muonMatch.clone(src = cms.InputTag("pfIsolatedMuonsZeroIso"))
@@ -164,6 +169,7 @@ process.pathPreselection = cms.Path(
 
 
 process.ZeroIsoLeptonSequence = cms.Path(
+         process.PVFilter + 
          process.pfIsolatedMuonsZeroIso +
 #         process.muonMatchZeroIso +
          process.patMuonsZeroIso +
@@ -174,20 +180,23 @@ process.ZeroIsoLeptonSequence = cms.Path(
 print " test 3 " 
 
 
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
-                                "/store/mc/Summer12_DR53X/T_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola/AODSIM/PU_S10_START53_V7A-v1/0000/F4FEBE8F-3BEA-E111-8373-003048FF9AA6.root", #53X version
+#                                "/store/mc/Summer12_DR53X/T_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola/AODSIM/PU_S10_START53_V7A-v1/0000/F4FEBE8F-3BEA-E111-8373-003048FF9AA6.root", #53X version
 #                                "/store/mc/Summer12/T_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola/AODSIM/PU_S7_START52_V9-v1/0000/FAD2E60D-868E-E111-AEFE-001BFCDBD11E.root", # 52X version
+                                "/store/mc/Summer12_DR53X/T_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola/AODSIM/PU_S10_START53_V7A-v1/0000/DC1958F9-2BEA-E111-8E57-003048679244.root",
 ),
 #eventsToProcess = cms.untracked.VEventRange('1:65161675-1:65161677'),#1:95606867-1:95606869')
-duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
+duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
+#skipEvents = cms.untracked.uint32(133),
 )
 
 #process.basePath += process.tightMuonsTest
 
 process.baseLeptonSequence = cms.Path(
+    process.PVFilter +
     process.basePath
     )
 #

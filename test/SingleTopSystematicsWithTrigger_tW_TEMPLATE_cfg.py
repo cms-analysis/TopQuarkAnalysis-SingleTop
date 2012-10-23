@@ -10,6 +10,8 @@ process.options = cms.untracked.PSet(
     FailPath = cms.untracked.vstring('ProductNotFound','Type Mismatch')
     )
 
+process.MessageLogger.cerr.FwkReport.reportEvery = 1000
+
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff") ### real data
 process.GlobalTag.globaltag = cms.string("START53_V7::All")
@@ -53,6 +55,10 @@ process.TreesDileptontW.dataPUFile = cms.untracked.string("pileUpDistr.root")
 
 process.TreesDileptontW.channelInfo = REPLACECHANNELNAME
 
+channelName = 'REPLACECHANNELNAME'
+
+if 'Dilepton' in channelName:
+    process.TreesDileptontW.systematics = cms.untracked.vstring()
 
 #doPU = cms.untracked.bool(False)
 

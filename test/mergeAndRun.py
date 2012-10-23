@@ -10,19 +10,22 @@ import subprocess
 #ex:
 # mergeAndRun.py tW_Synch T_tWChannel
 
+channelName = ""
+directory = ""
+
 if len(sys.argv) != 3:
     print "You need 3 arguments! Something like:"
     print "mergeAndRun.py tW_Synch T_tWChannel"
-    exit
+    exit()
 else:
     directory=sys.argv[1]
     if os.path.exists(directory):
         if not os.path.exists(directory+"/res"):
             print "Directory specified ("+directory+"/res) does not exist"
-            exit
+            exit()
     else:
         print "Directory specified ("+directory+") does not exist"
-        exit
+        exit()
 
     okChannelNames = ['TChannel',
                       'TbarChannel',
@@ -36,12 +39,16 @@ else:
                       'WW',
                       'WZ',
                       'ZZ',
-                      'Data']
+                      'Data',
+                      'TWChannelDilepton',
+                      'TbarWChannelDilepton',
+                      'TTBarDilepton']
                       
     if sys.argv[2] in okChannelNames:
         channelName = sys.argv[2]
     else:
-        print "Invalid channel name :" + sys.argv[2]
+        print "Invalid channel name: " + sys.argv[2]
+        exit()
 
 edmFileList = glob.glob(directory+"/res/edm*root")
 
