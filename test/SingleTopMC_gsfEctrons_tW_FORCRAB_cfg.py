@@ -45,10 +45,12 @@ from PhysicsTools.SelectorUtils.pvSelector_cfi import pvSelector
 
 process.goodOfflinePrimaryVertices = cms.EDFilter(
     "PrimaryVertexObjectFilter",
-    filterParams = pvSelector.clone( minNdof = cms.double(4.0), maxZ = cms.double(24.0), maxRho = cms.double(2.)  ),
+#    filterParams = pvSelector.clone( minNdof = cms.double(4.0), maxZ = cms.double(24.0), maxRho = cms.double(2.)  ),
+    filterParams = cms.PSet( minNdof = cms.double( 4. ) , maxZ = cms.double( 24. ) , maxRho = cms.double( 2. ) ) ,
+    filter = cms.bool( True) ,
     src=cms.InputTag('offlinePrimaryVertices')
     )
-
+ 
 
 
 from RecoJets.JetProducers.kt4PFJets_cfi import *
@@ -104,30 +106,44 @@ process.pfIsolatedElectrons.isolationValueMapsNeutral = cms.VInputTag( cms.Input
 process.pfIsolatedElectrons.deltaBetaIsolationValueMap = cms.InputTag("elPFIsoValuePU03PFId")
 
 # NOT for gsfElectrons
-#process.patElectrons.isolationValues = cms.PSet(
-#    pfChargedHadrons = cms.InputTag("elPFIsoValueCharged03PFId"),
-#    pfChargedAll = cms.InputTag("elPFIsoValueChargedAll03PFId"),
-#    pfPUChargedHadrons = cms.InputTag("elPFIsoValuePU03PFId"),
-#    pfNeutralHadrons = cms.InputTag("elPFIsoValueNeutral03PFId"),
-#    pfPhotons = cms.InputTag("elPFIsoValueGamma03PFId")
-#    )
+process.patElectrons.isolationValues = cms.PSet(
+    pfChargedHadrons = cms.InputTag("elPFIsoValueCharged03PFIdPFIso"),
+    pfChargedAll = cms.InputTag("elPFIsoValueChargedAll03PFIdPFIso"),
+    pfPUChargedHadrons = cms.InputTag("elPFIsoValuePU03PFIdPFIso"),
+    pfNeutralHadrons = cms.InputTag("elPFIsoValueNeutral03PFIdPFIso"),
+    pfPhotons = cms.InputTag("elPFIsoValueGamma03PFIdPFIso")
+    )
+
+process.patElectrons.isolationValuesNoPFId = cms.PSet(
+    pfChargedHadrons = cms.InputTag("elPFIsoValueCharged03NoPFIdPFIso"),
+    pfChargedAll = cms.InputTag("elPFIsoValueChargedAll03NoPFIdPFIso"),
+    pfPUChargedHadrons = cms.InputTag("elPFIsoValuePU03NoPFIdPFIso"),
+    pfNeutralHadrons = cms.InputTag("elPFIsoValueNeutral03NoPFIdPFIso"),
+    pfPhotons = cms.InputTag("elPFIsoValueGamma03NoPFIdPFIso")
+    )
 
 print " test 0 " 
-process.pfIsolatedMuons.combinedIsolationCut = cms.double(0.2)
-process.pfIsolatedElectrons.combinedIsolationCut = cms.double(0.2)
+process.pfIsolatedMuons.combinedIsolationCut = cms.double(1.)
+process.pfIsolatedElectrons.combinedIsolationCut = cms.double(1.)
 
-process.pfIsolatedMuons.isolationCut = cms.double(0.2)
-process.pfIsolatedElectrons.isolationCut = cms.double(0.2)
+process.pfIsolatedMuons.isolationCut = cms.double(1.)
+process.pfIsolatedMuons.doDeltaBetaCorrection = cms.bool(True)
+process.pfIsolatedElectrons.isolationCut = cms.double(1.)
 #applyPostfix(process,"pfIsolatedElectrons",postfix).combinedIsolationCut = cms.double(0.2)#
 
 #applyPostfix(process,"pfIsolatedMuons",postfix).isolationCut = cms.double(0.2)
 #applyPostfix(process,"pfIsolatedElectrons",postfix).isolationCut = cms.double(0.2)
 
+
+process.tightElectrons.category = cms.untracked.string("")    
+
+
+
+
 #
 process.patseq = cms.Sequence(
 #    process.patElectronIDs +
     process.goodOfflinePrimaryVertices *
-    process.PVFilter *
     process.patElectronIDs *
     process.kt6PFJetsForIsolation *
     getattr(process,"patPF2PATSequence"+postfix) #*

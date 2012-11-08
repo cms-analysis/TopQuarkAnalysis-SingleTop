@@ -113,9 +113,23 @@ nTupleTopJetsPF = cms.EDProducer(
 )
 
 nTupleVertices = cms.EDProducer(
-        "SingleTopVertexInfoDumper",
-            src = cms.InputTag("goodOfflinePrimaryVertices"),
-        )
+    "SingleTopVertexInfoDumper",
+    src = cms.InputTag("goodOfflinePrimaryVertices"),
+)
+
+nTupleVertices2 = cms.EDProducer(
+    "CandViewNtpProducer",
+    src = cms.InputTag("goodOfflinePrimaryVertices"),
+    lazyParser = cms.untracked.bool(True),
+    prefix = cms.untracked.string("offlinePV"),
+    variables = cms.VPSet(
+
+    cms.PSet(
+    tag = cms.untracked.string("isFake"),
+    quantity = cms.untracked.string("isFake")
+    ),
+    )
+    )
 
 nTuplePatMETsPF = cms.EDProducer(
     "CandViewNtpProducer",
@@ -181,6 +195,22 @@ nTupleElectrons = cms.EDProducer(
     quantity = cms.untracked.string("userFloat(\"RhoCorrectedIso\")"),
     ),
     cms.PSet(
+    tag = cms.untracked.string("ChargedHadronIso"),
+    quantity = cms.untracked.string("chargedHadronIso"),
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("NeutralHadronIso"),
+    quantity = cms.untracked.string("neutralHadronIso"),
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("PhotonIso"),
+    quantity = cms.untracked.string("photonIso"),
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("PUChargedHadronIso"),
+    quantity = cms.untracked.string("puChargedHadronIso"),
+    ),
+    cms.PSet(
     tag = cms.untracked.string("PVDxy"),
     quantity = cms.untracked.string("userFloat(\"VertexDxy\")"),
     ),
@@ -214,10 +244,10 @@ nTupleElectrons = cms.EDProducer(
     tag = cms.untracked.string("MvaTrigV0"),
     quantity = cms.untracked.string("electronID('mvaTrigV0')")
     ),
-#    cms.PSet(
-#    tag = cms.untracked.string("MvaNonTrigV0"),
-#    quantity = cms.untracked.string("electronID('mvaNonTrigV0')")
-#    ),
+    cms.PSet(
+    tag = cms.untracked.string("MvaNonTrigV0"),
+    quantity = cms.untracked.string("electronID('mvaNonTrigV0')")
+    ),
     cms.PSet(
     tag = cms.untracked.string("SuperClusterEta"),
     quantity = cms.untracked.string("superCluster.eta")
@@ -230,6 +260,36 @@ nTupleElectrons = cms.EDProducer(
     tag = cms.untracked.string("TrackerExpectedInnerHits"),
     quantity = cms.untracked.string("gsfTrack().trackerExpectedHitsInner.numberOfHits")
     ),
+    cms.PSet(
+    tag = cms.untracked.string("ecalDrivenMomentumPx"),
+    quantity = cms.untracked.string("ecalDrivenMomentum.Px")    
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("ecalDrivenMomentumPy"),
+    quantity = cms.untracked.string("ecalDrivenMomentum.Py")    
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("ecalDrivenMomentumPz"),
+    quantity = cms.untracked.string("ecalDrivenMomentum.Pz")    
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("ecalDrivenMomentumE"),
+    quantity = cms.untracked.string("ecalDrivenMomentum.E")    
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("ecalDrivenMomentumEt"),
+    quantity = cms.untracked.string("ecalDrivenMomentum.Et")    
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("ecalDrivenMomentumPt"),
+    quantity = cms.untracked.string("ecalDrivenMomentum.Pt")    
+#    quantity = cms.untracked.string("sqrt(ecalDrivenMomentum.fCoordinates.fX*ecalDrivenMomentum.fCoordinates.fX + ecalDrivenMomentum.fCoordinates.fY*ecalDrivenMomentum.fCoordinates.fY)")    
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("PassConversionVeto"),
+    quantity = cms.untracked.string("passConversionVeto")    
+    ),
+
     )
     )
 
@@ -277,6 +337,22 @@ nTupleMuons = nTupleElectrons.clone(
     quantity = cms.untracked.string("userFloat(\"RhoCorrectedIso\")"),
     ),
     cms.PSet(
+    tag = cms.untracked.string("ChargedHadronIso"),
+    quantity = cms.untracked.string("chargedHadronIso"),
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("NeutralHadronIso"),
+    quantity = cms.untracked.string("neutralHadronIso"),
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("PhotonIso"),
+    quantity = cms.untracked.string("photonIso"),
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("PUChargedHadronIso"),
+    quantity = cms.untracked.string("puChargedHadronIso"),
+    ),
+    cms.PSet(
     tag = cms.untracked.string("PVDz"),
     #    quantity = cms.untracked.string('(chargedHadronIso+ max(0., neutralHadronIso + photonIso -0.5*puChargedHadronIso()))/pt'),
     quantity = cms.untracked.string("userFloat(\"VertexDz\")"),
@@ -286,26 +362,86 @@ nTupleMuons = nTupleElectrons.clone(
     quantity = cms.untracked.string("userFloat(\"VertexDxy\")"),
     ),
     #ID and other parameters
-#    cms.PSet(
-#    tag = cms.untracked.string("IsGlobalMuonPromptTight"),
-#    quantity = cms.untracked.string("muonID('GlobalMuonPromptTight')")
-#    ),
-#    cms.PSet(
-#    tag = cms.untracked.string("IsGlobalMuon"),
-#    quantity = cms.untracked.string("isGlobalMuon")
-#    ),
-#    cms.PSet(
-#    tag = cms.untracked.string("IsTrackerMuon"),
-#    quantity = cms.untracked.string("isTrackerMuon")
-#    ),
+    cms.PSet(
+    tag = cms.untracked.string("IsGlobalMuonPromptTight"),
+    quantity = cms.untracked.string("muonID('GlobalMuonPromptTight')")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("IsGlobalMuon"),
+    quantity = cms.untracked.string("isGlobalMuon")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("IsTrackerMuon"),
+    quantity = cms.untracked.string("isTrackerMuon")
+    ),
     cms.PSet(
     tag = cms.untracked.string("AbsoluteDB"),
     quantity = cms.untracked.string("dB"),
     ),
-#    cms .PSet(
-#    tag = cms.untracked.string("TrackerValidInnerHits"),
-#    quantity = cms.untracked.string("innerTrack.numberOfValidHits")
-#    ),
+    cms .PSet(
+    tag = cms.untracked.string("TrackerValidInnerHits"),
+    quantity = cms.untracked.string("innerTrack.numberOfValidHits")
+    ),
+
+    cms.PSet(
+    tag = cms.untracked.string("SumChargedHadronPtR03"),
+    quantity = cms.untracked.string("pfIsolationR03.sumChargedHadronPt")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("SumChargedParticlePtR03"),
+    quantity = cms.untracked.string("pfIsolationR03.sumChargedParticlePt")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("SumNeutralHadronEtR03"),
+    quantity = cms.untracked.string("pfIsolationR03.sumNeutralHadronEt")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("SumPhotonEtR03"),
+    quantity = cms.untracked.string("pfIsolationR03.sumPhotonEt")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("SumNeutralHadronEtHighThresholdR03"),
+    quantity = cms.untracked.string("pfIsolationR03.sumNeutralHadronEtHighThreshold")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("SumPhotonEtHighThresholdR03"),
+    quantity = cms.untracked.string("pfIsolationR03.sumPhotonEtHighThreshold")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("SumPUPtR03"),
+    quantity = cms.untracked.string("pfIsolationR03.sumPUPt")
+    ),
+
+    cms.PSet(
+    tag = cms.untracked.string("SumChargedHadronPtR04"),
+    quantity = cms.untracked.string("pfIsolationR04.sumChargedHadronPt")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("SumChargedParticlePtR04"),
+    quantity = cms.untracked.string("pfIsolationR04.sumChargedParticlePt")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("SumNeutralHadronEtR04"),
+    quantity = cms.untracked.string("pfIsolationR04.sumNeutralHadronEt")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("SumPhotonEtR04"),
+    quantity = cms.untracked.string("pfIsolationR04.sumPhotonEt")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("SumNeutralHadronEtHighThresholdR04"),
+    quantity = cms.untracked.string("pfIsolationR04.sumNeutralHadronEtHighThreshold")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("SumPhotonEtHighThresholdR04"),
+    quantity = cms.untracked.string("pfIsolationR04.sumPhotonEtHighThreshold")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("SumPUPtR04"),
+    quantity = cms.untracked.string("pfIsolationR04.sumPUPt")
+    ),
+    
+
     )
     )
 
@@ -634,6 +770,21 @@ singleTopMCNeutrinos = cms.EDProducer(
     ),
 
 )
+
+nTuplePFJetsForIsolation = cms.EDProducer(
+          "CandViewNtpProducer",
+          src = cms.InputTag("kt6PFJetsForIsolation"),
+          lazyParser = cms.untracked.bool(True),
+          prefix = cms.untracked.string("kt6pfJetsForIso"),
+          variables = cms.VPSet(
+    
+          cms.PSet(
+          tag = cms.untracked.string("Rho"),
+          quantity = cms.untracked.string("rho")
+          ),
+
+          )
+          )
 
 nTuplePatType1METsPF = cms.EDProducer(
           "CandViewNtpProducer",

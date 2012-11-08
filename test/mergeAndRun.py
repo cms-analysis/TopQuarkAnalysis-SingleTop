@@ -13,6 +13,24 @@ import subprocess
 channelName = ""
 directory = ""
 
+okChannelNames = ['TChannel',
+                  'TbarChannel',
+                  'TWChannel',
+                  'TbarWChannel',
+                  'SChannel',
+                  'SbarChannel',
+                  'TTbar',
+                  'ZJets',
+                  'WJets',
+                  'WW',
+                  'WZ',
+                  'ZZ',
+                  'Data',
+                  'TWChannelDilepton',
+                  'TbarWChannelDilepton',
+                  'TTBarDilepton']
+
+    
 if len(sys.argv) != 3:
     print "You need 3 arguments! Something like:"
     print "mergeAndRun.py tW_Synch T_tWChannel"
@@ -27,22 +45,6 @@ else:
         print "Directory specified ("+directory+") does not exist"
         exit()
 
-    okChannelNames = ['TChannel',
-                      'TbarChannel',
-                      'TWChannel',
-                      'TbarWChannel',
-                      'SChannel',
-                      'SbarChannel',
-                      'TTbar',
-                      'ZJets',
-                      'WJets',
-                      'WW',
-                      'WZ',
-                      'ZZ',
-                      'Data',
-                      'TWChannelDilepton',
-                      'TbarWChannelDilepton',
-                      'TTBarDilepton']
                       
     if sys.argv[2] in okChannelNames:
         channelName = sys.argv[2]
@@ -51,6 +53,8 @@ else:
         exit()
 
 edmFileList = glob.glob(directory+"/res/edm*root")
+
+edmFileList.sort()
 
 for file in edmFileList:
     print file

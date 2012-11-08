@@ -22,9 +22,9 @@ hltFilterEle = cms.EDFilter("HLTSummaryFilter",
 #####Primary vertex filter
 PVFilter = cms.EDFilter(
     'SingleTopVertexFilter',
-    src = cms.InputTag("offlinePrimaryVertices"),
+    src = cms.InputTag("goodOfflinePrimaryVertices"),
     cut = cms.string('!isFake & position().Rho() < 2.0 & abs(z) < 24 & ndof >= 4. '),
-    filter = cms.bool(True)
+    filter = cms.bool(False)
     )
 
 PVFilterProducer = cms.EDFilter(

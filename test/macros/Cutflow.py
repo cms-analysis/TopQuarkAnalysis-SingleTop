@@ -71,6 +71,7 @@ for event in tWtree:
     muonE = event.muonE
     muonCharge = event.muonCharge
     muonRelIso = event.muonRelIso
+    muonDeltaCorrectedRelIso = event.muonDeltaCorrectedRelIso
 
     #Get Electron objects
     electronPt = event.electronPt
@@ -80,11 +81,16 @@ for event in tWtree:
     electronCharge = event.electronCharge
     electronRelIso = event.electronRelIso
     electronRhoCorrectedRelIso = event.electronRhoCorrectedRelIso
+    electronDeltaCorrectedRelIso = event.electronDeltaCorrectedRelIso
     electronPVDz = event.electronPVDz
     electronPVDxy = event.electronPVDxy
+    electronDB = event.electronDB
     electronMVATrigV0 = event.electronMVATrigV0
+    electronMVANonTrigV0 = event.electronMVANonTrigV0
     electronTrackerExpectedInnerHits = event.electronTrackerExpectedInnerHits
     electronSuperClusterEta = event.electronSuperClusterEta
+    electronECALPt = event.electronECALPt
+    electronPassConversionVeto = event.electronPassConversionVeto
 
     if len(electronPt) > 0 and len(muonPt) > 0:
         emuStart += 1
@@ -106,36 +112,33 @@ for event in tWtree:
         isTightMuon = False
         if muonPt[i] > 20:
             if abs(muonEta[i]) < 2.4:
-                if muonRelIso[i] < 0.2:
+                if muonDeltaCorrectedRelIso[i] < 0.2:
                     goodMuonidx.append(i)
                     isTightMuon = True
         if not isTightMuon:
             if muonPt[i] > 10:
                 if abs(muonEta[i]) < 2.5:
-                    if muonRelIso[i] < 0.2:
+                    if muonDeltaCorrectedRelIso[i] < 0.2:
                         looseMuonidx.append(i)
 
     for i in range(len(electronPt)):
         isTightElectron = False
-#         if electronPt[i] > 20:
-#             if abs(electronEta[i]) < 2.5:
-#                 if electronPVDxy[i] < 0.04:
-#                     if electronMVATrigV0[i] >= 0. and electronMVATrigV0[i] <= 1.0:
-#                         if electronRhoCorrectedRelIso[i] < 0.15:
-#                             if electronTrackerExpectedInnerHits[i] <= 1:
-#                                 goodEleidx.append(i)
-#                                 isTightElectron = True
-        if electronPt[i] > 20:
-            if abs(electronEta[i]) < 2.5:
-                if electronPVDxy[i] < 0.02:
-                    if electronRhoCorrectedRelIso[i] < 0.15:
-                        goodEleidx.append(i)
-                        isTightElectron = True
-        if not isTightElectron:
-            if electronPt[i] > 10:
+        if electronPassConversionVeto[i]:
+            if electronPt[i] > 20:
                 if abs(electronEta[i]) < 2.5:
-                    if electronSuperClusterEta < 1.442 or electronSuperClusterEta > 1.5660:
-                        if electronRelIso[i] < 0.15:
+                    if abs(electronPVDxy[i]) < 0.04: #####ADJUSTMENT
+                        if electronMVATrigV0[i] >= 0. and electronMVATrigV0[i] <= 1.0: #####ADJUSTMENT
+                            if electronRhoCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
+                                if electronTrackerExpectedInnerHits[i] <= 1:
+                                    goodEleidx.append(i)
+                                    isTightElectron = True
+
+        if not isTightElectron:
+            if electronPt[i] > 20:
+                if abs(electronEta[i]) < 2.5:
+                    #                    if electronSuperClusterEta < 1.442 or electronSuperClusterEta > 1.5660:
+                    if electronMVATrigV0[i] >= 0. and electronMVATrigV0[i] <= 1.0: #####ADJUSTMENT
+                        if electronRhoCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
                             looseEleidx.append(i)
 
     nLooseLeptons = len(looseEleidx) + len(looseMuonidx)
@@ -155,6 +158,7 @@ for event in tWtree:
         lepton0.SetPtEtaPhiE(muonPt[i],muonEta[i],muonPhi[i],muonE[i])
         lepton1.SetPtEtaPhiE(electronPt[j],electronEta[j],electronPhi[j],electronE[j])
         totalCharge = muonCharge[i]+electronCharge[j]
+        chargeMult = muonCharge[i]*electronCharge[j]
     elif len(goodMuonidx) == 2 and len(goodEleidx) == 0:
         ModeIdx = 1
         i = goodMuonidx[0]
@@ -162,6 +166,7 @@ for event in tWtree:
         lepton0.SetPtEtaPhiE(muonPt[i],muonEta[i],muonPhi[i],muonE[i])
         lepton1.SetPtEtaPhiE(muonPt[j],muonEta[j],muonPhi[j],muonE[j])
         totalCharge = muonCharge[i]+muonCharge[j]
+        chargeMult = muonCharge[i]*muonCharge[j]
     elif len(goodMuonidx) == 0 and len(goodEleidx) == 2:
         ModeIdx = 2
         i = goodEleidx[0]
@@ -169,17 +174,22 @@ for event in tWtree:
         lepton0.SetPtEtaPhiE(electronPt[i],electronEta[i],electronPhi[i],electronE[i])
         lepton1.SetPtEtaPhiE(electronPt[j],electronEta[j],electronPhi[j],electronE[j])
         totalCharge = electronCharge[i]+electronCharge[j]
+        chargeMult = electronCharge[i]*electronCharge[j]
     else: 
         continue  
 
 
+    if chargeMult > 0:
+        continue
+
     if totalCharge != 0:
+        print "Charge Issue???"
         continue
     
     LepSelection[ModeIdx] += 1
 
     if dumpEvtNum:
-        lepSelDump[ModeIdx].write(str(runNum) + " " + str(lumiNum) + " " + str(eventNum) +"\n")
+        lepSelDump[ModeIdx].write(str(runNum) + "\t" + str(lumiNum) + "\t" + str(eventNum) +"\n")
     
     if nLooseLeptons != 0:
         continue
@@ -187,7 +197,7 @@ for event in tWtree:
     LepVeto[ModeIdx] += 1
 
     if dumpEvtNum:
-        lepVetoDump[ModeIdx].write(str(runNum) + " " + str(lumiNum) + " " + str(eventNum) +"\n")
+        lepVetoDump[ModeIdx].write(str(runNum) + "\t" + str(lumiNum) + "\t" + str(eventNum) +"\n")
 
 
     mll = (lepton0 + lepton1).M()
@@ -203,19 +213,19 @@ for event in tWtree:
     mllCut[ModeIdx] += 1
 
     if dumpEvtNum:
-        mllCutDump[ModeIdx].write(str(runNum) + " " + str(lumiNum) + " " + str(eventNum) +"\n")
+        mllCutDump[ModeIdx].write(str(runNum) + "\t" + str(lumiNum) + "\t" + str(eventNum) +"\n")
 
 
     MetPt = event.MetPt
     MetPhi = event.MetPhi
 
-    if MetPt < 30:
+    if MetPt < 30 and not ModeIdx == 0:
         continue
 
     MetCut[ModeIdx] += 1
 
     if dumpEvtNum:
-        metCutDump[ModeIdx].write(str(runNum) + " " + str(lumiNum) + " " + str(eventNum) +"\n")
+        metCutDump[ModeIdx].write(str(runNum) + "\t" + str(lumiNum) + "\t" + str(eventNum) +"\n")
 
 
     MET = TLorentzVector()
@@ -241,7 +251,7 @@ for event in tWtree:
     OneJet[ModeIdx] += 1
 
     if dumpEvtNum:
-        oneJetDump[ModeIdx].write(str(runNum) + " " + str(lumiNum) + " " + str(eventNum) +"\n")
+        oneJetDump[ModeIdx].write(str(runNum) + "\t" + str(lumiNum) + "\t" + str(eventNum) +"\n")
 
 
     jetIdx = goodJetIdx[0]
@@ -259,7 +269,7 @@ for event in tWtree:
 
     Ht = lepton0.Pt() + lepton1.Pt() + MET.Pt() + jet.Pt()
 
-    if ModeIdx == 0 and Ht< 150:
+    if ModeIdx == 0 and Ht< 60:
         continue
 
     HtCut[ModeIdx] += 1

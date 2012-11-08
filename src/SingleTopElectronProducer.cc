@@ -2,7 +2,7 @@
  *\Author: A. Orso M. Iorio 
  *
  *
- *\version  $Id: SingleTopElectronProducer.cc,v 1.7.12.3 2012/06/05 10:04:08 oiorio Exp $ 
+ *\version  $Id: SingleTopElectronProducer.cc,v 1.7.12.4 2012/06/10 01:02:01 oiorio Exp $ 
  */
 
 // Single Top producer: produces a top candidate made out of a Lepton, a B jet and a MET
@@ -99,6 +99,11 @@ void SingleTopElectronProducer::produce(edm::Event & iEvent, const edm::EventSet
   iEvent.getByLabel(src_,electrons);
   iEvent.getByLabel(rho_,rho);
   double rhoD = *rho; 
+
+  double Aeff = 1.;
+
+
+
   double energy_ = TMath::Pi()*deltaR_*deltaR_* (*rho);
   
 
@@ -129,9 +134,20 @@ void SingleTopElectronProducer::produce(edm::Event & iEvent, const edm::EventSet
     bool passes = true;
     
     pat::Electron & el = (*initialElectrons)[i];
+
+    Aeff = 1.;
+     
+    if (abs(el.superCluster()->eta() < 1.0)){ Aeff = 0.10;}
+    else if (abs(el.superCluster()->eta() < 1.479)){ Aeff = 0.12;}
+    else if (abs(el.superCluster()->eta() < 2.0)){ Aeff = 0.085;}
+    else if (abs(el.superCluster()->eta() < 2.2)){ Aeff = 0.11;}
+    else if (abs(el.superCluster()->eta() < 2.3)){ Aeff = 0.12;}
+    else if (abs(el.superCluster()->eta() < 2.4)){ Aeff = 0.12;}
+    else { Aeff = 0.13;}
+
     
     el.addUserFloat("DeltaCorrectedIso",(el.chargedHadronIso() + std::max(0., el.neutralHadronIso() + el.photonIso() -0.5*el.puChargedHadronIso()))/el.et());
-    el.addUserFloat("RhoCorrectedIso",(el.chargedHadronIso() + std::max(0., el.neutralHadronIso() + el.photonIso() -energy_))/el.et());
+    el.addUserFloat("RhoCorrectedIso",(el.chargedHadronIso() + std::max(0., el.neutralHadronIso() + el.photonIso() -rhoD*Aeff))/el.et());
     
     double dxy= 9900;
     double dz= 9900;

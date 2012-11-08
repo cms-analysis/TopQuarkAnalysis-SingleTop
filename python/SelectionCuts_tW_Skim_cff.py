@@ -17,7 +17,7 @@ eleLooseCut = cms.string("et > 10 & abs(eta) < 2.5")
 
 #Tight leptons selection criteria
 #No isolation or electronID requirement
-eleTightCut = cms.string("et>10  && abs(eta)<2.5 && passConversionVeto")
+eleTightCut = cms.string("pt>10  && abs(eta)<2.5") # && passConversionVeto")
 
 muTightCut = cms.string("pt > 10 & (isGlobalMuon || isTrackerMuon) && isPFMuon & abs(eta) < 2.5")
 

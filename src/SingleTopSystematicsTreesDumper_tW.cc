@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper_tW.cc,v 1.1.2.1 2012/10/11 19:21:21 dnoonan Exp $
+*\version  $Id: SingleTopSystematicsTreesDumper_tW.cc,v 1.1.2.2 2012/10/13 22:09:09 dnoonan Exp $
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file
 //
@@ -74,6 +74,7 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
     electronsDZ_ =  iConfig.getParameter< edm::InputTag >("electronsDZ");
     electronsDXY_ =  iConfig.getParameter< edm::InputTag >("electronsDXY");
     electronsMVAID_ =  iConfig.getParameter< edm::InputTag >("electronsMVAID");
+    electronsMVAIDNonTrig_ =  iConfig.getParameter< edm::InputTag >("electronsMVAIDNonTrig");
     electronsRelIso_ =  iConfig.getParameter< edm::InputTag >("electronsRelIso");
     electronsDeltaCorrectedRelIso_ =  iConfig.getParameter< edm::InputTag >("electronsDeltaCorrectedRelIso");
     electronsRhoCorrectedRelIso_ =  iConfig.getParameter< edm::InputTag >("electronsRhoCorrectedRelIso");
@@ -83,6 +84,12 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
     electronsEleId95cIso_ =  iConfig.getParameter< edm::InputTag >("electronsEleId95cIso");
     electronsTrackerExpectedInnerHits_ =  iConfig.getParameter< edm::InputTag >("electronsTrackerExpectedInnerHits");
     electronsSuperClusterEta_ =  iConfig.getParameter< edm::InputTag >("electronsSuperClusterEta");
+    electronsECALPt_ =  iConfig.getParameter< edm::InputTag >("electronsECALPt");
+    electronsChargedHadronIso_ =  iConfig.getParameter< edm::InputTag >("electronsChargedHadronIso");
+    electronsPUChargedHadronIso_ =  iConfig.getParameter< edm::InputTag >("electronsPUChargedHadronIso");
+    electronsNeutralHadronIso_ =  iConfig.getParameter< edm::InputTag >("electronsNeutralHadronIso");
+    electronsPhotonIso_ =  iConfig.getParameter< edm::InputTag >("electronsPhotonIso");
+    electronsPassConversionVeto_ =  iConfig.getParameter< edm::InputTag >("electronsPassConversionVeto");
 
     //Muons
     muonsPt_ =  iConfig.getParameter< edm::InputTag >("muonsPt");
@@ -96,12 +103,33 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
     muonsRelIso_ =  iConfig.getParameter< edm::InputTag >("muonsRelIso");
     muonsDeltaCorrectedRelIso_ =  iConfig.getParameter< edm::InputTag >("muonsDeltaCorrectedRelIso");
     muonsRhoCorrectedRelIso_ =  iConfig.getParameter< edm::InputTag >("muonsRhoCorrectedRelIso");
+    muonsChargedHadronIso_ =  iConfig.getParameter< edm::InputTag >("muonsChargedHadronIso");
+    muonsPUChargedHadronIso_ =  iConfig.getParameter< edm::InputTag >("muonsPUChargedHadronIso");
+    muonsNeutralHadronIso_ =  iConfig.getParameter< edm::InputTag >("muonsNeutralHadronIso");
+    muonsPhotonIso_ =  iConfig.getParameter< edm::InputTag >("muonsPhotonIso");
+    muonsSumChargedHadronPtR03_ = iConfig.getParameter< edm::InputTag >("muonsSumChargedHadronPtR03");
+    muonsSumChargedParticlePtR03_ = iConfig.getParameter< edm::InputTag >("muonsSumChargedParticlePtR03");
+    muonsSumNeutralHadronEtR03_ = iConfig.getParameter< edm::InputTag >("muonsSumNeutralHadronEtR03");
+    muonsSumPhotonEtR03_ = iConfig.getParameter< edm::InputTag >("muonsSumPhotonEtR03");
+    muonsSumNeutralHadronEtHighThresholdR03_ = iConfig.getParameter< edm::InputTag >("muonsSumNeutralHadronEtHighThresholdR03");
+    muonsSumPhotonEtHighThresholdR03_ = iConfig.getParameter< edm::InputTag >("muonsSumPhotonEtHighThresholdR03");
+    muonsSumPUPtR03_ = iConfig.getParameter< edm::InputTag >("muonsSumPUPtR03");
+    muonsSumChargedHadronPtR04_ = iConfig.getParameter< edm::InputTag >("muonsSumChargedHadronPtR04");
+    muonsSumChargedParticlePtR04_ = iConfig.getParameter< edm::InputTag >("muonsSumChargedParticlePtR04");
+    muonsSumNeutralHadronEtR04_ = iConfig.getParameter< edm::InputTag >("muonsSumNeutralHadronEtR04");
+    muonsSumPhotonEtR04_ = iConfig.getParameter< edm::InputTag >("muonsSumPhotonEtR04");
+    muonsSumNeutralHadronEtHighThresholdR04_ = iConfig.getParameter< edm::InputTag >("muonsSumNeutralHadronEtHighThresholdR04");
+    muonsSumPhotonEtHighThresholdR04_ = iConfig.getParameter< edm::InputTag >("muonsSumPhotonEtHighThresholdR04");
+    muonsSumPUPtR04_ = iConfig.getParameter< edm::InputTag >("muonsSumPUPtR04");
 
     //Vertices
+    vertexX_ = iConfig.getParameter< edm::InputTag >("vertexX");//,"PileUpSync");
+    vertexY_ = iConfig.getParameter< edm::InputTag >("vertexY");//,"PileUpSync");
     vertexZ_ = iConfig.getParameter< edm::InputTag >("vertexZ");//,"PileUpSync");
     vertexrho_ = iConfig.getParameter< edm::InputTag >("vertexrho");//,"PileUpSync");
     vertexchi_ = iConfig.getParameter< edm::InputTag >("vertexchi");//,"PileUpSync");
     vertexNDOF_ = iConfig.getParameter< edm::InputTag >("vertexNDOF");//,"PileUpSync");
+    vertexIsFake_ = iConfig.getParameter< edm::InputTag >("vertexIsFake");//,"PileUpSync");
 
     //Jets
     jetsPt_ =  iConfig.getParameter< edm::InputTag >("jetsPt");
@@ -127,6 +155,8 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
     jetsDZ_ =  iConfig.getParameter< edm::InputTag >("jetsDZ");
     genjetsPt_ =  iConfig.getParameter< edm::InputTag >("genjetsPt");
     genjetsEta_ =  iConfig.getParameter< edm::InputTag >("genjetsEta");
+
+    ktJetsForIsoRho_ =  iConfig.getParameter< edm::InputTag >("ktJetsForIsoRho");
 
     METPhi_ =  iConfig.getParameter< edm::InputTag >("METPhi");
     METPt_ =  iConfig.getParameter< edm::InputTag >("METPt");
@@ -246,6 +276,24 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
 	trees[syst]->Branch("muonPVDz", &_muonPVDz_);
 	trees[syst]->Branch("muonPVDxy", &_muonPVDxy_);
 	trees[syst]->Branch("muonDB", &_muonDB_);
+	trees[syst]->Branch("muonChargedHadronIso", &_muonChargedHadronIso_);
+	trees[syst]->Branch("muonPUChargedHadronIso", &_muonPUChargedHadronIso_);
+	trees[syst]->Branch("muonNeutralHadronIso", &_muonNeutralHadronIso_);
+	trees[syst]->Branch("muonPhotonIso", &_muonPhotonIso_);
+	trees[syst]->Branch("muonSumChargedHadronPtR03", &_muonSumChargedHadronPtR03_);
+	trees[syst]->Branch("muonSumChargedParticlePtR03", &_muonSumChargedParticlePtR03_);
+	trees[syst]->Branch("muonSumNeutralHadronEtR03", &_muonSumNeutralHadronEtR03_);
+	trees[syst]->Branch("muonSumPhotonEtR03", &_muonSumPhotonEtR03_);
+	trees[syst]->Branch("muonSumNeutralHadronEtHighThresholdR03", &_muonSumNeutralHadronEtHighThresholdR03_);
+	trees[syst]->Branch("muonSumPhotonEtHighThresholdR03", &_muonSumPhotonEtHighThresholdR03_);
+	trees[syst]->Branch("muonSumPUPtR03", &_muonSumPUPtR03_);
+	trees[syst]->Branch("muonSumChargedHadronPtR04", &_muonSumChargedHadronPtR04_);
+	trees[syst]->Branch("muonSumChargedParticlePtR04", &_muonSumChargedParticlePtR04_);
+	trees[syst]->Branch("muonSumNeutralHadronEtR04", &_muonSumNeutralHadronEtR04_);
+	trees[syst]->Branch("muonSumPhotonEtR04", &_muonSumPhotonEtR04_);
+	trees[syst]->Branch("muonSumNeutralHadronEtHighThresholdR04", &_muonSumNeutralHadronEtHighThresholdR04_);
+	trees[syst]->Branch("muonSumPhotonEtHighThresholdR04", &_muonSumPhotonEtHighThresholdR04_);
+	trees[syst]->Branch("muonSumPUPtR04", &_muonSumPUPtR04_);
 
 	trees[syst]->Branch("electronPt", &_electronPt_);
 	trees[syst]->Branch("electronEta", &_electronEta_);
@@ -259,12 +307,19 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
 	trees[syst]->Branch("electronPVDxy", &_electronPVDxy_);
 	trees[syst]->Branch("electronDB", &_electronDB_);
 	trees[syst]->Branch("electronMVATrigV0", &_electronMVAID_);
+	trees[syst]->Branch("electronMVANonTrigV0", &_electronMVAIDNonTrig_);
 	trees[syst]->Branch("electronEleId70cIso", &_electronEleId70cIso_);
 	trees[syst]->Branch("electronEleId80cIso", &_electronEleId80cIso_);
 	trees[syst]->Branch("electronEleId90cIso", &_electronEleId90cIso_);
 	trees[syst]->Branch("electronEleId95cIso", &_electronEleId95cIso_);
 	trees[syst]->Branch("electronTrackerExpectedInnerHits", &_electronTrackerExpectedInnerHits_);
 	trees[syst]->Branch("electronSuperClusterEta", &_electronSuperClusterEta_);
+	trees[syst]->Branch("electronECALPt", &_electronECALPt_);
+	trees[syst]->Branch("electronChargedHadronIso", &_electronChargedHadronIso_);
+	trees[syst]->Branch("electronPUChargedHadronIso", &_electronPUChargedHadronIso_);
+	trees[syst]->Branch("electronNeutralHadronIso", &_electronNeutralHadronIso_);
+	trees[syst]->Branch("electronPhotonIso", &_electronPhotonIso_);
+	trees[syst]->Branch("electronPassConversionVeto", &_electronPassConversionVeto_);
 
 	trees[syst]->Branch("jetPt", &_jetPt_);
 	trees[syst]->Branch("jetEta", &_jetEta_);
@@ -290,15 +345,20 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
 	trees[syst]->Branch("genjetPt", &_genjetPt_);
 	trees[syst]->Branch("genjetEta", &_genjetEta_);
 
+	trees[syst]->Branch("ktJetsForIsoRho", &_ktJetsForIsoRho_);
+
 	trees[syst]->Branch("MetPhi", &_MetPhi_);
 	trees[syst]->Branch("MetPt", &_MetPt_);
 	trees[syst]->Branch("UnclMETPx", &_UnclMETPx_);
 	trees[syst]->Branch("UnclMETPy", &_UnclMETPy_);
 
+	trees[syst]->Branch("vertexX", &_vertexX_);
+	trees[syst]->Branch("vertexY", &_vertexY_);
 	trees[syst]->Branch("vertexZ", &_vertexZ_);
 	trees[syst]->Branch("vertexrho", &_vertexrho_);
 	trees[syst]->Branch("vertexchi", &_vertexchi_);
 	trees[syst]->Branch("vertexNDOF", &_vertexNDOF_);
+	trees[syst]->Branch("vertexIsFake", &_vertexIsFake_);
 
 	trees[syst]->Branch("runNum", &_runNum_);
 	trees[syst]->Branch("lumiNum", &_lumiNum_);
@@ -435,6 +495,24 @@ void SingleTopSystematicsTreesDumper_tW::initBranchVars()
     _muonPVDz_.clear();
     _muonPVDxy_.clear();
     _muonDB_.clear();
+    _muonChargedHadronIso_.clear();
+    _muonPUChargedHadronIso_.clear();
+    _muonNeutralHadronIso_.clear();
+    _muonPhotonIso_.clear();
+    _muonSumChargedHadronPtR03_.clear();
+    _muonSumChargedParticlePtR03_.clear();
+    _muonSumNeutralHadronEtR03_.clear();
+    _muonSumPhotonEtR03_.clear();
+    _muonSumNeutralHadronEtHighThresholdR03_.clear();
+    _muonSumPhotonEtHighThresholdR03_.clear();
+    _muonSumPUPtR03_.clear();
+    _muonSumChargedHadronPtR04_.clear();
+    _muonSumChargedParticlePtR04_.clear();
+    _muonSumNeutralHadronEtR04_.clear();
+    _muonSumPhotonEtR04_.clear();
+    _muonSumNeutralHadronEtHighThresholdR04_.clear();
+    _muonSumPhotonEtHighThresholdR04_.clear();
+    _muonSumPUPtR04_.clear();
     
     _electronPt_.clear();
     _electronEta_.clear();
@@ -448,12 +526,19 @@ void SingleTopSystematicsTreesDumper_tW::initBranchVars()
     _electronPVDxy_.clear();
     _electronDB_.clear();
     _electronMVAID_.clear();
+    _electronMVAIDNonTrig_.clear();
     _electronEleId70cIso_.clear();
     _electronEleId80cIso_.clear();
     _electronEleId90cIso_.clear();
     _electronEleId95cIso_.clear();
     _electronTrackerExpectedInnerHits_.clear();
     _electronSuperClusterEta_.clear();
+    _electronECALPt_.clear();
+    _electronChargedHadronIso_.clear();
+    _electronPUChargedHadronIso_.clear();
+    _electronNeutralHadronIso_.clear();
+    _electronPhotonIso_.clear();
+    _electronPassConversionVeto_.clear();
     
     _jetPt_.clear();
     _jetEta_.clear();
@@ -479,15 +564,20 @@ void SingleTopSystematicsTreesDumper_tW::initBranchVars()
     _genjetPt_.clear();
     _genjetEta_.clear();
 
+    _ktJetsForIsoRho_ = DOUBLE_NAN;
+
     _MetPhi_ = DOUBLE_NAN;
     _MetPt_ = DOUBLE_NAN;
     _UnclMETPx_ = DOUBLE_NAN;
     _UnclMETPy_ = DOUBLE_NAN;
 
+    _vertexX_ = DOUBLE_NAN;
+    _vertexY_ = DOUBLE_NAN;
     _vertexZ_ = DOUBLE_NAN;
     _vertexrho_ = DOUBLE_NAN;
     _vertexchi_ = DOUBLE_NAN;
     _vertexNDOF_ = DOUBLE_NAN;
+    _vertexIsFake_ = false;
 
     _runNum_ = INT_NAN;
     _lumiNum_ = INT_NAN;
@@ -678,6 +768,24 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
     iEvent.getByLabel(muonsRelIso_,  muonsRelIso);
     iEvent.getByLabel(muonsDeltaCorrectedRelIso_, muonsDeltaCorrectedRelIso);
     iEvent.getByLabel(muonsRhoCorrectedRelIso_,   muonsRhoCorrectedRelIso);;
+    iEvent.getByLabel(muonsChargedHadronIso_, muonsChargedHadronIso);
+    iEvent.getByLabel(muonsPUChargedHadronIso_, muonsPUChargedHadronIso);
+    iEvent.getByLabel(muonsNeutralHadronIso_, muonsNeutralHadronIso);
+    iEvent.getByLabel(muonsPhotonIso_, muonsPhotonIso);
+    iEvent.getByLabel(muonsSumChargedHadronPtR03_, muonsSumChargedHadronPtR03);
+    iEvent.getByLabel(muonsSumChargedParticlePtR03_, muonsSumChargedParticlePtR03);
+    iEvent.getByLabel(muonsSumNeutralHadronEtR03_, muonsSumNeutralHadronEtR03);
+    iEvent.getByLabel(muonsSumPhotonEtR03_, muonsSumPhotonEtR03);
+    iEvent.getByLabel(muonsSumNeutralHadronEtHighThresholdR03_, muonsSumNeutralHadronEtHighThresholdR03);
+    iEvent.getByLabel(muonsSumPhotonEtHighThresholdR03_, muonsSumPhotonEtHighThresholdR03);
+    iEvent.getByLabel(muonsSumPUPtR03_, muonsSumPUPtR03);
+    iEvent.getByLabel(muonsSumChargedHadronPtR04_, muonsSumChargedHadronPtR04);
+    iEvent.getByLabel(muonsSumChargedParticlePtR04_, muonsSumChargedParticlePtR04);
+    iEvent.getByLabel(muonsSumNeutralHadronEtR04_, muonsSumNeutralHadronEtR04);
+    iEvent.getByLabel(muonsSumPhotonEtR04_, muonsSumPhotonEtR04);
+    iEvent.getByLabel(muonsSumNeutralHadronEtHighThresholdR04_, muonsSumNeutralHadronEtHighThresholdR04);
+    iEvent.getByLabel(muonsSumPhotonEtHighThresholdR04_, muonsSumPhotonEtHighThresholdR04);
+    iEvent.getByLabel(muonsSumPUPtR04_, muonsSumPUPtR04);
 
     iEvent.getByLabel(electronsPt_, electronsPt);
     iEvent.getByLabel(electronsPhi_, electronsPhi);
@@ -691,17 +799,27 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
     iEvent.getByLabel(electronsDeltaCorrectedRelIso_, electronsDeltaCorrectedRelIso);
     iEvent.getByLabel(electronsRhoCorrectedRelIso_, electronsRhoCorrectedRelIso);
     iEvent.getByLabel(electronsMVAID_, electronsMVAID);
+    iEvent.getByLabel(electronsMVAIDNonTrig_, electronsMVAIDNonTrig);
     iEvent.getByLabel(electronsEleId70cIso_, electronsEleId70cIso);
     iEvent.getByLabel(electronsEleId80cIso_, electronsEleId80cIso);
     iEvent.getByLabel(electronsEleId90cIso_, electronsEleId90cIso);
     iEvent.getByLabel(electronsEleId95cIso_, electronsEleId95cIso);
     iEvent.getByLabel(electronsTrackerExpectedInnerHits_, electronsTrackerExpectedInnerHits);
     iEvent.getByLabel(electronsSuperClusterEta_, electronsSuperClusterEta);
+    iEvent.getByLabel(electronsECALPt_, electronsECALPt);
+    iEvent.getByLabel(electronsChargedHadronIso_, electronsChargedHadronIso);
+    iEvent.getByLabel(electronsPUChargedHadronIso_, electronsPUChargedHadronIso);
+    iEvent.getByLabel(electronsNeutralHadronIso_, electronsNeutralHadronIso);
+    iEvent.getByLabel(electronsPhotonIso_, electronsPhotonIso);
+    iEvent.getByLabel(electronsPassConversionVeto_, electronsPassConversionVeto);
 
+    iEvent.getByLabel(vertexX_,vertexX);
+    iEvent.getByLabel(vertexY_,vertexY);
     iEvent.getByLabel(vertexZ_,vertexZ);
     iEvent.getByLabel(vertexrho_,vertexrho);
     iEvent.getByLabel(vertexchi_,vertexchi);
     iEvent.getByLabel(vertexNDOF_,vertexNDOF);
+    iEvent.getByLabel(vertexIsFake_,vertexIsFake);
 
     iEvent.getByLabel(jetsPt_,		   jetsPt);		  
     iEvent.getByLabel(jetsEta_,		   jetsEta);		  
@@ -726,6 +844,8 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
     iEvent.getByLabel(jetsDZ_,             jetsDZ);
     iEvent.getByLabel(genjetsPt_,	   genjetsPt);		  
     iEvent.getByLabel(genjetsEta_,	   genjetsEta);		  
+
+    iEvent.getByLabel(ktJetsForIsoRho_,	   ktJetsForIsoRho);
 
     iEvent.getByLabel(METPt_, METPt);
     iEvent.getByLabel(METPhi_, METPhi);
@@ -888,6 +1008,24 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
       _muonDB_.push_back(muonsDB->at(i));
       _muonPVDz_.push_back(muonsDZ->at(i));
       _muonPVDxy_.push_back(muonsDXY->at(i));
+      _muonChargedHadronIso_.push_back(muonsChargedHadronIso->at(i)); 
+      _muonPUChargedHadronIso_.push_back(muonsPUChargedHadronIso->at(i)); 
+      _muonNeutralHadronIso_.push_back(muonsNeutralHadronIso->at(i));
+      _muonPhotonIso_.push_back(muonsPhotonIso->at(i));
+      _muonSumChargedHadronPtR03_.push_back(muonsSumChargedHadronPtR03->at(i));
+      _muonSumChargedParticlePtR03_.push_back(muonsSumChargedParticlePtR03->at(i));
+      _muonSumNeutralHadronEtR03_.push_back(muonsSumNeutralHadronEtR03->at(i));
+      _muonSumPhotonEtR03_.push_back(muonsSumPhotonEtR03->at(i));
+      _muonSumNeutralHadronEtHighThresholdR03_.push_back(muonsSumNeutralHadronEtHighThresholdR03->at(i));
+      _muonSumPhotonEtHighThresholdR03_.push_back(muonsSumPhotonEtHighThresholdR03->at(i));
+      _muonSumPUPtR03_.push_back(muonsSumPUPtR03->at(i));
+      _muonSumChargedHadronPtR04_.push_back(muonsSumChargedHadronPtR04->at(i));
+      _muonSumChargedParticlePtR04_.push_back(muonsSumChargedParticlePtR04->at(i));
+      _muonSumNeutralHadronEtR04_.push_back(muonsSumNeutralHadronEtR04->at(i));
+      _muonSumPhotonEtR04_.push_back(muonsSumPhotonEtR04->at(i));
+      _muonSumNeutralHadronEtHighThresholdR04_.push_back(muonsSumNeutralHadronEtHighThresholdR04->at(i));
+      _muonSumPhotonEtHighThresholdR04_.push_back(muonsSumPhotonEtHighThresholdR04->at(i));
+      _muonSumPUPtR04_.push_back(muonsSumPUPtR04->at(i));
     }
 
     //    cout << "Electrons" << endl;
@@ -906,13 +1044,20 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
       _electronPVDz_.push_back(electronsDZ->at(i));
       _electronPVDxy_.push_back(electronsDXY->at(i));
       _electronMVAID_.push_back(electronsMVAID->at(i));
+      _electronMVAIDNonTrig_.push_back(electronsMVAIDNonTrig->at(i));
       _electronEleId70cIso_.push_back(electronsEleId70cIso->at(i));
       _electronEleId80cIso_.push_back(electronsEleId80cIso->at(i));
       _electronEleId90cIso_.push_back(electronsEleId90cIso->at(i));
       _electronEleId95cIso_.push_back(electronsEleId95cIso->at(i));
       _electronTrackerExpectedInnerHits_.push_back(electronsTrackerExpectedInnerHits->at(i));
       _electronSuperClusterEta_.push_back(electronsSuperClusterEta->at(i));
-    }
+      _electronECALPt_.push_back(electronsECALPt->at(i)); 
+      _electronChargedHadronIso_.push_back(electronsChargedHadronIso->at(i)); 
+      _electronPUChargedHadronIso_.push_back(electronsPUChargedHadronIso->at(i)); 
+      _electronNeutralHadronIso_.push_back(electronsNeutralHadronIso->at(i));
+      _electronPhotonIso_.push_back(electronsPhotonIso->at(i));
+      _electronPassConversionVeto_.push_back(electronsPassConversionVeto->at(i));
+  }
 
     //    cout << "Jets" << endl;
 
@@ -941,13 +1086,18 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
       _genjetEta_.push_back(genjetsEta->at(i));
     }
 
+    _ktJetsForIsoRho_ = (*ktJetsForIsoRho);
+
     //    cout << "Other" << endl;
     
     // Get Vertex
+    _vertexX_ = vertexX->at(0);
+    _vertexY_ = vertexY->at(0);
     _vertexZ_ = vertexZ->at(0);
     _vertexrho_ = vertexrho->at(0);
     _vertexchi_ = vertexchi->at(0);
     _vertexNDOF_ = vertexNDOF->at(0);
+    _vertexIsFake_ = vertexIsFake->at(0);
 
     // Get Event Info
     _runNum_ = iEvent.eventAuxiliary().run();
@@ -1035,6 +1185,9 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
                                   || syst_name == "JERUp" || syst_name == "JERDown"
                                  ) && channel != "Data"
                                 );
+
+	_UnclMETPx_ = (*UnclMETPx);
+	_UnclMETPy_ = (*UnclMETPy);
 
         if (syst_name == "UnclusteredMETUp")
         {

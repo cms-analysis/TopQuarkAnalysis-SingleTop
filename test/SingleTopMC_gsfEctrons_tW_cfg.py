@@ -186,9 +186,11 @@ process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
 #                                "/store/mc/Summer12_DR53X/T_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola/AODSIM/PU_S10_START53_V7A-v1/0000/F4FEBE8F-3BEA-E111-8373-003048FF9AA6.root", #53X version
 #                                "/store/mc/Summer12/T_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola/AODSIM/PU_S7_START52_V9-v1/0000/FAD2E60D-868E-E111-AEFE-001BFCDBD11E.root", # 52X version
-                                "/store/mc/Summer12_DR53X/T_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola/AODSIM/PU_S10_START53_V7A-v1/0000/DC1958F9-2BEA-E111-8E57-003048679244.root",
+#                                "/store/mc/Summer12_DR53X/T_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola/AODSIM/PU_S10_START53_V7A-v1/0000/DC1958F9-2BEA-E111-8E57-003048679244.root",
+                                "/store/mc/Summer12_DR53X/T_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola/AODSIM/PU_S10_START53_V7A-v1/0000/0024E066-2BEA-E111-B72F-001BFCDBD11E.root",
 ),
 #eventsToProcess = cms.untracked.VEventRange('1:65161675-1:65161677'),#1:95606867-1:95606869')
+eventsToProcess = cms.untracked.VEventRange('1:90098-1:90100'),#1:95606867-1:95606869')
 duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
 #skipEvents = cms.untracked.uint32(133),
 )

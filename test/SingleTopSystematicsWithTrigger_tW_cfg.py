@@ -10,9 +10,11 @@ process.options = cms.untracked.PSet(
     FailPath = cms.untracked.vstring('ProductNotFound','Type Mismatch')
     )
 
+process.MessageLogger.cerr.FwkReport.reportEvery = 1000
+
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff") ### real data
-process.GlobalTag.globaltag = cms.string("START52_V9::All")
+process.GlobalTag.globaltag = cms.string("START53_V7::All")
 
 
 
@@ -34,30 +36,14 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
-
-#'file:/tmp/oiorio/edmntuple_tchannel_big.root',
-'file:/tmp/oiorio/TChannelMerged.root',
-
-),
-duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
-#eventsToProcess = cms.untracked.VEventRange('1:19517967-1:19517969'),
+                             'file:edmntuple_tWTestNoEleConvRej.root',
+                             ),
+                             duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
 )
 
 
-
-
-#from TChannel import *
-#process.source.fileNames = TChannel_ntuple
-process.source.fileNames = cms.untracked.vstring("file:edmntuple_tWTest.root")
-
-#PileUpSync
-
 #Output
-process.TFileService = cms.Service("TFileService", fileName = cms.string("edmntuple_tWTest_OUTPUT.root"))
-#process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/edmntuple_TTBar.root"))
-#process.TFileService = cms.Service("TFileService", fileName = cms.string("testNoPU.root"))
-
-#process.load("SingleTopAnalyzers_cfi")
+process.TFileService = cms.Service("TFileService", fileName = cms.string("output/ntuple_SysTrees_TESTING.root"))
 
 process.load("SingleTopRootPlizer_tW_cfi")
 process.load("SingleTopFilters_tW_cfi")
@@ -67,8 +53,12 @@ from SingleTopPSetsSummer_tW_cfi import *
 
 process.TreesDileptontW.dataPUFile = cms.untracked.string("pileUpDistr.root")
 
-process.TreesDileptontW.channelInfo = TWChannel
+process.TreesDileptontW.channelInfo = TestSample
 
+channelName = 'Testing'
+
+if 'Dilepton' in channelName:
+    process.TreesDileptontW.systematics = cms.untracked.vstring()
 
 #doPU = cms.untracked.bool(False)
 

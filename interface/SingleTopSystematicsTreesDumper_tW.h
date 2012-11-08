@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  *
  * Produces systematics histograms out of a standard Single Top n-tuple
- * \ version $Id: SingleTopSystematicsTreesDumper_tW.h,v 1.1.2.1 2012/10/11 19:21:20 dnoonan Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper_tW.h,v 1.1.2.2 2012/10/13 22:09:09 dnoonan Exp $
  */
 
 
@@ -197,6 +197,24 @@ private:
         muonsRelIso_,
         muonsDeltaCorrectedRelIso_,
         muonsRhoCorrectedRelIso_,
+        muonsChargedHadronIso_,
+        muonsPUChargedHadronIso_,
+        muonsNeutralHadronIso_,
+        muonsPhotonIso_,
+        muonsSumChargedHadronPtR03_,
+        muonsSumChargedParticlePtR03_,
+        muonsSumNeutralHadronEtR03_,
+        muonsSumPhotonEtR03_,
+        muonsSumNeutralHadronEtHighThresholdR03_,
+        muonsSumPhotonEtHighThresholdR03_,
+        muonsSumPUPtR03_,
+        muonsSumChargedHadronPtR04_,
+        muonsSumChargedParticlePtR04_,
+        muonsSumNeutralHadronEtR04_,
+        muonsSumPhotonEtR04_,
+        muonsSumNeutralHadronEtHighThresholdR04_,
+        muonsSumPhotonEtHighThresholdR04_,
+        muonsSumPUPtR04_,
 
         electronsPt_,
         electronsPhi_,
@@ -207,6 +225,7 @@ private:
         electronsDZ_,
         electronsDXY_,
         electronsMVAID_,
+        electronsMVAIDNonTrig_,
         electronsRelIso_,
         electronsDeltaCorrectedRelIso_,
         electronsRhoCorrectedRelIso_,
@@ -216,11 +235,20 @@ private:
         electronsEleId95cIso_,
         electronsTrackerExpectedInnerHits_,
         electronsSuperClusterEta_,
+        electronsECALPt_,
+        electronsChargedHadronIso_,
+        electronsPUChargedHadronIso_,
+        electronsNeutralHadronIso_,
+        electronsPhotonIso_,
+        electronsPassConversionVeto_,
 
+        vertexX_,
+        vertexY_,
         vertexZ_,
         vertexrho_,
         vertexchi_,
         vertexNDOF_,
+        vertexIsFake_,
 
         jetsPt_,
         jetsEta_,
@@ -245,6 +273,8 @@ private:
         jetsDZ_,
         genjetsPt_,
         genjetsEta_,
+
+        ktJetsForIsoRho_,
 
         METPt_,
         METPhi_,
@@ -274,6 +304,24 @@ private:
         muonsDB,
         muonsDZ,
         muonsDXY,
+        muonsChargedHadronIso,
+        muonsPUChargedHadronIso,
+        muonsNeutralHadronIso,
+        muonsPhotonIso,
+        muonsSumChargedHadronPtR03,
+        muonsSumChargedParticlePtR03,
+        muonsSumNeutralHadronEtR03,
+        muonsSumPhotonEtR03,
+        muonsSumNeutralHadronEtHighThresholdR03,
+        muonsSumPhotonEtHighThresholdR03,
+        muonsSumPUPtR03,
+        muonsSumChargedHadronPtR04,
+        muonsSumChargedParticlePtR04,
+        muonsSumNeutralHadronEtR04,
+        muonsSumPhotonEtR04,
+        muonsSumNeutralHadronEtHighThresholdR04,
+        muonsSumPhotonEtHighThresholdR04,
+        muonsSumPUPtR04,
       
 
         electronsPt,
@@ -288,13 +336,20 @@ private:
         electronsDZ,
         electronsDXY,
         electronsMVAID,
+        electronsMVAIDNonTrig,
         electronsEleId70cIso,
         electronsEleId80cIso,
         electronsEleId90cIso,
         electronsEleId95cIso,
         electronsTrackerExpectedInnerHits,
         electronsSuperClusterEta,
-
+        electronsECALPt,
+        electronsChargedHadronIso,
+        electronsPUChargedHadronIso,
+        electronsNeutralHadronIso,
+        electronsPhotonIso,
+        electronsPassConversionVeto,
+      
         jetsPt,
         jetsEta,
         jetsPhi,
@@ -320,17 +375,21 @@ private:
         METPhi,
         METPt,
 
+        vertexX,
+        vertexY,
         vertexZ,
         vertexrho,
         vertexchi;
 
     edm::Handle<std::vector<int> > vertexNDOF;
 
+    edm::Handle<std::vector<bool> > vertexIsFake;
+
     edm::Handle<std::vector<double> > genjetsPt,
-      genjetsEta;
+      genjetsEta; 
     
     edm::Handle<double> UnclMETPx,
-      UnclMETPy;
+      UnclMETPy, ktJetsForIsoRho;
 
 
     edm::Handle<int > n0, nm1, np1;
@@ -436,6 +495,24 @@ private:
     std::vector<double> _muonPVDz_;
     std::vector<double> _muonPVDxy_;
     std::vector<double> _muonDB_;
+    std::vector<double> _muonChargedHadronIso_;
+    std::vector<double> _muonPUChargedHadronIso_;
+    std::vector<double> _muonNeutralHadronIso_;
+    std::vector<double> _muonPhotonIso_;
+    std::vector<double> _muonSumChargedHadronPtR03_;
+    std::vector<double> _muonSumChargedParticlePtR03_;
+    std::vector<double> _muonSumNeutralHadronEtR03_;
+    std::vector<double> _muonSumPhotonEtR03_;
+    std::vector<double> _muonSumNeutralHadronEtHighThresholdR03_;
+    std::vector<double> _muonSumPhotonEtHighThresholdR03_;
+    std::vector<double> _muonSumPUPtR03_;
+    std::vector<double> _muonSumChargedHadronPtR04_;
+    std::vector<double> _muonSumChargedParticlePtR04_;
+    std::vector<double> _muonSumNeutralHadronEtR04_;
+    std::vector<double> _muonSumPhotonEtR04_;
+    std::vector<double> _muonSumNeutralHadronEtHighThresholdR04_;
+    std::vector<double> _muonSumPhotonEtHighThresholdR04_;
+    std::vector<double> _muonSumPUPtR04_;
 
     std::vector<double> _electronPt_;
     std::vector<double> _electronEta_;
@@ -449,12 +526,19 @@ private:
     std::vector<double> _electronPVDxy_;
     std::vector<double> _electronDB_;
     std::vector<double> _electronMVAID_;
+    std::vector<double> _electronMVAIDNonTrig_;
     std::vector<double> _electronEleId70cIso_;
     std::vector<double> _electronEleId80cIso_;
     std::vector<double> _electronEleId90cIso_;
     std::vector<double> _electronEleId95cIso_;
     std::vector<double> _electronTrackerExpectedInnerHits_;
     std::vector<double> _electronSuperClusterEta_;
+    std::vector<double> _electronECALPt_;
+    std::vector<double> _electronChargedHadronIso_;
+    std::vector<double> _electronPUChargedHadronIso_;
+    std::vector<double> _electronNeutralHadronIso_;
+    std::vector<double> _electronPhotonIso_;
+    std::vector<double> _electronPassConversionVeto_;
     
     std::vector<double> _jetPt_;
     std::vector<double> _jetEta_;
@@ -480,15 +564,20 @@ private:
     std::vector<double> _genjetPt_;
     std::vector<double> _genjetEta_;
 
+    double _ktJetsForIsoRho_;
+
     double _MetPhi_;
     double _MetPt_;
     double _UnclMETPx_;
     double _UnclMETPy_;
 
+    double _vertexX_;
+    double _vertexY_;
     double _vertexZ_;
     double _vertexrho_;
     double _vertexchi_;
     int _vertexNDOF_;
+    bool _vertexIsFake_;
 
     int _runNum_;
     int _lumiNum_;

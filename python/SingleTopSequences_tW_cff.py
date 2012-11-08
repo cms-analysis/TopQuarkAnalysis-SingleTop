@@ -35,6 +35,7 @@ from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_tW_cff import nTupleLooseEle
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_tW_cff import nTupleLooseElectronsEle
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_tW_cff import nTupleLooseMuons
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_tW_cff import nTupleVertices
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_tW_cff import nTupleVertices2
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_tW_cff import nTupleZVetoElectrons
 
 
