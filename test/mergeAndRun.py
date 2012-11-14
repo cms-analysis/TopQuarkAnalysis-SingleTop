@@ -28,7 +28,8 @@ okChannelNames = ['TChannel',
                   'Data',
                   'TWChannelDilepton',
                   'TbarWChannelDilepton',
-                  'TTBarDilepton']
+                  'TTBarDilepton',
+                  'TestSample']
 
     
 if len(sys.argv) != 3:

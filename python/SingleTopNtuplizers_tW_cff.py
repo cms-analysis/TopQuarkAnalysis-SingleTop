@@ -42,39 +42,44 @@ nTupleTopJetsPF = cms.EDProducer(
     quantity = cms.untracked.string("userFloat(\"betaStar\")"),
     ),
 
-    cms.PSet(
-    tag = cms.untracked.string("ChargedMultiplicity"),
-    quantity = cms.untracked.string("chargedMultiplicity"),
-     ),
 
-   cms.PSet(
+    cms.PSet(
     tag = cms.untracked.string("NeutralMultiplicity"),
     quantity = cms.untracked.string("neutralMultiplicity"),
-     ),
+    ),
  
-    
     cms.PSet(
     tag = cms.untracked.string("RMS"),
     quantity = cms.untracked.string("userFloat(\"RMS\")"),
     ),
 
     cms.PSet(
-    tag = cms.untracked.string("NeuHadEn"),
+    tag = cms.untracked.string("NumberOfDaughters"),
+    quantity = cms.untracked.string("numberOfDaughters"),
+    ),
+
+    cms.PSet(
+    tag = cms.untracked.string("ChargedMultiplicity"),
+    quantity = cms.untracked.string("chargedMultiplicity"),
+    ),
+
+    cms.PSet(
+    tag = cms.untracked.string("NeuHadEnFrac"),
     quantity = cms.untracked.string("neutralHadronEnergyFraction"),
     ),
 
     cms.PSet(
-    tag = cms.untracked.string("NeuEmEn"),
+    tag = cms.untracked.string("NeuEmEnFrac"),
     quantity = cms.untracked.string("neutralEmEnergyFraction"),
     ),
 
     cms.PSet(
-    tag = cms.untracked.string("CHEmEn"),
+    tag = cms.untracked.string("CHEmEnFrac"),
     quantity = cms.untracked.string("chargedEmEnergyFraction"),
     ),
 
     cms.PSet(
-    tag = cms.untracked.string("CHHadEn"),
+    tag = cms.untracked.string("CHHadEnFrac"),
     quantity = cms.untracked.string("chargedHadronEnergyFraction"),
     ),
 
@@ -150,6 +155,7 @@ nTuplePatMETsPF = cms.EDProducer(
     
     )
     )
+
 
 nTupleElectrons = cms.EDProducer(
     "CandViewNtpProducer",
@@ -283,12 +289,16 @@ nTupleElectrons = cms.EDProducer(
     cms.PSet(
     tag = cms.untracked.string("ecalDrivenMomentumPt"),
     quantity = cms.untracked.string("ecalDrivenMomentum.Pt")    
-#    quantity = cms.untracked.string("sqrt(ecalDrivenMomentum.fCoordinates.fX*ecalDrivenMomentum.fCoordinates.fX + ecalDrivenMomentum.fCoordinates.fY*ecalDrivenMomentum.fCoordinates.fY)")    
     ),
     cms.PSet(
     tag = cms.untracked.string("PassConversionVeto"),
     quantity = cms.untracked.string("passConversionVeto")    
     ),
+
+#     cms.PSet(
+#     tag = cms.untracked.string("IsoTest"),
+#     quantity = cms.untracked.string("isoDeposit().depositWithin(0.3)")    
+#     ),
 
     )
     )
@@ -853,8 +863,8 @@ nTuplesSkim = cms.Sequence(
     nTupleLooseMuons +
     nTupleElectrons +
     nTupleMuons +
-    nTupleQCDElectrons +
-    nTupleQCDMuons +
+#     nTupleQCDElectrons +
+#     nTupleQCDMuons +
     nTupleVertices
     )
 

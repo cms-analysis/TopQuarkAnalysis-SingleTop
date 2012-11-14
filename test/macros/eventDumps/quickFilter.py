@@ -2,12 +2,17 @@
 
 import sys
 
-stepNames = {'lepSel':['lepSel','lepsel_info','lepSel'],
-             'lepVeto':['lepVeto','info','lepSel']}
+stepNames = {'lepSel':['lepSel','lepsel_info','LepSel'],
+             'lepVeto':['lepVeto','lepveto','LepVeto'],
+             'met':['metCut','met','MET'],
+             'jet':['oneJet','jet','1jet'],
+             'btag':['bTag','bt','1BTag']
+             }
 
 cutLevel = 'lepSel'
 Rebeca = False
 Duncan = False
+eleSrc = 'PFele'
 if len(sys.argv) > 1:
     for i in range(1,len(sys.argv)):
         arg = sys.argv[i]
@@ -17,13 +22,15 @@ if len(sys.argv) > 1:
             Rebeca = True
         if arg == 'D':
             Duncan = True
+        if arg == 'GSF':
+            eleSrc = 'GSFele'
 else:
     cutLevel = 'lepSel'
 
 
-myFiles = [open(stepNames[cutLevel][0]+'Dump_emu.txt','r'),open(stepNames[cutLevel][0]+'Dump_mumu.txt','r'),open(stepNames[cutLevel][0]+'Dump_ee.txt','r')]
-rebecaFiles = [open(stepNames[cutLevel][1]+'_run_lumi_event_0_tw_dr.txt','r'),open(stepNames[cutLevel][1]+'_run_lumi_event_1_tw_dr.txt','r'),open(stepNames[cutLevel][1]+'_run_lumi_event_2_tw_dr.txt','r')]
-duncanFiles = [open('run_lumi_event_tw_emu_'+stepNames[cutLevel][2]+'_Brunel.txt','r'),open('run_lumi_event_tw_mumu_'+stepNames[cutLevel][2]+'_Brunel.txt','r'),open('run_lumi_event_tw_ee_'+stepNames[cutLevel][2]+'_Brunel.txt','r')]
+myFiles = [open('eventsDanny'+eleSrc+'/'+stepNames[cutLevel][0]+'Dump_emu.txt','r'),open('eventsDanny'+eleSrc+'/'+stepNames[cutLevel][0]+'Dump_mumu.txt','r'),open('eventsDanny'+eleSrc+'/'+stepNames[cutLevel][0]+'Dump_ee.txt','r')]
+rebecaFiles = [open('Rebeca/'+stepNames[cutLevel][1]+'_run_lumi_event_0_tw_dr.txt','r'),open('Rebeca/'+stepNames[cutLevel][1]+'_run_lumi_event_1_tw_dr.txt','r'),open('Rebeca/'+stepNames[cutLevel][1]+'_run_lumi_event_2_tw_dr.txt','r')]
+duncanFiles = [open('Duncan/emu_'+stepNames[cutLevel][2]+'.txt'),open('Duncan/mumu_'+stepNames[cutLevel][2]+'.txt'),open('Duncan/ee_'+stepNames[cutLevel][2]+'.txt')]
 
 diffMeRebecaFile  = [open('diff/MineNotRebecas_'+cutLevel+'_emu.txt','w'),open('diff/MineNotRebecas_'+cutLevel+'_mumu.txt','w'),open('diff/MineNotRebecas_'+cutLevel+'_ee.txt','w')]
 diffMeDuncanFile  = [open('diff/MineNotDuncans_'+cutLevel+'_emu.txt','w'),open('diff/MineNotDuncans_'+cutLevel+'_mumu.txt','w'),open('diff/MineNotDuncans_'+cutLevel+'_ee.txt','w')]

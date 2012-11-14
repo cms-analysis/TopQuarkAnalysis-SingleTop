@@ -60,6 +60,9 @@ channelName = 'REPLACECHANNELNAME'
 if 'Dilepton' in channelName:
     process.TreesDileptontW.systematics = cms.untracked.vstring()
 
+if 'TestSample' in channelName:
+    process.TreesDileptontW.systematics = cms.untracked.vstring()
+
 #doPU = cms.untracked.bool(False)
 
 #process.WeightProducer.doPU = cms.untracked.bool(False)

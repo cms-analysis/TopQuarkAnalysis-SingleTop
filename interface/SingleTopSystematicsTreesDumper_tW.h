@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  *
  * Produces systematics histograms out of a standard Single Top n-tuple
- * \ version $Id: SingleTopSystematicsTreesDumper_tW.h,v 1.1.2.2 2012/10/13 22:09:09 dnoonan Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper_tW.h,v 1.1.2.3 2012/11/08 18:59:05 dnoonan Exp $
  */
 
 
@@ -257,6 +257,7 @@ private:
         jetsCSV_,
         jetsTCHP_,
         jetsRMS_,
+        jetsNumDaughters_,
         jetsCHEmEn_,
         jetsCHHadEn_,
         jetsCHMult_,
@@ -357,6 +358,7 @@ private:
         jetsCSV,
         jetsTCHP,
         jetsRMS,
+        jetsNumDaughters,
         jetsCHEmEn,
         jetsCHHadEn,
         jetsCHMult,
@@ -544,6 +546,7 @@ private:
     std::vector<double> _jetEta_;
     std::vector<double> _jetPhi_;
     std::vector<double> _jetEnergy_;
+    std::vector<double> _jetNumDaughters_;
     std::vector<double> _jetCHEmEn_;
     std::vector<double> _jetCHHadEn_;
     std::vector<double> _jetCHMult_;
@@ -563,11 +566,13 @@ private:
     std::vector<double> _jetDZ_;
     std::vector<double> _genjetPt_;
     std::vector<double> _genjetEta_;
+    std::vector<double> _jetUncorrPt_;
 
     double _ktJetsForIsoRho_;
 
     double _MetPhi_;
     double _MetPt_;
+    double _UncorrMetPt_;
     double _UnclMETPx_;
     double _UnclMETPy_;
 

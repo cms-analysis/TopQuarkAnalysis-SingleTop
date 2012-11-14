@@ -27,10 +27,8 @@ muTightCut = cms.string("pt > 10 & (isGlobalMuon || isTrackerMuon) && isPFMuon &
 #defaultIsolationCut = cms.double(0.2)
 
 #eJet definition
-jetLooseCut = cms.string("pt()> 15 && abs(eta())<4.7" +
-                         " & numberOfDaughters()>1" +
-                         " & ((abs(eta())>=2.4) || ( chargedHadronEnergyFraction() > 0 & chargedMultiplicity()>0 & chargedEmEnergyFraction()<0.99))" +
-                         " & neutralEmEnergyFraction() < 0.99 & neutralHadronEnergyFraction() < 0.99 "  )
+jetLooseCut = cms.string("pt()> 5 & abs(eta())<5.")
+# & numberOfDaughters()>1 & ((abs(eta())>=2.4) || ( chargedHadronEnergyFraction() > 0 & chargedMultiplicity()>0 & chargedEmEnergyFraction()<0.99)) & neutralEmEnergyFraction() < 0.99 & neutralHadronEnergyFraction() < 0.99 "  )
 
 
 
@@ -74,6 +72,11 @@ countLeptons.minNumberTight = minTightLeptons
 countLeptons.maxNumberTight = maxTightLeptons
 
 countLeptons.doQCD = False
+
+
+countLeptons.qcdMuons = cms.InputTag("tightMuons")
+countLeptons.qcdElectrons = cms.InputTag("tightElectrons")
+
 
 #countLeptonsQCD.minNumber = minTightLeptons
 #countLeptonsQCD.maxNumber = maxTightLeptons

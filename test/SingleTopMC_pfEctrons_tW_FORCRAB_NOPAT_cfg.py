@@ -93,10 +93,10 @@ process.load("CMGTools.External.pujetidsequence_cff")
 
 
 #Use gsfElectrons:
-#process.patElectrons.useParticleFlow = True
-#process.eleIsoSequence = setupPFElectronIso(process, 'pfSelectedElectrons', "PFIso"+postfix)
-process.patElectrons.useParticleFlow = False
-process.eleIsoSequence = setupPFElectronIso(process, 'gsfElectrons', "PFIso"+postfix)
+process.patElectrons.useParticleFlow = True
+process.eleIsoSequence = setupPFElectronIso(process, 'pfSelectedElectrons', "PFIso"+postfix)
+#process.patElectrons.useParticleFlow = False
+#process.eleIsoSequence = setupPFElectronIso(process, 'gsfElectrons', "PFIso"+postfix)
 adaptPFIsoElectrons( process, process.patElectrons, "PFIso"+postfix)
 getattr(process,'patDefaultSequence'+postfix).replace( getattr(process,"patElectrons"+postfix),
                                                        process.pfParticleSelectionSequence +
@@ -206,8 +206,8 @@ process.pathPreselection = cms.Path(
 print " test 3 " 
 
 
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
                                 "/store/mc/Summer12_DR53X/T_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola/AODSIM/PU_S10_START53_V7A-v1/0000/F4FEBE8F-3BEA-E111-8373-003048FF9AA6.root", #53X version

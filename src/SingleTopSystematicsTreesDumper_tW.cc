@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper_tW.cc,v 1.1.2.2 2012/10/13 22:09:09 dnoonan Exp $
+*\version  $Id: SingleTopSystematicsTreesDumper_tW.cc,v 1.1.2.3 2012/11/08 18:59:06 dnoonan Exp $
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file
 //
@@ -139,6 +139,7 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
     jetsCSV_ =  iConfig.getParameter< edm::InputTag >("jetsCSV");
     jetsTCHP_ =  iConfig.getParameter< edm::InputTag >("jetsTCHP");
     jetsRMS_ =  iConfig.getParameter< edm::InputTag >("jetsRMS");
+    jetsNumDaughters_ = iConfig.getParameter< edm::InputTag >("jetsNumDaughters");
     jetsCHEmEn_ = iConfig.getParameter< edm::InputTag >("jetsCHEmEn");
     jetsCHHadEn_ = iConfig.getParameter< edm::InputTag >("jetsCHHadEn");
     jetsCHMult_ = iConfig.getParameter< edm::InputTag >("jetsCHMult");
@@ -246,13 +247,13 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
     std::vector<std::string> all_syst = systematics;
 
 
-    TFileDirectory SingleTopSystematics = fs->mkdir( "systematics_histograms" );
+    //TFileDirectory SingleTopSystematics = fs->mkdir( "systematics_histograms" );
     TFileDirectory SingleTopTrees = fs->mkdir( "systematics_trees" );
 
 
     for (size_t i = 0; i < rate_systematics.size(); ++i)
     {
-      all_syst.push_back(rate_systematics.at(i));
+      //      all_syst.push_back(rate_systematics.at(i));
     }
 
 
@@ -263,6 +264,16 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
         string syst = all_syst[i];
 
 	string treename = (channel +"_"+ syst);
+	cout << "-----------------------------------------------------" << endl;
+	cout << "-----------------------------------------------------" << endl;
+	cout << "-----------------------------------------------------" << endl;
+	cout << "-----------------------------------------------------" << endl;
+	cout << "-----------------------------------------------------" << endl;
+	cout << "-----------------------------------------------------" << endl;
+	cout << "-----------------------------------------------------" << endl;
+
+	cout << treename << endl << endl << endl;
+
 	trees[syst] = new TTree(treename.c_str(), treename.c_str());
 
 	trees[syst]->Branch("muonPt", &_muonPt_);
@@ -325,8 +336,9 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
 	trees[syst]->Branch("jetEta", &_jetEta_);
 	trees[syst]->Branch("jetPhi", &_jetPhi_);
 	trees[syst]->Branch("jetE", &_jetEnergy_);
+	trees[syst]->Branch("jetNumDaughters", &_jetNumDaughters_);
 	trees[syst]->Branch("jetCHEmEn", &_jetCHEmEn_);
-	trees[syst]->Branch("jetCHEmEn", &_jetCHHadEn_);
+	trees[syst]->Branch("jetCHHadEn", &_jetCHHadEn_);
 	trees[syst]->Branch("jetCHMult", &_jetCHMult_);
 	trees[syst]->Branch("jetNeuEmEn", &_jetNeuEmEn_);
 	trees[syst]->Branch("jetNeuEmEn", &_jetNeuHadEn_);
@@ -344,11 +356,13 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
 	trees[syst]->Branch("jetDZ", &_jetDZ_);
 	trees[syst]->Branch("genjetPt", &_genjetPt_);
 	trees[syst]->Branch("genjetEta", &_genjetEta_);
+	trees[syst]->Branch("jetUncorrPt", &_jetUncorrPt_);
 
 	trees[syst]->Branch("ktJetsForIsoRho", &_ktJetsForIsoRho_);
 
 	trees[syst]->Branch("MetPhi", &_MetPhi_);
 	trees[syst]->Branch("MetPt", &_MetPt_);
+	trees[syst]->Branch("UncorrMetPt", &_UncorrMetPt_);
 	trees[syst]->Branch("UnclMETPx", &_UnclMETPx_);
 	trees[syst]->Branch("UnclMETPy", &_UnclMETPy_);
 
@@ -421,7 +435,7 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
 
     //JetResolution part
     string fileResolName = "Spring10_PtResolution_AK5PF.txt";
-    bool  doGaussianResol = false;
+    //    bool  doGaussianResol = false;
     //  ptResol = new JetResolution(fileResolName, doGaussianResol);
 
     leptonRelIsoQCDCutUpper = 0.9, leptonRelIsoQCDCutLower = 0.2;
@@ -544,6 +558,7 @@ void SingleTopSystematicsTreesDumper_tW::initBranchVars()
     _jetEta_.clear();
     _jetPhi_.clear();
     _jetEnergy_.clear();
+    _jetNumDaughters_.clear();
     _jetCHEmEn_.clear();
     _jetCHHadEn_.clear();
     _jetCHMult_.clear();
@@ -563,11 +578,13 @@ void SingleTopSystematicsTreesDumper_tW::initBranchVars()
     _jetDZ_.clear();
     _genjetPt_.clear();
     _genjetEta_.clear();
+    _jetUncorrPt_.clear();
 
     _ktJetsForIsoRho_ = DOUBLE_NAN;
 
     _MetPhi_ = DOUBLE_NAN;
     _MetPt_ = DOUBLE_NAN;
+    _UncorrMetPt_ = DOUBLE_NAN;
     _UnclMETPx_ = DOUBLE_NAN;
     _UnclMETPy_ = DOUBLE_NAN;
 
@@ -828,6 +845,7 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
     iEvent.getByLabel(jetsCSV_,		   jetsCSV);		  
     iEvent.getByLabel(jetsTCHP_,	   jetsTCHP);		  
     iEvent.getByLabel(jetsRMS_,		   jetsRMS);		  
+    iEvent.getByLabel(jetsNumDaughters_,   jetsNumDaughters);	 
     iEvent.getByLabel(jetsCHEmEn_,	   jetsCHEmEn);	  
     iEvent.getByLabel(jetsCHHadEn_,	   jetsCHHadEn);	  
     iEvent.getByLabel(jetsCHMult_,	   jetsCHMult);	  
@@ -933,9 +951,9 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
 
     double PUWeight = 1;
     double PUWeightNoSyst = 1;
-    double bWeightNoSyst = 1;
-    double turnOnWeightValueNoSyst = 1;
-    double turnOnReWeightTreeNoSyst = 1;
+    //    double bWeightNoSyst = 1;
+    //    double turnOnWeightValueNoSyst = 1;
+    //    double turnOnReWeightTreeNoSyst = 1;
 
     double PUWeightNew = 1;
     double PUWeightNewNoSyst = 1;
@@ -945,52 +963,53 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
     float metPx = 0;
     float metPy = 0;
 
+    _UncorrMetPt_ = METPt->at(0);   
     float OrigmetPx = METPt->at(0) * cos(METPhi->at(0));
     float OrigmetPy = METPt->at(0) * sin(METPhi->at(0));
 
-    size_t nLeptons = 0;//leptonsPt->size();
-    size_t nQCDLeptons = 0;//leptonsPt->size();
-    size_t nJets = 0;
-    size_t nJetsNoPU = 0;
-    size_t nJetsCentralNoPU = 0;
-    size_t nJetsCentral = 0;
-    size_t nJetsForwardNoPU = 0;
-    size_t nJetsForward = 0;
-    size_t nJetsNoSyst = 0;
-    size_t nBJets = 0;
-    size_t nLooseBJets = 0;
+//     size_t nLeptons = 0;//leptonsPt->size();
+//     size_t nQCDLeptons = 0;//leptonsPt->size();
+//     size_t nJets = 0;
+//     size_t nJetsNoPU = 0;
+//     size_t nJetsCentralNoPU = 0;
+//     size_t nJetsCentral = 0;
+//     size_t nJetsForwardNoPU = 0;
+//     size_t nJetsForward = 0;
+    //    size_t nJetsNoSyst = 0;
+    //    size_t nBJets = 0;
+    //    size_t nLooseBJets = 0;
     //  size_t nAntiBJets = 0;
 
 
     double WeightLumi = finalLumi * crossSection / originalEvents;
-    double Weight = 1;
-    double MTWValue = 0;
-    double MTWValueQCD = 0;
-    double RelIsoQCDCut = 0.1;
+    //double Weight = 1;
+    //double MTWValue = 0;
+    //    double MTWValueQCD = 0;
+    //    double RelIsoQCDCut = 0.1;
 
-    float ptCut = 40;
+    //    float ptCut = 40;
 
-    double myWeight = 1.;
+    //    double myWeight = 1.;
 
-    bool didLeptonLoop = false;
-    bool passesLeptonStep = false;
-    bool isQCD = false;
+    //    bool didLeptonLoop = false;
+    //    bool passesLeptonStep = false;
+    //    bool isQCD = false;
 
 
-    bool didJetLoop = false;
+    //    bool didJetLoop = false;
 
     if (channel == "Data")WeightLumi = 1;
 
-    int secondPtPosition = -1;
-    int thirdPtPosition = -1;
+//     int secondPtPosition = -1;
+//     int thirdPtPosition = -1;
 
-    double secondPt = -1;
-    double thirdPt = -1;
+//     double secondPt = -1;
+//     double thirdPt = -1;
 
-    int lowBTagTreePositionNoSyst = -1;
-    int highBTagTreePositionNoSyst = -1;
-    int maxPtTreePositionNoSyst = -1;
-    int minPtTreePositionNoSyst = -1;
+//     int lowBTagTreePositionNoSyst = -1;
+//     int highBTagTreePositionNoSyst = -1;
+//     int maxPtTreePositionNoSyst = -1;
+//     int minPtTreePositionNoSyst = -1;
 
     //    cout << "Get Objects Section" << endl;
 
@@ -1065,6 +1084,7 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
     for (size_t i = 0; i < jetsPt->size(); i++){
       _jetEta_.push_back(jetsEta->at(i));
       _jetPhi_.push_back(jetsPhi->at(i));
+      _jetNumDaughters_.push_back(jetsNumDaughters->at(i));
       _jetCHEmEn_.push_back(jetsCHEmEn->at(i));
       _jetCHHadEn_.push_back(jetsCHHadEn->at(i));
       _jetCHMult_.push_back(jetsCHMult->at(i));
@@ -1154,6 +1174,7 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
     for (size_t s = 0; s < systematics.size(); ++s)
     {
       _jetPt_.clear();
+      _jetUncorrPt_.clear();
       _jetEnergy_.clear();
       metPx = OrigmetPx;
       metPy = OrigmetPy;
@@ -1161,14 +1182,14 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
       string syst_name =  systematics.at(s);
       string syst = syst_name;
       
-        nLeptons = 0;
-        nQCDLeptons = 0;
-        nJets = 0;
-        nJetsNoPU = 0;
-        nJetsCentral = 0;
-        nJetsCentralNoPU = 0;
-        nJetsForward = 0;
-        nJetsForwardNoPU = 0;
+//         nLeptons = 0;
+//         nQCDLeptons = 0;
+//         nJets = 0;
+//         nJetsNoPU = 0;
+//         nJetsCentral = 0;
+//         nJetsCentralNoPU = 0;
+//         nJetsForward = 0;
+//         nJetsForwardNoPU = 0;
         //    nBJets =0;
         //cout <<" syst " << syst << endl;
         //    nAntiBJets =0;
@@ -1176,15 +1197,15 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
         //Here the weight of the event is the weight
         //to normalize the sample to the luminosity
         //required in the cfg
-        Weight = WeightLumi;
+      //        Weight = WeightLumi;
         //    Weight *= PUWeight;
 
-        bool is_btag_relevant = ((syst_name == "noSyst" || syst_name == "BTagUp" || syst_name == "BTagDown"
-                                  || syst_name == "MisTagUp" || syst_name == "MisTagDown"
-                                  || syst_name == "JESUp" || syst_name == "JESDown"
-                                  || syst_name == "JERUp" || syst_name == "JERDown"
-                                 ) && channel != "Data"
-                                );
+//         bool is_btag_relevant = ((syst_name == "noSyst" || syst_name == "BTagUp" || syst_name == "BTagDown"
+//                                   || syst_name == "MisTagUp" || syst_name == "MisTagDown"
+//                                   || syst_name == "JESUp" || syst_name == "JESDown"
+//                                   || syst_name == "JERUp" || syst_name == "JERDown"
+//                                  ) && channel != "Data"
+//                                 );
 
 	_UnclMETPx_ = (*UnclMETPx);
 	_UnclMETPy_ = (*UnclMETPy);
@@ -1232,27 +1253,27 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
         //Clear the vector of objects to be used in the selection
 
         //Define - initialize some variables
-        MTWValue = 0;
+	//        MTWValue = 0;
 
 
         //position of lowest and highest b-tag used to chose the top candidate
-        int lowBTagTreePosition = -1;
-        lowBTagTree = 99999;
+	//        int lowBTagTreePosition = -1;
+	//        lowBTagTree = 99999;
 
-        int highBTagTreePosition = -1;
-        highBTagTree = -9999;
+	//        int highBTagTreePosition = -1;
+	//        highBTagTree = -9999;
 
 
-        int maxPtTreePosition = -1;
-        maxPtTree = -99999;
+	//        int maxPtTreePosition = -1;
+	//        maxPtTree = -99999;
 
-        int minPtTreePosition = -1;
-        minPtTree = 99999;
+	//        int minPtTreePosition = -1;
+	//        minPtTree = 99999;
 
-        secondPt = -1;
-        thirdPt = -1;
-        secondPtPosition = -1;
-        thirdPtPosition = -1;
+//         secondPt = -1;
+//         thirdPt = -1;
+//         secondPtPosition = -1;
+//         thirdPtPosition = -1;
 
         //Taking the unclustered met previously evaluated
         //and already present in the n-tuples
@@ -1261,9 +1282,9 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
 
 
         //Define - initialize some variables
-        float eta;
-        float ptCorr;
-        int flavour;
+	//        float eta;
+	//        float ptCorr;
+	int flavour;
         double unc = 0;
 
         //Loops to apply systematics on jets-leptons
@@ -1294,8 +1315,8 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
 
         //cout << " before met "<<endl;
 
-        bool hasTurnOnWeight = false;
-        double turnOnWeightValue = 1;
+	//        bool hasTurnOnWeight = false;
+	//        double turnOnWeightValue = 1;
         turnOnReWeightTree = 1;
         turnOnWeightTreeJetTrig1Up = 1;
         turnOnWeightTreeJetTrig1Down = 1;
@@ -1326,7 +1347,9 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
 	  if (doResol_ && genpt > 0.0){
 	    resolScale = resolSF(fabs(eta), syst_name);
 	    double smear = std::max((double)(0.0), (double)(ptCorr + (ptCorr - genpt) * resolScale) / ptCorr);
-	    energyCorr = energyCorr * smear;
+	    metPx -= (jetsPt->at(i) * cos(jetsPhi->at(i)))*(smear-1);
+	    metPy -= (jetsPt->at(i) * sin(jetsPhi->at(i)))*(smear-1);
+	    energyCorr = energyCorr * smear;	    
 	    ptCorr = ptCorr * smear;
 	  }
 
@@ -1349,6 +1372,7 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
 	  
 	  _jetPt_.push_back(ptCorr);
 	  _jetEnergy_.push_back(energyCorr);
+	  _jetUncorrPt_.push_back(jetsPt->at(i));
 
 	}
 
@@ -1383,9 +1407,15 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
         _PUWeightNew_ = PUWeightNew;
         //Jet trees:
 
-        _MetPt_ = sqrt(metPx * metPx + metPy * metPy);
-	_MetPhi_ = METPhi->at(0);
 
+	TLorentzVector metVec;
+	metVec.SetPxPyPzE(metPx, metPy, 0, sqrt(metPx*metPx+metPy*metPy));
+
+//         _MetPt_ = sqrt(metPx * metPx + metPy * metPy);
+// 	_MetPhi_ = METPhi->at(0);
+
+	_MetPt_ = metVec.Pt();
+	_MetPhi_ = metVec.Phi();
 	
 	trees[syst]->Fill();
     }
@@ -3583,15 +3613,57 @@ double SingleTopSystematicsTreesDumper_tW::pileUpSFNew()
 
 double SingleTopSystematicsTreesDumper_tW::resolSF(double eta, string syst)
 {
-    double fac = 0.;
-    if (syst == "JERUp")fac = 1.;
-    if (syst == "JERDown")fac = -1.;
-    if (eta <= 0.5) return 0.05 + 0.06 * fac;
-    else if ( eta > 0.5 && eta <= 1.1 ) return 0.06 + 0.06 * fac;
-    else if ( eta > 1.1 && eta <= 1.7 ) return 0.1 + 0.06 * fac;
-    else if ( eta > 1.7 && eta <= 2.3 ) return 0.13 + 0.1 * fac;
-    else if ( eta > 2.3 && eta <= 5. ) return 0.29 + 0.2 * fac;
-    return 0.1;
+//     double fac = 0.;
+//     if (syst == "JERUp")fac = 1.;
+//     if (syst == "JERDown")fac = -1.;
+//     if (eta <= 0.5) return 0.05 + 0.06 * fac;
+//     else if ( eta > 0.5 && eta <= 1.1 ) return 0.06 + 0.06 * fac;
+//     else if ( eta > 1.1 && eta <= 1.7 ) return 0.1 + 0.06 * fac;
+//     else if ( eta > 1.7 && eta <= 2.3 ) return 0.13 + 0.1 * fac;
+//     else if ( eta > 2.3 && eta <= 5. ) return 0.29 + 0.2 * fac;
+//     return 0.1;
+
+//     if (syst == "JERDown"){
+//       if (eta <= 1.1) return -0.006;
+//       else if (eta <= 1.7) return 0.129;
+//       else if (eta <= 2.3) return 0.011;
+//       else return 0.1461;
+//     }
+//     else if (syst == "JERDown"){
+//       if (eta <= 1.1) return 0.136;
+//       else if (eta <= 1.7) return 0.251;
+//       else if (eta <= 2.3) return 0.176;
+//       else return 0.356;
+//     }
+//     else {
+//       if (eta <= 1.1) return 0.066;
+//       else if (eta <= 1.7) return 0.191;
+//       else if (eta <= 2.3) return 0.096;
+//       else return 0.166;
+//     }
+
+
+    if (syst == "JERDown"){
+      if (eta <= 1.1) return -0.00634;
+      else if (eta <= 1.7) return 0.1262;
+      else if (eta <= 2.3) return 0.0059;
+      else return 0.1122;
+    }
+    else if (syst == "JERDown"){
+      if (eta <= 1.1) return 0.1363;
+      else if (eta <= 1.7) return 0.254;
+      else if (eta <= 2.3) return 0.1814;
+      else return 0.3625;
+    }
+    else {
+      if (eta <= 1.1) return 0.066;
+      else if (eta <= 1.7) return 0.191;
+      else if (eta <= 2.3) return 0.096;
+      else return 0.166;
+    }
+
+    
+
 }
 
 

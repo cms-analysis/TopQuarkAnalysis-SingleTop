@@ -26,8 +26,8 @@ from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_tW_cff import nTupleAllElect
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_tW_cff import nTupleAllMuons
 
 
-from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_tW_cff import nTupleQCDElectrons
-from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_tW_cff import nTupleQCDMuons
+# from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_tW_cff import nTupleQCDElectrons
+# from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_tW_cff import nTupleQCDMuons
 
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_tW_cff import nTupleAllJets
 
@@ -125,8 +125,8 @@ basePath = cms.Sequence(
        #   UnclusteredType1METPF +
           genJetsPF +
           NVertices +
-          tightMuonsZeroIso +
-          tightElectronsZeroIso +
+#          tightMuonsZeroIso +
+#          tightElectronsZeroIso +
           tightMuons +
           tightElectrons +
       #    tightZeroIsoRhoCorrectedRelIso+
