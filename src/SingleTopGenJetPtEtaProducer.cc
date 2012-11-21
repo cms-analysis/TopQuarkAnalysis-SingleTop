@@ -2,7 +2,7 @@
  *\Author: A. Orso M. Iorio 
  *
  *
- *\version  $Id: SingleTopUnclusteredMETProducer.cc,v 1.1 2011/03/24 15:58:07 oiorio Exp $ 
+ *\version  $Id: SingleTopGenJetPtEtaProducer.cc,v 1.1.2.1 2011/09/21 13:26:31 oiorio Exp $ 
  */
 
 // Single Top producer: produces a top candidate made out of a Lepton, a B jet and a MET
@@ -44,6 +44,10 @@ void SingleTopGenJetPtEtaProducer::produce(edm::Event & iEvent, const edm::Event
   
   for(size_t j = 0; j < jets->size(); ++j){
     if(jets->at(j).genJet()!=0){
+//       std::cout << "JET PT " << j << "  " <<jets->at(j).pt() << std::endl;  //COMMENT OUT LATER
+//       std::cout << "GEN JET PT " << j << "  " <<jets->at(j).genJet()->pt() << std::endl;
+//       std::cout << "JET ETA " << j << "  " <<jets->at(j).eta() << std::endl;
+//       std::cout << "GEN JET ETA " << j << "  " <<jets->at(j).genJet()->eta() << std::endl;
       pt_->push_back(jets->at(j).genJet()->pt()) ;
       eta_->push_back(jets->at(j).genJet()->eta()) ;
     }

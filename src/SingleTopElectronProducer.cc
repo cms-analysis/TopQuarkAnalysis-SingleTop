@@ -2,7 +2,7 @@
  *\Author: A. Orso M. Iorio 
  *
  *
- *\version  $Id: SingleTopElectronProducer.cc,v 1.7.12.4 2012/06/10 01:02:01 oiorio Exp $ 
+ *\version  $Id: SingleTopElectronProducer.cc,v 1.7.12.4.2.1 2012/11/08 18:59:06 dnoonan Exp $ 
  */
 
 // Single Top producer: produces a top candidate made out of a Lepton, a B jet and a MET
@@ -136,14 +136,17 @@ void SingleTopElectronProducer::produce(edm::Event & iEvent, const edm::EventSet
     pat::Electron & el = (*initialElectrons)[i];
 
     Aeff = 1.;
-     
-    if (abs(el.superCluster()->eta() < 1.0)){ Aeff = 0.10;}
-    else if (abs(el.superCluster()->eta() < 1.479)){ Aeff = 0.12;}
-    else if (abs(el.superCluster()->eta() < 2.0)){ Aeff = 0.085;}
-    else if (abs(el.superCluster()->eta() < 2.2)){ Aeff = 0.11;}
-    else if (abs(el.superCluster()->eta() < 2.3)){ Aeff = 0.12;}
-    else if (abs(el.superCluster()->eta() < 2.4)){ Aeff = 0.12;}
-    else { Aeff = 0.13;}
+
+    //NEWEST Data2012 nubmers
+    //https://twiki.cern.ch/twiki/bin/view/CMS/EgammaEARhoCorrection#Isolation_cone_R_0_3
+
+    if (abs(el.superCluster()->eta() < 1.0)){ Aeff = 0.13;}
+    else if (abs(el.superCluster()->eta() < 1.479)){ Aeff = 0.14;}
+    else if (abs(el.superCluster()->eta() < 2.0)){ Aeff = 0.07;}
+    else if (abs(el.superCluster()->eta() < 2.2)){ Aeff = 0.09;}
+    else if (abs(el.superCluster()->eta() < 2.3)){ Aeff = 0.11;}
+    else if (abs(el.superCluster()->eta() < 2.4)){ Aeff = 0.11;}
+    else { Aeff = 0.14;}
 
     
     el.addUserFloat("DeltaCorrectedIso",(el.chargedHadronIso() + std::max(0., el.neutralHadronIso() + el.photonIso() -0.5*el.puChargedHadronIso()))/el.et());

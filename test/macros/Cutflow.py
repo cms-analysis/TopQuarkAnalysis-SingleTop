@@ -36,11 +36,12 @@ mumuStart = 0
 eeStart = 0
 
 if dumpEvtNum:
-    lepSelDump = [open('eventDumps/Danny/lepSelDump_emu.txt','w'),open('eventDumps/Danny/lepSelDump_mumu.txt','w'),open('eventDumps/Danny/lepSelDump_ee.txt','w')]
-    lepVetoDump = [open('eventDumps/Danny/lepVetoDump_emu.txt','w'),open('eventDumps/Danny/lepVetoDump_mumu.txt','w'),open('eventDumps/Danny/lepVetoDump_ee.txt','w')]
-    mllCutDump = [open('eventDumps/Danny/mllCutDump_emu.txt','w'),open('eventDumps/Danny/mllCutDump_mumu.txt','w'),open('eventDumps/Danny/mllCutDump_ee.txt','w')]
-    metCutDump = [open('eventDumps/Danny/metCutDump_emu.txt','w'),open('eventDumps/Danny/metCutDump_mumu.txt','w'),open('eventDumps/Danny/metCutDump_ee.txt','w')]
-    oneJetDump = [open('eventDumps/Danny/oneJetDump_emu.txt','w'),open('eventDumps/Danny/oneJetDump_mumu.txt','w'),open('eventDumps/Danny/oneJetDump_ee.txt','w')]
+    lepSelDump = [open('eventDumps/eventsDannyGSFele/lepSelDump_emu.txt','w'),open('eventDumps/eventsDannyGSFele/lepSelDump_mumu.txt','w'),open('eventDumps/eventsDannyGSFele/lepSelDump_ee.txt','w')]
+    lepVetoDump = [open('eventDumps/eventsDannyGSFele/lepVetoDump_emu.txt','w'),open('eventDumps/eventsDannyGSFele/lepVetoDump_mumu.txt','w'),open('eventDumps/eventsDannyGSFele/lepVetoDump_ee.txt','w')]
+    mllCutDump = [open('eventDumps/eventsDannyGSFele/mllCutDump_emu.txt','w'),open('eventDumps/eventsDannyGSFele/mllCutDump_mumu.txt','w'),open('eventDumps/eventsDannyGSFele/mllCutDump_ee.txt','w')]
+    metCutDump = [open('eventDumps/eventsDannyGSFele/metCutDump_emu.txt','w'),open('eventDumps/eventsDannyGSFele/metCutDump_mumu.txt','w'),open('eventDumps/eventsDannyGSFele/metCutDump_ee.txt','w')]
+    oneJetDump = [open('eventDumps/eventsDannyGSFele/oneJetDump_emu.txt','w'),open('eventDumps/eventsDannyGSFele/oneJetDump_mumu.txt','w'),open('eventDumps/eventsDannyGSFele/oneJetDump_ee.txt','w')]
+    bTagDump = [open('eventDumps/eventsDannyGSFele/bTagDump_emu.txt','w'),open('eventDumps/eventsDannyGSFele/bTagDump_mumu.txt','w'),open('eventDumps/eventsDannyGSFele/bTagDump_ee.txt','w')]
 
 
 evtCount = 0.
@@ -126,30 +127,26 @@ for event in tWtree:
         if electronPassConversionVeto[i]:
             if electronPt[i] > 20:
                 if abs(electronEta[i]) < 2.5:
-                    if abs(electronPVDxy[i]) < 0.04: #####ADJUSTMENT
-                        if electronMVATrigV0[i] >= 0. and electronMVATrigV0[i] <= 1.0: #####ADJUSTMENT
-                            if electronRhoCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
+                    if abs(electronPVDxy[i]) < 0.04:
+                        if electronMVATrigV0[i] >= 0. and electronMVATrigV0[i] <= 1.0:
+#                            if electronRhoCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
+                            if electronDeltaCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
                                 if electronTrackerExpectedInnerHits[i] <= 1:
                                     goodEleidx.append(i)
                                     isTightElectron = True
-
         if not isTightElectron:
-            if electronPt[i] > 20:
+            if electronPt[i] > 15:
                 if abs(electronEta[i]) < 2.5:
-                    #                    if electronSuperClusterEta < 1.442 or electronSuperClusterEta > 1.5660:
                     if electronMVATrigV0[i] >= 0. and electronMVATrigV0[i] <= 1.0: #####ADJUSTMENT
-                        if electronRhoCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
+#                        if electronRhoCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
+                        if electronDeltaCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
                             looseEleidx.append(i)
-
     nLooseLeptons = len(looseEleidx) + len(looseMuonidx)
 
     ModeIdx = -1
 
     lepton0 = TLorentzVector()
     lepton1 = TLorentzVector()
-
-#     if (len(goodMuonidx)+len(goodEleidx)) != 2:
-#         print "muons",len(goodMuonidx),"electrons", len(goodEleidx)
 
     if len(goodMuonidx) == 1 and len(goodEleidx) == 1:
         ModeIdx = 0
@@ -236,14 +233,35 @@ for event in tWtree:
     jetEta = event.jetEta
     jetE = event.jetE
     jetCSV = event.jetCSV
+    jetNumDaughters = event.jetNumDaughters
+    jetCHEmEn = event.jetCHEmEn
+    jetCHHadEn = event.jetCHHadEn
+    jetCHMult = event.jetCHMult
+    jetNeuEmEn = event.jetNeuEmEn
+    jetNeuHadEn = event.jetNeuHadEn
 
 
     goodJetIdx = list()
 
     for i in range(len(jetPt)):
+        jetID = False
+        if jetNumDaughters[i] > 1:
+            if jetNeuHadEn[i] < 0.99:
+                if jetNeuEmEn[i] < 0.99:
+                    if abs(jetEta[i]) > 2.4:
+                        jetID = True
+                    else:
+                        if jetCHEmEn[i] < 0.99:
+                            if jetCHHadEn[i] > 0:
+                                if jetCHMult[i] > 0:
+                                    jetID = True
         if jetPt[i] > 30:
             if abs(jetEta[i]) < 2.4:
-                goodJetIdx.append(i)
+                if jetID:
+                    tJet = TLorentzVector()
+                    tJet.SetPtEtaPhiE(jetPt[i],jetEta[i],jetPhi[i],jetE[i])
+                    if min(lepton0.DeltaR(tJet),lepton1.DeltaR(tJet)) > 0.3:
+                        goodJetIdx.append(i)
 
     if len(goodJetIdx) != 1:
         continue
@@ -256,10 +274,16 @@ for event in tWtree:
 
     jetIdx = goodJetIdx[0]
 
+
+
+
     if jetCSV[jetIdx] < 0.679:
         continue
 
     JetBtag[ModeIdx] += 1
+
+    if dumpEvtNum:
+        bTagDump[ModeIdx].write(str(runNum) + "\t" + str(lumiNum) + "\t" + str(eventNum) +"\n")
 
 
     jet = TLorentzVector()
@@ -269,7 +293,7 @@ for event in tWtree:
 
     Ht = lepton0.Pt() + lepton1.Pt() + MET.Pt() + jet.Pt()
 
-    if ModeIdx == 0 and Ht< 60:
+    if ModeIdx == 0 and Ht< 160:
         continue
 
     HtCut[ModeIdx] += 1

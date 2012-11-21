@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper_tW.cc,v 1.1.2.3 2012/11/08 18:59:06 dnoonan Exp $
+*\version  $Id: SingleTopSystematicsTreesDumper_tW.cc,v 1.1.2.4 2012/11/14 03:30:29 dnoonan Exp $
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file
 //
@@ -264,15 +264,15 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
         string syst = all_syst[i];
 
 	string treename = (channel +"_"+ syst);
-	cout << "-----------------------------------------------------" << endl;
-	cout << "-----------------------------------------------------" << endl;
-	cout << "-----------------------------------------------------" << endl;
-	cout << "-----------------------------------------------------" << endl;
-	cout << "-----------------------------------------------------" << endl;
-	cout << "-----------------------------------------------------" << endl;
-	cout << "-----------------------------------------------------" << endl;
+// 	cout << "-----------------------------------------------------" << endl;
+// 	cout << "-----------------------------------------------------" << endl;
+// 	cout << "-----------------------------------------------------" << endl;
+// 	cout << "-----------------------------------------------------" << endl;
+// 	cout << "-----------------------------------------------------" << endl;
+// 	cout << "-----------------------------------------------------" << endl;
+// 	cout << "-----------------------------------------------------" << endl;
 
-	cout << treename << endl << endl << endl;
+// 	cout << treename << endl << endl << endl;
 
 	trees[syst] = new TTree(treename.c_str(), treename.c_str());
 
@@ -341,7 +341,7 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
 	trees[syst]->Branch("jetCHHadEn", &_jetCHHadEn_);
 	trees[syst]->Branch("jetCHMult", &_jetCHMult_);
 	trees[syst]->Branch("jetNeuEmEn", &_jetNeuEmEn_);
-	trees[syst]->Branch("jetNeuEmEn", &_jetNeuHadEn_);
+	trees[syst]->Branch("jetNeuHadEn", &_jetNeuHadEn_);
 	trees[syst]->Branch("jetNeuMult", &_jetNeuMult_);
 	trees[syst]->Branch("jetCSV", &_jetCSV_);
 	trees[syst]->Branch("jetTCHP", &_jetTCHP_);
@@ -886,7 +886,7 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
     //iEvent.getByLabel(np1_,np1);
     nVertices = *n0;
 
-    if (jetsPt->size() > 25 && channel != "Data")return; //Crazy events with huge jet multiplicity in mc
+    //if (jetsPt->size() > 25 && channel != "Data")return; //Crazy events with huge jet multiplicity in mc
 
     if (isFirstEvent && takeBTagSFFromDB_)
     {
@@ -1337,6 +1337,9 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
         bWeightTreeMisTagUp = 1;
         bWeightTreeBTagDown = 1;
         bWeightTreeMisTagDown = 1;
+	TVector2 met;
+	TVector2 tmpjet;
+	met.SetMagPhi(METPt->at(0), METPhi->at(0));
 
 	for (size_t i = 0; i < jetsPt->size(); i++){
 	  double ptCorr = jetsPt->at(i);
@@ -1344,14 +1347,21 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
 	  double eta = jetsEta->at(i);
 	  double genpt = genjetsPt->at(i);
 	  flavour = jetsFlavour->at(i);
-	  if (doResol_ && genpt > 0.0){
+	  tmpjet.SetMagPhi(ptCorr,jetsPhi->at(i));
+	  //	  cout << "MET " << met.Mod() << endl;
+	  met += tmpjet;
+	  
+	  if (doResol_ && genpt > 15.0){
 	    resolScale = resolSF(fabs(eta), syst_name);
 	    double smear = std::max((double)(0.0), (double)(ptCorr + (ptCorr - genpt) * resolScale) / ptCorr);
-	    metPx -= (jetsPt->at(i) * cos(jetsPhi->at(i)))*(smear-1);
-	    metPy -= (jetsPt->at(i) * sin(jetsPhi->at(i)))*(smear-1);
+// 	    metPx -= (jetsPt->at(i) * cos(jetsPhi->at(i)))*(smear-1);
+// 	    metPy -= (jetsPt->at(i) * sin(jetsPhi->at(i)))*(smear-1);
+//	    std::cout << ptCorr << "\t" << genpt << "\t" << smear << std::endl;
 	    energyCorr = energyCorr * smear;	    
 	    ptCorr = ptCorr * smear;
 	  }
+	  tmpjet.SetMagPhi(ptCorr,jetsPhi->at(i));
+	  met -= tmpjet;
 
 	  if (syst_name == "JESUp"){
 	    unc = jetUncertainty( eta,  ptCorr, flavour);
@@ -1414,8 +1424,8 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
 //         _MetPt_ = sqrt(metPx * metPx + metPy * metPy);
 // 	_MetPhi_ = METPhi->at(0);
 
-	_MetPt_ = metVec.Pt();
-	_MetPhi_ = metVec.Phi();
+	_MetPt_ = met.Mod();
+	_MetPhi_ = met.Phi();
 	
 	trees[syst]->Fill();
     }
