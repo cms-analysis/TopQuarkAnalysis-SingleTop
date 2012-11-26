@@ -10,10 +10,11 @@ doBScan = cms.untracked.bool(True),
 #rateSystematics = cms.untracked.vstring("WLightRateUp",                                        "WLightRateDown",                                        "TTBarRateUp",                                        "Ttbarratedown ",                                        "WHFRateUp",                                        "WHFRateDown"),
 rateSystematics = cms.untracked.vstring(),
 doPU = cms.untracked.bool(True),
+doMCTruth = cms.untracked.bool(True),
 #doResol  = cms.untracked.bool(False),
 
 algo  = cms.untracked.string("TCHPT"),
-#algo  = cms.untracked.string("CSVT"),doLooseBJetVeto= cms.untracked.bool(True),
+#algo  = cms.untracked.string("CSVT"),doLooseBJetVeto= cms.untracked.bool(False),
 
 doResol  = cms.untracked.bool(True),
 takeBTagSFFromDB = cms.untracked.bool(False),
@@ -113,7 +114,7 @@ jetsBTagAlgo = cms.InputTag("nTupleTopJetsPF","topJetsPFTrackCountingHighPur"),
 jetsAntiBTagAlgo =  cms.InputTag("nTupleTopJetsPF","topJetsPFCombinedSecondaryVertexBJetTags"),  
 jetsFlavour = cms.InputTag("nTupleTopJetsPF","topJetsPFFlavour"),   
 
-jetsCorrTotal = cms.InputTag("nTupleTopJetsPF","topJetsPFJetCorrTotal"),   
+jetsCorrTotal = cms.InputTag("nTupleTopJetsPF","topJetsPFJetCorrTotal"), 
 
 #MET 
 
@@ -125,19 +126,96 @@ UnclusteredMETPy = cms.InputTag("UnclusteredMETPF","UnclusteredMETPy"),
 
 #Vertices
 vertexZ = cms.InputTag("nTupleVertices","z"),  
-#rho = cms.InputTag("UnclusteredMETPF","UnclusteredMETPx"),
-rho = cms.InputTag("kt6PFJetsForIsolation", "rho"),
-#rho = cms.InputTag("kt6PFJetsForIsolation", "double_kt6PFJetsForIsolation_rho_SingleTop.obj"),
-#rhoasd = cms.InputTag("kt6PFJetsForIsolation", "rho", "SingleTop"),
-
 
 nVerticesPlus = cms.InputTag("NVertices","PileUpP1"),
 nVerticesMinus = cms.InputTag("NVertices","PileUpM1"),
 nVertices = cms.InputTag("NVertices","PileUpTrue"),
 
+#MC part
+MCQuarksEta = cms.InputTag("singleTopMCQuarks","MCquarksEta"),  
+MCQuarksPt = cms.InputTag("singleTopMCQuarks","MCquarksPt"),  
+MCQuarksPhi = cms.InputTag("singleTopMCQuarks","MCquarksPhi"),  
+MCQuarksEnergy = cms.InputTag("singleTopMCQuarks","MCquarksE"),
+MCQuarksPdgId = cms.InputTag("singleTopMCQuarks","MCquarksPdgId"),
+MCQuarksMotherId= cms.InputTag("MCTruthParticles","MCquarksMotherID"),  
+
+MCBQuarksEta = cms.InputTag("singleTopMCBQuarks","MCbquarksEta"),  
+MCBQuarksPt = cms.InputTag("singleTopMCBQuarks","MCbquarksPt"),  
+MCBQuarksPhi = cms.InputTag("singleTopMCBQuarks","MCbquarksPhi"),  
+MCBQuarksEnergy = cms.InputTag("singleTopMCBQuarks","MCbquarksE"),
+MCBQuarksPdgId = cms.InputTag("singleTopMCBQuarks","MCbquarksPdgId"),
+MCBQuarksMotherId= cms.InputTag("MCTruthParticles","MCbquarksMotherID"),  
+
+MCLeptonsEta = cms.InputTag("singleTopMCLeptons","MCleptonsEta"),  
+MCLeptonsPt = cms.InputTag("singleTopMCLeptons","MCleptonsPt"),  
+MCLeptonsPhi = cms.InputTag("singleTopMCLeptons","MCleptonsPhi"),  
+MCLeptonsEnergy = cms.InputTag("singleTopMCLeptons","MCleptonsE"),  
+MCLeptonsPdgId = cms.InputTag("singleTopMCLeptons","MCleptonsPdgId"),  
+MCLeptonsMotherId= cms.InputTag("MCTruthParticles","MCleptonsMotherID"),  
+
+MCNeutrinosEta = cms.InputTag("singleTopMCNeutrinos","mcNeutrinosEta"),  
+MCNeutrinosPt = cms.InputTag("singleTopMCNeutrinos","mcNeutrinosPt"),  
+MCNeutrinosPhi = cms.InputTag("singleTopMCNeutrinos","mcNeutrinosPhi"),  
+MCNeutrinosEnergy = cms.InputTag("singleTopMCNeutrinos","mcNeutrinosE"),
+MCNeutrinosPdgId = cms.InputTag("singleTopMCNeutrinos","mcNeutrinosPdgId"),
+MCNeutrinosMotherId= cms.InputTag("MCTruthParticles","MCneutrinosMotherID"),  
+
+#Top
+MCTopsEta = cms.InputTag("singleTopMCTops","MCtopsEta"),  
+MCTopsPt = cms.InputTag("singleTopMCTops","MCtopsPt"),  
+MCTopsPhi = cms.InputTag("singleTopMCTops","MCtopsPhi"),  
+MCTopsEnergy = cms.InputTag("singleTopMCTops","MCtopsE"),  
+MCTopsPdgId = cms.InputTag("singleTopMCTops","MCtopsPdgId"),  
+MCTopsMotherId= cms.InputTag("MCTruthParticles","MCtopsMotherID"),  
+
+
+MCTopLeptonsEta = cms.InputTag("singleTopMCTopsLepton","MCtopsLeptonEta"),  
+MCTopLeptonsPt = cms.InputTag("singleTopMCTopsLepton","MCtopsLeptonPt"),  
+MCTopLeptonsPhi = cms.InputTag("singleTopMCTopsLepton","MCtopsLeptonPhi"),  
+MCTopLeptonsEnergy = cms.InputTag("singleTopMCTopsLepton","MCtopsLeptonE"),  
+MCTopLeptonsPdgId = cms.InputTag("singleTopMCTopsLepton","MCtopsLeptonPdgId"),  
+MCTopLeptonsMotherId= cms.InputTag("MCTruthParticles","MCtopsLeptonMotherID"),  
+
+MCTopBQuarksEta = cms.InputTag("singleTopMCTopsBQuark","MCtopsBQuarkEta"),  
+MCTopBQuarksPt = cms.InputTag("singleTopMCTopsBQuark","MCtopsBQuarkPt"),  
+MCTopBQuarksPhi = cms.InputTag("singleTopMCTopsBQuark","MCtopsBQuarkPhi"),  
+MCTopBQuarksEnergy = cms.InputTag("singleTopMCTopsBQuark","MCtopsBQuarkE"),  
+MCTopBQuarksPdgId = cms.InputTag("singleTopMCTopsBQuark","MCtopsBQuarkPdgId"),  
+MCTopBQuarksMotherId= cms.InputTag("MCTruthParticles","MCtopsBQuarkMotherID"),  
+
+MCTopNeutrinosEta = cms.InputTag("singleTopMCTopsNeutrino","MCtopsNeutrinoEta"),  
+MCTopNeutrinosPt = cms.InputTag("singleTopMCTopsNeutrino","MCtopsNeutrinoPt"),  
+MCTopNeutrinosPhi = cms.InputTag("singleTopMCTopsNeutrino","MCtopsNeutrinoPhi"),  
+MCTopNeutrinosEnergy = cms.InputTag("singleTopMCTopsNeutrino","MCtopsNeutrinoE"),  
+MCTopNeutrinosPdgId = cms.InputTag("singleTopMCTopsNeutrino","MCtopsNeutrinoPdgId"),  
+MCTopNeutrinosMotherId= cms.InputTag("MCTruthParticles","MCtopsNeutrinoMotherID"),  
+
+MCTopQuarksEta = cms.InputTag("singleTopMCTopsQuark","MCtopsQuarkEta"),  
+MCTopQuarksPt = cms.InputTag("singleTopMCTopsQuark","MCtopsQuarkPt"),  
+MCTopQuarksPhi = cms.InputTag("singleTopMCTopsQuark","MCtopsQuarkPhi"),  
+MCTopQuarksEnergy = cms.InputTag("singleTopMCTopsQuark","MCtopsQuarkE"),  
+MCTopQuarksPdgId = cms.InputTag("singleTopMCTopsQuark","MCtopsQuarkPdgId"),  
+MCTopQuarksMotherId= cms.InputTag("MCTruthParticles","MCtopsQuarkMotherID"),  
+
+MCTopQuarkBarsEta = cms.InputTag("singleTopMCTopsQuarkBar","MCtopsQuarkBarEta"),  
+MCTopQuarkBarsPt = cms.InputTag("singleTopMCTopsQuarkBar","MCtopsQuarkBarPt"),  
+MCTopQuarkBarsPhi = cms.InputTag("singleTopMCTopsQuarkBar","MCtopsQuarkBarPhi"),  
+MCTopQuarkBarsEnergy = cms.InputTag("singleTopMCTopsQuarkBar","MCtopsQuarkBarE"),  
+MCTopQuarkBarsPdgId = cms.InputTag("singleTopMCTopsQuarkBar","MCtopsQuarkBarPdgId"),  
+MCTopQuarkBarsMotherId= cms.InputTag("MCTruthParticles","MCtopsQuarkBarMotherID"),  
+
+MCTopWsEta = cms.InputTag("singleTopMCTopsW","MCtopsWEta"),  
+MCTopWsPt = cms.InputTag("singleTopMCTopsW","MCtopsWPt"),  
+MCTopWsPhi = cms.InputTag("singleTopMCTopsW","MCtopsWPhi"),  
+MCTopWsEnergy = cms.InputTag("singleTopMCTopsW","MCtopsWE"),  
+MCTopWsPdgId = cms.InputTag("singleTopMCTopsW","MCtopsWPdgId"),  
+MCTopWsMotherId = cms.InputTag("MCTruthParticles","MCtopsWMotherID"),
+MCTopWsDauOneId= cms.InputTag("MCTruthParticles","MCtopsWDauOneID"),  
+
+
+
 
 )
-
 
 TreesMu = TreesEle.clone(
 
@@ -195,4 +273,5 @@ leptonsFlavour = cms.untracked.string("muon"),
 
     
     )
+
 

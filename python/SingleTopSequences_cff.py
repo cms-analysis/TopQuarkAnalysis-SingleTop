@@ -38,6 +38,21 @@ from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleVertices
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleZVetoElectrons
 
 
+
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCLeptons
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCNeutrinos
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCQuarks
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCBQuarks
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCTops
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCTopsW
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCTopsBQuark
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCTopsQuark
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCTopsQuarkBar
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCTopsLepton
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCTopsNeutrino
+
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTuplesSkimMCTruth
+
 #if isdata: process.looseLeptonSequence.remove(process.muonMatchLoose)
 
 
@@ -157,9 +172,15 @@ flavorHistorySequence = cms.Sequence(
             bFlavorHistoryProducer
             )
 
+#PV Filter
+pvfilters = cms.Sequence(
+        PVFilter #+
+        #    countLeptons
+            )
+
 #Selection step: require 1 high pt muon/electron
 preselection = cms.Sequence(
-    PVFilter +
+#    PVFilter +
     countLeptons
     )
 

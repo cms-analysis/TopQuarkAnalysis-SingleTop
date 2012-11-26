@@ -1,20 +1,16 @@
-#ifndef _Top_Ele_Producer_h
-#define _Top_Ele_Producer_h
+#ifndef Single_Top_TChannel_MC_Producer_h
+#define Single_Top_TChannel_MC_Producer_h
 
-
-
-/**
- *\Class TopProducer
+/* \Class SingleTopMCProducer
  *
- * \Author A. Orso M. Iorio
+ * \Authors: A. Giammanco, A. Orso M. Iorio
  * 
- *
- *\version  $Id: SingleTopElectronProducer.h,v 1.2.12.2 2012/06/05 10:57:11 oiorio Exp $
- *
- *
-*/
+ * \ version $Id: SingleTopMCProducer.h,v 1.2 2010/09/07 14:32:43 oiorio Exp $
+ */
 
-
+//Single Top MC Producer
+// Original 
+// Adapted by O.Iorio
 
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/EDAnalyzer.h"
@@ -33,6 +29,7 @@
 #include "FWCore/Framework/interface/EDProducer.h"
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
+//#include "FWCore/ParameterSet/interface/InputTag.h"
 #include "FWCore/Utilities/interface/InputTag.h"
 #include "DataFormats/Common/interface/View.h"
 
@@ -54,49 +51,31 @@
 
 #include "DataFormats/Candidate/interface/NamedCompositeCandidate.h"
 
-#include "CommonTools/Utils/interface/StringObjectFunction.h"
-#include "CommonTools/Utils/interface/StringCutObjectSelector.h"
-
-
-
-//#include "TLorentzVector.h"
-#include "TopQuarkAnalysis/SingleTop/interface/EquationSolver.h"
 
 
 //class JetFlavourIdentifier;
 
 
-//namespace pat {
 
-  class SingleTopElectronProducer : public edm::EDProducer {
+  class SingleTopMCProducer : public edm::EDProducer {
 
     public:
 
-      explicit SingleTopElectronProducer(const edm::ParameterSet & iConfig);
-      ~SingleTopElectronProducer();
+      explicit SingleTopMCProducer(const edm::ParameterSet & iConfig);
+      ~SingleTopMCProducer();
       virtual void produce(edm::Event & iEvent, const edm::EventSetup & iSetup);
     //       static void fillDescriptions(edm::ConfigurationDescriptions & descriptions);
     private:
-    typedef StringCutObjectSelector<pat::Electron> Selector;
-   
-    edm::InputTag src_,rho_;
-    std::string cut_,id_;
-    double deltaR_;
-    edm::Handle< double > rho;
-    std::string category_;
-    bool isData_,isMC_;
-   //std::vector<std::string> triggernames;
-    //    edm::InputTag               electronsInputTag_;
-    //edm::InputTag               rhoIsoInputTag;
-    //   edm::InputTag               primaryVertexInputTag_; 
-   
-    edm::InputTag               beamSpot_;
-    edm::InputTag               conversions_;
-    std::vector<edm::InputTag>  isoVals_;
-   
 
+    //InputTags
+    edm::InputTag genParticlesSrc_,genJetsSrc_; 
+
+    //cuts for genJets Matching
+    double genJetsDeltarMatching_;
+
+    bool isSingleTopTChan_;
   };
-//}
+
 
 
 #endif

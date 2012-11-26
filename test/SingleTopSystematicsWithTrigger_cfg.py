@@ -63,7 +63,8 @@ process.load("SingleTopRootPlizer_cfi")
 process.load("SingleTopFilters_cfi")
 #from SingleTopPSets_cfi import *
 #from SingleTopPSetsFall11_cfi import *
-from SingleTopPSetsSummer_cfi import *
+#from SingleTopPSetsSummer_cfi import *
+from SingleTopPSetsFall_cfi import *
 
 process.TreesEle.dataPUFile = cms.untracked.string("pileUpDistr.root")
 process.TreesMu.dataPUFile = cms.untracked.string("pileUpDistr.root")
@@ -124,6 +125,8 @@ if channel_instruction == "all":
     process.TreesEle.doTurnOn = cms.untracked.bool(False) 
     process.TreesEle.doPU = cms.untracked.bool(False) 
     process.TreesMu.doPU = cms.untracked.bool(False) 
+    process.TreesMu.doMCTruth = cms.untracked.bool(False) 
+    process.TreesEle.doMCTruth = cms.untracked.bool(False) 
     process.PathSys = cms.Path(
     #    process.PlotsMu +
     #    process.PlotsEle +
@@ -135,6 +138,7 @@ if channel_instruction == "all":
 if channel_instruction == "mu":
     process.TreesMu.doPU = cms.untracked.bool(False) 
     process.TreesMu.doResol = cms.untracked.bool(False) 
+    process.TreesMu.doMCTruth = cms.untracked.bool(False) 
     process.PathSysMu = cms.Path(
     #    process.PlotsMu +
     #    process.PlotsEle +
@@ -146,6 +150,7 @@ if channel_instruction == "ele":
     process.TreesEle.doTurnOn = cms.untracked.bool(False) 
     process.TreesEle.doPU = cms.untracked.bool(False) 
     process.TreesEle.doResol = cms.untracked.bool(False) 
+    process.TreesEle.doMCTruth = cms.untracked.bool(False) 
     process.PathSysMu = cms.Path(
     #    process.PlotsMu +
     #    process.PlotsEle +
@@ -156,6 +161,7 @@ if channel_instruction == "ele":
 if channel_instruction == "muqcd":
     process.TreesMu.doPU = cms.untracked.bool(False) 
     process.TreesMu.doResol = cms.untracked.bool(False) 
+    process.TreesMu.doMCTruth = cms.untracked.bool(False) 
     process.PathSysMu = cms.Path(
     #    process.PlotsMu +
     #    process.PlotsEle +
@@ -169,6 +175,7 @@ if channel_instruction == "eleqcd":
     process.TreesEle.doPU = cms.untracked.bool(False) 
     process.TreesEle.doResol = cms.untracked.bool(False) 
     process.TreesEle.isControlSample = cms.untracked.bool(True) 
+    process.TreesMu.doMCTruth = cms.untracked.bool(False) 
     process.PathSysEle = cms.Path(
     #    process.PlotsMu +
     #    process.PlotsEle +

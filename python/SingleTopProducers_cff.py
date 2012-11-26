@@ -55,7 +55,6 @@ UnclusteredMETPF = cms.EDProducer("SingleTopUnclusteredMETProducer",
                                   muonsSource = cms.InputTag("selectedPatMuons"),
                                   )
 
-
 UnclusteredType1METPF = cms.EDProducer("SingleTopUnclusteredMETProducer",
                                                                          metSource = cms.InputTag("patType1CorrectedPFMet"),
                                                                          jetsSource = cms.InputTag("selectedPatJets"),
@@ -115,8 +114,9 @@ tightElectronsZeroIso = cms.EDProducer("SingleTopElectronProducer",
   cut = cms.string('pt >  20 & abs(eta) < 2.4'),
 #  rho = cms.InputTag("kt6PFJetsCentralNeutral:rho"),
   rho = cms.InputTag("kt6PFJetsForIsolation","rho"),
-  category = cms.untracked.string("tight"),
-)
+  category = cms.untracked.string("qcd"),
+  isData = cms.untracked.bool(False),
+ )
 
 
 
@@ -148,7 +148,11 @@ preselectedMETs = cms.EDFilter("PATMETSelector",
 
 
 #Part of MC Truth particles production
-MCTruthParticles = cms.EDProducer("SingleTopTChannelMCProducer",
-                                          genParticlesSource = cms.InputTag("genParticles")
-                                          )
+#MCTruthParticles = cms.EDProducer("SingleTopTChannelMCProducer",
+#                                          genParticlesSource = cms.InputTag("genParticles")
+#                                          )
+
+MCTruthParticles = cms.EDProducer("SingleTopMCProducer",
+                                  genParticlesSource = cms.InputTag("genParticles")
+                                  )
 

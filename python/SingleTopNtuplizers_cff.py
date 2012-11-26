@@ -177,6 +177,11 @@ nTupleElectrons = cms.EDProducer(
 #    quantity = cms.untracked.string("userFloat(\"DeltaCorrectedIso\")"),
     ),
     cms.PSet(
+    tag = cms.untracked.string("PassesTightID"),
+    quantity = cms.untracked.string("userFloat(\"PassesTightID\")"),
+#    quantity = cms.untracked.string("userFloat(\"DeltaCorrectedIso\")"),
+    ),
+    cms.PSet(
     tag = cms.untracked.string("PFRhoCorrectedRelIso"),
     quantity = cms.untracked.string("userFloat(\"RhoCorrectedIso\")"),
     ),
@@ -585,7 +590,7 @@ nTupleAllJets = nTupleTopJetsPF.clone(
 
 singleTopMCNeutrinos = cms.EDProducer(
     "CandViewNtpProducer",
-    src = cms.InputTag("MCTruthParticles","topNeutrinos"),
+    src = cms.InputTag("MCTruthParticles","MCneutrinos"),
     prefix = cms.untracked.string("mcNeutrinos"),
 
     variables = cms.VPSet(
@@ -612,23 +617,18 @@ singleTopMCNeutrinos = cms.EDProducer(
     ),
 
         cms.PSet(
-    tag = cms.untracked.string("Pt"),
-    quantity = cms.untracked.string("pt")
+    tag = cms.untracked.string("E"),
+    quantity = cms.untracked.string("energy")
     ),
 
         cms.PSet(
-    tag = cms.untracked.string("Phi"),
-    quantity = cms.untracked.string("phi")
+    tag = cms.untracked.string("Charge"),
+    quantity = cms.untracked.string("charge")
     ),
 
         cms.PSet(
-    tag = cms.untracked.string("P"),
-    quantity = cms.untracked.string("p")
-    ),
-
-        cms.PSet(
-    tag = cms.untracked.string("Theta"),
-    quantity = cms.untracked.string("theta")
+    tag = cms.untracked.string("Status"),
+    quantity = cms.untracked.string("status")
     ),
 
     ),
@@ -669,25 +669,38 @@ nTupleQCDElectrons = nTupleElectrons.clone(
 )
  
 
-singleTopMCNeutrinos = cms.EDProducer(
-    "CandViewNtpProducer",
-    src = cms.InputTag("MCTruthParticles","topNeutrinos"),
-    prefix = cms.untracked.string("mcNeutrinos"),
 
-    variables = cms.VPSet(
+#singleTopMCLeptons = singleTopMCNeutrinos.clone( src = cms.InputTag("MCTruthParticles","topLeptons"), prefix = cms.untracked.string("mcLeptons"))
+#
+#singleTopMCRecoilQuark = singleTopMCNeutrinos.clone( src = cms.InputTag("MCTruthParticles","singleTopRecoilQuark"), prefix = cms.untracked.string("mcRecoilQuark"))
+#singleTopMCBQuark = singleTopMCNeutrinos.clone( src = cms.InputTag("MCTruthParticles","bGenParticles"), prefix = cms.untracked.string("mcBQuark"))
 
-    cms.PSet(
-    tag = cms.untracked.string("PdgId"),
-    quantity = cms.untracked.string("pdgId")
-    ),
-    ),
-)
-
-singleTopMCLeptons = singleTopMCNeutrinos.clone( src = cms.InputTag("MCTruthParticles","topLeptons"), prefix = cms.untracked.string("mcLeptons"))
-
-singleTopMCRecoilQuark = singleTopMCNeutrinos.clone( src = cms.InputTag("MCTruthParticles","singleTopRecoilQuark"), prefix = cms.untracked.string("mcRecoilQuark"))
-singleTopMCBQuark = singleTopMCNeutrinos.clone( src = cms.InputTag("MCTruthParticles","bGenParticles"), prefix = cms.untracked.string("mcBQuark"))
+singleTopMCLeptons = singleTopMCNeutrinos.clone( src = cms.InputTag("MCTruthParticles","MCleptons"), prefix = cms.untracked.string("MCleptons"))
+singleTopMCWs = singleTopMCNeutrinos.clone( src = cms.InputTag("MCTruthParticles","MCws"), prefix = cms.untracked.string("MCws"))
+singleTopMCQuarks = singleTopMCNeutrinos.clone( src = cms.InputTag("MCTruthParticles","MCquarks"), prefix = cms.untracked.string("MCquarks"))
+singleTopMCBQuarks = singleTopMCNeutrinos.clone( src = cms.InputTag("MCTruthParticles","MCbquarks"), prefix = cms.untracked.string("MCbquarks"))
+singleTopMCTops = singleTopMCNeutrinos.clone( src = cms.InputTag("MCTruthParticles","MCtops"), prefix = cms.untracked.string("MCtops"))
+singleTopMCTopsW = singleTopMCNeutrinos.clone( src = cms.InputTag("MCTruthParticles","MCtopsW"), prefix = cms.untracked.string("MCtopsW"))
+singleTopMCTopsBQuark = singleTopMCNeutrinos.clone( src = cms.InputTag("MCTruthParticles","MCtopsBQuark"), prefix = cms.untracked.string("MCtopsBQuark"))
+singleTopMCTopsQuark = singleTopMCNeutrinos.clone( src = cms.InputTag("MCTruthParticles","MCtopsQuark"), prefix = cms.untracked.string("MCtopsQuark"))
+singleTopMCTopsQuarkBar = singleTopMCNeutrinos.clone( src = cms.InputTag("MCTruthParticles","MCtopsQuarkBar"), prefix = cms.untracked.string("MCtopsQuarkBar"))
+singleTopMCTopsLepton = singleTopMCNeutrinos.clone( src = cms.InputTag("MCTruthParticles","MCtopsLepton"), prefix = cms.untracked.string("MCtopsLepton"))
+singleTopMCTopsNeutrino = singleTopMCNeutrinos.clone( src = cms.InputTag("MCTruthParticles","MCtopsNeutrino"), prefix = cms.untracked.string("MCtopsNeutrino"))
  
+nTuplesSkimMCTruth =  cms.Sequence(
+    singleTopMCLeptons +
+    singleTopMCNeutrinos +
+    singleTopMCQuarks +
+    singleTopMCBQuarks +
+    singleTopMCTops +
+    singleTopMCTopsBQuark +
+    singleTopMCTopsW +
+    singleTopMCTopsLepton +
+    singleTopMCTopsNeutrino +
+    singleTopMCTopsQuark +
+    singleTopMCTopsQuarkBar
+
+)
 
 
 nTuplesSkim = cms.Sequence(

@@ -2,7 +2,7 @@
  *\Author: A. Orso M. Iorio 
  *
  *
- *\version  $Id: SingleTopElectronProducer.cc,v 1.7.12.3 2012/06/05 10:04:08 oiorio Exp $ 
+ *\version  $Id: SingleTopElectronProducer.cc,v 1.7.12.4 2012/06/10 01:02:01 oiorio Exp $ 
  */
 
 // Single Top producer: produces a top candidate made out of a Lepton, a B jet and a MET
@@ -57,6 +57,7 @@
 #include "DataFormats/Scalers/interface/DcsStatus.h"
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "RecoEgamma/EgammaTools/interface/ConversionFinder.h"
+#include "EGamma/EGammaAnalysisTools/interface/ElectronEffectiveArea.h"
 #include "PhysicsTools/SelectorUtils/interface/SimpleCutBasedElectronIDSelectionFunctor.h"
 
 
@@ -79,8 +80,8 @@ SingleTopElectronProducer::SingleTopElectronProducer(const edm::ParameterSet& iC
   rho_ = iConfig.getParameter<edm::InputTag> ("rho");
   deltaR_ = iConfig.getUntrackedParameter<double>         ( "deltaR",0.3 );
   category_ = iConfig.getUntrackedParameter<std::string>         ( "category","none");
-  
-  
+  isData_ = iConfig.getUntrackedParameter<bool> ("isData",false);
+    
 
   produces<std::vector<pat::Electron> >();
 }
@@ -90,6 +91,7 @@ void SingleTopElectronProducer::produce(edm::Event & iEvent, const edm::EventSet
   edm::Handle<edm::View<reco::Vertex> > vertices;
   iEvent.getByLabel("offlinePrimaryVertices",vertices);
 
+  isMC_ = !isData_;
 
   ////std::cout << " mark 0 " << std::endl;
 
@@ -101,10 +103,10 @@ void SingleTopElectronProducer::produce(edm::Event & iEvent, const edm::EventSet
   double rhoD = *rho; 
   double energy_ = TMath::Pi()*deltaR_*deltaR_* (*rho);
   
-
+  
   edm::Handle<reco::ConversionCollection> conversions;
   iEvent.getByLabel("allConversions", conversions);
-
+  
   // iso deposits
   //IsoDepositVals isoVals(isoVals_.size());
   //for (size_t j = 0; j < isoVals_.size(); ++j) {
@@ -129,8 +131,12 @@ void SingleTopElectronProducer::produce(edm::Event & iEvent, const edm::EventSet
     bool passes = true;
     
     pat::Electron & el = (*initialElectrons)[i];
+
+    if(isData_)    energy_ =  ElectronEffectiveArea::GetElectronEffectiveArea(ElectronEffectiveArea::kEleGammaAndNeutralHadronIso03, el.superCluster()->eta(), ElectronEffectiveArea::kEleEAData2011)*(*rho);
+    if(isMC_ ) energy_ =  ElectronEffectiveArea::GetElectronEffectiveArea(ElectronEffectiveArea::kEleGammaAndNeutralHadronIso03, el.superCluster()->eta(), ElectronEffectiveArea::kEleEAFall11MC)*(*rho);
     
     el.addUserFloat("DeltaCorrectedIso",(el.chargedHadronIso() + std::max(0., el.neutralHadronIso() + el.photonIso() -0.5*el.puChargedHadronIso()))/el.et());
+
     el.addUserFloat("RhoCorrectedIso",(el.chargedHadronIso() + std::max(0., el.neutralHadronIso() + el.photonIso() -energy_))/el.et());
     
     double dxy= 9900;
@@ -177,6 +183,10 @@ void SingleTopElectronProducer::produce(edm::Event & iEvent, const edm::EventSet
       bool id = EgammaCutBasedEleId::PassWP(EgammaCutBasedEleId::TIGHT, isEB, pt, eta, dEtaIn, dPhiIn, sigmaIEtaIEta, hoe, ooemoop, dxy, dz, iso_ch, iso_em, iso_nh, vtxFitConversion, mHits, rhoD);
       passes = passes && id;
     }
+    if(category_ == "qcd"){
+      bool id = EgammaCutBasedEleId::PassWP(EgammaCutBasedEleId::TIGHT, isEB, pt, eta, dEtaIn, dPhiIn, sigmaIEtaIEta, hoe, ooemoop, dxy, dz, iso_ch, iso_em, iso_nh, vtxFitConversion, mHits, rhoD);
+      passes = passes && id;
+    }
     if(category_ == "loose"){
       bool id = EgammaCutBasedEleId::PassWP(EgammaCutBasedEleId::LOOSE, isEB, pt, eta, dEtaIn, dPhiIn, sigmaIEtaIEta, hoe, ooemoop, dxy, dz, iso_ch, iso_em, iso_nh, vtxFitConversion, mHits, rhoD);
       passes = passes && id;
@@ -188,8 +198,11 @@ void SingleTopElectronProducer::produce(edm::Event & iEvent, const edm::EventSet
    
     }
     
+    el.addUserFloat("PassesTightID",(float)passes);
+
+   
     if(passes)finalElectrons->push_back(el);
-    
+    else if((category_=="qcd"))finalElectrons->push_back(el);
     //std::cout << " passes cut " << cut_ <<  std::endl;
     
     //    finalElectrons->push_back(electrons->at(i));

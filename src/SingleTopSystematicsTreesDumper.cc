@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.15 2012/08/23 13:37:22 atiko Exp $
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.14 2012/08/15 09:36:38 oiorio Exp $
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file
 //
@@ -32,7 +32,6 @@
 #include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
 #include "TopQuarkAnalysis/SingleTop/interface/EquationSolver.h"
 
-#include "../interface/ReWeighting.h"
 
 namespace LHAPDF
 {
@@ -66,6 +65,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
     RelIsoCut = channelInfo.getUntrackedParameter<double>("RelIsoCut", 0.1);
     loosePtCut = channelInfo.getUntrackedParameter<double>("loosePtCut", 40);
 
+    addPDFToNJets  =  channelInfo.getUntrackedParameter< bool >("addPDFToNJets", false);
     maxPtCut = iConfig.getUntrackedParameter<double>("maxPtCut", 40);
 
     //tight leptons
@@ -75,6 +75,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
 
     //  dataPUFile_ =  iConfig.getUntrackedParameter< std::string >("dataPUFile","pileUpDistr.root");
     //  mcPUFile_ =  iConfig.getUntrackedParameter< std::string >("mcPUFile","pileupdistr_TChannel.root");
+
 
     leptonsPt_ =  iConfig.getParameter< edm::InputTag >("leptonsPt");
     leptonsPhi_ =  iConfig.getParameter< edm::InputTag >("leptonsPhi");
@@ -154,6 +155,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
 
     doPDF_  =  iConfig.getUntrackedParameter< bool >("doPDF", true);
 
+
     //Q2 part
     x1_ = iConfig.getParameter<edm::InputTag>("x1") ;
     x2_ = iConfig.getParameter<edm::InputTag>("x2") ;
@@ -167,25 +169,106 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
     np1_ = iConfig.getParameter< edm::InputTag >("nVerticesPlus");//,"PileUpSync");
     nm1_ = iConfig.getParameter< edm::InputTag >("nVerticesMinus");//,"PileUpSync");
     n0_ = iConfig.getParameter< edm::InputTag >("nVertices");//,"PileUpSync");
+
     vertexZ_ = iConfig.getParameter< edm::InputTag >("vertexZ");//,"PileUpSync");
 
-    rho_ = iConfig.getParameter< edm::InputTag >("rho");
-    
     doPU_ = iConfig.getUntrackedParameter< bool >("doPU", false);
     doResol_ = iConfig.getUntrackedParameter< bool >("doResol", false);
     doTurnOn_ = iConfig.getUntrackedParameter< bool >("doTurnOn", true);
 
     doReCorrection_ = iConfig.getUntrackedParameter< bool >("doReCorrection", false);
     dataPUFile_ =  channelInfo.getUntrackedParameter< std::string >("Season", "SummerMean11");
-    
-    PUFileNew_ =  channelInfo.getUntrackedParameter< std::string >("PUFileNew", "pileUpDistrNewWJets");
-    
+
     takeBTagSFFromDB_ = iConfig.getUntrackedParameter< bool >("takeBTagSFFromDB", true);
 
     doJetTrees_ = iConfig.getUntrackedParameter< bool >("doJetTrees", true);
 
     algo_ = iConfig.getUntrackedParameter< std::string >("algo", "CSVT");
     doLooseBJetVeto_ = iConfig.getUntrackedParameter< bool >("doLooseBJetVeto", false);
+
+    //MC Truth part
+    doMCTruth_ = iConfig.getUntrackedParameter< bool >("doMCTruth", false);
+
+    //Quarks/leptons
+    MCQuarksEta_ =  iConfig.getParameter< edm::InputTag >("MCQuarksEta");
+    MCQuarksPt_ =  iConfig.getParameter< edm::InputTag >("MCQuarksPt");
+    MCQuarksPhi_ =  iConfig.getParameter< edm::InputTag >("MCQuarksPhi");
+    MCQuarksEnergy_ =  iConfig.getParameter< edm::InputTag >("MCQuarksEnergy");
+    MCQuarksPdgId_ =  iConfig.getParameter< edm::InputTag >("MCQuarksPdgId");
+    MCQuarksMotherId_ =  iConfig.getParameter< edm::InputTag >("MCQuarksMotherId");
+    
+    MCBQuarksEta_ =  iConfig.getParameter< edm::InputTag >("MCBQuarksEta");
+    MCBQuarksPt_ =  iConfig.getParameter< edm::InputTag >("MCBQuarksPt");
+    MCBQuarksPhi_ =  iConfig.getParameter< edm::InputTag >("MCBQuarksPhi");
+    MCBQuarksEnergy_ =  iConfig.getParameter< edm::InputTag >("MCBQuarksEnergy");
+    MCBQuarksPdgId_ =  iConfig.getParameter< edm::InputTag >("MCBQuarksPdgId");
+    MCBQuarksMotherId_ =  iConfig.getParameter< edm::InputTag >("MCBQuarksMotherId");
+    
+    MCLeptonsEta_ =  iConfig.getParameter< edm::InputTag >("MCLeptonsEta");
+    MCLeptonsPt_ =  iConfig.getParameter< edm::InputTag >("MCLeptonsPt");
+    MCLeptonsPhi_ =  iConfig.getParameter< edm::InputTag >("MCLeptonsPhi");
+    MCLeptonsEnergy_ =  iConfig.getParameter< edm::InputTag >("MCLeptonsEnergy");
+    MCLeptonsPdgId_ =  iConfig.getParameter< edm::InputTag >("MCLeptonsPdgId");
+    MCLeptonsMotherId_ =  iConfig.getParameter< edm::InputTag >("MCLeptonsMotherId");
+    
+    MCNeutrinosEta_ =  iConfig.getParameter< edm::InputTag >("MCNeutrinosEta");
+    MCNeutrinosPt_ =  iConfig.getParameter< edm::InputTag >("MCNeutrinosPt");
+    MCNeutrinosPhi_ =  iConfig.getParameter< edm::InputTag >("MCNeutrinosPhi");
+    MCNeutrinosEnergy_ =  iConfig.getParameter< edm::InputTag >("MCNeutrinosEnergy");
+    MCNeutrinosPdgId_ =  iConfig.getParameter< edm::InputTag >("MCNeutrinosPdgId");
+    MCNeutrinosMotherId_ =  iConfig.getParameter< edm::InputTag >("MCNeutrinosMotherId");
+
+    //Top
+    MCTopsEta_ =  iConfig.getParameter< edm::InputTag >("MCTopsEta");
+    MCTopsPt_ =  iConfig.getParameter< edm::InputTag >("MCTopsPt");
+    MCTopsPhi_ =  iConfig.getParameter< edm::InputTag >("MCTopsPhi");
+    MCTopsEnergy_ =  iConfig.getParameter< edm::InputTag >("MCTopsEnergy");
+    MCTopsPdgId_ =  iConfig.getParameter< edm::InputTag >("MCTopsPdgId");
+    MCTopsMotherId_ =  iConfig.getParameter< edm::InputTag >("MCTopsMotherId");
+
+    MCTopBQuarksEta_ =  iConfig.getParameter< edm::InputTag >("MCTopBQuarksEta");
+    MCTopBQuarksPt_ =  iConfig.getParameter< edm::InputTag >("MCTopBQuarksPt");
+    MCTopBQuarksPhi_ =  iConfig.getParameter< edm::InputTag >("MCTopBQuarksPhi");
+    MCTopBQuarksEnergy_ =  iConfig.getParameter< edm::InputTag >("MCTopBQuarksEnergy");
+    MCTopBQuarksPdgId_ =  iConfig.getParameter< edm::InputTag >("MCTopBQuarksPdgId");
+    MCTopBQuarksMotherId_ =  iConfig.getParameter< edm::InputTag >("MCTopBQuarksMotherId");
+
+    MCTopLeptonsEta_ =  iConfig.getParameter< edm::InputTag >("MCTopLeptonsEta");
+    MCTopLeptonsPt_ =  iConfig.getParameter< edm::InputTag >("MCTopLeptonsPt");
+    MCTopLeptonsPhi_ =  iConfig.getParameter< edm::InputTag >("MCTopLeptonsPhi");
+    MCTopLeptonsEnergy_ =  iConfig.getParameter< edm::InputTag >("MCTopLeptonsEnergy");
+    MCTopLeptonsPdgId_ =  iConfig.getParameter< edm::InputTag >("MCTopLeptonsPdgId");
+    MCTopLeptonsMotherId_ =  iConfig.getParameter< edm::InputTag >("MCTopLeptonsMotherId");
+
+    MCTopNeutrinosEta_ =  iConfig.getParameter< edm::InputTag >("MCTopNeutrinosEta");
+    MCTopNeutrinosPt_ =  iConfig.getParameter< edm::InputTag >("MCTopNeutrinosPt");
+    MCTopNeutrinosPhi_ =  iConfig.getParameter< edm::InputTag >("MCTopNeutrinosPhi");
+    MCTopNeutrinosEnergy_ =  iConfig.getParameter< edm::InputTag >("MCTopNeutrinosEnergy");
+    MCTopNeutrinosPdgId_ =  iConfig.getParameter< edm::InputTag >("MCTopNeutrinosPdgId");
+    MCTopNeutrinosMotherId_ =  iConfig.getParameter< edm::InputTag >("MCTopNeutrinosMotherId");
+    
+    MCTopQuarksEta_ =  iConfig.getParameter< edm::InputTag >("MCTopQuarksEta");
+    MCTopQuarksPt_ =  iConfig.getParameter< edm::InputTag >("MCTopQuarksPt");
+    MCTopQuarksPhi_ =  iConfig.getParameter< edm::InputTag >("MCTopQuarksPhi");
+    MCTopQuarksEnergy_ =  iConfig.getParameter< edm::InputTag >("MCTopQuarksEnergy");
+    MCTopQuarksPdgId_ =  iConfig.getParameter< edm::InputTag >("MCTopQuarksPdgId");
+    MCTopQuarksMotherId_ =  iConfig.getParameter< edm::InputTag >("MCTopQuarksMotherId");
+
+    MCTopQuarkBarsEta_ =  iConfig.getParameter< edm::InputTag >("MCTopQuarkBarsEta");
+    MCTopQuarkBarsPt_ =  iConfig.getParameter< edm::InputTag >("MCTopQuarkBarsPt");
+    MCTopQuarkBarsPhi_ =  iConfig.getParameter< edm::InputTag >("MCTopQuarkBarsPhi");
+    MCTopQuarkBarsEnergy_ =  iConfig.getParameter< edm::InputTag >("MCTopQuarkBarsEnergy");
+    MCTopQuarkBarsPdgId_ =  iConfig.getParameter< edm::InputTag >("MCTopQuarkBarsPdgId");
+    MCTopQuarkBarsMotherId_ =  iConfig.getParameter< edm::InputTag >("MCTopQuarkBarsMotherId");
+    
+
+    MCTopWsEta_ =  iConfig.getParameter< edm::InputTag >("MCTopWsEta");
+    MCTopWsPt_ =  iConfig.getParameter< edm::InputTag >("MCTopWsPt");
+    MCTopWsPhi_ =  iConfig.getParameter< edm::InputTag >("MCTopWsPhi");
+    MCTopWsEnergy_ =  iConfig.getParameter< edm::InputTag >("MCTopWsEnergy");
+    MCTopWsPdgId_ =  iConfig.getParameter< edm::InputTag >("MCTopWsPdgId");
+    MCTopWsMotherId_ =  iConfig.getParameter< edm::InputTag >("MCTopWsMotherId");
+    MCTopWsDauOneId_ =  iConfig.getParameter< edm::InputTag >("MCTopWsDauOneId");
 
     string season = "Summer11";
     season = dataPUFile_;
@@ -212,14 +295,9 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
         //LumiWeights_.weight3D_init(1.000);
 
         //    //cout << " built lumiWeights "<<endl;
-        
-        NewPUWeights_ = edm::ReWeighting(PUFileNew_+".root",
-            PUFileNew_+"Data.root",
-            std::string("c1"),
-            std::string("c1"));
     }
-    
-    
+
+    //  preWeights_ =  iConfig.getParameter< edm::InputTag >("preWeights");
 
 
     Service<TFileService> fs;
@@ -229,9 +307,9 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
     facBTagErr = 1.5;
 
     systematics.insert(systematics.begin(), "noSyst");
-
+    
     //  for(size_t i = 0; i < systematics.size();++i){
-    //  if(systematics.at(i)=="")
+    //  ifB(systematics.at(i)=="")
     //}
 
     std::vector<std::string> all_syst = systematics;
@@ -239,8 +317,8 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
 
     TFileDirectory SingleTopSystematics = fs->mkdir( "systematics_histograms" );
     TFileDirectory SingleTopTrees = fs->mkdir( "systematics_trees" );
-
-
+    
+    
     for (size_t i = 0; i < rate_systematics.size(); ++i)
     {
       all_syst.push_back(rate_systematics.at(i));
@@ -288,9 +366,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             treesNJets[syst]->Branch("w2CSVT", &w2CSVT);
             treesNJets[syst]->Branch("w1CSVL", &w1CSVM);
             treesNJets[syst]->Branch("w2CSVL", &w2CSVM);
-            treesNJets[syst]->Branch("bWeight",&bWeightTree);
             treesNJets[syst]->Branch("PUWeight", &PUWeightTree);
-            treesNJets[syst]->Branch("PUWeightNew", &PUWeightTreeNew);
             treesNJets[syst]->Branch("turnOnWeight", &turnOnWeightTree);
             treesNJets[syst]->Branch("turnOnReWeight", &turnOnReWeightTree);
             treesNJets[syst]->Branch("leptonPt", &lepPt);
@@ -329,17 +405,29 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             treesNJets[syst]->Branch("bJetBeta", &bJetBeta);
             treesNJets[syst]->Branch("bJetDZ", &bJetDZ);
             treesNJets[syst]->Branch("bJetRMS", &bJetRMS);
-            treesNJets[syst]->Branch("rho", &rho);
-        }
+	    
+	    if(addPDFToNJets){
+            for (int p = 1; p <= 52; ++p)
+	      {
+                stringstream w_n;
+                w_n << p;
+                treesNJets[syst]->Branch(("PDFWeight" + w_n.str()).c_str(), &pdf_weights[p - 1]);
+            }
+	    
+            treesNJets[syst]->Branch("PDFWeight_Alternate_Set_1", &pdf_weights_alternate_set_1);
+            treesNJets[syst]->Branch("PDFWeight_Alternate_Set_2", &pdf_weights_alternate_set_2);
+	    }
 
+        }
+	
         for (int bj = 0; bj <= 5; ++bj)
         {
-
+	  
             stringstream tags;
             int ntagss = bj;
             if (ntagss > 2 )
 	      {
-
+		
                 ntagss = ntagss - 3;
                 tags << ntagss;
                 tags <<  "T_QCD";
@@ -349,19 +437,19 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
                 tags << ntagss << "T";
 	      }
            //2J1T
-
+	    
             string treename = (channel + "_2J_" + tags.str() + "_" + syst);
-
+	    
             //if(bj==0 )treename = (channel+"_"+syst+"WSample");
             //      if(bj==3 )treename = (channel+"_"+syst+"WSampleQCD");
-
+	    
             //      if(bj==1 )treename = (channel+"_"+syst);
             //      if(bj==4 )treename = (channel+"_"+syst+"QCD");
-
+	    
             trees2J[bj][syst] = new TTree(treename.c_str(), treename.c_str());
-
+	    
             //quantities for the analysis
-
+	    
             trees2J[bj][syst]->Branch("eta", &etaTree);
             trees2J[bj][syst]->Branch("costhetalj", &cosTree);
             trees2J[bj][syst]->Branch("costhetalbl", &cosBLTree);
@@ -391,17 +479,15 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             trees2J[bj][syst]->Branch("PUWeightPUUp", &PUWeightTreePUUp);
             trees2J[bj][syst]->Branch("PUWeightPUDown", &PUWeightTreePUDown);
 
-            trees2J[bj][syst]->Branch("PUWeightNew", &PUWeightTreeNew);
-
             //Systematics turn on weights
             trees2J[bj][syst]->Branch("turnOnWeight", &turnOnWeightTree);
             //trees2J[bj][syst]->Branch("turnOnWeightPt",&turnOnPtWeightTree);
             //trees2J[bj][syst]->Branch("turnOnWeightBTag",&turnOnBTagWeightTree);
             trees2J[bj][syst]->Branch("turnOnReWeight", &turnOnReWeightTree);
-
+	    
             trees2J[bj][syst]->Branch("turnOnWeightJetTrig1Up", &turnOnWeightTreeJetTrig1Up);
             trees2J[bj][syst]->Branch("turnOnWeightJetTrig1Down", &turnOnWeightTreeJetTrig1Down);
-
+	    
             trees2J[bj][syst]->Branch("turnOnWeightJetTrig2Up", &turnOnWeightTreeJetTrig2Up);
             trees2J[bj][syst]->Branch("turnOnWeightJetTrig2Down", &turnOnWeightTreeJetTrig2Down);
 
@@ -436,7 +522,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             trees2J[bj][syst]->Branch("fJetFlavour", &fJetFlavourTree);
             trees2J[bj][syst]->Branch("fJetPUID", &fJetPUID);
             trees2J[bj][syst]->Branch("fJetPUWP", &fJetPUWP);
-
+	    
             trees2J[bj][syst]->Branch("fJetBeta", &fJetBeta);
             trees2J[bj][syst]->Branch("fJetDZ", &fJetDZ);
             trees2J[bj][syst]->Branch("fJetRMS", &fJetRMS);
@@ -474,7 +560,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             trees2J[bj][syst]->Branch("metPhi", &metPhi);
 
             trees2J[bj][syst]->Branch("HT", &HT);
-
+	    
             trees2J[bj][syst]->Branch("topMass", &topMassTree);
             trees2J[bj][syst]->Branch("topMtw", &topMtwTree);
 
@@ -495,8 +581,114 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             trees2J[bj][syst]->Branch("lowBTag", &lowBTagTree);
             trees2J[bj][syst]->Branch("highBTag", &highBTagTree);
 
-            trees2J[bj][syst]->Branch("rho", &rho);
+	    if(doMCTruth_ && bj == 1 && syst == "noSyst"){
 
+	      for (int p = 1; p <= 2; ++p)
+	      {
+                stringstream w_n;
+                w_n << p;
+		TString num( w_n.str() );
+		num = "_"+num+"_";
+		
+		trees2J[bj][syst]->Branch("nMCTruthLeptons", &nMCTruthLeptons);
+
+		trees2J[bj][syst]->Branch("MCTop"+num+"Pt", &MCTopsPtVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTop"+num+"Phi", &MCTopsPhiVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTop"+num+"Eta", &MCTopsEtaVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTop"+num+"E", &MCTopsEnergyVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTop"+num+"PdgId", &MCTopsPdgIdVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTop"+num+"MotherId", &MCTopsMotherIdVec[p-1]);
+		
+		trees2J[bj][syst]->Branch("MCTopLepton"+num+"Pt", &MCTopLeptonsPtVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopLepton"+num+"Phi", &MCTopLeptonsPhiVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopLepton"+num+"Eta", &MCTopLeptonsEtaVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopLepton"+num+"E", &MCTopLeptonsEnergyVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopLepton"+num+"PdgId", &MCTopLeptonsPdgIdVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopLepton"+num+"MotherId", &MCTopLeptonsMotherIdVec[p-1]);
+		
+		trees2J[bj][syst]->Branch("MCTopNeutrino"+num+"Pt", &MCTopNeutrinosPtVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopNeutrino"+num+"Phi", &MCTopNeutrinosPhiVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopNeutrino"+num+"Eta", &MCTopNeutrinosEtaVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopNeutrino"+num+"E", &MCTopNeutrinosEnergyVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopNeutrino"+num+"PdgId", &MCTopNeutrinosPdgIdVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopNeutrino"+num+"MotherId", &MCTopNeutrinosMotherIdVec[p-1]);
+
+		trees2J[bj][syst]->Branch("MCTopQuark"+num+"Pt", &MCTopQuarksPtVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopQuark"+num+"Phi", &MCTopQuarksPhiVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopQuark"+num+"Eta", &MCTopQuarksEtaVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopQuark"+num+"E", &MCTopQuarksEnergyVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopQuark"+num+"PdgId", &MCTopQuarksPdgIdVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopQuark"+num+"MotherId", &MCTopQuarksMotherIdVec[p-1]);
+		
+		trees2J[bj][syst]->Branch("MCTopQuarkBar"+num+"Pt", &MCTopQuarkBarsPtVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopQuarkBar"+num+"Phi", &MCTopQuarkBarsPhiVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopQuarkBar"+num+"Eta", &MCTopQuarkBarsEtaVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopQuarkBar"+num+"E", &MCTopQuarkBarsEnergyVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopQuarkBar"+num+"PdgId", &MCTopQuarkBarsPdgIdVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopQuarkBar"+num+"MotherId", &MCTopQuarkBarsMotherIdVec[p-1]);
+		
+		trees2J[bj][syst]->Branch("MCTopBQuark"+num+"Pt", &MCTopBQuarksPtVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopBQuark"+num+"Phi", &MCTopBQuarksPhiVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopBQuark"+num+"Eta", &MCTopBQuarksEtaVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopBQuark"+num+"E", &MCTopBQuarksEnergyVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopBQuark"+num+"PdgId", &MCTopBQuarksPdgIdVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopBQuark"+num+"MotherId", &MCTopBQuarksMotherIdVec[p-1]);
+		
+		trees2J[bj][syst]->Branch("MCTopW"+num+"Pt", &MCTopWsPtVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopW"+num+"Phi", &MCTopWsPhiVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopW"+num+"Eta", &MCTopWsEtaVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopW"+num+"E", &MCTopWsEnergyVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopW"+num+"PdgId", &MCTopWsPdgIdVec[p-1]);
+		trees2J[bj][syst]->Branch("MCTopW"+num+"DauOneId", &MCTopWsDauOneIdVec[p-1]);
+	      
+		}
+
+
+	      for (int p = 1; p <= 12; ++p)
+	      {
+                stringstream w_n;
+                w_n << p;
+		TString num( w_n.str() );
+		num = "_"+num+"_";
+		
+		trees2J[bj][syst]->Branch("MCQuark"+num+"Pt", &MCQuarksPtVec[p-1]);
+		trees2J[bj][syst]->Branch("MCQuark"+num+"Phi", &MCQuarksPhiVec[p-1]);
+		trees2J[bj][syst]->Branch("MCQuark"+num+"Eta", &MCQuarksEtaVec[p-1]);
+		trees2J[bj][syst]->Branch("MCQuark"+num+"E", &MCQuarksEnergyVec[p-1]);
+		trees2J[bj][syst]->Branch("MCQuark"+num+"PdgId", &MCQuarksPdgIdVec[p-1]);
+		trees2J[bj][syst]->Branch("MCQuark"+num+"MotherId", &MCQuarksMotherIdVec[p-1]);
+	      }
+
+	      for (int p = 1; p <= 4; ++p)
+		{
+		  stringstream w_n;
+		  w_n << p;
+		  TString num( w_n.str() );
+		  num = "_"+num+"_";
+		
+		  trees2J[bj][syst]->Branch("MCBQuark"+num+"Pt", &MCBQuarksPtVec[p-1]);
+		  trees2J[bj][syst]->Branch("MCBQuark"+num+"Phi", &MCBQuarksPhiVec[p-1]);
+		  trees2J[bj][syst]->Branch("MCBQuark"+num+"Eta", &MCBQuarksEtaVec[p-1]);
+		  trees2J[bj][syst]->Branch("MCBQuark"+num+"E", &MCBQuarksEnergyVec[p-1]);
+		  trees2J[bj][syst]->Branch("MCBQuark"+num+"PdgId", &MCBQuarksPdgIdVec[p-1]);
+		  trees2J[bj][syst]->Branch("MCBQuark"+num+"MotherId", &MCBQuarksMotherIdVec[p-1]);
+		  
+		  trees2J[bj][syst]->Branch("MCLepton"+num+"Pt", &MCLeptonsPtVec[p-1]);
+		  trees2J[bj][syst]->Branch("MCLepton"+num+"Phi", &MCLeptonsPhiVec[p-1]);
+		  trees2J[bj][syst]->Branch("MCLepton"+num+"Eta", &MCLeptonsEtaVec[p-1]);
+		  trees2J[bj][syst]->Branch("MCLepton"+num+"E", &MCLeptonsEnergyVec[p-1]);
+		  trees2J[bj][syst]->Branch("MCLepton"+num+"PdgId", &MCLeptonsPdgIdVec[p-1]);
+		  trees2J[bj][syst]->Branch("MCLepton"+num+"MotherId", &MCLeptonsMotherIdVec[p-1]);
+		  
+		  trees2J[bj][syst]->Branch("MCNeutrino"+num+"Pt", &MCNeutrinosPtVec[p-1]);
+		  trees2J[bj][syst]->Branch("MCNeutrino"+num+"Phi", &MCNeutrinosPhiVec[p-1]);
+		  trees2J[bj][syst]->Branch("MCNeutrino"+num+"Eta", &MCNeutrinosEtaVec[p-1]);
+		  trees2J[bj][syst]->Branch("MCNeutrino"+num+"E", &MCNeutrinosEnergyVec[p-1]);
+		  trees2J[bj][syst]->Branch("MCNeutrino"+num+"PdgId", &MCNeutrinosPdgIdVec[p-1]);
+		  trees2J[bj][syst]->Branch("MCNeutrino"+num+"MotherId", &MCNeutrinosMotherIdVec[p-1]);
+		}
+	    }	    
+	    
             for (int p = 1; p <= 52; ++p)
             {
                 stringstream w_n;
@@ -590,9 +782,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             trees3J[bj][syst]->Branch("thirdJetE", &thirdJetE);
             trees3J[bj][syst]->Branch("thirdJetFlavour", &thirdJetFlavourTree);
 
-
-
-
+	    
             trees3J[bj][syst]->Branch("eventFlavour", &eventFlavourTree);
 
 
@@ -631,8 +821,6 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
 
             trees3J[bj][syst]->Branch("PUWeightPUUp", &PUWeightTreePUUp);
             trees3J[bj][syst]->Branch("PUWeightPUDown", &PUWeightTreePUDown);
-            
-            trees3J[bj][syst]->Branch("PUWeightNew", &PUWeightTreeNew);
 
             //Systematics turn on weights
             trees3J[bj][syst]->Branch("turnOnWeight", &turnOnWeightTree);
@@ -656,8 +844,6 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
 
             trees3J[bj][syst]->Branch("turnOnWeightBTagTrig3Up", &turnOnWeightTreeBTagTrig3Up);
             trees3J[bj][syst]->Branch("turnOnWeightBTagTrig3Down", &turnOnWeightTreeBTagTrig3Down);
-
-            trees3J[bj][syst]->Branch("rho", &rho);
 
             for (int p = 1; p <= 52; ++p)
             {
@@ -808,7 +994,6 @@ void SingleTopSystematicsTreesDumper::initBranchVars()
     w1CSVM = DOUBLE_NAN;
     w2CSVM = DOUBLE_NAN;
     PUWeightTree = DOUBLE_NAN;
-    PUWeightTreeNew = DOUBLE_NAN;
     turnOnWeightTree = DOUBLE_NAN;
     turnOnReWeightTree = DOUBLE_NAN;
     lepPt = DOUBLE_NAN;
@@ -843,8 +1028,6 @@ void SingleTopSystematicsTreesDumper::initBranchVars()
     cosTree = DOUBLE_NAN;
     cosBLTree = DOUBLE_NAN;
     mtwMassTree = DOUBLE_NAN;
-
-    rho = DOUBLE_NAN;
 
     chargeTree = INT_NAN;
     runTree = INT_NAN;
@@ -952,7 +1135,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
     iEvent.getByLabel(jetsEta_, jetsEta);
     iEvent.getByLabel(jetsPt_, jetsPt);
     //  if(jetsPt->size() < 2)return;
-    if (jetsPt->size() > 25 && channel != "Data")return; //Crazy events with huge jet multiplicity in mc
+    if (jetsPt->size() > 22 )return; //Crazy events with huge jet multiplicity in mc
+    //if (jetsPt->size() > 20 && channel != "Data")return; //Crazy events with huge jet multiplicity in mc
     iEvent.getByLabel(jetsPhi_, jetsPhi);
 
     if (isFirstEvent && takeBTagSFFromDB_)
@@ -979,6 +1163,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
     gotJets = 0;
     gotMets = 0;
     gotPU = 0;
+    gotPDFs = 0;
 
     //cout <<" test 2 "<<endl;
 
@@ -1028,9 +1213,6 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
     double bWeightNoSyst = 1;
     double turnOnWeightValueNoSyst = 1;
     double turnOnReWeightTreeNoSyst = 1;
-
-    double PUWeightNew = 1;
-    double PUWeightNewNoSyst = 1;
 
     BinningPointByMap measurePoint;
 
@@ -1229,7 +1411,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
 
                 //  if(leptonsFlavour_ == "muon" ) {
                 iEvent.getByLabel(leptonsPt_, leptonsPt);
-                leptonPt = leptonsPt->at(i);
+                leptonPt = leptonsPt->at(i)*0.992;
                 if ( leptonPt < 26.) continue;
                 //  }
                 //Apply isolation cut
@@ -1321,16 +1503,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
             //Loop for the qcd leptons
             if (doQCD_ && isQCD)
             {
-                iEvent.getByLabel(looseMuonsDeltaCorrectedRelIso_, looseMuonsDeltaCorrectedRelIso);
-                iEvent.getByLabel(looseElectronsDeltaCorrectedRelIso_, looseElectronsDeltaCorrectedRelIso);
-                
-                bool hasLooseElectrons = looseElectronsDeltaCorrectedRelIso->size() != 0;
-                bool hasLooseMuons =  looseMuonsDeltaCorrectedRelIso->size() != 0;
-
-                if (hasLooseElectrons or hasLooseMuons) continue;
-            
                 iEvent.getByLabel(qcdLeptonsDeltaCorrectedRelIso_, qcdLeptonsDeltaCorrectedRelIso);
-        		iEvent.getByLabel(qcdLeptonsRhoCorrectedRelIso_, qcdLeptonsRhoCorrectedRelIso);
+		iEvent.getByLabel(qcdLeptonsRhoCorrectedRelIso_, qcdLeptonsRhoCorrectedRelIso);
 
                 for (size_t i = 0; i < qcdLeptonsDeltaCorrectedRelIso->size(); ++i)
                 {
@@ -1347,11 +1521,11 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
 		    //		    cout << "qcd lep " << i << "rel iso "<<leptonRelIso<<endl;
 
 		    		    
-        		    float leptonQCDRelIso = leptonRelIso;
-                            //Use an anti-isolation requirement
+		    float leptonQCDRelIso = leptonRelIso;
+                    //Use an anti-isolation requirement
 
-        		    lepDeltaCorrectedRelIso = leptonRelIso;
-        		    lepRhoCorrectedRelIso = qcdLeptonsRhoCorrectedRelIso->at(i) ;
+		    lepDeltaCorrectedRelIso = leptonRelIso;
+		    lepRhoCorrectedRelIso = qcdLeptonsRhoCorrectedRelIso->at(i) ;
 
                     if (leptonsFlavour_ == "muon")
                     {
@@ -1359,7 +1533,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                         if ( leptonQCDRelIso < leptonRelIsoQCDCutLower )continue;
 			
                         if (!gotQCDLeptons)
-                        {
+			  {
                             iEvent.getByLabel(qcdLeptonsEta_, qcdLeptonsEta);
                             //iEvent.getByLabel(qcdLeptonsPt_,qcdLeptonsPt);
                             iEvent.getByLabel(qcdLeptonsPhi_, qcdLeptonsPhi);
@@ -1622,7 +1796,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
 
 
 		HT+= (math::PtEtaPhiELorentzVector(ptCorr, jetsEta->at(i), jetsPhi->at(i), energyCorr)).Et();
-
+		
                 //Pt cut
                 bool passesPtCut = ptCorr > ptCut;
                 if (passesPtCut)
@@ -1643,7 +1817,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                         ++nJetsNoSyst;
                         jetsNoSyst[nJets - 1] = jets[nJets - 1];
 			//			cout <<" jet no syst "<< nJets-1<<" pt "  <<jetsNoSyst[nJets-1].pt()<<endl;
-
+			
 		    }
 		}
 
@@ -1655,8 +1829,8 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                 bool passesTCHPT = jetsBTagAlgo->at(i) > 3.41; //TCHPT Working point
                 bool passesCSVT = jetsAntiBTagAlgo->at(i) > 0.898; //TCHPT Working point
 
-		bool passesCSVM = jetsAntiBTagAlgo->at(i)>0.244;//ACTUALLY IT IS LOOSE WORKING POINT
-
+		bool passesCSVM = jetsAntiBTagAlgo->at(i)>0.244;//ACTUALLY IT IS LOOSE WORKING POINT 
+		
 		//		bool passesCSVM = jetsAntiBTagAlgo->at(i) > 0.679;
 
                 double valueChosenAlgo = valueCSV;
@@ -2061,16 +2235,12 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                 iEvent.getByLabel(n0_, n0);
                 //iEvent.getByLabel(np1_,np1);
                 nVertices = *n0;
-                
                 gotPU = true;
             }
 
         }
         else(nVertices = -1);
 
-        iEvent.getByLabel(rho_, rhoHandle);
-        rho = *rhoHandle;
-         
         if (doPU_)
         {
             if (syst == "noSyst")
@@ -2079,22 +2249,14 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                 PUWeightTreePUUp = pileUpSF("PUUp");
                 PUWeightTreePUDown = pileUpSF("PUDown");
                 //    cout<< "n0 " << nVertices <<   " weight = "<< PUWeightNoSyst<< " cross-check "  <<endl;
-                
-                PUWeightNewNoSyst = pileUpSFNew(); PUWeightNew = PUWeightNewNoSyst;
             }
-            else {
-               PUWeight = PUWeightNoSyst;
-               PUWeightNew = PUWeightNewNoSyst;
-            }
+            else PUWeight = PUWeightNoSyst;
         }
-        else {
-            PUWeight = 1;
-            PUWeightNew = 1;
-        }
+        else PUWeight = 1;
         PUWeightTree = PUWeight;
         weightTree = Weight;
 
-        PUWeightTreeNew = PUWeightNew;
+
         //Jet trees:
 
         if (isQCD)
@@ -2119,7 +2281,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
         runTree = iEvent.eventAuxiliary().run();
         lumiTree = iEvent.eventAuxiliary().luminosityBlock();
         eventTree = iEvent.eventAuxiliary().event();
-
+	
 	//	cout << " syst " << syst << endl;
 
         for (size_t J_ = 0; J_ < nJets; ++J_ )
@@ -2207,7 +2369,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
 
         }
 
-
+	
 
 
         if (doJetTrees_ && !isQCD)
@@ -2247,13 +2409,54 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                 nJForwardNoPU = nJetsForwardNoPU;
                 nJForward = nJetsForward;
 
+		if(addPDFToNJets){
+		  
+		  iEvent.getByLabel(x1_, x1h);
+		  iEvent.getByLabel(x2_, x2h);
+		  
+		  iEvent.getByLabel(scalePDF_, scalePDFh);
+		  iEvent.getByLabel(id1_, id1h);
+		  iEvent.getByLabel(id2_, id2h);
+		  
+		  x1 = *x1h;
+		  x2 = *x2h;
+		  
+		  scalePDF = *scalePDFh;
+		  
+		  id1 = *id1h;
+		  id2 = *id2h;
+		  
+		  //Q2 = x1 * x2 * 7000*7000;
+		  LHAPDF::usePDFMember(1, 0);
+		  double xpdf1 = LHAPDF::xfx(1, x1, scalePDF, id1);
+		  double xpdf2 = LHAPDF::xfx(1, x2, scalePDF, id2);
+		  double w0 = xpdf1 * xpdf2;
+		  for (int p = 1; p <= 52; ++p)
+                    {
+		      LHAPDF::usePDFMember(1, p);
+		      double xpdf1_new = LHAPDF::xfx(1, x1, scalePDF, id1);
+		      double xpdf2_new = LHAPDF::xfx(1, x2, scalePDF, id2);
+		      double pweight = xpdf1_new * xpdf2_new / w0;
+		      pdf_weights[p - 1] = pweight;
+                    }
+		  LHAPDF::usePDFMember(2, 0);
+		  double xpdf1_new = LHAPDF::xfx(2, x1, scalePDF, id1);
+		  double xpdf2_new = LHAPDF::xfx(2, x2, scalePDF, id2);
+		  pdf_weights_alternate_set_1 = xpdf1_new * xpdf2_new / w0;
+		  xpdf1_new = LHAPDF::xfx(3, x1, scalePDF, id1);
+		  xpdf2_new = LHAPDF::xfx(3, x2, scalePDF, id2);
+		  pdf_weights_alternate_set_2 = xpdf1_new * xpdf2_new / w0;
+		  //    pdf_weights_alternate_set_1 =pweight1;
+		  //    pdf_weights_alternate_set_2 =pweight2;
+		  gotPDFs = true;
+		}
                 //  if(nJ > 2) cout << " nJ>3 check "<<  nJets << " third pt "<< thirdPt<<endl;
-
-                treesNJets[syst]->Fill();
+		treesNJets[syst]->Fill();
             }
-
+	    
         }
-        
+
+
         ntight_tags = ncsvt_tags;
         if (algo_ == "TCHPT")ntight_tags = ntchpt_tags;
         if ( nJets < 2 )continue;
@@ -2434,46 +2637,46 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
             if (syst == "noSyst" && doPDF_ )
             {
 
-                if (channel != "Data")
+	      if (channel != "Data" && !gotPDFs)
                 {
-                    iEvent.getByLabel(x1_, x1h);
-                    iEvent.getByLabel(x2_, x2h);
-
-                    iEvent.getByLabel(scalePDF_, scalePDFh);
-                    iEvent.getByLabel(id1_, id1h);
-                    iEvent.getByLabel(id2_, id2h);
-
-                    x1 = *x1h;
-                    x2 = *x2h;
-
-                    scalePDF = *scalePDFh;
-
-                    id1 = *id1h;
-                    id2 = *id2h;
-
-                    //Q2 = x1 * x2 * 7000*7000;
-                    LHAPDF::usePDFMember(1, 0);
-                    double xpdf1 = LHAPDF::xfx(1, x1, scalePDF, id1);
-                    double xpdf2 = LHAPDF::xfx(1, x2, scalePDF, id2);
-                    double w0 = xpdf1 * xpdf2;
-                    for (int p = 1; p <= 52; ++p)
+		  iEvent.getByLabel(x1_, x1h);
+		  iEvent.getByLabel(x2_, x2h);
+		  
+		  iEvent.getByLabel(scalePDF_, scalePDFh);
+		  iEvent.getByLabel(id1_, id1h);
+		  iEvent.getByLabel(id2_, id2h);
+		  
+		  x1 = *x1h;
+		  x2 = *x2h;
+		  
+		  scalePDF = *scalePDFh;
+		  
+		  id1 = *id1h;
+		  id2 = *id2h;
+		  
+		  //Q2 = x1 * x2 * 7000*7000;
+		  LHAPDF::usePDFMember(1, 0);
+		  double xpdf1 = LHAPDF::xfx(1, x1, scalePDF, id1);
+		  double xpdf2 = LHAPDF::xfx(1, x2, scalePDF, id2);
+		  double w0 = xpdf1 * xpdf2;
+		  for (int p = 1; p <= 52; ++p)
                     {
-                        LHAPDF::usePDFMember(1, p);
-                        double xpdf1_new = LHAPDF::xfx(1, x1, scalePDF, id1);
-                        double xpdf2_new = LHAPDF::xfx(1, x2, scalePDF, id2);
-                        double pweight = xpdf1_new * xpdf2_new / w0;
-                        pdf_weights[p - 1] = pweight;
+		      LHAPDF::usePDFMember(1, p);
+		      double xpdf1_new = LHAPDF::xfx(1, x1, scalePDF, id1);
+		      double xpdf2_new = LHAPDF::xfx(1, x2, scalePDF, id2);
+		      double pweight = xpdf1_new * xpdf2_new / w0;
+		      pdf_weights[p - 1] = pweight;
                     }
-                    LHAPDF::usePDFMember(2, 0);
-                    double xpdf1_new = LHAPDF::xfx(2, x1, scalePDF, id1);
-                    double xpdf2_new = LHAPDF::xfx(2, x2, scalePDF, id2);
-                    pdf_weights_alternate_set_1 = xpdf1_new * xpdf2_new / w0;
-                    xpdf1_new = LHAPDF::xfx(3, x1, scalePDF, id1);
-                    xpdf2_new = LHAPDF::xfx(3, x2, scalePDF, id2);
-                    pdf_weights_alternate_set_2 = xpdf1_new * xpdf2_new / w0;
-                    //    pdf_weights_alternate_set_1 =pweight1;
-                    //    pdf_weights_alternate_set_2 =pweight2;
-
+		  LHAPDF::usePDFMember(2, 0);
+		  double xpdf1_new = LHAPDF::xfx(2, x1, scalePDF, id1);
+		  double xpdf2_new = LHAPDF::xfx(2, x2, scalePDF, id2);
+		  pdf_weights_alternate_set_1 = xpdf1_new * xpdf2_new / w0;
+		  xpdf1_new = LHAPDF::xfx(3, x1, scalePDF, id1);
+		  xpdf2_new = LHAPDF::xfx(3, x2, scalePDF, id2);
+		  pdf_weights_alternate_set_2 = xpdf1_new * xpdf2_new / w0;
+		  //    pdf_weights_alternate_set_1 =pweight1;
+		  //    pdf_weights_alternate_set_2 =pweight2;
+		  
                 }
             }
             turnOnWeightTree = turnOnWeightValue;
@@ -2543,6 +2746,285 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
             topPhi = top.phi();
             topPt = top.pt();
 
+	    if(B==1 && nJets ==2 && syst == "noSyst" && doMCTruth_){
+	      
+	      iEvent.getByLabel(MCTopQuarksEta_, MCTopQuarksEta); iEvent.getByLabel(MCTopQuarksPt_, MCTopQuarksPt); iEvent.getByLabel(MCTopQuarksPhi_, MCTopQuarksPhi); iEvent.getByLabel(MCTopQuarksEnergy_, MCTopQuarksEnergy); iEvent.getByLabel(MCTopQuarksMotherId_, MCTopQuarksMotherId);
+
+	      iEvent.getByLabel(MCTopQuarkBarsEta_, MCTopQuarkBarsEta); iEvent.getByLabel(MCTopQuarkBarsPt_, MCTopQuarkBarsPt); iEvent.getByLabel(MCTopQuarkBarsPhi_, MCTopQuarkBarsPhi); iEvent.getByLabel(MCTopQuarkBarsEnergy_, MCTopQuarkBarsEnergy); iEvent.getByLabel(MCTopQuarkBarsMotherId_, MCTopQuarkBarsMotherId);
+
+	      iEvent.getByLabel(MCTopLeptonsEta_, MCTopLeptonsEta); iEvent.getByLabel(MCTopLeptonsPt_, MCTopLeptonsPt); iEvent.getByLabel(MCTopLeptonsPhi_, MCTopLeptonsPhi); iEvent.getByLabel(MCTopLeptonsEnergy_, MCTopLeptonsEnergy); iEvent.getByLabel(MCTopLeptonsMotherId_, MCTopLeptonsMotherId);
+
+	      iEvent.getByLabel(MCTopNeutrinosEta_, MCTopNeutrinosEta); iEvent.getByLabel(MCTopNeutrinosPt_, MCTopNeutrinosPt); iEvent.getByLabel(MCTopNeutrinosPhi_, MCTopNeutrinosPhi); iEvent.getByLabel(MCTopNeutrinosEnergy_, MCTopNeutrinosEnergy); iEvent.getByLabel(MCTopNeutrinosMotherId_, MCTopNeutrinosMotherId);
+
+	      iEvent.getByLabel(MCTopBQuarksEta_, MCTopBQuarksEta); iEvent.getByLabel(MCTopBQuarksPt_, MCTopBQuarksPt); iEvent.getByLabel(MCTopBQuarksPhi_, MCTopBQuarksPhi); iEvent.getByLabel(MCTopBQuarksEnergy_, MCTopBQuarksEnergy); iEvent.getByLabel(MCTopBQuarksMotherId_, MCTopBQuarksMotherId);
+
+	      iEvent.getByLabel(MCTopWsEta_, MCTopWsEta); iEvent.getByLabel(MCTopWsPt_, MCTopWsPt); iEvent.getByLabel(MCTopWsPhi_, MCTopWsPhi); iEvent.getByLabel(MCTopWsEnergy_, MCTopWsEnergy); iEvent.getByLabel(MCTopWsDauOneId_, MCTopWsDauOneId);
+
+
+	      
+	      iEvent.getByLabel(MCLeptonsEta_, MCLeptonsEta); iEvent.getByLabel(MCLeptonsPt_, MCLeptonsPt); iEvent.getByLabel(MCLeptonsPhi_, MCLeptonsPhi); iEvent.getByLabel(MCLeptonsEnergy_, MCLeptonsEnergy);
+	      iEvent.getByLabel(MCNeutrinosEta_, MCNeutrinosEta); iEvent.getByLabel(MCNeutrinosPt_, MCNeutrinosPt); iEvent.getByLabel(MCNeutrinosPhi_, MCNeutrinosPhi); iEvent.getByLabel(MCNeutrinosEnergy_, MCNeutrinosEnergy);
+	      iEvent.getByLabel(MCBQuarksEta_, MCBQuarksEta); iEvent.getByLabel(MCBQuarksPt_, MCBQuarksPt); iEvent.getByLabel(MCBQuarksPhi_, MCBQuarksPhi); iEvent.getByLabel(MCBQuarksEnergy_, MCBQuarksEnergy);
+	      iEvent.getByLabel(MCQuarksEta_, MCQuarksEta); iEvent.getByLabel(MCQuarksPt_, MCQuarksPt); iEvent.getByLabel(MCQuarksPhi_, MCQuarksPhi); iEvent.getByLabel(MCQuarksEnergy_, MCQuarksEnergy);
+	      
+	      iEvent.getByLabel(MCTopBQuarksPdgId_, MCTopBQuarksPdgId);iEvent.getByLabel(MCTopWsPdgId_, MCTopWsPdgId);
+	      iEvent.getByLabel(MCTopQuarksPdgId_, MCTopQuarksPdgId);iEvent.getByLabel(MCTopsPdgId_, MCTopsPdgId);
+	      iEvent.getByLabel(MCTopQuarkBarsPdgId_, MCTopQuarkBarsPdgId);
+	      iEvent.getByLabel(MCTopLeptonsPdgId_, MCTopLeptonsPdgId);
+	      iEvent.getByLabel(MCTopNeutrinosPdgId_, MCTopNeutrinosPdgId);
+	      
+	      iEvent.getByLabel(MCBQuarksPdgId_, MCBQuarksPdgId); iEvent.getByLabel(MCQuarksPdgId_, MCQuarksPdgId);
+	      iEvent.getByLabel(MCLeptonsPdgId_, MCLeptonsPdgId); iEvent.getByLabel(MCNeutrinosPdgId_, MCNeutrinosPdgId);
+
+	      iEvent.getByLabel(MCBQuarksMotherId_, MCBQuarksMotherId); iEvent.getByLabel(MCQuarksMotherId_, MCQuarksMotherId);
+	      iEvent.getByLabel(MCLeptonsMotherId_, MCLeptonsMotherId); iEvent.getByLabel(MCNeutrinosMotherId_, MCNeutrinosMotherId);
+	      
+	      for (size_t p = 1; p <= 12; ++p){
+		//		cout << "in loop 1" << endl; 
+		if(!(MCQuarksEta->size() < p) ){
+		  MCQuarksEtaVec[p-1]=MCQuarksEta->at(p-1);
+		  //  cout << " lepton eta "<< MCQuarksEtaVec[p-1]<<endl;
+		  MCQuarksPhiVec[p-1]=MCQuarksPhi->at(p-1);
+		  MCQuarksPtVec[p-1]=MCQuarksPt->at(p-1);
+		  MCQuarksEnergyVec[p-1]=MCQuarksEnergy->at(p-1);
+		  MCQuarksPdgIdVec[p-1]=MCQuarksPdgId->at(p-1);
+		  MCQuarksMotherIdVec[p-1]=MCQuarksMotherId->at(p-1);
+		}
+		else{
+		  MCQuarksEtaVec[p-1]=-999;
+		  MCQuarksPhiVec[p-1]=-999;
+		  MCQuarksPtVec[p-1]=-999;
+		  MCQuarksEnergyVec[p-1]=-999;
+		  MCQuarksPdgIdVec[p-1]=-999;
+		  MCQuarksMotherIdVec[p-1]=-999;
+		}
+	      }
+	      for (size_t p = 1; p <= 4; ++p){
+		//		cout << "in loop 1" << endl; 
+		if(!(MCLeptonsEta->size() < p) ){
+		  MCLeptonsEtaVec[p-1]=MCLeptonsEta->at(p-1);
+		  //  cout << " lepton eta "<< MCLeptonsEtaVec[p-1]<<endl;
+		  MCLeptonsPhiVec[p-1]=MCLeptonsPhi->at(p-1);
+		  MCLeptonsPtVec[p-1]=MCLeptonsPt->at(p-1);
+		  MCLeptonsEnergyVec[p-1]=MCLeptonsEnergy->at(p-1);
+		  MCLeptonsPdgIdVec[p-1]=MCLeptonsPdgId->at(p-1);
+		  MCLeptonsMotherIdVec[p-1]=MCLeptonsMotherId->at(p-1);
+
+		}
+		else{
+		  MCLeptonsEtaVec[p-1]=-999;
+		  MCLeptonsPhiVec[p-1]=-999;
+		  MCLeptonsPtVec[p-1]=-999;
+		  MCLeptonsEnergyVec[p-1]=-999;
+		  MCLeptonsPdgIdVec[p-1]=-999;
+		  MCLeptonsMotherIdVec[p-1]=-999;
+		  
+		}
+		if(!(MCBQuarksEta->size() < p) ){
+		  MCBQuarksEtaVec[p-1]=MCBQuarksEta->at(p-1);
+		  //  cout << " lepton eta "<< MCBQuarksEtaVec[p-1]<<endl;
+		  MCBQuarksPhiVec[p-1]=MCBQuarksPhi->at(p-1);
+		  MCBQuarksPtVec[p-1]=MCBQuarksPt->at(p-1);
+		  MCBQuarksEnergyVec[p-1]=MCBQuarksEnergy->at(p-1);
+		  MCBQuarksPdgIdVec[p-1]=MCBQuarksPdgId->at(p-1);
+		  MCBQuarksMotherIdVec[p-1]=MCBQuarksMotherId->at(p-1);
+		}
+		else{
+		  MCBQuarksEtaVec[p-1]=-999;
+		  MCBQuarksPhiVec[p-1]=-999;
+		  MCBQuarksPtVec[p-1]=-999;
+		  MCBQuarksEnergyVec[p-1]=-999;
+		  MCBQuarksPdgIdVec[p-1]=-999;
+		  MCBQuarksMotherIdVec[p-1]=-999;
+		}
+		if(!(MCNeutrinosEta->size() < p) ){
+		  MCNeutrinosEtaVec[p-1]=MCNeutrinosEta->at(p-1);
+		  //  cout << " lepton eta "<< MCNeutrinosEtaVec[p-1]<<endl;
+		  MCNeutrinosPhiVec[p-1]=MCNeutrinosPhi->at(p-1);
+		  MCNeutrinosPtVec[p-1]=MCNeutrinosPt->at(p-1);
+		  MCNeutrinosEnergyVec[p-1]=MCNeutrinosEnergy->at(p-1);
+		  MCNeutrinosPdgIdVec[p-1]=MCNeutrinosPdgId->at(p-1);
+		  MCNeutrinosMotherIdVec[p-1]=MCNeutrinosMotherId->at(p-1);
+		}
+		else{
+		  MCNeutrinosEtaVec[p-1]=-999;
+		  MCNeutrinosPhiVec[p-1]=-999;
+		  MCNeutrinosPtVec[p-1]=-999;
+		  MCNeutrinosEnergyVec[p-1]=-999;
+		  MCNeutrinosPdgIdVec[p-1]=-999;
+		  MCNeutrinosMotherIdVec[p-1]=-999;
+		}
+	      }
+	      
+	      nMCTruthLeptons = 0;
+	      
+	      for (size_t p = 1; p <= 2; ++p){
+		//		cout << "in loop 2" << endl; 
+		//		cout << " p is "<< p << " leptons size "<< MCTopLeptonsEta->size()<<endl;
+		
+		
+		bool isLeptonic = false;
+		bool isHadronic = false;
+		
+		
+		size_t position = 0;
+		
+		//		cout << " loop 1 "<<endl;
+		//		cout << MCTopWsEta->size() << " p " << p<< endl;
+		if (MCTopWsEta->size() < p)continue;
+		//		cout << " loop 2 "<<endl;
+		//if (abs(MCTopWsDauOneId->at(p-1)) > 6){
+		if(MCTopNeutrinosEta->size()!=MCTopLeptonsEta->size())continue;
+		if(MCTopQuarksEta->size()!=MCTopQuarkBarsEta->size())continue;
+		
+		//		cout << " loop 3 "<<endl;
+		
+		for (size_t l = 1; l <= MCTopQuarksEta->size();++l ){
+		  
+		  		  cout << " quark id "<<   MCTopQuarksPdgId->at(l-1) << " quarkbar id "<< MCTopQuarkBarsPdgId->at(l-1) <<
+		  " W dau one id "<< MCTopWsDauOneId->at(p-1) << endl;
+		  
+		  		  cout  << " quark mother id "<<  MCTopQuarksMotherId->at(l-1) << " quarkbar id "<< MCTopQuarkBarsMotherId->at(l-1) << 
+		  " W  id "<< MCTopWsPdgId->at(p-1) << endl;
+		  if(  MCTopQuarksPdgId->at(l-1) == MCTopWsDauOneId->at(p-1) ||  MCTopQuarkBarsPdgId->at(l-1) == MCTopWsDauOneId->at(p-1) ){
+		    position = l;
+		    isHadronic = true;
+		  }
+		}
+		for (size_t l = 1; l <= MCTopLeptonsEta->size();++l ){
+		  
+		  		  cout << " lepton id "<<  MCTopLeptonsPdgId->at(l-1) << " neutrino id "<< MCTopNeutrinosPdgId->at(l-1)<< 
+		    " W dau one id "<< MCTopWsDauOneId->at(p-1) << endl;
+		  
+		  		  cout << " lepton mother id "<<  MCTopLeptonsMotherId->at(l-1) << " neutrino id "<< MCTopNeutrinosMotherId->at(l-1) << 
+		    " W  id "<< MCTopWsPdgId->at(p-1) << endl;
+		  
+		  if(  MCTopLeptonsPdgId->at(l-1) == MCTopWsDauOneId->at(p-1) ||  MCTopNeutrinosPdgId->at(l-1) == MCTopWsDauOneId->at(p-1) ){
+		    position = l;
+		    ++nMCTruthLeptons;
+		    isLeptonic = true;
+		  }
+		}
+		
+		
+		cout <<" pos "<<  position <<"  islep "<<  isLeptonic<< " lep size "<< MCTopLeptonsEta->size()<< " neu size "<< MCTopNeutrinosEta->size()<< endl;
+		cout <<" pos "<<  position <<"  ishad "<<  isHadronic<< " quark size"<< MCTopQuarksEta->size()<< " qbar size "<< MCTopQuarkBarsEta->size()<< endl;
+		if(isLeptonic){
+		  MCTopLeptonsEtaVec[p-1]=MCTopLeptonsEta->at(position-1);
+		  //  cout << " lepton eta "<< MCTopLeptonsEtaVec[p-1]<<endl;
+		  MCTopLeptonsPhiVec[p-1]=MCTopLeptonsPhi->at(position-1);
+		  MCTopLeptonsPtVec[p-1]=MCTopLeptonsPt->at(position-1);
+		  MCTopLeptonsEnergyVec[p-1]=MCTopLeptonsEnergy->at(position-1);
+		  MCTopLeptonsPdgIdVec[p-1]=MCTopLeptonsPdgId->at(position-1);
+		  MCTopLeptonsMotherIdVec[p-1]=MCTopLeptonsMotherId->at(position-1);
+
+		  MCTopNeutrinosEtaVec[p-1]=MCTopNeutrinosEta->at(position-1);
+		  MCTopNeutrinosPhiVec[p-1]=MCTopNeutrinosPhi->at(position-1);
+		  MCTopNeutrinosPtVec[p-1]=MCTopNeutrinosPt->at(position-1);
+		  MCTopNeutrinosEnergyVec[p-1]=MCTopNeutrinosEnergy->at(position-1);
+		  MCTopNeutrinosPdgIdVec[p-1]=MCTopNeutrinosPdgId->at(position-1);
+		  MCTopNeutrinosMotherIdVec[p-1]=MCTopNeutrinosMotherId->at(position-1);
+
+		}
+		else{
+		  MCTopLeptonsEtaVec[p-1]=-999;
+		  MCTopLeptonsPhiVec[p-1]=-999;
+		  MCTopLeptonsPtVec[p-1]=-999;
+		  MCTopLeptonsEnergyVec[p-1]=-999;
+		  MCTopLeptonsPdgIdVec[p-1]=-999;
+		  MCTopLeptonsMotherIdVec[p-1]=-999;
+		
+		  MCTopNeutrinosEtaVec[p-1]=-999;
+		  MCTopNeutrinosPhiVec[p-1]=-999;
+		  MCTopNeutrinosPtVec[p-1]=-999;
+		  MCTopNeutrinosEnergyVec[p-1]=-999;
+		  MCTopNeutrinosPdgIdVec[p-1]=-999;
+		  MCTopNeutrinosMotherIdVec[p-1]=-999;
+		}
+		if(isHadronic){
+		  
+		  MCTopQuarksPhiVec[p-1]=MCTopQuarksPhi->at(position-1);
+		  MCTopQuarksPtVec[p-1]=MCTopQuarksPt->at(position-1);
+		  MCTopQuarksEnergyVec[p-1]=MCTopQuarksEnergy->at(position-1);
+		  MCTopQuarksPdgIdVec[p-1]=MCTopQuarksPdgId->at(position-1);
+		  MCTopQuarksMotherIdVec[p-1]=MCTopQuarksMotherId->at(position-1);
+
+		  MCTopQuarkBarsEtaVec[p-1]=MCTopQuarkBarsEta->at(position-1);
+		  MCTopQuarkBarsPhiVec[p-1]=MCTopQuarkBarsPhi->at(position-1);
+		  MCTopQuarkBarsPtVec[p-1]=MCTopQuarkBarsPt->at(position-1);
+		  MCTopQuarkBarsEnergyVec[p-1]=MCTopQuarkBarsEnergy->at(position-1);
+		  MCTopQuarkBarsPdgIdVec[p-1]=MCTopQuarkBarsPdgId->at(position-1);
+		  MCTopQuarkBarsMotherIdVec[p-1]=MCTopQuarkBarsMotherId->at(position-1);
+
+		}
+		else{
+		  MCTopQuarksEtaVec[p-1]=-999;
+		  MCTopQuarksPhiVec[p-1]=-999;
+		  MCTopQuarksPtVec[p-1]=-999;
+		  MCTopQuarksEnergyVec[p-1]=-999;
+		  MCTopQuarksPdgIdVec[p-1]=-999;
+		  MCTopQuarksMotherIdVec[p-1]=-999;
+		
+		  MCTopQuarkBarsEtaVec[p-1]=-999;
+		  MCTopQuarkBarsPhiVec[p-1]=-999;
+		  MCTopQuarkBarsPtVec[p-1]=-999;
+		  MCTopQuarkBarsEnergyVec[p-1]=-999;
+		  MCTopQuarkBarsPdgIdVec[p-1]=-999;
+		  MCTopQuarkBarsMotherIdVec[p-1]=-999;
+
+	      }
+		if(!(MCTopWsEta->size() < p) ){
+		  MCTopWsEtaVec[p-1]=MCTopWsEta->at(p-1);
+		  MCTopWsPhiVec[p-1]=MCTopWsPhi->at(p-1);
+		  MCTopWsPtVec[p-1]=MCTopWsPt->at(p-1);
+		  MCTopWsEnergyVec[p-1]=MCTopWsEnergy->at(p-1);
+		  MCTopWsPdgIdVec[p-1]=MCTopWsPdgId->at(p-1);
+		}
+		else{
+		  MCTopWsEtaVec[p-1]=-999;
+		  MCTopWsPhiVec[p-1]=-999;
+		  MCTopWsPtVec[p-1]=-999;
+		  MCTopWsEnergyVec[p-1]=-999;
+		  MCTopWsPdgIdVec[p-1]=-999;
+		}
+		if(!(MCTopBQuarksEta->size() < p) ){
+		  MCTopBQuarksEtaVec[p-1]=MCTopBQuarksEta->at(p-1);
+		  MCTopBQuarksPhiVec[p-1]=MCTopBQuarksPhi->at(p-1);
+		  MCTopBQuarksPtVec[p-1]=MCTopBQuarksPt->at(p-1);
+		  MCTopBQuarksEnergyVec[p-1]=MCTopBQuarksEnergy->at(p-1);
+		  MCTopBQuarksPdgIdVec[p-1]=MCTopBQuarksPdgId->at(p-1);
+		  MCTopBQuarksMotherIdVec[p-1]=MCTopBQuarksMotherId->at(p-1);
+		}
+		else{
+		  MCTopBQuarksEtaVec[p-1]=-999;
+		  MCTopBQuarksPhiVec[p-1]=-999;
+		  MCTopBQuarksPtVec[p-1]=-999;
+		  MCTopBQuarksEnergyVec[p-1]=-999;
+		  MCTopBQuarksPdgIdVec[p-1]=-999;
+		  MCTopBQuarksMotherIdVec[p-1]=-999;
+		}
+		if( (!(MCBQuarksEta->size() < p)) && (!(MCTopWsEta->size() < p))){
+		  math::PtEtaPhiELorentzVector mctop = math::PtEtaPhiELorentzVector(
+										    (MCTopBQuarksPtVec[p-1]+MCTopWsPtVec[p-1]),
+										    (MCTopBQuarksEtaVec[p-1]+MCTopWsEtaVec[p-1]),
+										    (MCTopBQuarksPhiVec[p-1]+MCTopWsPhiVec[p-1]),
+										    (MCTopBQuarksEnergyVec[p-1]+MCTopWsEnergyVec[p-1]) );
+		  MCTopsPtVec[p-1]=mctop.pt();
+		  MCTopsEtaVec[p-1]=mctop.eta();
+		  MCTopsPhiVec[p-1]=mctop.phi();
+		  MCTopsEnergyVec[p-1]=mctop.energy();
+		  MCTopsPdgIdVec[p-1]=6* MCTopBQuarksPdgIdVec[p-1]/5.;
+		}
+		else{
+		  MCTopsEtaVec[p-1]=-999;
+		  MCTopsPhiVec[p-1]=-999;
+		  MCTopsPtVec[p-1]=-999;
+		  MCTopsEnergyVec[p-1]=-999;
+		  MCTopsPdgIdVec[p-1]=-999;
+		}
+	      }
+
+	    }
 
             if (nJets == 2)
             {
@@ -4746,12 +5228,6 @@ double SingleTopSystematicsTreesDumper::pileUpSF(string syst)
 
 
 }
-
-double SingleTopSystematicsTreesDumper::pileUpSFNew()
-{
-   return NewPUWeights_.weight(rho);
-}
-
 
 double SingleTopSystematicsTreesDumper::resolSF(double eta, string syst)
 {
