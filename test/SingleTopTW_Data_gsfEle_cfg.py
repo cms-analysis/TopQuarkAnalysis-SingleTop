@@ -72,7 +72,7 @@ from PhysicsTools.PatAlgos.tools.pfTools import *
 #Postfix = "SingleTop"
 Postfix = ""
 
-runOnMC = True
+runOnMC = False
 jetAlgoName = "AK5"
 
 print "test2.2"
@@ -141,6 +141,15 @@ process.tightElectrons.category = cms.untracked.string("")
 ######  MET FILTERS FOR DATA ######
 ###################################
 
+#Scraping
+process.scrapingVeto = cms.EDFilter("FilterOutScraping",
+                                    applyfilter = cms.untracked.bool(True),
+                                    debugOn = cms.untracked.bool(False),
+                                    numtrack = cms.untracked.uint32(10),
+                                    thresh = cms.untracked.double(0.25)
+                                    )
+
+
 #CSC Beam Halo
 process.load('RecoMET.METAnalyzers.CSCHaloFilter_cfi')
 
@@ -166,18 +175,8 @@ process.load('RecoMET.METFilters.EcalDeadCellTriggerPrimitiveFilter_cfi')
 process.EcalDeadCellTriggerPrimitiveFilter.tpDigiCollection = cms.InputTag("ecalTPSkimNA")
 
 # Tracking failure filter
-process.goodVertices = cms.EDFilter(
-      "VertexSelector",
-        filter = cms.bool(False),
-        src = cms.InputTag("offlinePrimaryVertices"),
-        cut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.rho < 2")
-      )
-
 process.load('RecoMET.METFilters.trackingFailureFilter_cfi')
-
-###HOW ITS DONE IN TOPBRUSSELS
-#process.load('RecoMET.METFilters.trackingFailureFilter_cfi')
-#process.trackingFailureFilter.VertexSource = cms.InputTag("goodOfflinePrimaryVertices", "", "")
+process.trackingFailureFilter.VertexSource = cms.InputTag("goodOfflinePrimaryVertices", "", "")
 
 # The EE bad SuperCrystal filter
 process.load('RecoMET.METFilters.eeBadScFilter_cfi')
@@ -190,7 +189,14 @@ process.load('RecoMET.METFilters.ecalLaserCorrFilter_cfi')
 #
 process.patseq = cms.Sequence(
 #    process.patElectronIDs +
+    process.CSCTightHaloFilter* #MET FILTER
+    process.HBHENoiseFilter* #MET FILTER
+    process.scrapingVeto* #MET FILTER
+    process.EcalDeadCellTriggerPrimitiveFilter* #MET FILTER
     process.goodOfflinePrimaryVertices *
+    process.trackingFailureFilter* #MET FILTER
+    process.eeBadScFilter* #MET FILTER
+    process.ecalLaserCorrFilter* #MET FILTER
     process.patElectronIDs *
     process.kt6PFJetsForIsolation *
     getattr(process,"patPF2PATSequence"+postfix) #*
@@ -198,11 +204,11 @@ process.patseq = cms.Sequence(
 
 print " test 2 " 
 
-process.pathPreselection = cms.Path(
-        process.patseq
-        + process.puJetIdSqeuence + process.puJetIdSqeuenceChs
-        #+  process.producePatPFMETCorrections
-        )
+# process.pathPreselection = cms.Path(
+#         process.patseq
+#         + process.puJetIdSqeuence + process.puJetIdSqeuenceChs
+#         #+  process.producePatPFMETCorrections
+#         )
 
 
 print " test 3 " 
@@ -212,7 +218,7 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
-                             "/store/data/Run2012A/MuEG/AOD/PromptReco-v1/000/192/969/EA4D368E-A994-E111-81E8-001D09F291D2.root",
+                             "/store/data/Run2012A/MuEG/AOD/PromptReco-v1/000/190/949/3AF68EB8-4686-E111-A8AF-003048D2BC62.root",
 #                                 "/store/mc/Summer12_DR53X/T_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola/AODSIM/PU_S10_START53_V7A-v1/0000/FA8766A2-38EA-E111-9624-001A92811738.root",
 
 ),
@@ -224,19 +230,30 @@ duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
 #skipEvents = cms.untracked.uint32(133),
 )
 
-process.baseLeptonSequence = cms.Path(
-#    process.PVFilter +
-    process.basePathData
-    )
+# process.baseLeptonSequence = cms.Path(
+# #    process.PVFilter +
+#     process.basePathData
+#     )
 
 process.topJetsPF.removeOverlap = cms.untracked.bool(False)
 
 process.preselection.remove(process.PVFilter)
 
+
+# process.selection = cms.Path (
+#     process.preselection + 
+#     process.nTuplesSkim
+#     )
+
+
 process.selection = cms.Path (
-    process.preselectionData + 
-    process.nTuplesSkim
-    )
+        process.patseq
+        + process.puJetIdSqeuence + process.puJetIdSqeuenceChs +
+        process.basePathData +
+        process.preselection +
+        process.nTuplesSkim
+        )
+    
 
 print " test 4 " 
 
