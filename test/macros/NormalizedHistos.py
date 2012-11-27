@@ -33,6 +33,7 @@ plotInfo = [['ptjet',60,0,300],
             ['ptjl0',60,0,300],
             ['ptjl1',60,0,300],
             ['ptleps',60,0,300],
+            ['htleps',60,0,300],
             ['ptsys_ht',100,0,1],
             ['ptjet_ht',100,0,1],
             ['ptlep0_ht',100,0,1],
@@ -46,6 +47,12 @@ plotInfo = [['ptjet',60,0,300],
             ['NlooseJet25Central',10,0,10],
             ['NlooseJet25Forward',10,0,10],
             ['NtightJetForward',10,0,10],            
+            ['NlooseJet15',10,0,10],
+            ['NlooseJet20',10,0,10],
+            ['NlooseJet25',10,0,10],
+            ['NbtaggedlooseJet15',4,0,4],
+            ['NbtaggedlooseJet20',4,0,4],
+            ['NbtaggedlooseJet25',4,0,4],
             ['unweightedEta_Avg', 300,0,30],
             ['unweightedEta_Vecjll', 300,0,30],
             ['unweightedEta_Vecsys', 300,0,30],
@@ -58,12 +65,12 @@ plotInfo = [['ptjet',60,0,300],
             ['dRleps', 100, 0,10],
             ['dRjlmin', 100, 0,10],
             ['dRjlmax', 100, 0,10],
-#             ['dEtaleps', 100, 0,10],
-#             ['dEtajlmin', 100, 0,10],
-#             ['dEtajlmax', 100, 0,10],
-            ['dPhileps', 100, 0,10],
-            ['dPhijlmin', 100, 0,10],
-            ['dPhijlmax', 100, 0,10],
+            ['dEtaleps', 100, 0,10],
+            ['dEtajlmin', 100, 0,10],
+            ['dEtajlmax', 100, 0,10],
+            ['dPhileps', 100, 0,3.15],
+            ['dPhijlmin', 100, 0,3.15],
+            ['dPhijlmax', 100, 0,3.15],
 #             ['cosThetaleps', 100, 0,10],
 #             ['cosThetajlmin', 100, 0,10],
 #             ['cosThetajlmax', 100, 0,10]
@@ -72,11 +79,11 @@ plotInfo = [['ptjet',60,0,300],
             ['etajet', 100, 0, 5],
             ['etalep0', 100, 0, 5],
             ['etalep1', 100, 0, 5],
-            ['phijet', 100, -5, 5],
-            ['philep0', 100, -5, 5],
-            ['philep1', 100, -5, 5],
-            ['phimet', 100, -5, 5],
-            ['sumeta2', 100, 0, 10],
+            ['phijet', 100, -3.15, 3.15],
+            ['philep0', 100, -3.15, 3.15],
+            ['philep1', 100, -3.15, 3.15],
+            ['phimet', 100, -3.15, 3.15],
+            ['sumeta2', 100, 0, 15],
             ['loosejetPt', 60, 0, 300],
             ['loosejetCSV', 175, -0.75, 1.0],
             ['loosejetFlavour', 100, -25, 25],            
@@ -150,15 +157,16 @@ for fileName in fileNamesList:
 #         if evtCount%reportEvery == 0:
 #             print str(evtCount) + "th event"
 
-        #    Get Muon objects
+        #Get Muon objects
         muonPt = event.muonPt
         muonEta = event.muonEta
         muonPhi = event.muonPhi
         muonE = event.muonE
         muonCharge = event.muonCharge
         muonRelIso = event.muonRelIso
-        
-        #    Get Electron objects
+        muonDeltaCorrectedRelIso = event.muonDeltaCorrectedRelIso
+
+        #Get Electron objects
         electronPt = event.electronPt
         electronEta = event.electronEta
         electronPhi = event.electronPhi
@@ -166,12 +174,17 @@ for fileName in fileNamesList:
         electronCharge = event.electronCharge
         electronRelIso = event.electronRelIso
         electronRhoCorrectedRelIso = event.electronRhoCorrectedRelIso
-        #    electronPVDz = event.electronPVDz
+        electronDeltaCorrectedRelIso = event.electronDeltaCorrectedRelIso
+        electronPVDz = event.electronPVDz
         electronPVDxy = event.electronPVDxy
+        electronDB = event.electronDB
         electronMVATrigV0 = event.electronMVATrigV0
+        electronMVANonTrigV0 = event.electronMVANonTrigV0
         electronTrackerExpectedInnerHits = event.electronTrackerExpectedInnerHits
         electronSuperClusterEta = event.electronSuperClusterEta
-
+        electronECALPt = event.electronECALPt
+        electronPassConversionVeto = event.electronPassConversionVeto
+        
         if len(electronPt) > 0 and len(muonPt) > 0:
             emuStart += 1
         if len(electronPt) > 1:
@@ -192,49 +205,41 @@ for fileName in fileNamesList:
             isTightMuon = False
             if muonPt[i] > 20:
                 if abs(muonEta[i]) < 2.4:
-                    if muonRelIso[i] < 0.2:
+                    if muonDeltaCorrectedRelIso[i] < 0.2:
                         goodMuonidx.append(i)
                         isTightMuon = True
-
             if not isTightMuon:
                 if muonPt[i] > 10:
                     if abs(muonEta[i]) < 2.5:
-                        if muonRelIso[i] < 0.2:
+                        if muonDeltaCorrectedRelIso[i] < 0.2:
                             looseMuonidx.append(i)
 
         for i in range(len(electronPt)):
             isTightElectron = False
-            #         if electronPt[i] > 20:
-            #             if abs(electronEta[i]) < 2.5:
-            #                 if electronPVDxy[i] < 0.04:
-            #                     if electronMVATrigV0[i] >= 0. and electronMVATrigV0[i] <= 1.0:
-            #                         if electronRhoCorrectedRelIso[i] < 0.15:
-            #                             if electronTrackerExpectedInnerHits[i] <= 1:
-            #                                 goodEleidx.append(i)
-            #                                 isTightElectron = True
-            if electronPt[i] > 20:
-                if abs(electronEta[i]) < 2.5:
-                    if electronPVDxy[i] < 0.02:
-                        if electronRhoCorrectedRelIso[i] < 0.15:
-                            goodEleidx.append(i)
-                            isTightElectron = True
-
-            if not isTightElectron:
-                if electronPt[i] > 10:
+            if electronPassConversionVeto[i]:
+                if electronPt[i] > 20:
                     if abs(electronEta[i]) < 2.5:
-                        if electronSuperClusterEta < 1.442 or electronSuperClusterEta > 1.5660:
-                            if electronRelIso[i] < 0.15:
+                        if abs(electronPVDxy[i]) < 0.04:
+                            if electronMVATrigV0[i] >= 0. and electronMVATrigV0[i] <= 1.0:
+                                #                            if electronRhoCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
+                                if electronDeltaCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
+                                    if electronTrackerExpectedInnerHits[i] <= 1:
+                                        goodEleidx.append(i)
+                                        isTightElectron = True
+            if not isTightElectron:
+                if electronPt[i] > 15:
+                    if abs(electronEta[i]) < 2.5:
+                        if electronMVATrigV0[i] >= 0. and electronMVATrigV0[i] <= 1.0: #####ADJUSTMENT
+                            #                        if electronRhoCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
+                            if electronDeltaCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
                                 looseEleidx.append(i)
-
+                                
         nLooseLeptons = len(looseEleidx) + len(looseMuonidx)
 
         ModeIdx = -1
 
         lepton0 = TLorentzVector()
         lepton1 = TLorentzVector()
-
-        #     if (len(goodMuonidx)+len(goodEleidx)) != 2:
-        #         print "muons",len(goodMuonidx),"electrons", len(goodEleidx)
 
         if len(goodMuonidx) == 1 and len(goodEleidx) == 1:
             ModeIdx = 0
@@ -243,6 +248,7 @@ for fileName in fileNamesList:
             lepton0.SetPtEtaPhiE(muonPt[i],muonEta[i],muonPhi[i],muonE[i])
             lepton1.SetPtEtaPhiE(electronPt[j],electronEta[j],electronPhi[j],electronE[j])
             totalCharge = muonCharge[i]+electronCharge[j]
+            chargeMult = muonCharge[i]*electronCharge[j]
         elif len(goodMuonidx) == 2 and len(goodEleidx) == 0:
             ModeIdx = 1
             i = goodMuonidx[0]
@@ -250,6 +256,7 @@ for fileName in fileNamesList:
             lepton0.SetPtEtaPhiE(muonPt[i],muonEta[i],muonPhi[i],muonE[i])
             lepton1.SetPtEtaPhiE(muonPt[j],muonEta[j],muonPhi[j],muonE[j])
             totalCharge = muonCharge[i]+muonCharge[j]
+            chargeMult = muonCharge[i]*muonCharge[j]
         elif len(goodMuonidx) == 0 and len(goodEleidx) == 2:
             ModeIdx = 2
             i = goodEleidx[0]
@@ -257,21 +264,24 @@ for fileName in fileNamesList:
             lepton0.SetPtEtaPhiE(electronPt[i],electronEta[i],electronPhi[i],electronE[i])
             lepton1.SetPtEtaPhiE(electronPt[j],electronEta[j],electronPhi[j],electronE[j])
             totalCharge = electronCharge[i]+electronCharge[j]
+            chargeMult = electronCharge[i]*electronCharge[j]
         else: 
             continue  
 
 
-        if totalCharge != 0:
+        if chargeMult > 0:
             continue
 
+        if totalCharge != 0:
+            print "Charge Issue???"
+            continue
+    
         LepSelection[ModeIdx] += 1
-
 
         if nLooseLeptons != 0:
             continue
 
         LepVeto[ModeIdx] += 1
-
 
         mll = (lepton0 + lepton1).M()
 
@@ -282,16 +292,19 @@ for fileName in fileNamesList:
             if mll < 101 and mll > 81:
                 continue
 
-
+    
         mllCut[ModeIdx] += 1
+
+
 
         MetPt = event.MetPt
         MetPhi = event.MetPhi
 
-        if MetPt < 30:
+        if MetPt < 30 and not ModeIdx == 0:
             continue
 
         MetCut[ModeIdx] += 1
+        
 
         MET = TLorentzVector()
         MET.SetPtEtaPhiE(MetPt, 0, MetPhi, MetPt)
@@ -301,9 +314,17 @@ for fileName in fileNamesList:
         jetEta = event.jetEta
         jetE = event.jetE
         jetCSV = event.jetCSV
+        jetNumDaughters = event.jetNumDaughters
+        jetCHEmEn = event.jetCHEmEn
+        jetCHHadEn = event.jetCHHadEn
+        jetCHMult = event.jetCHMult
+        jetNeuEmEn = event.jetNeuEmEn
+        jetNeuHadEn = event.jetNeuHadEn
         jetFlavour = event.jetFlavour
 
         goodJetIdx = list()
+        looseJetIdx = list()
+        btaggedLooseJetIdx = list()
         tightJetForwardIdx = list()
         looseJet25CentralIdx = list()
         looseJet25ForwardIdx = list()
@@ -312,37 +333,70 @@ for fileName in fileNamesList:
         looseJet15CentralIdx = list()
         looseJet15ForwardIdx = list()
         looseJet15Idx = list()
+        looseJet20Idx = list()
+        looseJet25Idx = list()
+        btaggedLooseJet15Idx = list()
+        btaggedLooseJet20Idx = list()
+        btaggedLooseJet25Idx = list()
+
+    
 
 
         for i in range(len(jetPt)):
             isTightJet = False
+            jetID = False
+            if jetNumDaughters[i] > 1:
+                if jetNeuHadEn[i] < 0.99:
+                    if jetNeuEmEn[i] < 0.99:
+                        if abs(jetEta[i]) > 2.4:
+                            jetID = True
+                        else:
+                            if jetCHEmEn[i] < 0.99:
+                                if jetCHHadEn[i] > 0:
+                                    if jetCHMult[i] > 0:
+                                        jetID = True
             if jetPt[i] > 30:
                 if abs(jetEta[i]) < 2.4:
-                    goodJetIdx.append(i)
-                    isTightJet = True
+                    if jetID:
+                        tJet = TLorentzVector()
+                        tJet.SetPtEtaPhiE(jetPt[i],jetEta[i],jetPhi[i],jetE[i])
+                        if min(lepton0.DeltaR(tJet),lepton1.DeltaR(tJet)) > 0.3:
+                            goodJetIdx.append(i)
+                            isTightJet = True
             if not isTightJet:
-                looseJet15Idx.append(i)
-                if jetPt[i] > 15:
-                    if abs(jetEta[i]) < 2.4:
-                        looseJet15CentralIdx.append(i)
-                    else:
-                        looseJet15ForwardIdx.append(i)
-                if jetPt[i] > 20:
-                    if abs(jetEta[i]) < 2.4:
-                        looseJet20CentralIdx.append(i)
-                    else:
-                        looseJet20ForwardIdx.append(i)
-                if jetPt[i] > 25:
-                    if abs(jetEta[i]) < 2.4:
-                        looseJet25CentralIdx.append(i)
-                    else:
-                        looseJet25ForwardIdx.append(i)
-                if jetPt[i] > 30:
-                    if abs(jetEta[i]) > 2.4:
-                        tightJetForwardIdx.append(i)
+                if jetID:
+                    if jetPt[i] > 15:
+                        looseJet15Idx.append(i)
+                        if abs(jetEta[i]) < 2.5:
+                            looseJet15CentralIdx.append(i)
+                        else:
+                            looseJet15ForwardIdx.append(i)
+                        if jetCSV[i] > 0.679:
+                                btaggedLooseJet15Idx.append(i)
+                    if jetPt[i] > 20:
+                        looseJet20Idx.append(i)
+                        if abs(jetEta[i]) < 2.5:
+                            looseJet20CentralIdx.append(i)
+                        else:
+                            looseJet20ForwardIdx.append(i)
+                        if jetCSV[i] > 0.679:
+                            btaggedLooseJet20Idx.append(i)
+                    if jetPt[i] > 25:
+                        looseJet25Idx.append(i)
+                        if abs(jetEta[i]) < 2.5:
+                            looseJet25CentralIdx.append(i)
+                        else:
+                            looseJet25ForwardIdx.append(i)
+                        if jetCSV[i] > 0.679:
+                            btaggedLooseJet25Idx.append(i)
+                    if jetPt[i] > 30:
+                        if abs(jetEta[i]) > 2.5:
+                            tightJetForwardIdx.append(i)
+                    
 
         if len(goodJetIdx) != 1:
             continue
+
 
         OneJet[ModeIdx] += 1
 
@@ -444,6 +498,7 @@ for fileName in fileNamesList:
         Histos['mjl1'].Fill(jl1.M())
         Histos['ptjl1'].Fill(jl1.Pt())
         Histos['ptleps'].Fill(leptons.Pt())
+        Histos['htleps'].Fill(lepton0.Pt() + lepton1.Pt())
         Histos['ptsys_ht'].Fill(system.Pt()/Ht)
         Histos['ptjet_ht'].Fill(jet.Pt()/Ht)
         Histos['ptlep0_ht'].Fill(lepton0.Pt()/Ht)
@@ -457,6 +512,12 @@ for fileName in fileNamesList:
         Histos['NlooseJet25Central'].Fill(len(looseJet25CentralIdx))
         Histos['NlooseJet25Forward'].Fill(len(looseJet25ForwardIdx))
         Histos['NtightJetForward'].Fill(len(tightJetForwardIdx))
+        Histos['NlooseJet15'].Fill(len(looseJet15Idx))
+        Histos['NlooseJet20'].Fill(len(looseJet20Idx))
+        Histos['NlooseJet25'].Fill(len(looseJet25Idx))
+        Histos['NbtaggedlooseJet15'].Fill(len(btaggedLooseJet15Idx))
+        Histos['NbtaggedlooseJet20'].Fill(len(btaggedLooseJet20Idx))
+        Histos['NbtaggedlooseJet25'].Fill(len(btaggedLooseJet25Idx))
         Histos['unweightedEta_Avg'].Fill(unweightedEta_Avg)
         Histos['unweightedEta_Vecjll'].Fill(unweightedEta_Vecjll)
         Histos['unweightedEta_Vecsys'].Fill(unweightedEta_Vecsys)
@@ -469,9 +530,9 @@ for fileName in fileNamesList:
         Histos['dRleps'].Fill(abs(lepton0.DeltaR(lepton1)))
         Histos['dRjlmin'].Fill(min(abs(jet.DeltaR(lepton0)),abs(jet.DeltaR(lepton1))))
         Histos['dRjlmax'].Fill(max(abs(jet.DeltaR(lepton0)),abs(jet.DeltaR(lepton1))))
-#         Histos['dEtaleps'].Fill(abs(lepton0.DeltaEta(lepton1)))
-#         Histos['dEtajlmin'].Fill(min(abs(jet.DeltaEta(lepton0)),abs(jet.DeltaEta(lepton1))))
-#         Histos['dEtajlmax'].Fill(max(abs(jet.DeltaEta(lepton0)),abs(jet.DeltaEta(lepton1))))
+        Histos['dEtaleps'].Fill(abs(lepton0.Eta() - lepton1.Eta()))
+        Histos['dEtajlmin'].Fill(min(abs(jet.Eta()-lepton0.Eta()),abs(jet.Eta()-lepton1.Eta())))
+        Histos['dEtajlmax'].Fill(max(abs(jet.Eta()-lepton0.Eta()),abs(jet.Eta()-lepton1.Eta())))
         Histos['dPhileps'].Fill(abs(lepton0.DeltaPhi(lepton1)))
         Histos['dPhijlmin'].Fill(min(abs(jet.DeltaPhi(lepton0)),abs(jet.DeltaPhi(lepton1))))
         Histos['dPhijlmax'].Fill(max(abs(jet.DeltaPhi(lepton0)),abs(jet.DeltaPhi(lepton1))))
@@ -522,6 +583,7 @@ for fileName in fileNamesList:
         HistosBtaggedL['mjl1'].Fill(jl1.M())
         HistosBtaggedL['ptjl1'].Fill(jl1.Pt())
         HistosBtaggedL['ptleps'].Fill(leptons.Pt())
+        HistosBtaggedL['htleps'].Fill(lepton0.Pt() + lepton1.Pt())
         HistosBtaggedL['ptsys_ht'].Fill(system.Pt()/Ht)
         HistosBtaggedL['ptjet_ht'].Fill(jet.Pt()/Ht)
         HistosBtaggedL['ptlep0_ht'].Fill(lepton0.Pt()/Ht)
@@ -535,6 +597,12 @@ for fileName in fileNamesList:
         HistosBtaggedL['NlooseJet25Central'].Fill(len(looseJet25CentralIdx))
         HistosBtaggedL['NlooseJet25Forward'].Fill(len(looseJet25ForwardIdx))
         HistosBtaggedL['NtightJetForward'].Fill(len(tightJetForwardIdx))
+        HistosBtaggedL['NlooseJet15'].Fill(len(looseJet15Idx))
+        HistosBtaggedL['NlooseJet20'].Fill(len(looseJet20Idx))
+        HistosBtaggedL['NlooseJet25'].Fill(len(looseJet25Idx))
+        HistosBtaggedL['NbtaggedlooseJet15'].Fill(len(btaggedLooseJet15Idx))
+        HistosBtaggedL['NbtaggedlooseJet20'].Fill(len(btaggedLooseJet20Idx))
+        HistosBtaggedL['NbtaggedlooseJet25'].Fill(len(btaggedLooseJet25Idx))
         HistosBtaggedL['unweightedEta_Avg'].Fill(unweightedEta_Avg)
         HistosBtaggedL['unweightedEta_Vecjll'].Fill(unweightedEta_Vecjll)
         HistosBtaggedL['unweightedEta_Vecsys'].Fill(unweightedEta_Vecsys)
@@ -547,9 +615,9 @@ for fileName in fileNamesList:
         HistosBtaggedL['dRleps'].Fill(abs(lepton0.DeltaR(lepton1)))
         HistosBtaggedL['dRjlmin'].Fill(min(abs(jet.DeltaR(lepton0)),abs(jet.DeltaR(lepton1))))
         HistosBtaggedL['dRjlmax'].Fill(max(abs(jet.DeltaR(lepton0)),abs(jet.DeltaR(lepton1))))
-#         HistosBtaggedL['dEtaleps'].Fill(abs(lepton0.DeltaEta(lepton1)))
-#         HistosBtaggedL['dEtajlmin'].Fill(min(abs(jet.DeltaEta(lepton0)),abs(jet.DeltaEta(lepton1))))
-#         HistosBtaggedL['dEtajlmax'].Fill(max(abs(jet.DeltaEta(lepton0)),abs(jet.DeltaEta(lepton1))))
+        HistosBtaggedL['dEtaleps'].Fill(abs(lepton0.Eta() - lepton1.Eta()))
+        HistosBtaggedL['dEtajlmin'].Fill(min(abs(jet.Eta()-lepton0.Eta()),abs(jet.Eta()-lepton1.Eta())))
+        HistosBtaggedL['dEtajlmax'].Fill(max(abs(jet.Eta()-lepton0.Eta()),abs(jet.Eta()-lepton1.Eta())))
         HistosBtaggedL['dPhileps'].Fill(abs(lepton0.DeltaPhi(lepton1)))
         HistosBtaggedL['dPhijlmin'].Fill(min(abs(jet.DeltaPhi(lepton0)),abs(jet.DeltaPhi(lepton1))))
         HistosBtaggedL['dPhijlmax'].Fill(max(abs(jet.DeltaPhi(lepton0)),abs(jet.DeltaPhi(lepton1))))
@@ -579,6 +647,9 @@ for fileName in fileNamesList:
         HistosBtaggedL['aplanarityJLLWithLoose'].Fill(aplanarity_jllWithLoose)
         HistosBtaggedL['aplanarityJLLMWithLoose'].Fill(aplanarity_jllmWithLoose)
 
+
+
+
         if jetCSV[jetIdx] < 0.679:
             continue
 
@@ -599,6 +670,7 @@ for fileName in fileNamesList:
         HistosBtaggedM['mjl1'].Fill(jl1.M())
         HistosBtaggedM['ptjl1'].Fill(jl1.Pt())
         HistosBtaggedM['ptleps'].Fill(leptons.Pt())
+        HistosBtaggedM['htleps'].Fill(lepton0.Pt() + lepton1.Pt())
         HistosBtaggedM['ptsys_ht'].Fill(system.Pt()/Ht)
         HistosBtaggedM['ptjet_ht'].Fill(jet.Pt()/Ht)
         HistosBtaggedM['ptlep0_ht'].Fill(lepton0.Pt()/Ht)
@@ -612,6 +684,12 @@ for fileName in fileNamesList:
         HistosBtaggedM['NlooseJet25Central'].Fill(len(looseJet25CentralIdx))
         HistosBtaggedM['NlooseJet25Forward'].Fill(len(looseJet25ForwardIdx))
         HistosBtaggedM['NtightJetForward'].Fill(len(tightJetForwardIdx))
+        HistosBtaggedM['NlooseJet15'].Fill(len(looseJet15Idx))
+        HistosBtaggedM['NlooseJet20'].Fill(len(looseJet20Idx))
+        HistosBtaggedM['NlooseJet25'].Fill(len(looseJet25Idx))
+        HistosBtaggedM['NbtaggedlooseJet15'].Fill(len(btaggedLooseJet15Idx))
+        HistosBtaggedM['NbtaggedlooseJet20'].Fill(len(btaggedLooseJet20Idx))
+        HistosBtaggedM['NbtaggedlooseJet25'].Fill(len(btaggedLooseJet25Idx))
         HistosBtaggedM['unweightedEta_Avg'].Fill(unweightedEta_Avg)
         HistosBtaggedM['unweightedEta_Vecjll'].Fill(unweightedEta_Vecjll)
         HistosBtaggedM['unweightedEta_Vecsys'].Fill(unweightedEta_Vecsys)
@@ -624,9 +702,9 @@ for fileName in fileNamesList:
         HistosBtaggedM['dRleps'].Fill(abs(lepton0.DeltaR(lepton1)))
         HistosBtaggedM['dRjlmin'].Fill(min(abs(jet.DeltaR(lepton0)),abs(jet.DeltaR(lepton1))))
         HistosBtaggedM['dRjlmax'].Fill(max(abs(jet.DeltaR(lepton0)),abs(jet.DeltaR(lepton1))))
-#         HistosBtaggedM['dEtaleps'].Fill(abs(lepton0.DeltaEta(lepton1)))
-#         HistosBtaggedM['dEtajlmin'].Fill(min(abs(jet.DeltaEta(lepton0)),abs(jet.DeltaEta(lepton1))))
-#         HistosBtaggedM['dEtajlmax'].Fill(max(abs(jet.DeltaEta(lepton0)),abs(jet.DeltaEta(lepton1))))
+        HistosBtaggedM['dEtaleps'].Fill(abs(lepton0.Eta() - lepton1.Eta()))
+        HistosBtaggedM['dEtajlmin'].Fill(min(abs(jet.Eta()-lepton0.Eta()),abs(jet.Eta()-lepton1.Eta())))
+        HistosBtaggedM['dEtajlmax'].Fill(max(abs(jet.Eta()-lepton0.Eta()),abs(jet.Eta()-lepton1.Eta())))
         HistosBtaggedM['dPhileps'].Fill(abs(lepton0.DeltaPhi(lepton1)))
         HistosBtaggedM['dPhijlmin'].Fill(min(abs(jet.DeltaPhi(lepton0)),abs(jet.DeltaPhi(lepton1))))
         HistosBtaggedM['dPhijlmax'].Fill(max(abs(jet.DeltaPhi(lepton0)),abs(jet.DeltaPhi(lepton1))))
@@ -657,6 +735,7 @@ for fileName in fileNamesList:
         HistosBtaggedM['aplanarityJLLMWithLoose'].Fill(aplanarity_jllmWithLoose)
 
 
+
         if jetCSV[jetIdx] < 0.898:
             continue
 
@@ -677,6 +756,7 @@ for fileName in fileNamesList:
         HistosBtaggedT['mjl1'].Fill(jl1.M())
         HistosBtaggedT['ptjl1'].Fill(jl1.Pt())
         HistosBtaggedT['ptleps'].Fill(leptons.Pt())
+        HistosBtaggedT['htleps'].Fill(lepton0.Pt() + lepton1.Pt())
         HistosBtaggedT['ptsys_ht'].Fill(system.Pt()/Ht)
         HistosBtaggedT['ptjet_ht'].Fill(jet.Pt()/Ht)
         HistosBtaggedT['ptlep0_ht'].Fill(lepton0.Pt()/Ht)
@@ -690,6 +770,12 @@ for fileName in fileNamesList:
         HistosBtaggedT['NlooseJet25Central'].Fill(len(looseJet25CentralIdx))
         HistosBtaggedT['NlooseJet25Forward'].Fill(len(looseJet25ForwardIdx))
         HistosBtaggedT['NtightJetForward'].Fill(len(tightJetForwardIdx))
+        HistosBtaggedT['NlooseJet15'].Fill(len(looseJet15Idx))
+        HistosBtaggedT['NlooseJet20'].Fill(len(looseJet20Idx))
+        HistosBtaggedT['NlooseJet25'].Fill(len(looseJet25Idx))
+        HistosBtaggedT['NbtaggedlooseJet15'].Fill(len(btaggedLooseJet15Idx))
+        HistosBtaggedT['NbtaggedlooseJet20'].Fill(len(btaggedLooseJet20Idx))
+        HistosBtaggedT['NbtaggedlooseJet25'].Fill(len(btaggedLooseJet25Idx))
         HistosBtaggedT['unweightedEta_Avg'].Fill(unweightedEta_Avg)
         HistosBtaggedT['unweightedEta_Vecjll'].Fill(unweightedEta_Vecjll)
         HistosBtaggedT['unweightedEta_Vecsys'].Fill(unweightedEta_Vecsys)
@@ -702,9 +788,9 @@ for fileName in fileNamesList:
         HistosBtaggedT['dRleps'].Fill(abs(lepton0.DeltaR(lepton1)))
         HistosBtaggedT['dRjlmin'].Fill(min(abs(jet.DeltaR(lepton0)),abs(jet.DeltaR(lepton1))))
         HistosBtaggedT['dRjlmax'].Fill(max(abs(jet.DeltaR(lepton0)),abs(jet.DeltaR(lepton1))))
-#         HistosBtaggedT['dEtaleps'].Fill(abs(lepton0.DeltaEta(lepton1)))
-#         HistosBtaggedT['dEtajlmin'].Fill(min(abs(jet.DeltaEta(lepton0)),abs(jet.DeltaEta(lepton1))))
-#         HistosBtaggedT['dEtajlmax'].Fill(max(abs(jet.DeltaEta(lepton0)),abs(jet.DeltaEta(lepton1))))
+        HistosBtaggedT['dEtaleps'].Fill(abs(lepton0.Eta() - lepton1.Eta()))
+        HistosBtaggedT['dEtajlmin'].Fill(min(abs(jet.Eta()-lepton0.Eta()),abs(jet.Eta()-lepton1.Eta())))
+        HistosBtaggedT['dEtajlmax'].Fill(max(abs(jet.Eta()-lepton0.Eta()),abs(jet.Eta()-lepton1.Eta())))
         HistosBtaggedT['dPhileps'].Fill(abs(lepton0.DeltaPhi(lepton1)))
         HistosBtaggedT['dPhijlmin'].Fill(min(abs(jet.DeltaPhi(lepton0)),abs(jet.DeltaPhi(lepton1))))
         HistosBtaggedT['dPhijlmax'].Fill(max(abs(jet.DeltaPhi(lepton0)),abs(jet.DeltaPhi(lepton1))))
@@ -733,6 +819,8 @@ for fileName in fileNamesList:
         HistosBtaggedT['aplanarityJLLM'].Fill(aplanarity_jllm)
         HistosBtaggedT['aplanarityJLLWithLoose'].Fill(aplanarity_jllWithLoose)
         HistosBtaggedT['aplanarityJLLMWithLoose'].Fill(aplanarity_jllmWithLoose)
+
+
 
 
     for i in range(3):

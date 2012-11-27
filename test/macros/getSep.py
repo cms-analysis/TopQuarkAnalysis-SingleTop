@@ -1,5 +1,4 @@
 #!/usr/bin/env python                                                                                                                  
-
 from ROOT import *
 from separation import *
 
@@ -20,6 +19,7 @@ Vars = ['ptjet',
         'ptjl0',
         'ptjl1',
         'ptleps',
+        'htleps',
         'ptsys_ht',
         'ptjet_ht',
         'ptlep0_ht',
@@ -33,6 +33,12 @@ Vars = ['ptjet',
         'NlooseJet25Central',
         'NlooseJet25Forward',
         'NtightJetForward',
+        'NlooseJet15',
+        'NlooseJet20',
+        'NlooseJet25',
+        'NbtaggedlooseJet15',
+        'NbtaggedlooseJet20',
+        'NbtaggedlooseJet25',
         'unweightedEta_Avg',
         'unweightedEta_Vecjll',
         'unweightedEta_Vecsys',
@@ -45,11 +51,13 @@ Vars = ['ptjet',
         'dRleps',
         'dRjlmin',
         'dRjlmax',
+        'dEtaleps',
+        'dEtajlmin',
+        'dEtajlmax',
         'dPhileps',
         'dPhijlmin',
         'dPhijlmax',
         'met',
-#        'flavourJet',
         'etajet',
         'etalep0',
         'etalep1',
@@ -60,7 +68,6 @@ Vars = ['ptjet',
         'sumeta2',
         'loosejetPt',
         'loosejetCSV',
-#        'loosejetFlavour',
         'centralityJLL',
         'centralityJLLM',
         'centralityJLLWithLoose',
@@ -140,28 +147,44 @@ for var in Vars:
     s = f.Get("TWDilepton_"+var)
     b = f.Get("TTBarDilepton_"+var)
     b.SetLineColor(kRed)
-    s.DrawNormalized()
-    b.DrawNormalized("same")
+    if s.GetMaximum()/s.Integral() > b.GetMaximum()/b.Integral():
+        s.DrawNormalized()
+        b.DrawNormalized("same")
+    else:
+        b.DrawNormalized()
+        s.DrawNormalized("same")        
     c.SaveAs("~/tempPlots/"+var+".png")
 
     s = f.Get("TWDilepton_BtaggedL_"+var)
     b = f.Get("TTBarDilepton_BtaggedL_"+var)
     b.SetLineColor(kRed)
-    s.DrawNormalized()
-    b.DrawNormalized("same")
+    if s.GetMaximum()/s.Integral() > b.GetMaximum()/b.Integral():
+        s.DrawNormalized()
+        b.DrawNormalized("same")
+    else:
+        b.DrawNormalized()
+        s.DrawNormalized("same")        
     c.SaveAs("~/tempPlots/BtaggedLoose/"+var+".png")
 
     s = f.Get("TWDilepton_BtaggedM_"+var)
     b = f.Get("TTBarDilepton_BtaggedM_"+var)
     b.SetLineColor(kRed)
-    s.DrawNormalized()
-    b.DrawNormalized("same")
+    if s.GetMaximum()/s.Integral() > b.GetMaximum()/b.Integral():
+        s.DrawNormalized()
+        b.DrawNormalized("same")
+    else:
+        b.DrawNormalized()
+        s.DrawNormalized("same")        
     c.SaveAs("~/tempPlots/BtaggedMedium/"+var+".png")
 
     s = f.Get("TWDilepton_BtaggedT_"+var)
     b = f.Get("TTBarDilepton_BtaggedT_"+var)
     b.SetLineColor(kRed)
-    s.DrawNormalized()
-    b.DrawNormalized("same")
+    if s.GetMaximum()/s.Integral() > b.GetMaximum()/b.Integral():
+        s.DrawNormalized()
+        b.DrawNormalized("same")
+    else:
+        b.DrawNormalized()
+        s.DrawNormalized("same")        
     c.SaveAs("~/tempPlots/BtaggedTight/"+var+".png")
 

@@ -26,6 +26,7 @@ LepVeto = [0,0,0]
 mllCut = [0,0,0]
 MetCut = [0,0,0]
 OneJet = [0,0,0]
+LooseJetVeto = [0,0,0]
 JetBtag = [0,0,0]
 HtCut = [0,0,0]
 
@@ -242,8 +243,11 @@ for event in tWtree:
 
 
     goodJetIdx = list()
+    looseJetIdx = list()
+    btaggedLooseJetIdx = list()
 
     for i in range(len(jetPt)):
+        isTightJet = False
         jetID = False
         if jetNumDaughters[i] > 1:
             if jetNeuHadEn[i] < 0.99:
@@ -262,6 +266,15 @@ for event in tWtree:
                     tJet.SetPtEtaPhiE(jetPt[i],jetEta[i],jetPhi[i],jetE[i])
                     if min(lepton0.DeltaR(tJet),lepton1.DeltaR(tJet)) > 0.3:
                         goodJetIdx.append(i)
+                        isTightJet = True
+        if not isTightJet:
+            if jetPt[i] > 20:
+                if abs(jetEta[i]) < 2.5:
+                    if jetID:
+                        looseJetIdx.append(i)
+                        if jetCSV[i] > 0.679:
+                            btaggedLooseJetIdx.append(i)
+            
 
     if len(goodJetIdx) != 1:
         continue
@@ -270,6 +283,12 @@ for event in tWtree:
 
     if dumpEvtNum:
         oneJetDump[ModeIdx].write(str(runNum) + "\t" + str(lumiNum) + "\t" + str(eventNum) +"\n")
+
+    if len(btaggedLooseJetIdx) > 0:
+        continue
+
+    LooseJetVeto[ModeIdx] += 1
+
 
 
     jetIdx = goodJetIdx[0]
@@ -309,6 +328,7 @@ for i in range(3):
     print 'Mll Cut          '+ str(mllCut[i])
     print 'Met Cut          '+ str(MetCut[i])
     print 'One Jet          '+ str(OneJet[i])
+    print 'Loose Jet Veto   '+ str(LooseJetVeto[i])
     print 'Btagged          '+ str(JetBtag[i])
     print 'Ht Cut           '+ str(HtCut[i])
 

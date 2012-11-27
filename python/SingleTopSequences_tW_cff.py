@@ -44,11 +44,20 @@ from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_tW_cff import nTupleZVetoEle
 
 # require scraping filter
 scrapingVeto = cms.EDFilter("FilterOutScraping",
-                                                                applyfilter=cms.untracked.bool(True),
-                                                                debugOn=cms.untracked.bool(False),
-                                                                numtrack=cms.untracked.uint32(10),
-                                                                thresh=cms.untracked.double(0.2)
-                                                                )
+                            applyfilter=cms.untracked.bool(True),
+                            debugOn=cms.untracked.bool(False),
+                            numtrack=cms.untracked.uint32(10),
+                            thresh=cms.untracked.double(0.2)
+                            )
+
+scrapingFilter=cms.EDFilter("FilterOutScraping" ,
+                            applyfilter = cms.untracked.bool( True ),
+                            debugOn = cms.untracked.bool( False ) ,
+                            numtrack = cms.untracked.uint32( 10 ) ,
+                            thresh = cms.untracked.double( 0.25 )
+                            )
+
+
 # HB + HE noise filtering
 from CommonTools.RecoAlgos.HBHENoiseFilter_cfi import HBHENoiseFilter
 
@@ -169,7 +178,8 @@ preselectionData = cms.Sequence(
     #    hltFilter +
     PVFilter +
     HBHENoiseFilter +
-    scrapingVeto +
+#    scrapingVeto +
+    scrapingFilter +
     countLeptons
     )
 

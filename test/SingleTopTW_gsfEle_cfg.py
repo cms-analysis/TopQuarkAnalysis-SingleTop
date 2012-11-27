@@ -252,39 +252,39 @@ from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_tW_cff import saveNTuplesSki
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_tW_cff import saveNTuplesSkimMu
     
 savePatTupleSkimLoose = cms.untracked.vstring(
-    'keep *'
-#     'drop *',
+#     'keep *'
+    'drop *',
 
-#     'keep patMuons_selectedPatMuons_*_*',
-#     'keep patElectrons_selectedPatElectrons_*_*',
-#     'keep patJets_selectedPatJets_*_*',
-#     'keep patMETs_patMETs_*_*',
-#     'keep *_patPFMet_*_*',
-#     'keep *_patType1CorrectedPFMet_*_*',
-#     'keep *_PVFilterProducer_*_*',
+    'keep patMuons_selectedPatMuons_*_*',
+    'keep patElectrons_selectedPatElectrons_*_*',
+    'keep patJets_selectedPatJets_*_*',
+    'keep patMETs_patMETs_*_*',
+    'keep *_patPFMet_*_*',
+    'keep *_patType1CorrectedPFMet_*_*',
+    'keep *_PVFilterProducer_*_*',
 
-#     'keep *_kt6PFJetsForIsolation_rho_*',
+    'keep *_kt6PFJetsForIsolation_rho_*',
 
-#     'keep patJets_topJetsPF_*_*',
-#     'keep patMuons_looseMuons_*_*',
-#     'keep *_looseElectrons_*_*',
-#     'keep patMuons_tightMuons_*_*',
-#     'keep patMuons_tightMuonsTest_*_*',
-#     'keep *_tightElectrons_*_*',
+    'keep patJets_topJetsPF_*_*',
+    'keep patMuons_looseMuons_*_*',
+    'keep *_looseElectrons_*_*',
+    'keep patMuons_tightMuons_*_*',
+    'keep patMuons_tightMuonsTest_*_*',
+    'keep *_tightElectrons_*_*',
 
-#     'keep *_PDFInfo_*_*',
+    'keep *_PDFInfo_*_*',
 
-#     'keep *_patElectronsZeroIso_*_*',
-#     'keep *_patMuonsZeroIso_*_*',
-#     'keep *_kt6PFJetsCentral_*_*',
-#     'keep *_PVFilterProducer_*_*',
+    'keep *_patElectronsZeroIso_*_*',
+    'keep *_patMuonsZeroIso_*_*',
+    'keep *_kt6PFJetsCentral_*_*',
+    'keep *_PVFilterProducer_*_*',
     
-#     'keep *_cFlavorHistoryProducer_*_*',
-#     'keep *_bFlavorHistoryProducer_*_*',
-#     "keep *_puJetId_*_*", # input variables
-#     "keep *_puJetMva_*_*", # final MVAs and working point flags
-#     "keep *_puJetIdChs_*_*", # input variables
-#     "keep *_puJetMvaCmvahs_*_*" # final MVAs and working point flags
+    'keep *_cFlavorHistoryProducer_*_*',
+    'keep *_bFlavorHistoryProducer_*_*',
+    "keep *_puJetId_*_*", # input variables
+    "keep *_puJetMva_*_*", # final MVAs and working point flags
+    "keep *_puJetIdChs_*_*", # input variables
+    "keep *_puJetMvaCmvahs_*_*" # final MVAs and working point flags
 
     )
 
