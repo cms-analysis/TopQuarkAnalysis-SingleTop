@@ -145,21 +145,21 @@ basePath = cms.Sequence(
 
 basePathData = cms.Sequence(
        preselectedMETs +
-          looseMuons +
-          PVFilterProducer +
-          looseElectrons +
-          looseElectronsEle +
-          #   zVetoElectrons +
-          topJetsPF +
+       looseMuons +
+       PVFilterProducer +
+       looseElectrons +
+       looseElectronsEle +
+       #   zVetoElectrons +
+       topJetsPF +
        UnclusteredMETPF +
        #   UnclusteredType1METPF +
-          #   NVertices +
-          tightMuonsZeroIso +
-          tightElectronsZeroIso +
-          tightMuons +
-          tightElectrons 
-          #  SingleTopMCProducer +
-          )
+       #          NVertices +
+       #          tightMuonsZeroIso +
+       #          tightElectronsZeroIso +
+       tightMuons +
+       tightElectrons 
+       #  SingleTopMCProducer +
+       )
 
 #Flavor history tools sequence
 flavorHistorySequence = cms.Sequence(
