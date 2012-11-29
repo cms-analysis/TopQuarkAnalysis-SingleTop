@@ -6,7 +6,17 @@ import sys
 
 from EventShapeVariables import *        
 
+from fileLoadDict import fileLists
 
+if len(sys.argv) == 2:
+    ChanName = sys.argv[1]
+    if not ChanName in fileLists:
+        print 'Unknown Channel, please check list in fileLoadDict.py'
+        sys.exit(0)
+else:
+    print 'Please specificy a channel as the arguement'
+    sys.exit(0)
+        
 ### a C/C++ structure is required, to allow memory based access
 gROOT.ProcessLine(
     "struct eventInfo_t {\
@@ -20,12 +30,14 @@ gROOT.ProcessLine(
     Double_t        ptlep1;\
     Double_t        jetCSV;\
     Double_t        ht;\
+    Double_t        htTot;\
     Double_t        htNoMet;\
     Double_t        msys;\
     Double_t        mjll;\
     Double_t        mjl0;\
     Double_t        mjl1;\
     Double_t        ptsys;\
+    Double_t        ptsysTot;\
     Double_t        ptjll;\
     Double_t        ptjl0;\
     Double_t        ptjl1;\
@@ -68,6 +80,9 @@ gROOT.ProcessLine(
     Double_t        dPhileps;\
     Double_t        dPhijlmin;\
     Double_t        dPhijlmax;\
+    Double_t        dPhimetlmin;\
+    Double_t        dPhimetlmax;\
+    Double_t        dPhijmet;\
     Double_t        met;\
     Double_t        etajet;\
     Double_t        etalep0;\
@@ -94,89 +109,93 @@ gROOT.ProcessLine(
     };" );
 
 
-Vars = [
-    ['I',             'RunNum'],
-    ['I',             'LumiNum'],
-    ['I',             'EventNum'],
-    ['D',             'weight'],
-    ['D',             'weightNoPU'],
-    ['D',             'ptjet'],
-    ['D',             'ptlep0'],
-    ['D',             'ptlep1'],
-    ['D',             'jetCSV'],
-    ['D',             'ht'],
-    ['D',             'htNoMet'],
-    ['D',             'msys'],
-    ['D',             'mjll'],
-    ['D',             'mjl0'],
-    ['D',             'mjl1'],
-    ['D',             'ptsys'],
-    ['D',             'ptjll'],
-    ['D',             'ptjl0'],
-    ['D',             'ptjl1'],
-    ['D',             'ptleps'],
-    ['D',             'htleps'],
-    ['D',             'ptsys_ht'],
-    ['D',             'ptjet_ht'],
-    ['D',             'ptlep0_ht'],
-    ['D',             'ptlep1_ht'],
-    ['D',             'ptleps_ht'],
-    ['D',             'htleps_ht'],
-    ['I',             'NlooseJet15Central'],
-    ['I',             'NlooseJet15Forward'],
-    ['I',             'NlooseJet20Central'],
-    ['I',             'NlooseJet20Forward'],
-    ['I',             'NlooseJet25Central'],
-    ['I',             'NlooseJet25Forward'],
-    ['I',             'NtightJetForward'],
-    ['I',             'NlooseJet15'],
-    ['I',             'NlooseJet20'],
-    ['I',             'NlooseJet25'],
-    ['I',             'NbtaggedlooseJet15'],
-    ['I',             'NbtaggedlooseJet20'],
-    ['I',             'NbtaggedlooseJet25'],
-    ['D',             'unweightedEta_Avg'],
-    ['D',             'unweightedEta_Vecjll'],
-    ['D',             'unweightedEta_Vecsys'],
-    ['D',             'unweightedPhi_Avg'],
-    ['D',             'unweightedPhi_Vecjll'],
-    ['D',             'unweightedPhi_Vecsys'],
-    ['D',             'avgEta'],
-    ['D',             'sysEta'],
-    ['D',             'jllEta'],
-    ['D',             'dRleps'],
-    ['D',             'dRjlmin'],
-    ['D',             'dRjlmax'],
-    ['D',             'dEtaleps'],
-    ['D',             'dEtajlmin'],
-    ['D',             'dEtajlmax'],
-    ['D',             'dPhileps'],
-    ['D',             'dPhijlmin'],
-    ['D',             'dPhijlmax'],
-    ['D',             'met'],
-    ['D',             'etajet'],
-    ['D',             'etalep0'],
-    ['D',             'etalep1'],
-    ['D',             'phijet'],
-    ['D',             'philep0'],
-    ['D',             'philep1'],
-    ['D',             'phimet'],
-    ['D',             'sumeta2'],
-    ['D',             'loosejetPt'],
-    ['D',             'loosejetCSV'],
-    ['D',             'centralityJLL'],
-    ['D',             'centralityJLLM'],
-    ['D',             'centralityJLLWithLoose'],
-    ['D',             'centralityJLLMWithLoose'],
-    ['D',             'sphericityJLL'],
-    ['D',             'sphericityJLLM'],
-    ['D',             'sphericityJLLWithLoose'],
-    ['D',             'sphericityJLLMWithLoose'],
-    ['D',             'aplanarityJLL'],
-    ['D',             'aplanarityJLLM'],
-    ['D',             'aplanarityJLLWithLoose'],
-    ['D',             'aplanarityJLLMWithLoose']
-    ]
+Vars = [['I', 'RunNum'],
+        ['I', 'LumiNum'],
+        ['I', 'EventNum'],
+        ['D', 'weight'],
+        ['D', 'weightNoPU'],
+        ['D', 'ptjet'],
+        ['D', 'ptlep0'],
+        ['D', 'ptlep1'],
+        ['D', 'jetCSV'],
+        ['D', 'ht'],
+        ['D', 'htTot'],
+        ['D', 'htNoMet'],
+        ['D', 'msys'],
+        ['D', 'mjll'],
+        ['D', 'mjl0'],
+        ['D', 'mjl1'],
+        ['D', 'ptsys'],
+        ['D', 'ptsysTot'],
+        ['D', 'ptjll'],
+        ['D', 'ptjl0'],
+        ['D', 'ptjl1'],
+        ['D', 'ptleps'],
+        ['D', 'htleps'],
+        ['D', 'ptsys_ht'],
+        ['D', 'ptjet_ht'],
+        ['D', 'ptlep0_ht'],
+        ['D', 'ptlep1_ht'],
+        ['D', 'ptleps_ht'],
+        ['D', 'htleps_ht'],
+        ['I', 'NlooseJet15Central'],
+        ['I', 'NlooseJet15Forward'],
+        ['I', 'NlooseJet20Central'],
+        ['I', 'NlooseJet20Forward'],
+        ['I', 'NlooseJet25Central'],
+        ['I', 'NlooseJet25Forward'],
+        ['I', 'NtightJetForward'],
+        ['I', 'NlooseJet15'],
+        ['I', 'NlooseJet20'],
+        ['I', 'NlooseJet25'],
+        ['I', 'NbtaggedlooseJet15'],
+        ['I', 'NbtaggedlooseJet20'],
+        ['I', 'NbtaggedlooseJet25'],
+        ['D', 'unweightedEta_Avg'],
+        ['D', 'unweightedEta_Vecjll'],
+        ['D', 'unweightedEta_Vecsys'],
+        ['D', 'unweightedPhi_Avg'],
+        ['D', 'unweightedPhi_Vecjll'],
+        ['D', 'unweightedPhi_Vecsys'],
+        ['D', 'avgEta'],
+        ['D', 'sysEta'],
+        ['D', 'jllEta'],
+        ['D', 'dRleps'],
+        ['D', 'dRjlmin'],
+        ['D', 'dRjlmax'],
+        ['D', 'dEtaleps'],
+        ['D', 'dEtajlmin'],
+        ['D', 'dEtajlmax'],
+        ['D', 'dPhileps'],
+        ['D', 'dPhijlmin'],
+        ['D', 'dPhijlmax'],
+        ['D', 'dPhimetlmin'],
+        ['D', 'dPhimetlmax'],
+        ['D', 'dPhijmet'],
+        ['D', 'met'],
+        ['D', 'etajet'],
+        ['D', 'etalep0'],
+        ['D', 'etalep1'],
+        ['D', 'phijet'],
+        ['D', 'philep0'],
+        ['D', 'philep1'],
+        ['D', 'phimet'],
+        ['D', 'sumeta2'],
+        ['D', 'loosejetPt'],
+        ['D', 'loosejetCSV'],
+        ['D', 'centralityJLL'],
+        ['D', 'centralityJLLM'],
+        ['D', 'centralityJLLWithLoose'],
+        ['D', 'centralityJLLMWithLoose'],
+        ['D', 'sphericityJLL'],
+        ['D', 'sphericityJLLM'],
+        ['D', 'sphericityJLLWithLoose'],
+        ['D', 'sphericityJLLMWithLoose'],
+        ['D', 'aplanarityJLL'],
+        ['D', 'aplanarityJLLM'],
+        ['D', 'aplanarityJLLWithLoose'],
+        ['D', 'aplanarityJLLMWithLoose']
+        ]
 
 
 #Trees for TMVA input (signal/control regions)
@@ -212,24 +231,21 @@ for trees in treeList:
             tree.Branch(var[1],AddressOf(eventInfo,var[1]),var[1]+'/'+var[0])
 
 
+fchain = TChain('TreesDileptontW/'+fileLists[ChanName][0]+'_noSyst')
 
-filename = ['../output/ntuple_SystTrees_TWChannel.root']
-
-fileName = TFile('../output/ntuple_SysTrees_TWChannel.root')
-
-fileName.cd('TreesDileptontW')
-
-tWtree = gROOT.FindObject('TWChannel_noSyst')
+for file in fileLists[ChanName][1]:
+    fchain.Add(file)
 
 Channel = ['emu', 'mumu', 'ee']
 
 evtCount = 0.
 percent = 0.0
-progSlots = 25.
-nEvents = tWtree.GetEntries()*1.
+progSlots = 125.
+nEvents = fchain.GetEntries()*1.
 
+print nEvents
 
-for event in tWtree:
+for event in fchain:
 
     evtCount += 1.
     if evtCount/nEvents > percent:
@@ -239,8 +255,8 @@ for event in tWtree:
         sys.stdout.flush()
         percent += 1./progSlots
 
-    if evtCount > 3000:
-        break
+#     if evtCount > 3000:
+#         break
 
     runNum = event.runNum
     lumiNum = event.lumiNum
@@ -482,7 +498,9 @@ for event in tWtree:
     jet.SetPtEtaPhiE(jetPt[jetIdx],jetEta[jetIdx], jetPhi[jetIdx], jetE[jetIdx])
 
     system = lepton0 + lepton1 + MET + jet
+    systemTot = lepton0 + lepton1 + MET + jet
     Ht = lepton0.Pt() + lepton1.Pt() + MET.Pt() + jet.Pt()
+    HtTot = lepton0.Pt() + lepton1.Pt() + MET.Pt() + jet.Pt()
     HtNoMet = lepton0.Pt() + lepton1.Pt() + jet.Pt()
     jll = jet + lepton0 + lepton1
     jl0 = jet + lepton0
@@ -515,6 +533,8 @@ for event in tWtree:
         temp.SetPtEtaPhiE(jetPt[i],jetEta[i], jetPhi[i], jetE[i])
         listJLLWithLoose.append(temp)
         listJLLMWithLoose.append(temp)
+        systemTot += temp
+        HtTot += temp.Pt()
 
 
 
@@ -566,9 +586,11 @@ for event in tWtree:
     eventInfo.ptlep1 = lepton1.Pt()
     eventInfo.jetCSV = jetCSV[jetIdx]
     eventInfo.ht = Ht
+    eventInfo.htTot = HtTot
     eventInfo.htNoMet = HtNoMet
     eventInfo.msys = system.M()
     eventInfo.ptsys = system.Pt()
+    eventInfo.ptsysTot = systemTot.Pt()
     eventInfo.mjll = jll.M()
     eventInfo.ptjll = jll.Pt()
     eventInfo.mjl0 = jl0.M()
@@ -614,6 +636,9 @@ for event in tWtree:
     eventInfo.dPhileps = abs(lepton0.DeltaPhi(lepton1))
     eventInfo.dPhijlmin = min(abs(jet.DeltaPhi(lepton0)),abs(jet.DeltaPhi(lepton1)))
     eventInfo.dPhijlmax = max(abs(jet.DeltaPhi(lepton0)),abs(jet.DeltaPhi(lepton1)))
+    eventInfo.dPhimetlmin = min(abs(MET.DeltaPhi(lepton0)),abs(MET.DeltaPhi(lepton1)))
+    eventInfo.dPhimetlmax = max(abs(MET.DeltaPhi(lepton0)),abs(MET.DeltaPhi(lepton1)))
+    eventInfo.dPhijmet = abs(jet.DeltaPhi(MET))
     eventInfo.met = MET.Pt()
     eventInfo.etajet = abs(jet.Eta())
     eventInfo.etalep0 = abs(lepton0.Eta())
@@ -670,7 +695,8 @@ for event in tWtree:
                 tree1j1tZpeak[3].Fill()
 
 
-outputFile = TFile("tmvaTestFile.root","RECREATE")
+outputFile = TFile('tmvaFiles/'+fileLists[ChanName][2],"RECREATE")
+
 emuDir = outputFile.mkdir("emuChannel","emu channel");
 mumuDir = outputFile.mkdir("mumuChannel","mumu channel");
 eeDir = outputFile.mkdir("eeChannel","ee channel");
@@ -685,3 +711,5 @@ for tree in treeList:
     tree[2].Write()
     combinedDir.cd()
     tree[3].Write()
+
+print
