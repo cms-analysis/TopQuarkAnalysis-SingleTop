@@ -326,8 +326,8 @@ process.singleTopNTuple.dropMetaData = cms.untracked.string("ALL")
 print " test 6"
 
 process.outpath = cms.EndPath(
-   process.singleTopNTuple +
-   process.singleTopPatTuple 
+   process.singleTopNTuple #+
+#   process.singleTopPatTuple 
    )
 
 print " test 7"
