@@ -27,7 +27,7 @@ TWChannel = cms.PSet(
 
 TbarWChannel = cms.PSet(
     crossSection = tbarW_XSec,
-    channel = cms.untracked.string("TbarWChannel"),
+    channel = cms.untracked.string("TWChannel"),
     originalEvents = cms.untracked.double(493460),
     finalLumi = lumi,
     Season = cms.untracked.string(PileUpSeason53X),
@@ -62,7 +62,7 @@ TChannel = cms.PSet(
     
 TbarChannel = cms.PSet(
     crossSection = cms.untracked.double(30.7),
-    channel = cms.untracked.string("TbarChannel"),
+    channel = cms.untracked.string("TChannel"),
     originalEvents = cms.untracked.double(1935072),
     finalLumi = lumi,
     Season = cms.untracked.string(PileUpSeason53X),
@@ -78,7 +78,7 @@ SChannel = cms.PSet(
 
 SbarChannel = cms.PSet(
     crossSection = cms.untracked.double(1.76),
-    channel = cms.untracked.string("SbarChannel"),
+    channel = cms.untracked.string("SChannel"),
     originalEvents = cms.untracked.double(139974),
     finalLumi = lumi,
     Season = cms.untracked.string(PileUpSeason53X),
@@ -187,7 +187,7 @@ TWChannel_DS = cms.PSet(
 
 TbarWChannel_DS = cms.PSet(
     crossSection = tbarW_XSec,
-    channel = cms.untracked.string("TbarWChannel"),
+    channel = cms.untracked.string("TWChannel"),
     originalEvents = cms.untracked.double(2940594),
     finalLumi = lumi,
     Season = cms.untracked.string(PileUpSeason53X),
@@ -212,7 +212,7 @@ TWChannel_Q2Down = cms.PSet(
 
 TbarWChannel_Q2Up = cms.PSet(
     crossSection = tbarW_XSec,
-    channel = cms.untracked.string("TbarWChannel_Q2Up"),
+    channel = cms.untracked.string("TWChannel_Q2Up"),
     originalEvents = cms.untracked.double(1492534),
     finalLumi = lumi,
     Season = cms.untracked.string(PileUpSeason53X),
@@ -220,7 +220,7 @@ TbarWChannel_Q2Up = cms.PSet(
 
 TbarWChannel_Q2Down = cms.PSet(
     crossSection = tbarW_XSec,
-    channel = cms.untracked.string("TbarWChannel_Q2Down"),
+    channel = cms.untracked.string("TWChannel_Q2Down"),
     originalEvents = cms.untracked.double(1493101),
     finalLumi = lumi,
     Season = cms.untracked.string(PileUpSeason53X),
@@ -284,7 +284,7 @@ TW_Mass166_5 = cms.PSet(
 
 TbarW_Mass166_5 = cms.PSet(
     crossSection = tbarW_XSec,
-    channel = cms.untracked.string("TbarW_Mass166_5"),
+    channel = cms.untracked.string("TW_Mass166_5"),
     originalEvents = cms.untracked.double(1478200),
     finalLumi = lumi,
     Season = cms.untracked.string(PileUpSeason53X),
@@ -300,7 +300,7 @@ TW_Mass178_5 = cms.PSet(
 
 TbarW_Mass178_5 = cms.PSet(
     crossSection = tbarW_XSec,
-    channel = cms.untracked.string("TbarW_Mass178_5"),
+    channel = cms.untracked.string("TW_Mass178_5"),
     originalEvents = cms.untracked.double(1493389),
     finalLumi = lumi,
     Season = cms.untracked.string(PileUpSeason53X),
