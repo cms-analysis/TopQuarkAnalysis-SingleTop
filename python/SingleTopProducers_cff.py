@@ -72,6 +72,9 @@ genJetsPF = cms.EDProducer("SingleTopGenJetPtEtaProducer",
 #PDF Info
 NVertices = cms.EDProducer("SingleTopPileUpProducer")
 
+#n gen particles Info
+NGenParticles = cms.EDProducer("SingleTopNGenParticlesProducer")
+
 #PDF Info
 PDFInfo = cms.EDProducer("PDFInfoDumper",
                          )
@@ -96,7 +99,7 @@ topJetsPF = cms.EDProducer("SingleTopJetsProducer",
                          puChargedID  = cms.InputTag("puJetMvaChs","fullId"),
                            puIDVariables  = cms.InputTag("puJetId"),
                            removeOverlap = cms.untracked.bool(False),
-                         #                         checkOverlaps = cms.PSet(),
+                         #                         checkOverlaps  cms.PSet(),
                            )
 
 
@@ -121,7 +124,7 @@ tightElectronsZeroIso = cms.EDProducer("SingleTopElectronProducer",
 
 
 tightMuons = cms.EDProducer("SingleTopMuonProducer",
-  src = cms.InputTag("selectedPatMuons"),
+  src = cms.InputTag("selectedPatMuonsTriggerMatch"),
   cut = cms.string('pt >  20 & abs(eta) < 2.4'),
 #  rho = cms.InputTag("kt6PFJetsCentralNeutral:rho"),
   rho = cms.InputTag("kt6PFJetsForIsolation","rho"),
@@ -155,4 +158,54 @@ preselectedMETs = cms.EDFilter("PATMETSelector",
 MCTruthParticles = cms.EDProducer("SingleTopMCProducer",
                                   genParticlesSource = cms.InputTag("genParticles")
                                   )
+
+##################Trigger matching part
+
+
+PatMuonTriggerMatchHLTIsoMu24 = cms.EDProducer(
+      "PATTriggerMatcherDRDPtLessByR"                 # match by DeltaR only, best match by DeltaR
+      , src     = cms.InputTag( "selectedPatMuons" )
+      , matched = cms.InputTag( "patTrigger" )          # default producer label as defined in PhysicsTools/PatAlgos/python/triggerLayer1/triggerProducer_cfi.py
+#      , matchedCuts = cms.string( 'path( "HLT_IsoMu24_eta2p1_v*" )' )
+      , matchedCuts = cms.string( 'path( "HLT_IsoMu24_eta2p1_v13" )' )
+      , maxDPtRel = cms.double( 0.5 )
+      , maxDeltaR = cms.double( 0.5 )
+      , resolveAmbiguities    = cms.bool( True )        # only one match per trigger object
+      , resolveByMatchQuality = cms.bool( True )        # take best match found per reco object: by DeltaR here (s. above)
+      )
+
+PatJetTriggerMatchHLTIsoMuBTagIP = cms.EDProducer(
+      "PATTriggerMatcherDRDPtLessByR"                 # match by DeltaR only, best match by DeltaR
+      , src     = cms.InputTag( "selectedPatJets" )
+      , matched = cms.InputTag( "patTrigger" )          # default producer label as defined in PhysicsTools/PatAlgos/python/triggerLayer1/triggerProducer_cfi.py
+#      , matchedCuts = cms.string( 'path( "HLT_IsoMu24_eta2p1_v*" )' )
+      , matchedCuts = cms.string( 'path( "HLT_Mu17_eta2p1_CentralPFNoPUJet30_BTagIPIter_v*" )' )
+      , maxDPtRel = cms.double( 0.5 )
+      , maxDeltaR = cms.double( 0.5 )
+      , resolveAmbiguities    = cms.bool( True )        # only one match per trigger object
+      , resolveByMatchQuality = cms.bool( True )        # take best match found per reco object: by DeltaR here (s. above)
+      )
+
+
+PatElectronTriggerMatchHLTEle27WP80 = cms.EDProducer(
+      "PATTriggerMatcherDRDPtLessByR"                 # match by DeltaR only, best match by DeltaR
+      , src     = cms.InputTag( "selectedPatElectrons" )
+      , matched = cms.InputTag( "patTrigger" )          # default producer label as defined in PhysicsTools/PatAlgos/python/triggerLayer1/triggerProducer_cfi.py
+      , matchedCuts = cms.string( 'path( "HLT_Ele27_WP80_v*" )' )
+      , maxDPtRel = cms.double( 0.5 )
+      , maxDeltaR = cms.double( 0.5 )
+      , resolveAmbiguities    = cms.bool( True )        # only one match per trigger object
+      , resolveByMatchQuality = cms.bool( True )        # take best match found per reco object: by DeltaR here (s. above)
+      )
+
+
+
+triggerMatchingSequence = cms.Sequence(
+    PatMuonTriggerMatchHLTIsoMu24 # +#    somePatMuonTriggerMatchHLTEle27WP80
+    )
+
+#triggerMatchingInputTags = cms.VInputTag(
+#    cms.InputTag( 'somePatMuonTriggerMatchHLTIsoMu24' ),
+#    cms.InputTag( 'somePatMuonTriggerMatchHLTEle27WP80' ),
+#)
 

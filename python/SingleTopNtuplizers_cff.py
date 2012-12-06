@@ -512,7 +512,7 @@ nTupleZVetoElectrons = nTupleLooseElectrons.clone(
     )
 
 nTupleAllJets = nTupleTopJetsPF.clone(
-    src = cms.InputTag("selectedPatJets"),
+    src = cms.InputTag("selectedPatJetsTriggerMatch"),
     lazyParser = cms.untracked.bool(True),
     prefix = cms.untracked.string("allJets"),
     variables = cms.VPSet(
@@ -528,6 +528,10 @@ nTupleAllJets = nTupleTopJetsPF.clone(
     cms.PSet(
     tag = cms.untracked.string("CombinedSecondaryVertexBJetTags"),
     quantity = cms.untracked.string("bDiscriminator('combinedSecondaryVertexBJetTags')"),
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("isMatchedByHLTMu17eta2p1CentralPFNoPUJet30BTagIPIter"),
+    quantity = cms.untracked.string("1-triggerObjectMatchesByPath(\"HLT_Mu17_eta2p1_CentralPFNoPUJet30_BTagIPIter_v*\").empty()"),
     ),
 #    cms.PSet(
 #    tag = cms.untracked.string("SecondaryVertexHighPurBJetTags"),
@@ -733,6 +737,7 @@ saveNTuplesSkim = cms.untracked.vstring(
     'keep floats_nTupleTopJetsPF_*_*',
     'keep *_UnclusteredMETPF_*_*',
     'keep *_NVertices_*_*',
+    'keep *_NGenParticles_*_*',
     'keep floats_nTuplePatType1METsPF_*_*',
     'keep *_UnclusteredType1METPF_*_*',
     'keep *_genJetsPF_*_*',
