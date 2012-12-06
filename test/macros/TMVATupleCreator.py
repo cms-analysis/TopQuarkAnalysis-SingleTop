@@ -6,7 +6,7 @@ import sys
 
 from EventShapeVariables import *        
 
-from fileLoadDict import fileLists
+from fileLoadDict_storeUser import fileLists
 
 if len(sys.argv) == 2:
     ChanName = sys.argv[1]
@@ -240,7 +240,7 @@ Channel = ['emu', 'mumu', 'ee']
 
 evtCount = 0.
 percent = 0.0
-progSlots = 125.
+progSlots = 25.
 nEvents = fchain.GetEntries()*1.
 
 print nEvents
