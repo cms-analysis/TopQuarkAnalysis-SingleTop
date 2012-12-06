@@ -66,6 +66,7 @@ postfix = ""
 
 # Configure PAT to use PF2PAT instead of AOD sources
 from PhysicsTools.PatAlgos.tools.pfTools import *
+from PhysicsTools.PatAlgos.tools.trigTools import *
 Postfix = ""
 runOnMC = True
 jetAlgoName = "AK5"
@@ -74,6 +75,13 @@ usePF2PAT(process, runPF2PAT=True, jetAlgo=jetAlgoName, runOnMC=runOnMC, postfix
 #usePF2PAT(process, runPF2PAT=True, jetAlgo=jetAlgoName, runOnMC=runOnMC, postfix=Postfix, jetCorrections=('AK5PFchs',['L1FastJet','L2Relative','L3Absolute']), pvCollection=cms.InputTag('offlinePrimaryVertices'),  typeIMetCorrections=True)
 #          jetCorrections=('AK5PFchs', jetCorrections)
 
+
+                    
+#SwitchOnTriggerMatching( process, triggerMatchers = _Matches, triggerProducer = 'patTrigger', triggerEventProducer = 'patTriggerEvent', sequence = 'patDefaultSequence', hltProcess = 'HLT', outputModule = 'out', postfix = '' )
+#switchOnTrigger(p)
+switchOnTriggerMatchEmbedding(process,triggerMatchers = ['PatMuonTriggerMatchHLTIsoMu24','PatJetTriggerMatchHLTIsoMuBTagIP'])
+
+
 process.pfPileUp.Enable = True
 process.load("CMGTools.External.pujetidsequence_cff")
 
@@ -81,7 +89,7 @@ process.pfPileUp.checkClosestZVertex = cms.bool(False)
 
 #Use gsfElectrons:
 #process.patElectrons.useParticleFlow = False
-#process.eleIsoSequence = setupPFElectronIso(process, 'gsfElectrons', "PFIso"+postfix)
+#process.eleIsoSequence = setupPFElectronIso(process, 'gsfElectrons', "PFISoee_"+postfix)
 #adaptPFIsoElectrons( process, process.patElectrons, "PFIso"+postfix)
 #getattr(process,'patDefaultSequence'+postfix).replace( getattr(process,"patElectrons"+postfix),
 #                                                       process.pfParticleSelectionSequence +
@@ -128,7 +136,7 @@ process.patseq = cms.Sequence(
     process.goodOfflinePrimaryVertices *
     process.patElectronIDs *
     process.kt6PFJetsForIsolation *
-    getattr(process,"patPF2PATSequence"+postfix) #*
+    getattr(process,"patPF2PATSequence"+postfix) #*    +process.triggerMatchingSequence
 #    process.producePatPFMETCorrections
 #    getattr(process,"patPF2PATSequence"+postfixQCD) 
     )
@@ -180,13 +188,14 @@ process.pathPreselection = cms.Path(
 print " test 3 " 
 
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(200) )
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
 #"file:/tmp/oiorio/Sync_File_TTBar.root",
 #"file:/tmp/oiorio/Synch_File_TbarChannel.root",
-"file:/tmp/oiorio/T_t-channel_Synch.root",
+#"file:/tmp/oiorio/T_t-channel_Synch.root",
+"file:/afs/cern.ch/work/o/oiorio/public/xFrancescoFab/T_t-channel_Synch.root"
 #"file:/tmp/oiorio/edmntuple_sync2012_T_t_withPVCleaning.root"
 ),
 #eventsToProcess = cms.untracked.VEventRange('1:65161675-1:65161677'),#1:95606867-1:95606869')
@@ -209,10 +218,17 @@ process.baseLeptonSequence = cms.Path(
 #
 process.topJetsPF.removeOverlap = cms.untracked.bool(False)
 
+#process.TrigSel = cms.Path(
+#    process.HLTFilterMu2012
+#    )
+
+process.load("SingleTopFilters_cfi")
+
 process.selection = cms.Path (
     process.goodOfflinePrimaryVertices *
+    process.HLTFilterMu2012 *
     process.preselection + 
-    process.nTuplesSkim
+    process.nTuplesSkim 
     )
 
 doMCTruth = True 
@@ -227,6 +243,9 @@ savePatTupleSkimLoose = cms.untracked.vstring(
     'drop *',
 
     'keep patMuons_selectedPatMuons_*_*',
+    'keep patMuons_selectedPatMuonsTriggerMatch_*_*',
+    'keep patJets_selectedPatJetsTriggerMatch_*_*',
+
     'keep patElectrons_selectedPatElectrons_*_*',
     'keep patJets_selectedPatJets_*_*',
     'keep patMETs_patMETs_*_*',
@@ -243,6 +262,11 @@ savePatTupleSkimLoose = cms.untracked.vstring(
     'keep patMuons_tightMuonsTest_*_*',
     'keep *_tightElectrons_*_*',
 
+    "keep *_TriggerResults_*_*",#Trigger results
+    "keep *_PatMuonTriggerMatchHLTIsoMu24_*_*",#Trigger matches
+    "keep *_patTrigger_*_*",
+    "keep *_patTriggerEvent_*_*",
+
     'keep *_PDFInfo_*_*',
 
     'keep *_patElectronsZeroIso_*_*',
@@ -256,8 +280,9 @@ savePatTupleSkimLoose = cms.untracked.vstring(
     "keep *_puJetMva_*_*", # final MVAs and working point flags
     "keep *_puJetIdChs_*_*", # input variables
     "keep *_puJetMvaChs_*_*" # final MVAs and working point flags
-
     )
+
+
 
 
 print " test 5 " 
@@ -313,7 +338,7 @@ process.singleTopPatTuple = cms.OutputModule("PoolOutputModule",
 process.singleTopNTuple.dropMetaData = cms.untracked.string("ALL")
 
 process.outpath = cms.EndPath(
-    process.singleTopNTuple #+
-#    process.singleTopPatTuple 
+    process.singleTopNTuple +
+    process.singleTopPatTuple 
     )
 
