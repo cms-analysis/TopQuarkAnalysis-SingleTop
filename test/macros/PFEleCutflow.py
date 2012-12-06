@@ -149,6 +149,9 @@ for event in tWtree:
     lepton0 = TLorentzVector()
     lepton1 = TLorentzVector()
 
+    lepton0DoCrossClean = False
+    lepton1DoCrossClean = False
+
     if len(goodMuonidx) == 1 and len(goodEleidx) == 1:
         ModeIdx = 0
         i = goodMuonidx[0]
@@ -157,6 +160,8 @@ for event in tWtree:
         lepton1.SetPtEtaPhiE(electronPt[j],electronEta[j],electronPhi[j],electronE[j])
         totalCharge = muonCharge[i]+electronCharge[j]
         chargeMult = muonCharge[i]*electronCharge[j]
+        lepton0DoCrossClean = False
+        lepton1DoCrossClean = True        
     elif len(goodMuonidx) == 2 and len(goodEleidx) == 0:
         ModeIdx = 1
         i = goodMuonidx[0]
@@ -165,6 +170,8 @@ for event in tWtree:
         lepton1.SetPtEtaPhiE(muonPt[j],muonEta[j],muonPhi[j],muonE[j])
         totalCharge = muonCharge[i]+muonCharge[j]
         chargeMult = muonCharge[i]*muonCharge[j]
+        lepton0DoCrossClean = False
+        lepton1DoCrossClean = False
     elif len(goodMuonidx) == 0 and len(goodEleidx) == 2:
         ModeIdx = 2
         i = goodEleidx[0]
@@ -173,6 +180,8 @@ for event in tWtree:
         lepton1.SetPtEtaPhiE(electronPt[j],electronEta[j],electronPhi[j],electronE[j])
         totalCharge = electronCharge[i]+electronCharge[j]
         chargeMult = electronCharge[i]*electronCharge[j]
+        lepton0DoCrossClean = True
+        lepton1DoCrossClean = True
     else: 
         continue  
 
@@ -264,9 +273,14 @@ for event in tWtree:
                 if jetID:
                     tJet = TLorentzVector()
                     tJet.SetPtEtaPhiE(jetPt[i],jetEta[i],jetPhi[i],jetE[i])
-                    if min(lepton0.DeltaR(tJet),lepton1.DeltaR(tJet)) > 0.3:
-                        goodJetIdx.append(i)
-                        isTightJet = True
+                    if lepton0DoCrossClean:
+                        if lepton0.DeltaR(tJet) < 0.3:
+                            continue
+                    if lepton1DoCrossClean:
+                        if lepton1.DeltaR(tJet) < 0.3:
+                            continue
+                    goodJetIdx.append(i)
+                    isTightJet = True
         if not isTightJet:
             if jetPt[i] > 20:
                 if abs(jetEta[i]) < 2.5:
