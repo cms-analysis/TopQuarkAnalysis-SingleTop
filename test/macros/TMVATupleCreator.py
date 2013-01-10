@@ -5,17 +5,46 @@ from ROOT import *
 import sys
 
 from EventShapeVariables import *        
-
+from BtagSF import *
 from fileLoadDict_storeUser import fileLists
+
+allowedSystNames = ['JESUp','JESDown','UnclusteredMETUp','UnclusteredMETDown','JERUp','JERDown','BtagSFUp','BtagSFDown']
 
 if len(sys.argv) == 2:
     ChanName = sys.argv[1]
     if not ChanName in fileLists:
         print 'Unknown Channel, please check list in fileLoadDict.py'
         sys.exit(0)
+    systName = "noSyst"
+elif len(sys.argv) == 3:
+    ChanName = sys.argv[1]
+    if not ChanName in fileLists:
+        print 'Unknown Channel, please check list in fileLoadDict.py'
+        sys.exit(0)
+    systName = sys.argv[2]
+    if not systName in allowedSystNames:
+        print 'Unknown Systematic:', systName
+        sys.exit(0)
 else:
     print 'Please specificy a channel as the arguement'
     sys.exit(0)
+
+RunA = True
+RunB = True
+RunC = True
+
+fileVersion = 'v2'
+
+#Input actual luminosities for runA, B, Crereco, and Cprompt for each channel from data
+
+TrueLumis = [[808.472+82.136,4429.,495.003,6383.],
+             [808.472+82.136,4429.,495.003,6383.],
+             [808.472+82.136,4429.,495.003,6383.]]
+
+
+#The values used from SingleTopPSetsSummer_tW for the luminosities of run A, B, Crereco, and Cprompt
+UsedLumis = [15000.,15000.,15000.,15000.]
+
         
 ### a C/C++ structure is required, to allow memory based access
 gROOT.ProcessLine(
@@ -23,8 +52,13 @@ gROOT.ProcessLine(
     Int_t           RunNum;\
     Int_t           LumiNum;\
     Int_t           EventNum;\
-    Double_t        weight;\
-    Double_t        weightNoPU;\
+    Double_t        weightA;\
+    Double_t        weightNoPUA;\
+    Double_t        weightB;\
+    Double_t        weightNoPUB;\
+    Double_t        weightC;\
+    Double_t        weightNoPUC;\
+    Double_t        weightBtagSF;\
     Double_t        ptjet;\
     Double_t        ptlep0;\
     Double_t        ptlep1;\
@@ -36,11 +70,23 @@ gROOT.ProcessLine(
     Double_t        mjll;\
     Double_t        mjl0;\
     Double_t        mjl1;\
+    Double_t        mjlmax;\
+    Double_t        mjlmin;\
+    Double_t        mjl0met;\
+    Double_t        mjl1met;\
+    Double_t        mjlmetmax;\
+    Double_t        mjlmetmin;\
     Double_t        ptsys;\
     Double_t        ptsysTot;\
     Double_t        ptjll;\
     Double_t        ptjl0;\
     Double_t        ptjl1;\
+    Double_t        ptjl0met;\
+    Double_t        ptjl1met;\
+    Double_t        ptjlmetmax;\
+    Double_t        ptjlmetmin;\
+    Double_t        ptjlmax;\
+    Double_t        ptjlmin;\
     Double_t        ptleps;\
     Double_t        htleps;\
     Double_t        ptsys_ht;\
@@ -112,8 +158,13 @@ gROOT.ProcessLine(
 Vars = [['I', 'RunNum'],
         ['I', 'LumiNum'],
         ['I', 'EventNum'],
-        ['D', 'weight'],
-        ['D', 'weightNoPU'],
+        ['D', 'weightA'],
+        ['D', 'weightNoPUA'],
+        ['D', 'weightB'],
+        ['D', 'weightNoPUB'],
+        ['D', 'weightC'],
+        ['D', 'weightNoPUC'],
+        ['D', 'weightBtagSF'],
         ['D', 'ptjet'],
         ['D', 'ptlep0'],
         ['D', 'ptlep1'],
@@ -125,11 +176,23 @@ Vars = [['I', 'RunNum'],
         ['D', 'mjll'],
         ['D', 'mjl0'],
         ['D', 'mjl1'],
+        ['D', 'mjl0met'],
+        ['D', 'mjl1met'],
+        ['D', 'mjlmetmax'],
+        ['D', 'mjlmetmin'],
+        ['D', 'mjlmax'],
+        ['D', 'mjlmin'],
         ['D', 'ptsys'],
         ['D', 'ptsysTot'],
         ['D', 'ptjll'],
         ['D', 'ptjl0'],
         ['D', 'ptjl1'],
+        ['D', 'ptjl0met'],
+        ['D', 'ptjl1met'],
+        ['D', 'ptjlmetmax'],
+        ['D', 'ptjlmetmin'],
+        ['D', 'ptjlmax'],
+        ['D', 'ptjlmin'],
         ['D', 'ptleps'],
         ['D', 'htleps'],
         ['D', 'ptsys_ht'],
@@ -200,38 +263,64 @@ Vars = [['I', 'RunNum'],
 
 #Trees for TMVA input (signal/control regions)
 
-tree1jNotagging = [TTree('1jNoTagging','1jNoTagging'),TTree('1jNoTagging','1jNoTagging'),TTree('1jNoTagging','1jNoTagging'),TTree('1jNoTagging','1jNoTagging')]
-tree1j0t = [TTree('1j0t','1j0t'),TTree('1j0t','1j0t'),TTree('1j0t','1j0t'),TTree('1j0t','1j0t')]
-tree1j1t = [TTree('1j1t','1j1t'),TTree('1j1t','1j1t'),TTree('1j1t','1j1t'),TTree('1j1t','1j1t')]
-tree2jNotagging = [TTree('2jNoTagging','2jNoTagging'),TTree('2jNoTagging','2jNoTagging'),TTree('2jNoTagging','2jNoTagging'),TTree('2jNoTagging','2jNoTagging')]
-tree2j0t = [TTree('2j0t','2j0t'),TTree('2j0t','2j0t'),TTree('2j0t','2j0t'),TTree('2j0t','2j0t')]
-tree2j1t = [TTree('2j1t','2j1t'),TTree('2j1t','2j1t'),TTree('2j1t','2j1t'),TTree('2j1t','2j1t')]
-tree2j2t = [TTree('2j2t','2j2t'),TTree('2j2t','2j2t'),TTree('2j2t','2j2t'),TTree('2j2t','2j2t')]
-tree3plusjNotagging = [TTree('3plusjNoTagging','2plusjNoTagging'),TTree('3plusjNoTagging','2plusjNoTagging'),TTree('3plusjNoTagging','2plusjNoTagging'),TTree('3plusjNoTagging','2plusjNoTagging')]
-tree1j1tZpeak = [TTree('1j1tZpeak','1j1tZpeak'),TTree('1j1tZpeak','1j1tZpeak'),TTree('1j1tZpeak','1j1tZpeak'),TTree('1j1tZpeak','1j1tZpeak')]
+tree1jNotagging = [TTree('1jNoTagging','1jNoTagging'),TTree('1jNoTagging','1jNoTagging'),TTree('1jNoTagging','1jNoTagging')]
+tree1j0t = [TTree('1j0t','1j0t'),TTree('1j0t','1j0t'),TTree('1j0t','1j0t')]
+tree1j1t = [TTree('1j1t','1j1t'),TTree('1j1t','1j1t'),TTree('1j1t','1j1t')]
+tree2jNotagging = [TTree('2jNoTagging','2jNoTagging'),TTree('2jNoTagging','2jNoTagging'),TTree('2jNoTagging','2jNoTagging')]
+tree2j0t = [TTree('2j0t','2j0t'),TTree('2j0t','2j0t'),TTree('2j0t','2j0t')]
+tree2j1t = [TTree('2j1t','2j1t'),TTree('2j1t','2j1t'),TTree('2j1t','2j1t')]
+tree2j2t = [TTree('2j2t','2j2t'),TTree('2j2t','2j2t'),TTree('2j2t','2j2t')]
+tree3plusjNotagging = [TTree('3plusjNoTagging','3plusjNoTagging'),TTree('3plusjNoTagging','3plusjNoTagging'),TTree('3plusjNoTagging','3plusjNoTagging')]
+tree1j1tZpeak = [TTree('1j1tZpeak','1j1tZpeak'),TTree('1j1tZpeak','1j1tZpeak'),TTree('1j1tZpeak','1j1tZpeak')]
+treeZpeakLepSel = [TTree('ZpeakLepSel','ZpeakLepSel'),TTree('ZpeakLepSel','ZpeakLepSel'),TTree('ZpeakLepSel','ZpeakLepSel')]
 
-treeList = [tree1jNotagging
-            ,tree1j0t
-            ,tree1j1t
-            ,tree2jNotagging
-            ,tree2j0t
-            ,tree2j1t
-            ,tree2j2t
-            ,tree3plusjNotagging
-            ,tree1j1tZpeak
-            ]
+# treeList = [tree1jNotagging
+#             ,tree1j0t
+#             ,tree1j1t
+#             ,tree2jNotagging
+#             ,tree2j0t
+#             ,tree2j1t
+#             ,tree2j2t
+#             ,tree3plusjNotagging
+#             ,tree1j1tZpeak
+#             ,treeZpeakLepSel
+#             ]
+
+
+treeList = {'tree1jNotagging':[TTree('1jNoTagging','1jNoTagging'),TTree('1jNoTagging','1jNoTagging'),TTree('1jNoTagging','1jNoTagging'),TTree('1jNoTagging','1jNoTagging')],
+            'tree1j0t':[TTree('1j0t','1j0t'),TTree('1j0t','1j0t'),TTree('1j0t','1j0t'),TTree('1j0t','1j0t')],
+            'tree1j1t':[TTree('1j1t','1j1t'),TTree('1j1t','1j1t'),TTree('1j1t','1j1t'),TTree('1j1t','1j1t')],
+            'tree2jNotagging':[TTree('2jNoTagging','2jNoTagging'),TTree('2jNoTagging','2jNoTagging'),TTree('2jNoTagging','2jNoTagging'),TTree('2jNoTagging','2jNoTagging')],
+            'tree2j0t':[TTree('2j0t','2j0t'),TTree('2j0t','2j0t'),TTree('2j0t','2j0t'),TTree('2j0t','2j0t')],
+            'tree2j1t':[TTree('2j1t','2j1t'),TTree('2j1t','2j1t'),TTree('2j1t','2j1t'),TTree('2j1t','2j1t')],
+            'tree2j2t':[TTree('2j2t','2j2t'),TTree('2j2t','2j2t'),TTree('2j2t','2j2t'),TTree('2j2t','2j2t')],
+            'tree3plusjNotagging':[TTree('3plusjNoTagging','3plusjNoTagging'),TTree('3plusjNoTagging','3plusjNoTagging'),TTree('3plusjNoTagging','3plusjNoTagging'),TTree('3plusjNoTagging','2plusjNoTagging')],
+            'tree1j1tZpeak':[TTree('1j1tZpeak','1j1tZpeak'),TTree('1j1tZpeak','1j1tZpeak'),TTree('1j1tZpeak','1j1tZpeak'),TTree('1j1tZpeak','1j1tZpeak')],
+            'treeZpeakLepSel':[TTree('ZpeakLepSel','ZpeakLepSel'),TTree('ZpeakLepSel','ZpeakLepSel'),TTree('ZpeakLepSel','ZpeakLepSel'),TTree('ZpeakLepSel','ZpeakLepSel')],
+            }
+
 
 #Branch variables for TMVA tree
 
 eventInfo = eventInfo_t()
 
-for trees in treeList:
+for i in treeList:
+    trees = treeList[i]
     for tree in trees:
         for var in Vars:
             tree.Branch(var[1],AddressOf(eventInfo,var[1]),var[1]+'/'+var[0])
 
+temp = ''
 
-fchain = TChain('TreesDileptontW/'+fileLists[ChanName][0]+'_noSyst')
+if 'BtagSF' in systName:
+    temp = systName
+    systName = 'noSyst'
+fchain = TChain('TreesDileptontW/'+fileLists[ChanName][0]+'_'+systName)
+
+fchain.SetCacheSize(20*1024*1024)
+
+if 'BtagSF' in temp:
+    systName = temp    
 
 for file in fileLists[ChanName][1]:
     fchain.Add(file)
@@ -261,8 +350,14 @@ for event in fchain:
     runNum = event.runNum
     lumiNum = event.lumiNum
     eventNum = event.eventNum
-    evtWeight = event.weight
-    evtPUWeight = event.PUWeight
+    evtWeightA = event.weightA
+    evtWeightB = event.weightB
+    evtWeightCrereco = event.weightCrereco
+    evtWeightCprompt = event.weightCprompt
+    evtPUWeightA = event.PUWeightA
+    evtPUWeightB = event.PUWeightB
+    evtPUWeightCrereco = event.PUWeightCrereco
+    evtPUWeightCprompt = event.PUWeightCprompt
 
     #Get Muon objects
     muonPt = event.muonPt
@@ -377,8 +472,13 @@ for event in fchain:
 
     mll = (lepton0 + lepton1).M()
 
-    if mll < 20:
+    passMll20 = False
+    if mll > 20:
+        passMll20 = True    
+    else:
         continue
+#     if mll < 20:
+#         continue
 
     inZpeak = False
     if ModeIdx > 0:
@@ -388,8 +488,11 @@ for event in fchain:
     MetPt = event.MetPt
     MetPhi = event.MetPhi
 
-    if MetPt < 30 and not ModeIdx == 0:
-        continue
+    passMET = False
+    if ModeIdx==0 or MetPt>30:
+        passMET = True
+#     if MetPt < 30 and not ModeIdx == 0:
+#         continue
 
 
     MET = TLorentzVector()
@@ -497,18 +600,32 @@ for event in fchain:
     jet = TLorentzVector()
     jet.SetPtEtaPhiE(jetPt[jetIdx],jetEta[jetIdx], jetPhi[jetIdx], jetE[jetIdx])
 
-    system = lepton0 + lepton1 + MET + jet
+    system = lepton0 + lepton1 + MET + jet 
     systemTot = lepton0 + lepton1 + MET + jet
     Ht = lepton0.Pt() + lepton1.Pt() + MET.Pt() + jet.Pt()
     HtTot = lepton0.Pt() + lepton1.Pt() + MET.Pt() + jet.Pt()
     HtNoMet = lepton0.Pt() + lepton1.Pt() + jet.Pt()
+    
     jll = jet + lepton0 + lepton1
     jl0 = jet + lepton0
     jl1 = jet + lepton1
+    jl0met = jet + lepton0 + MET
+    jl1met = jet + lepton1 + MET
     leptons = lepton0 + lepton1
 
     H = jet.E() + lepton0.E() + lepton1.E() + MET.E()
     HNoMet = jet.E() + lepton0.E() + lepton1.E()
+
+    for i in range(1,len(goodJetIdx)):
+        tempidx = goodJetIdx[i]
+        tempjet = TLorentzVector()
+        tempjet.SetPtEtaPhiE(jetPt[tempidx],jetEta[tempidx], jetPhi[tempidx], jetE[tempidx])
+
+        system = system + tempjet
+        systemTot = systemTot + tempjet
+        Ht = Ht + tempjet.Pt()
+        HtTot = HtTot + tempjet.Pt()
+        HtNoMet = HtNoMet + tempjet.Pt()
 
     listJLL = list()
 
@@ -528,13 +645,13 @@ for event in fchain:
     listJLLWithLoose = list(listJLL)
     listJLLMWithLoose = list(listJLLM)
 
-    for i in looseJet15Idx:
+    for i in looseJet20Idx:
         temp = TLorentzVector()
         temp.SetPtEtaPhiE(jetPt[i],jetEta[i], jetPhi[i], jetE[i])
         listJLLWithLoose.append(temp)
         listJLLMWithLoose.append(temp)
-        systemTot += temp
-        HtTot += temp.Pt()
+        systemTot = systemTot + temp
+        HtTot = HtTot + temp.Pt()
 
 
 
@@ -570,17 +687,50 @@ for event in fchain:
     sumEta2 = pow(lepton0.Eta(),2) + pow(lepton1.Eta(),2) + pow(jet.Eta(),2)
 
     ptLooseJet = 0.
-    csvLooseJet = -0.5
-    if len(looseJet15Idx) > 0:
-        ptLooseJet = jetPt[looseJet15Idx[0]]
-        csvLooseJet = jetCSV[looseJet15Idx[0]]
+    csvLooseJet = -0.05
+    if len(looseJet20Idx) > 0:
+        ptLooseJet = jetPt[looseJet20Idx[0]]
+        csvLooseJet = jetCSV[looseJet20Idx[0]]
+
+    eventInfo.weightA = 0.
+    eventInfo.weightNoPUA = 0.
+    eventInfo.weightB = 0.
+    eventInfo.weightNoPUB = 0.
+    eventInfo.weightC = 0.
+    eventInfo.weightNoPUC = 0.
+
+
+    eventInfo.weightA = evtWeightA*evtPUWeightA*TrueLumis[ModeIdx][0]/UsedLumis[0]
+    eventInfo.weightNoPU = evtWeightA*TrueLumis[ModeIdx][0]/UsedLumis[0]
+
+    eventInfo.weightB = evtWeightB*evtPUWeightB*TrueLumis[ModeIdx][1]/UsedLumis[1]
+    eventInfo.weightNoPUB = evtWeightB*TrueLumis[ModeIdx][1]/UsedLumis[1]
+
+    eventInfo.weightC = evtWeightCrereco*evtPUWeightCrereco*TrueLumis[ModeIdx][2]/UsedLumis[2]
+    eventInfo.weightNoPUC = evtWeightCrereco*TrueLumis[ModeIdx][2]/UsedLumis[2]
+
+    eventInfo.weightC += evtWeightCprompt*evtPUWeightCprompt*TrueLumis[ModeIdx][3]/UsedLumis[3]
+    eventInfo.weightNoPUC += evtWeightCprompt*TrueLumis[ModeIdx][3]/UsedLumis[3]
+
+    #Take the Btag SF weight as each btagged jet SF multiplied together
+
+    btagSF_ = 1.
+    SFsyst = ''
+    if systName == 'BtagSFUp':
+        SFsyst = 'Up'
+    if systName == 'BtagSFDown':
+        SFsyst = 'Down'
+    
+    for i in btaggedTightJetIdx:        
+        btagSF_ = btagSF_ * BtagSF(jetPt[i],SFsyst)
+        
+        
+    eventInfo.weightBtagSF = btagSF_
 
 
     eventInfo.RunNum = runNum
     eventInfo.LumiNum = lumiNum
     eventInfo.EventNum = eventNum
-    eventInfo.weight = evtWeight*evtPUWeight
-    eventInfo.weightNoPU = evtWeight
     eventInfo.ptjet = jet.Pt()
     eventInfo.ptlep0 = lepton0.Pt()
     eventInfo.ptlep1 = lepton1.Pt()
@@ -596,7 +746,19 @@ for event in fchain:
     eventInfo.mjl0 = jl0.M()
     eventInfo.ptjl0 = jl0.Pt()
     eventInfo.mjl1 = jl1.M()
-    eventInfo.ptjl1 = jl1.Pt()
+    eventInfo.ptjl1 = jl1.Pt() 
+    eventInfo.mjl0met = jl0met.M()
+    eventInfo.ptjl0met = jl0met.Pt()
+    eventInfo.mjl1met = jl1met.M()
+    eventInfo.ptjl1met = jl1met.Pt()
+    eventInfo.mjlmax = max(jl0.M(),jl1.M())
+    eventInfo.mjlmin = min(jl0.M(),jl1.M())
+    eventInfo.ptjlmax = max(jl0.Pt(),jl1.Pt())
+    eventInfo.ptjlmin = min(jl0.Pt(),jl1.Pt())
+    eventInfo.mjlmetmax = max(jl0met.M(),jl1met.M())
+    eventInfo.mjlmetmin = min(jl0met.M(),jl1met.M())
+    eventInfo.ptjlmetmax = max(jl0met.Pt(),jl1met.Pt())
+    eventInfo.ptjlmetmin = min(jl0met.Pt(),jl1met.Pt())    
     eventInfo.ptleps = leptons.Pt()
     eventInfo.htleps = lepton0.Pt() + lepton1.Pt()
     eventInfo.ptsys_ht = system.Pt()/Ht
@@ -663,53 +825,62 @@ for event in fchain:
     eventInfo.aplanarityJLLWithLoose = aplanarity_jllWithLoose
     eventInfo.aplanarityJLLMWithLoose = aplanarity_jllmWithLoose
 
-    if not inZpeak:
+    if not inZpeak and passMET and passMll20:
         if len(goodJetIdx) == 1:
-            tree1jNotagging[ModeIdx].Fill()
-            tree1jNotagging[3].Fill()
+            treeList['tree1jNotagging'][ModeIdx].Fill()
+#            treeList['tree1jNotagging'][3].Fill()
             if len(btaggedTightJetIdx) == 0:
-                tree1j0t[ModeIdx].Fill()
-                tree1j0t[3].Fill()
+                treeList['tree1j0t'][ModeIdx].Fill()
+#                treeList['tree1j0t'][3].Fill()
             if len(btaggedTightJetIdx) == 1:
-                tree1j1t[ModeIdx].Fill()
-                tree1j1t[3].Fill()
+                treeList['tree1j1t'][ModeIdx].Fill()
+#                treeList['tree1j1t'][3].Fill()
         if len(goodJetIdx) == 2:
-            tree2jNotagging[ModeIdx].Fill()
-            tree2jNotagging[3].Fill()
+            treeList['tree2jNotagging'][ModeIdx].Fill()
+#            treeList['tree2jNotagging'][3].Fill()
             if len(btaggedTightJetIdx) == 0:
-                tree2j0t[ModeIdx].Fill()
-                tree2j0t[3].Fill()
+                treeList['tree2j0t'][ModeIdx].Fill()
+#                treeList['tree2j0t'][3].Fill()
             if len(btaggedTightJetIdx) == 1:
-                tree2j1t[ModeIdx].Fill()
-                tree2j1t[3].Fill()
+                treeList['tree2j1t'][ModeIdx].Fill()
+#                treeList['tree2j1t'][3].Fill()
             if len(btaggedTightJetIdx) == 2:
-                tree2j2t[ModeIdx].Fill()
-                tree2j2t[3].Fill()
+                treeList['tree2j2t'][ModeIdx].Fill()
+#                treeList['tree2j2t'][3].Fill()
         if len(goodJetIdx) > 2:
-            tree3plusjNotagging[ModeIdx].Fill()
-            tree3plusjNotagging[3].Fill()
+            treeList['tree3plusjNotagging'][ModeIdx].Fill()
+#            treeList['tree3plusjNotagging'][3].Fill()
     if inZpeak:
+        treeList['treeZpeakLepSel'][ModeIdx].Fill()
+#        treeList['treeZpeakLepSel'][3].Fill()
+        #No MET cut is applied to 1j1t zpeak region
         if len(goodJetIdx) == 1:
             if len(btaggedTightJetIdx) == 1:
-                tree1j1tZpeak[ModeIdx].Fill()
-                tree1j1tZpeak[3].Fill()
+                treeList['tree1j1tZpeak'][ModeIdx].Fill()
+#                treeList['tree1j1tZpeak'][3].Fill()
 
 
-outputFile = TFile('tmvaFiles/'+fileLists[ChanName][2],"RECREATE")
+outFileName = 'tmvaFiles/'+fileVersion+'/'+fileLists[ChanName][2]
+if not 'noSyst' in systName:
+    outFileName = outFileName.replace(".root",'_'+systName+'.root')
+
+print
+print outFileName
+outputFile = TFile(outFileName,"RECREATE")
 
 emuDir = outputFile.mkdir("emuChannel","emu channel");
 mumuDir = outputFile.mkdir("mumuChannel","mumu channel");
 eeDir = outputFile.mkdir("eeChannel","ee channel");
-combinedDir = outputFile.mkdir("combined","All Channels Combined");
+#combinedDir = outputFile.mkdir("combined","All Channels Combined");
 
-for tree in treeList:
+for i in treeList:
+    tree = treeList[i]
     emuDir.cd()
     tree[0].Write()
     mumuDir.cd()
     tree[1].Write()
     eeDir.cd()
     tree[2].Write()
-    combinedDir.cd()
-    tree[3].Write()
+#    combinedDir.cd()
+#    tree[3].Write()
 
-print

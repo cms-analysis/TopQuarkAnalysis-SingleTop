@@ -25,7 +25,9 @@ process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cf
 
 ChannelName = "tW_New_Test"
 
-process.GlobalTag.globaltag = cms.string('START53_V10::All')
+#process.GlobalTag.globaltag = cms.string('START53_V10::All')
+
+process.GlobalTag.globaltag = cms.string('FT_53_V10_AN3::All')
 
 #from Configuration.PyReleaseValidation.autoCond import autoCond
 #process.GlobalTag.globaltag = autoCond['startup']
@@ -77,8 +79,8 @@ jetAlgoName = "AK5"
 
 print "test2.2"
 
+usePF2PAT(process, runPF2PAT=True, jetAlgo=jetAlgoName, runOnMC=runOnMC, postfix=Postfix, jetCorrections=('AK5PFchs',['L1FastJet','L2Relative','L3Absolute','L2L3Residual']), pvCollection=cms.InputTag('goodOfflinePrimaryVertices'),  typeIMetCorrections=True)
 #usePF2PAT(process, runPF2PAT=True, jetAlgo=jetAlgoName, runOnMC=runOnMC, postfix=Postfix, jetCorrections=('AK5PFchs',['L1FastJet','L2Relative','L3Absolute']), pvCollection=cms.InputTag('goodOfflinePrimaryVertices'),  typeIMetCorrections=True)
-usePF2PAT(process, runPF2PAT=True, jetAlgo=jetAlgoName, runOnMC=runOnMC, postfix=Postfix, jetCorrections=('AK5PFchs',['L1FastJet','L2Relative','L3Absolute']), pvCollection=cms.InputTag('goodOfflinePrimaryVertices'),  typeIMetCorrections=True)
 #usePF2PAT(process, runPF2PAT=True, jetAlgo=jetAlgoName, runOnMC=runOnMC, postfix=Postfix, jetCorrections=('AK5PFchs',['L1FastJet','L2Relative','L3Absolute']), pvCollection=cms.InputTag('goodofflinePrimaryVertices'),  typeIMetCorrections=True)
 #          jetCorrections=('AK5PFchs', jetCorrections)
 

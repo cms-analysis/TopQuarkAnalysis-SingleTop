@@ -5,19 +5,19 @@ from ROOT import *
 import sys
 
 printSkim = True
-printLepSel = True
+printLepSel = False
 
 #EventNumsFile = open('eventDumps/diff/RebecasNotMine_lepSel_emu.txt')
 #EventNumsFile = open('eventDumps/diff/RebecasNotMine_lepVeto_emu.txt')
 #EventNumsFile = open('eventDumps/diff/MineNotRebecas_lepVeto_mumu.txt')
-EventNumsFile = open('eventDumps/diff/DuncansNotMine_lepSel_mumu.txt')
+#EventNumsFile = open('eventDumps/diff/DuncansNotMine_lepSel_mumu.txt')
 #EventNumsFile = open('eventDumps/diff/MineNotDuncans_lepSel_mumu.txt')
-EventNumsWanted = EventNumsFile.readlines()
+#EventNumsWanted = EventNumsFile.readlines()
 
-for i in range(len(EventNumsWanted)):
-    EventNumsWanted[i] = int(EventNumsWanted[i].split()[2])
+# for i in range(len(EventNumsWanted)):
+#     EventNumsWanted[i] = int(EventNumsWanted[i].split()[2])
 
-#EventNumsWanted = [288,149520,6952,4987,102152]  # A way to bypass the files, and pick specific events
+EventNumsWanted = [288,149520,6952,4987,102152]  # A way to bypass the files, and pick specific events
 
 EventsLeft = EventNumsWanted[:]
 

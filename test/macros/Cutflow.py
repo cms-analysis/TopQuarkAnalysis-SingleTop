@@ -13,7 +13,8 @@ if len(sys.argv) > 1:
 
 #filenames = ['../output/ntuple_SystTrees_TWChannel.root']
 
-fileName = TFile('../output/ntuple_SysTrees_TWChannel.root')
+#fileName = TFile('../output/ntuple_SysTrees_TWChannel.root')
+fileName = TFile('/mnt/hadoop/user/uscms01/pnfs/unl.edu/data4/cms/store/user/dnoonan/tW_8TeV/Ntuples/ntuple_SysTrees_TWChannel.root')
 
 fileName.cd('TreesDileptontW')
 
@@ -130,8 +131,8 @@ for event in tWtree:
                 if abs(electronEta[i]) < 2.5:
                     if abs(electronPVDxy[i]) < 0.04:
                         if electronMVATrigV0[i] >= 0. and electronMVATrigV0[i] <= 1.0:
-#                            if electronRhoCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
-                            if electronDeltaCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
+                            if electronRhoCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
+#                            if electronDeltaCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
                                 if electronTrackerExpectedInnerHits[i] <= 1:
                                     goodEleidx.append(i)
                                     isTightElectron = True
@@ -139,8 +140,8 @@ for event in tWtree:
             if electronPt[i] > 15:
                 if abs(electronEta[i]) < 2.5:
                     if electronMVATrigV0[i] >= 0. and electronMVATrigV0[i] <= 1.0: #####ADJUSTMENT
-#                        if electronRhoCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
-                        if electronDeltaCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
+                        if electronRhoCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
+#                        if electronDeltaCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
                             looseEleidx.append(i)
     nLooseLeptons = len(looseEleidx) + len(looseMuonidx)
 

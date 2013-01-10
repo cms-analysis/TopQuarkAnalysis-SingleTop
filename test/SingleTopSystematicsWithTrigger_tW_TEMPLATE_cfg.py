@@ -35,15 +35,16 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 # Process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(20000))
 
 process.source = cms.Source ("PoolSource",
-                             fileNames = cms.untracked.vstring (
+                             fileNames = cms.untracked.vstring (*(
                              'file:INSERTFILENAME',
-                             ),
+                             )),
                              duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
 )
 
 
 #Output
-process.TFileService = cms.Service("TFileService", fileName = cms.string("output/ntuple_SysTrees_REPLACECHANNELNAME.root"))
+process.TFileService = cms.Service("TFileService", fileName = cms.string("output/ntuple_SysTrees_REPLACEROOTFILENAME.root"))
+#process.TFileService = cms.Service("TFileService", fileName = cms.string("/mnt/hadoop/user/uscms01/pnfs/unl.edu/data4/cms/store/user/dnoonan/tW_8TeV/Ntuples/ntuple_SysTrees_REPLACEROOTFILENAME.root"))
 
 process.load("SingleTopRootPlizer_tW_cfi")
 process.load("SingleTopFilters_tW_cfi")
@@ -62,6 +63,7 @@ if 'Dilepton' in channelName:
 
 if 'TestSample' in channelName:
     process.TreesDileptontW.systematics = cms.untracked.vstring()
+
 
 #doPU = cms.untracked.bool(False)
 
@@ -100,58 +102,13 @@ if channel_instruction == "allmc":
     process.TreesDileptontW
     )
 
-if channel_instruction == "all":
-    process.TreesEle.doTurnOn = cms.untracked.bool(False) 
-    process.TreesEle.doPU = cms.untracked.bool(False) 
-    process.TreesMu.doPU = cms.untracked.bool(False) 
-    process.PathSys = cms.Path(
-    #    process.PlotsMu +
-    #    process.PlotsEle +
-    process.HLTFilterMuOrEle *
-    process.TreesMu +
-    process.TreesEle
+if channel_instruction == "data":
+    process.TreesDileptontW.doResol = cms.untracked.bool(False)
+    process.TreesDileptontW.doPU = cms.untracked.bool(False)
+    process.TreesDileptontW.systematics = cms.untracked.vstring()
+
+    process.PathSysAllTW = cms.Path(
+#    process.HLTFilterTWDilepton2012 *
+    process.TreesDileptontW
     )
 
-if channel_instruction == "mu":
-    process.TreesMu.doPU = cms.untracked.bool(False) 
-    process.TreesMu.doResol = cms.untracked.bool(False) 
-    process.PathSysMu = cms.Path(
-    #    process.PlotsMu +
-    #    process.PlotsEle +
-   process.HLTFilterMu2012 *
-    process.TreesMu 
-    )
-
-if channel_instruction == "ele":
-    process.TreesEle.doTurnOn = cms.untracked.bool(False) 
-    process.TreesEle.doPU = cms.untracked.bool(False) 
-    process.TreesEle.doResol = cms.untracked.bool(False) 
-    process.PathSysMu = cms.Path(
-    #    process.PlotsMu +
-    #    process.PlotsEle +
-    process.HLTFilterEle2012 *
-    process.TreesEle 
-    )
-
-if channel_instruction == "muqcd":
-    process.TreesMu.doPU = cms.untracked.bool(False) 
-    process.TreesMu.doResol = cms.untracked.bool(False) 
-    process.PathSysMu = cms.Path(
-    #    process.PlotsMu +
-    #    process.PlotsEle +
-    process.HLTFilterMuQCD *
-    process.TreesMu 
-    )
-
-
-if channel_instruction == "eleqcd":
-    process.TreesEle.doTurnOn = cms.untracked.bool(False) 
-    process.TreesEle.doPU = cms.untracked.bool(False) 
-    process.TreesEle.doResol = cms.untracked.bool(False) 
-    process.TreesEle.isControlSample = cms.untracked.bool(True) 
-    process.PathSysEle = cms.Path(
-    #    process.PlotsMu +
-    #    process.PlotsEle +
-    process.HLTFilterEleQCD *
-    process.TreesEle
-    )
