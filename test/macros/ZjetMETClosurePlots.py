@@ -8,6 +8,8 @@ from ROOT import *
 from setTDRStyle import *
 from array import array
 
+from ZjetSF import *
+
 import glob
 import os
 
@@ -39,14 +41,14 @@ noPlots = False
 
 totals = list()
 errors = list()
-#for i in range(1,len(sys.argv)):
+
 i = 1
 while i < len(sys.argv):
     arg=sys.argv[i]
     if arg == '-b':
         i += 1
         continue
-    elif 'plotVariables.p' in arg:
+    elif 'ZjetMETClosurePlots.p' in arg:
         i += 1
         continue
     elif arg in AllowedRegions:
@@ -218,16 +220,6 @@ for mode in range(1,3):
 
         else:
             tree.Add('tmvaFiles/'+vFolder+'/'+fileList[i])
-#             fName = 'tmvaFiles/'+fileList[i]
-#             print fName
-#             file = TFile(fName,'r')
-
-#             file.cd(Folder[mode])
-#             treeName = region
-#             print 
-
-#             tree = gROOT.FindObject(treeName)
-
 
 
         nEvents = tree.GetEntries()*1.
@@ -269,6 +261,8 @@ for mode in range(1,3):
             if fileList[i] == 'DATA':
                 _weight = 1.
 
+            if 'ZJets.ro' in fileList[i]:
+                _weight *= ZjetSF(_met, mode)
 
             HistoLists[i]['met'].Fill(                      _met                      , _weight )
 
@@ -324,7 +318,6 @@ for mode in range(1,3):
 
 #     bins = array('d',[0,5,10,15,20,25,30,40,50,75,100,150,200,300])
 #     bins = array('d',[0,5,10,15,20,25,30,40,50,75,300])
-#     bins = array('d',[0,10,20,30,40,50,300])
     bins = array('d',[0,10,20,30,40,50,60,300])
     plotInfo.append(['metBinned',1,0,1,'MET [GeV]'])
     for i in range(len(HistoLists)):            
@@ -381,40 +374,10 @@ for mode in range(1,3):
             os.system(command)
             
         
-        c1.SaveAs("VariablePlots/"+specialName+region+"/"+plot[0]+"_"+region+"_"+ChanName[mode]+".pdf")
+        c1.SaveAs("VariablePlots/"+specialName+region+"/ClosureTest_"+plot[0]+"_"+region+"_"+ChanName[mode]+".pdf")
         c1.SetLogy()
-        hStack.SetMaximum(max_*150)
-        hStack.SetMinimum(1)        
-        c1.SaveAs("VariablePlots/"+specialName+region+"/"+plot[0]+"_"+region+"_"+ChanName[mode]+"_log.pdf")
+        hStack.SetMaximum(max_*150.)
+        hStack.SetMinimum(0.1)
+        
+        c1.SaveAs("VariablePlots/"+specialName+region+"/ClosureTest_"+plot[0]+"_"+region+"_"+ChanName[mode]+"_log.pdf")
 
-
-    zjet = HistoLists[4]['metBinned']
-    other = HistoLists[0]['metBinned']
-    data = HistoLists[-1]['metBinned']
-    for i in range(1,len(HistoLists)-1):
-        if i != 4:
-            other.Add(HistoLists[i]['metBinned'])
-
-
-    
-    print "-------------------------------------------------------------------"
-    print "ZJets Scale Factors", ChanName[mode]
-    print "-------------------------------------------------------------------"
-    print
-    print "Bin Content"
-    print "Bin range\t  Zjets\tOtherMC\tData"
-    for bin in range(1,len(bins)):
-        print bins[bin-1],"-",bins[bin],"\t:","%.1f" % zjet.GetBinContent(bin),"\t","%.1f" % other.GetBinContent(bin),"\t","%.1f" % data.GetBinContent(bin)
-    print
-    print "-------------------------------------------------------------------"
-    print "Scale Factor"
-    print "Bin range\tZjets\tOtherMC\tData"
-    for bin in range(1,len(bins)):
-        ZjetMC = zjet.GetBinContent(bin)
-        ZjetData = data.GetBinContent(bin)-other.GetBinContent(bin)
-        print bins[bin-1],"-",bins[bin],"\t:","%.4f" % (ZjetData/ZjetMC)
-    print
-    print "-------------------------------------------------------------------"
-    
-    
-    

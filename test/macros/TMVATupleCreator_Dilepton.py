@@ -36,7 +36,7 @@ RunA = True
 RunB = True
 RunC = True
 
-fileVersion = 'v4'
+fileVersion = 'v4_MET40'
 
 #Input actual luminosities for runA, B, Crereco, and Cprompt for each channel from data
 
@@ -465,7 +465,7 @@ for event in fchain:
     MetPhi = event.MetPhi
 
     passMET = False
-    if ModeIdx==0 or MetPt>30:
+    if ModeIdx==0 or MetPt>40:
         passMET = True
 
 #     if MetPt < 30 and not ModeIdx == 0:

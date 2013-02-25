@@ -127,6 +127,19 @@ if RunB:
 if RunC:
     TotalLumi = TotalLumi + 495.003+6383.
 
+runs = ''
+
+if RunA and RunB and RunC:
+    runs=''
+else:
+    runs='_'
+    if RunA:
+        runs+='A'
+    if RunB:
+        runs+='B'
+    if RunC:
+        runs+='C'
+
 TotalLumi = TotalLumi/1000.
 
 labelcms = TPaveText(0.1,0.88,0.6,0.92,"NDCBR")
@@ -463,8 +476,8 @@ for mode in range(3):
 
             _btagSF = 1.
 
-            if int(vFolder.split('v')[-1]) == 2:
-                _btagSF = event.weightBtagSF
+#             if int(vFolder.split('v')[-1]) == 2:
+#                 _btagSF = event.weightBtagSF
             
                 
 
@@ -482,8 +495,8 @@ for mode in range(3):
 
             #EXTRA CUTS
 
-#             if mode > 0 and _met < 30:
-#                 continue
+            if mode > 0 and _met < 50:
+                continue
             
             #             if _met < 30:
             #                 continue
@@ -833,7 +846,7 @@ for mode in range(4):
             channel = "_" + ChanName[mode]
 
         
-        c1.SaveAs("VariablePlots/"+specialName+region+"/"+plot[0]+"_"+region+channel+".pdf")
+        c1.SaveAs("VariablePlots/"+specialName+region+"/"+plot[0]+"_"+region+channel+runs+".pdf")
 
 signal = [0.,0.,0.]
 bkg = [0.,0.,0.]
