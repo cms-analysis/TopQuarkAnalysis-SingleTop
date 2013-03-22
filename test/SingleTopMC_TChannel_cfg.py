@@ -240,7 +240,7 @@ process.singleTopNTuple = cms.OutputModule("PoolOutputModule",
 )
 
 process.singleTopPatTuple = cms.OutputModule("PoolOutputModule",
-                   fileName = cms.untracked.string('/tmp/oiorio/pattuple_'+ChannelName+'.root'),
+                   fileName = cms.untracked.string('pattuple_'+ChannelName+'.root'),
 
                    SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('pathSelection')),
                    outputCommands = savePatTupleSkimLoose
