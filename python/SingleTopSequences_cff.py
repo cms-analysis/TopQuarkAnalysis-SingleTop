@@ -64,25 +64,6 @@ scrapingVeto = cms.EDFilter("FilterOutScraping",
 # HB + HE noise filtering
 from CommonTools.RecoAlgos.HBHENoiseFilter_cfi import HBHENoiseFilter
 
-HBHENoiseFilter.minIsolatedNoiseSumE = cms.double(999999.)
-HBHENoiseFilter.minNumIsolatedNoiseChannels = cms.int32(999999)
-HBHENoiseFilter.minIsolatedNoiseSumEt = cms.double(999999.)
-
-from CommonTools.RecoAlgos.HBHENoiseFilterResultProducer_cfi import HBHENoiseFilterResultProducer
-HBHENoiseFilterResultProducer.minRatio = cms.double(-999)
-HBHENoiseFilterResultProducer.maxRatio = cms.double(999)
-HBHENoiseFilterResultProducer.minHPDHits = cms.int32(17)
-HBHENoiseFilterResultProducer.minRBXHits = cms.int32(999)
-HBHENoiseFilterResultProducer.minHPDNoOtherHits = cms.int32(10)
-HBHENoiseFilterResultProducer.minZeros = cms.int32(10)
-HBHENoiseFilterResultProducer.minHighEHitTime = cms.double(-9999.0)
-HBHENoiseFilterResultProducer.maxHighEHitTime = cms.double(9999.0)
-HBHENoiseFilterResultProducer.maxRBXEMF = cms.double(-999.0)
-HBHENoiseFilterResultProducer.minNumIsolatedNoiseChannels = cms.int32(999999)
-HBHENoiseFilterResultProducer.minIsolatedNoiseSumE = cms.double(999999.)
-HBHENoiseFilterResultProducer.minIsolatedNoiseSumEt = cms.double(999999.)
-HBHENoiseFilterResultProducer.useTS4TS5 = cms.bool(True)
-
 
 from RecoMET.METAnalyzers.CSCHaloFilter_cfi import CSCTightHaloFilter
 from RecoMET.METFilters.hcalLaserEventFilter_cfi import hcalLaserEventFilter
@@ -91,7 +72,9 @@ from RecoMET.METFilters.eeBadScFilter_cfi import eeBadScFilter
 from RecoMET.METFilters.ecalLaserCorrFilter_cfi import ecalLaserCorrFilter
 from RecoMET.METFilters.EcalDeadCellBoundaryEnergyFilter_cfi import EcalDeadCellBoundaryEnergyFilter
 from RecoMET.METFilters.EcalDeadCellTriggerPrimitiveFilter_cfi import EcalDeadCellTriggerPrimitiveFilter
-
+from RecoMET.METFilters.trackingPOGFilters_cfi import manystripclus53X
+from RecoMET.METFilters.trackingPOGFilters_cfi import toomanystripclus53X
+from RecoMET.METFilters.trackingPOGFilters_cfi import logErrorTooManyClusters
 
 EcalDeadCellTriggerPrimitiveFilter.tpDigiCollection = cms.InputTag("ecalTPSkimNA")
 EcalDeadCellBoundaryEnergyFilter.taggingMode = cms.bool(False)
@@ -201,6 +184,9 @@ preselection = cms.Sequence(
     trackingFailureFilter *
     eeBadScFilter *
     ecalLaserCorrFilter *
+    ~manystripclus53X *
+    ~toomanystripclus53X *
+    ~logErrorTooManyClusters *
     countLeptons
     )
 
@@ -218,6 +204,9 @@ preselectionData = cms.Sequence(
     trackingFailureFilter *
     eeBadScFilter *
     ecalLaserCorrFilter *
+    ~manystripclus53X *
+    ~toomanystripclus53X *
+    ~logErrorTooManyClusters *
     countLeptons
     )
 

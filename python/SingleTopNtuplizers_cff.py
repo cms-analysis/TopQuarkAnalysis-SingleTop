@@ -195,7 +195,12 @@ nTupleElectrons = cms.EDProducer(
     tag = cms.untracked.string("PFRhoCorrectedRelIso"),
     quantity = cms.untracked.string("userFloat(\"RhoCorrectedIso\")"),
     ),
-    #Vertex
+    #Number of Hits 
+    cms.PSet(
+    tag = cms.untracked.string("MissingHits"),
+    quantity = cms.untracked.string("gsfTrack.trackerExpectedHitsInner.numberOfHits"),
+    ),
+    #Vertex 
     cms.PSet(
     tag = cms.untracked.string("PVDxy"),
     quantity = cms.untracked.string("userFloat(\"VertexDxy\")"),
@@ -377,6 +382,11 @@ nTupleVetoElectrons = nTupleElectrons.clone(
     cms.PSet(
     tag = cms.untracked.string("PFRhoCorrectedRelIso"),
     quantity = cms.untracked.string("userFloat(\"RhoCorrectedIso\")"),
+    ),
+    #Number of Hits 
+    cms.PSet(
+    tag = cms.untracked.string("MissingHits"),
+    quantity = cms.untracked.string("gsfTrack.trackerExpectedHitsInner.numberOfHits"),
     ),
     #Vertex
     cms.PSet(

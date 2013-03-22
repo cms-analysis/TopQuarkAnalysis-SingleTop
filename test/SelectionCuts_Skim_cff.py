@@ -8,14 +8,14 @@ muVetoCut = cms.string(" (isGlobalMuon || isTrackerMuon) " +
                        "& pt > 10 & abs(eta) < 2.5 " +
                        "& userFloat(\"DeltaCorrectedIso\") <0.2 ")
 
-eleVetoCut = cms.string("ecalDrivenMomentum.pt > 20 " +
+eleVetoCut = cms.string(" ecalDrivenMomentum.pt > 20 " +
                         "& abs(eta) < 2.5 " +
-                        "& userFloat(\"RhoCorrectedIso\") <0.2" +
+                        "& userFloat(\"RhoCorrectedIso\") <0.15" +
                         "& userFloat(\"PassesVetoID\") >0.0"
                         )
 
 eleVetoCutMVA = cms.string(" ecalDrivenMomentum.pt > 20" +
-                           "& abs(eta) < 2.5 && userFloat(\"RhoCorrectedIso\") <0.2" +
+                           "& abs(eta) < 2.5 && userFloat(\"RhoCorrectedIso\") <0.15" +
                            "& electronID('mvaTrigV0') >0.0")
 
 #Tight leptons selection criteria
@@ -27,7 +27,7 @@ muTightCut = cms.string(" pt > 26 & isGlobalMuon && isPFMuon & abs(eta) < 2.1 &&
                         "& numberOfMatchedStations() > 1 && innerTrack.hitPattern.numberOfValidPixelHits > 0 " +
                         "& globalTrack.hitPattern.numberOfValidMuonHits > 0")
 #Jet definition
-jetLooseCut = cms.string("numberOfDaughters()>1 & pt()> 20 && abs(eta())<5 " +
+jetLooseCut = cms.string(" numberOfDaughters()>1 & pt()> 20 && abs(eta())<5 " +
                          " & ((abs(eta())>=2.4) || ( chargedHadronEnergyFraction() > 0 & chargedMultiplicity()>0 & chargedEmEnergyFraction()<0.99))"+
                          " & neutralEmEnergyFraction() < 0.99 & neutralHadronEnergyFraction() < 0.99 "  )
 

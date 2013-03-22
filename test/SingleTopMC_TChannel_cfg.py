@@ -122,7 +122,7 @@ process.ZeroIsoLeptonSequence = cms.Sequence(
          )
 
 #Set max number of events:
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500) )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 #Input file:
@@ -167,11 +167,6 @@ savePatTupleSkimLoose = cms.untracked.vstring(
     'keep patElectrons_selectedPatElectrons_*_*',
     'keep patJets_selectedPatJets_*_*',
     'keep patMETs_patMETs_*_*',
-#    'keep *_patPFMet_*_*',
-#    'keep *_patType1CorrectedPFMet_*_*',
-#    'keep *_PVFilterProducer_*_*',
-
-#    'keep *_kt6PFJetsForIsolation_rho_*',
     'keep *_kt6PFJets_rho_*',
 
     'keep patJets_topJetsPF_*_*',
@@ -183,8 +178,6 @@ savePatTupleSkimLoose = cms.untracked.vstring(
 
     "keep *_TriggerResults_*_*",#Trigger results
     "keep *_PatMuonTriggerMatchHLTIsoMu24_*_*",#Trigger matches
-#    "keep *_patTrigger_*_*",
-#    "keep *_patTriggerEvent_*_*",
 
     'keep *_PDFInfo_*_*',
 

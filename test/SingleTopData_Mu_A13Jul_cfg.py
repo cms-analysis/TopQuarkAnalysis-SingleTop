@@ -24,7 +24,7 @@ ChannelName = "Mu_A13Jul"
 isData = True
 
 #Tag:
-process.GlobalTag.globaltag = cms.string('FT_53_V6_AN3::All')
+process.GlobalTag.globaltag = cms.string('FT_53_V6C_AN3::All')
 
 #Single top and pat sequences:
 process.load("TopQuarkAnalysis.SingleTop.SingleTopSequences_cff") 
@@ -36,9 +36,9 @@ import HLTrigger.HLTfilters.triggerResultsFilter_cfi as triggerFilter
 
 process.HLTFilterMu2012  = triggerFilter.triggerResultsFilter.clone(
     hltResults = cms.InputTag( "TriggerResults","","HLT" ),
-    triggerConditions = ["HLT_*"],#All trigger paths are included in the skim
-#    triggerConditions = ["HLT_IsoMu24_eta2p1_v*"],
-#    triggerConditions = ["HLT_Ele27_WP80_v*"],
+   triggerConditions = ["HLT_*"],#All trigger paths are included in the skim
+#   triggerConditions = ["HLT_IsoMu24_eta2p1_v*"],
+#   triggerConditions = ["HLT_Ele27_WP80_v*"],
     l1tResults = '',
     throw = False
     )
@@ -114,13 +114,13 @@ process.ZeroIsoLeptonSequence = cms.Sequence(
          )
 
 #Set max number of events:
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500) )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 #Input file:
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
-    "file:/tmp/oiorio/DataReRecoA.root"
+    "file:/afs/cern.ch/work/o/oiorio/public/xFrancescoFab/DataReRecoA.root"
 ),
 duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 )
