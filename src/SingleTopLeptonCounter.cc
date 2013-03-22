@@ -2,7 +2,7 @@
  *\Author: A. Orso M. Iorio 
  *
  *
- *\version  $Id: SingleTopLeptonCounter.cc,v 1.1.2.2 2012/01/17 04:06:56 oiorio Exp $ 
+ *\version  $Id: SingleTopLeptonCounter.cc,v 1.1.2.3 2012/04/03 08:50:02 oiorio Exp $ 
  */
 
 
@@ -102,7 +102,6 @@ bool SingleTopLeptonCounter::filter(edm::Event & iEvent, const edm::EventSetup &
     
     //   std::cout <<  " QCDLeptonAccept " << QCDAccept<< " Total accept "<<  (LeptonAccept || QCDAccept) <<std::endl;
   
-
   return (LeptonAccept || QCDAccept);
   }
   return true;

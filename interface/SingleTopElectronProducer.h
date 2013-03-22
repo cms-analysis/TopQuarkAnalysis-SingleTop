@@ -9,7 +9,7 @@
  * \Author A. Orso M. Iorio
  * 
  *
- *\version  $Id: SingleTopElectronProducer.h,v 1.2.12.2 2012/06/05 10:57:11 oiorio Exp $
+ *\version  $Id: SingleTopElectronProducer.h,v 1.2.12.2.4.1 2012/11/26 10:26:00 oiorio Exp $
  *
  *
 */
@@ -83,7 +83,6 @@
     std::string cut_,id_;
     double deltaR_;
     edm::Handle< double > rho;
-    std::string category_;
     bool isData_,isMC_;
    //std::vector<std::string> triggernames;
     //    edm::InputTag               electronsInputTag_;

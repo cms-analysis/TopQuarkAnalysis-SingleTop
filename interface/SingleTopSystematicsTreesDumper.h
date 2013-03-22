@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  *
  * Produces systematics histograms out of a standard Single Top n-tuple
- * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.12 2012/08/15 09:36:37 oiorio Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.14.2.1 2012/11/26 10:26:00 oiorio Exp $
  */
 
 
@@ -119,24 +119,17 @@ private:
   double topMtw(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, float metPx, float metPy);
 
   float muonHLTEff(float etaMu,string period);
+  void muonHLTSF(float etaMu, float ptMu);
 
   //B-weight generating functions
-  double BScaleFactor(string algo, string syst_name);
-  double MisTagScaleFactor(string algo, string syst_name, double sf, double eff, double sferr);
-  double AntiBScaleFactor(string algo, string syst_name);
-  double AntiMisTagScaleFactor(string algo, string syst_name, double sf, double eff, double sferr);
   double resolSF(double eta, string syst);
   double pileUpSF(string syst);
   double bTagSF(int B);
   double bTagSF(int B, string syst);
   
-  double EventAntiScaleFactor(string algo, string syst_name );
-  double EventScaleFactor(string algo, string syst_name );
-  double SFMap(string);   double SFErrMap(string);   double EFFMap(string); double EFFMap(string, string);  double EFFErrMap(string);
+  double EFFMap(string); double EFFMap(string, string);  double EFFErrMap(string);
   
-  void InitializeEventScaleFactorMap();
   void InitializeTurnOnReWeight(string SFFile);
-  double EventScaleFactorMap(string, string);
 
   //Jet uncertainty as a function of eta pt and jet flavour
   double jetUncertainty(double eta, double ptCorr, int flavour);
@@ -357,6 +350,7 @@ private:
     qcdLeptonsEnergy,
     qcdLeptonsCharge,
     
+
     qcdLeptonsDeltaCorrectedRelIso,
     qcdLeptonsRhoCorrectedRelIso,
     
@@ -524,7 +518,7 @@ private:
     int flavours[10];
 
     float pdf_weights[52];
-    float  pdf_weights_alternate_set_1, pdf_weights_alternate_set_2;
+  float  pdf_weights_mstw, pdf_weights_nnpdf21, pdf_weights_gjr_ff, pdf_weights_gjr_fv, pdf_weights_gjr_fdis, pdf_weights_alekhin ;
 
   //Tops
    
@@ -602,12 +596,12 @@ float    MCTopsPtVec[2],
     MCNeutrinosPtVec[4],
     MCNeutrinosPhiVec[4],
     MCNeutrinosEtaVec[4],
-  MCNeutrinosEnergyVec[4],
-  MCNeutrinosPdgIdVec[4],
-  MCNeutrinosMotherIdVec[4]
+    MCNeutrinosEnergyVec[4],
+    MCNeutrinosPdgIdVec[4],
+    MCNeutrinosMotherIdVec[4]
     ;
 
-
+  
     //  float recorrection_weights[7][7];
     //  float pt_bin_extremes[8];
     //  float tchpt_bin_extremes[8];
@@ -621,8 +615,9 @@ float    MCTopsPtVec[2],
     map<string, TTree *> trees2J[6];
     map<string, TTree *> trees3J[6];
     map<string, TTree *> treesNJets;
-
-    bool doJetTrees_;
+    TTree * treesMCTruth;
+  
+  bool doJetTrees_, isSingleTopCompHEP_;
 
 
     enum Bin
@@ -641,7 +636,7 @@ float    MCTopsPtVec[2],
     size_t bScanSteps;
 
 
-  bool doBScan_, doQCD_, doPDF_, takeBTagSFFromDB_,addPDFToNJets, doMCTruth_;
+  bool doBScan_, doQCD_, doPDF_, takeBTagSFFromDB_,addPDFToNJets, doMCTruth_, doFullMCTruth_;
     //To be changed in 1 tree, now we keep
     //because we have no time to change and debug
     map<string, TTree *> treesScan[10];
@@ -657,7 +652,31 @@ float    MCTopsPtVec[2],
     //Variables to use as trees references
 
     //Variables to use as trees references
-  double etaTree, etaTree2, cosTree, cosBLTree, topMassTree, totalWeightTree, weightTree, mtwMassTree, lowBTagTree, highBTagTree, maxPtTree, minPtTree, topMassLowBTagTree, topMassBestTopTree, topMassMeas, bWeightTree, PUWeightTree, turnOnWeightTree, limuWeightTree, turnOnReWeightTree, miscWeightTree, lepEff, lepEffB, topMtwTree, HT ;
+  double etaTree, etaTree2, cosTree, cosBLTree, topMassTree, totalWeightTree, weightTree, mtwMassTree, lowBTagTree, highBTagTree, maxPtTree, minPtTree, topMassLowBTagTree, topMassBestTopTree, topMassMeas, bWeightTree, PUWeightTree, turnOnWeightTree, limuWeightTree, turnOnReWeightTree, miscWeightTree, lepEff, lepEffB,lepSF,lepSFB,lepSFC , topMtwTree, HT ,
+    lepSFIDUp,
+    lepSFIDDown,
+    lepSFIsoUp,
+    lepSFIsoDown,
+    lepSFTrigUp,
+    lepSFTrigDown,
+
+    lepSFIDUpB,
+    lepSFIDDownB,
+    lepSFIsoUpB,
+    lepSFIsoDownB,
+    lepSFTrigUpB,
+    lepSFTrigDownB,
+    lepSFIDUpC,
+    lepSFIDDownC,
+    lepSFIsoUpC,
+    lepSFIsoDownC,
+    lepSFTrigUpC,
+    lepSFTrigDownC,
+    
+    sfID,sfIDup,sfIDdown,  
+    sfIso,sfIsoup,sfIsodown,  
+    sfTrig,sfTrigup,sfTrigdown  
+    ;
     //Weights for systematics
     double bWeightTreeBTagUp,
            bWeightTreeMisTagUp,
@@ -681,9 +700,9 @@ float    MCTopsPtVec[2],
   int nJ, nJNoPU, nJCentral, nJCentralNoPU, nJForward, nJForwardNoPU, nTCHPT, nCSVT, nCSVM;
     double w1TCHPT, w2TCHPT, w1CSVT, w2CSVT, w1CSVM, w2CSVM;
 
-    int runTree, eventTree, lumiTree, chargeTree, electronID, bJetFlavourTree, fJetFlavourTree, eventFlavourTree, puZero, firstJetFlavourTree, secondJetFlavourTree, thirdJetFlavourTree;
+  int runTree, eventTree, lumiTree, chargeTree, electronID, bJetFlavourTree, fJetFlavourTree, eventFlavourTree, puZero, firstJetFlavourTree, secondJetFlavourTree, thirdJetFlavourTree, isQCDTree;
 
-  double lepPt, lepEta, lepPhi, lepRelIso, lepDeltaCorrectedRelIso, lepRhoCorrectedRelIso, fJetPhi, fJetPt, fJetEta, fJetE, bJetPt, bJetEta, bJetPhi, bJetE, metPt, metPhi, topPt, topPhi, topEta, topE, totalEnergy, totalMomentum, fJetBTag, bJetBTag, vtxZ, fJetPUID, fJetPUWP, bJetPUID, bJetPUWP, firstJetPt, firstJetEta, firstJetPhi, firstJetE, secondJetPt, secondJetEta, secondJetPhi, secondJetE, thirdJetPt, thirdJetEta, thirdJetPhi, thirdJetE,fJetBeta,fJetDZ,fJetRMS,bJetBeta,bJetDZ,bJetRMS;
+  double lepPt, lepEta, lepPhi, lepRelIso, lepDeltaCorrectedRelIso, lepRhoCorrectedRelIso, fJetPhi, fJetPt, fJetEta, fJetE, bJetPt, bJetEta, bJetPhi, bJetE, metPt, metPhi, topPt, topPhi, topEta, topE, totalEnergy, totalMomentum, fJetBTag, bJetBTag, vtxZ, fJetPUID, fJetPUWP, bJetPUID, bJetPUWP, firstJetPt, firstJetEta, firstJetPhi, firstJetE, secondJetPt, secondJetEta, secondJetPhi, secondJetE, thirdJetPt, thirdJetEta, thirdJetPhi, thirdJetE,fJetBeta,fJetDZ,fJetRMS,bJetBeta,bJetDZ,bJetRMS, leptonMVAID;
 
 
     //Not used anymore:
@@ -802,6 +821,7 @@ float    MCTopsPtVec[2],
            b_weight_csvt_1_tag,
            b_weight_csvt_2_tags;
 
+  bool doBTagSF_;
     float x1, x2, Q2, scalePDF;
     int id1, id2;
 

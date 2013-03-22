@@ -31,12 +31,11 @@ from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleQCDMuons
 
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleAllJets
 
-from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleLooseElectrons
-from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleLooseElectronsEle
-from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleLooseMuons
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleVetoElectrons
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleVetoElectronsMVA
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleVetoMuons
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleVertices
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleZVetoElectrons
-
 
 
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCLeptons
@@ -53,7 +52,6 @@ from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCTopsNe
 
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTuplesSkimMCTruth
 
-#if isdata: process.looseLeptonSequence.remove(process.muonMatchLoose)
 
 
 # require scraping filter
@@ -86,8 +84,34 @@ HBHENoiseFilterResultProducer.minIsolatedNoiseSumEt = cms.double(999999.)
 HBHENoiseFilterResultProducer.useTS4TS5 = cms.bool(True)
 
 
+from RecoMET.METAnalyzers.CSCHaloFilter_cfi import CSCTightHaloFilter
+from RecoMET.METFilters.hcalLaserEventFilter_cfi import hcalLaserEventFilter
+from RecoMET.METFilters.trackingFailureFilter_cfi import trackingFailureFilter
+from RecoMET.METFilters.eeBadScFilter_cfi import eeBadScFilter
+from RecoMET.METFilters.ecalLaserCorrFilter_cfi import ecalLaserCorrFilter
+from RecoMET.METFilters.EcalDeadCellBoundaryEnergyFilter_cfi import EcalDeadCellBoundaryEnergyFilter
+from RecoMET.METFilters.EcalDeadCellTriggerPrimitiveFilter_cfi import EcalDeadCellTriggerPrimitiveFilter
+
+
+EcalDeadCellTriggerPrimitiveFilter.tpDigiCollection = cms.InputTag("ecalTPSkimNA")
+EcalDeadCellBoundaryEnergyFilter.taggingMode = cms.bool(False)
+EcalDeadCellBoundaryEnergyFilter.cutBoundEnergyDeadCellsEB=cms.untracked.double(10)
+EcalDeadCellBoundaryEnergyFilter.cutBoundEnergyDeadCellsEE=cms.untracked.double(10)
+EcalDeadCellBoundaryEnergyFilter.cutBoundEnergyGapEB=cms.untracked.double(100)
+EcalDeadCellBoundaryEnergyFilter.cutBoundEnergyGapEE=cms.untracked.double(100)
+EcalDeadCellBoundaryEnergyFilter.enableGap=cms.untracked.bool(False)
+EcalDeadCellBoundaryEnergyFilter.limitDeadCellToChannelStatusEB = cms.vint32(12,14)
+EcalDeadCellBoundaryEnergyFilter.limitDeadCellToChannelStatusEE = cms.vint32(12,14)
+
+
+goodVertices = cms.EDFilter( "VertexSelector" ,
+                             filter = cms.bool(False),
+                             src = cms.InputTag("offlinePrimaryVertices"),
+                               cut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.rho < 2")
+                             )
 
 nTuplePatMETsPF.src = cms.InputTag('patMETs')
+
 
 from RecoEgamma.ElectronIdentification.electronIdSequence_cff import *
 from EGamma.EGammaAnalysisTools.electronIdMVAProducer_cfi import *
@@ -103,14 +127,10 @@ patElectronIDs = cms.Sequence(simpleEleIdSequence +
 electronIDSources = cms.PSet(
     mvaTrigV0    = cms.InputTag("mvaTrigV0"),
     mvaNonTrigV0    = cms.InputTag("mvaNonTrigV0"),
-#    simpleEleId60cIso = cms.InputTag("simpleEleId60cIso"),
     simpleEleId70cIso = cms.InputTag("simpleEleId70cIso"),
     simpleEleId80cIso = cms.InputTag("simpleEleId80cIso"),
     simpleEleId90cIso = cms.InputTag("simpleEleId90cIso"),
     simpleEleId95cIso = cms.InputTag("simpleEleId95cIso"),
-#    eidRobustLoose= cms.InputTag("eidRobustLoose"),
-#    eidRobustTight= cms.InputTag("eidRobustTight"),
-#    eidRobustHighEnergy= cms.InputTag("eidRobustHighEnergy")
     )
 
 #cFlavorHistory
@@ -128,11 +148,11 @@ patMuons.usePV = cms.bool(False)
 #In those paths the customized collections are produced
 
 basePath = cms.Sequence(
-       preselectedMETs +
-          looseMuons +
+    preselectedMETs +
+          vetoMuons +
           PVFilterProducer +
-          looseElectrons +
-          looseElectronsEle +
+          vetoElectrons +
+          vetoElectronsMVA +
        #   zVetoElectrons +
           topJetsPF +
           UnclusteredMETPF +
@@ -144,63 +164,60 @@ basePath = cms.Sequence(
           tightElectronsZeroIso +
           tightMuons +
           tightElectrons +
-      #    tightZeroIsoRhoCorrectedRelIso+
-       #  SingleTopMCProducer +
           PDFInfo
           )
 
 basePathData = cms.Sequence(
        preselectedMETs +
-          looseMuons +
+          vetoMuons +
           PVFilterProducer +
-          looseElectrons +
-          looseElectronsEle +
-          #   zVetoElectrons +
+          vetoElectrons +
+          vetoElectronsMVA +
           topJetsPF +
-       UnclusteredMETPF +
-       #   UnclusteredType1METPF +
-          #   NVertices +
+          UnclusteredMETPF +
           tightMuonsZeroIso +
           tightElectronsZeroIso +
           tightMuons +
           tightElectrons 
           #  SingleTopMCProducer +
-          )
+         )
 
-#Flavor history tools sequence
-flavorHistorySequence = cms.Sequence(
-        cFlavorHistoryProducer *
-            bFlavorHistoryProducer
-            )
 
 #PV Filter
 pvfilters = cms.Sequence(
-        PVFilter #+
-        #    countLeptons
-            )
+    PVFilter
+    )
 
 #Selection step: require 1 high pt muon/electron
 preselection = cms.Sequence(
 #    PVFilter +
+    HBHENoiseFilter *
+    scrapingVeto *
+    CSCTightHaloFilter *
+    hcalLaserEventFilter *
+    EcalDeadCellTriggerPrimitiveFilter *
+    EcalDeadCellBoundaryEnergyFilter *
+    goodVertices *
+    trackingFailureFilter *
+    eeBadScFilter *
+    ecalLaserCorrFilter *
     countLeptons
     )
 
 #Selection step: require 1 high pt muon/electron
 preselectionData = cms.Sequence(
     #    hltFilter +
-    PVFilter +
-    HBHENoiseFilter +
-    scrapingVeto +
+#    PVFilter +
+    HBHENoiseFilter *
+    scrapingVeto *
+    CSCTightHaloFilter *
+    hcalLaserEventFilter *
+    EcalDeadCellTriggerPrimitiveFilter *
+    EcalDeadCellBoundaryEnergyFilter *
+    goodVertices *
+    trackingFailureFilter *
+    eeBadScFilter *
+    ecalLaserCorrFilter *
     countLeptons
     )
 
-#Selection step: require 1 high pt muon/electron
-#process.preselection(
-#    hltFilter +
-#    PVFilter +
-#    countLeptons
-#    )
-
-#Ntuple production sequences:
-
-#!!!Work in progress!!!#

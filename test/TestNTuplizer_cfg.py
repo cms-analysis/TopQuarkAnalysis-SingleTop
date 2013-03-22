@@ -34,25 +34,14 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
-'file:/tmp/oiorio/edmntuple_TTBar.root',
-#'file:/tmp/oiorio/TChannelMerged.root',
+#'file:/tmp/oiorio/edmntuple_TTBar.root',
+'file:edmntuple_TChannel.root',
 ),
 duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
 #eventsToProcess = cms.untracked.VEventRange('1:19517967-1:19517969'),
 )
 
-#from TChannel import *
-#process.source.fileNames = TChannel_ntuple
-process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/edmntuple_TTBarTestGSFNoIso.root")
-process.source.fileNames = cms.untracked.vstring("file:/tmp/oiorio/edmntuple_TTBarSynch_PFElectrons.root")
-process.source.fileNames = cms.untracked.vstring("file:/afs/cern.ch/work/j/jpata/public/stpol/sync2012/edmntuple_T_t_deltaBetaOff.root")
-process.source.fileNames = cms.untracked.vstring("file:/afs/cern.ch/work/j/jpata/public/stpol/sync2012/edmntuple_T_t_deltaBetaOn.root")
-
-#PileUpSync
-
-#Output
-process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/Tbar_deltaBetaOff.root"))
-process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/Tbar_deltaBetaOn.root"))
+process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/TChannel_test_ele.root"))
 
 
 #process.load("SingleTopAnalyzers_cfi")
@@ -66,13 +55,8 @@ from SingleTopPSetsSummer_cfi import *
 process.TreesEle.dataPUFile = cms.untracked.string("pileUpDistr.root")
 process.TreesMu.dataPUFile = cms.untracked.string("pileUpDistr.root")
 
-#process.TreesEle.doTurnOn = cms.untracked.bool(False)
-
 process.TreesEle.channelInfo = TChannelEle
 process.TreesMu.channelInfo = TChannelMu
-#process.PlotsEle.channelInfo = TChannelEle
-#process.PlotsMu.channelInfo = TChannelMu
-#process.TreesMu.systematics = cms.untracked.vstring();
 
 
 #doPU = cms.untracked.bool(False)
@@ -81,10 +65,6 @@ process.TreesMu.doQCD = cms.untracked.bool(False)
 process.TreesEle.doQCD = cms.untracked.bool(False)
 process.TreesMu.doResol = cms.untracked.bool(False)
 process.TreesEle.doResol = cms.untracked.bool(False)
-
-#process.TreesMu.doPU = cms.untracked.bool(False)
-#process.TreesEle.doPU = cms.untracked.bool(False)
-
 
 channel_instruction = "channel_instruction" #SWITCH_INSTRUCTION
 channel_instruction = "allmc" #SWITCH_INSTRUCTION
@@ -97,21 +77,20 @@ process.HLTFilterMuOrEle.isMC = MC_instruction
 process.HLTFilterMuOrEleMC.isMC = MC_instruction
     
 
-#process.PUWeightsPath = cms.Path(
-#    process.WeightProducer 
-#)
 
 if channel_instruction == "allmc":
-    #    process.TreesMu.doResol = cms.untracked.bool(True)
-    #    process.TreesEle.doResol = cms.untracked.bool(True)
-    #    process.TreesEle.doTurnOn = cms.untracked.bool(True) 
+    process.TreesMu.doQCD = cms.untracked.bool(True)
+    process.TreesEle.doQCD = cms.untracked.bool(True)
+
+    process.TreesMu.doResol = cms.untracked.bool(True)
+    process.TreesEle.doResol = cms.untracked.bool(True)
+    
     process.PathSysMu = cms.Path(
     process.HLTFilterMu2012 *
-#    process.HLTFilterMuJet *
     process.TreesMu
     )
     process.PathSysEle = cms.Path(
-    process.HLTFilterEleJet *
+    process.HLTFilterEle2012 *
     process.TreesEle
     )
 

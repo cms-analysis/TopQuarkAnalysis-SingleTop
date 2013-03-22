@@ -11,6 +11,7 @@ doBScan = cms.untracked.bool(True),
 rateSystematics = cms.untracked.vstring(),
 doPU = cms.untracked.bool(True),
 doMCTruth = cms.untracked.bool(True),
+doFullMCTruth = cms.untracked.bool(False),
 #doResol  = cms.untracked.bool(False),
 
 algo  = cms.untracked.string("TCHPT"),
@@ -46,24 +47,36 @@ channelInfo = cms.PSet(
     ),
 
 #Leptons
+#leptonsEta = cms.InputTag("nTupleElectrons","tightElectronsPFEta"),  
+#leptonsPt = cms.InputTag("nTupleElectrons","tightElectronsPFPt"),  
+#leptonsPhi = cms.InputTag("nTupleElectrons","tightElectronsPFPhi"),  
+#leptonsEnergy = cms.InputTag("nTupleElectrons","tightElectronsPFE"),  
+
 leptonsEta = cms.InputTag("nTupleElectrons","tightElectronsEta"),  
 leptonsPt = cms.InputTag("nTupleElectrons","tightElectronsPt"),  
 leptonsPhi = cms.InputTag("nTupleElectrons","tightElectronsPhi"),  
 leptonsEnergy = cms.InputTag("nTupleElectrons","tightElectronsE"),  
+
 leptonsCharge = cms.InputTag("nTupleElectrons","tightElectronsCharge"),  
 
 leptonsDeltaCorrectedRelIso = cms.InputTag("nTupleElectrons","tightElectronsPFDeltaCorrectedRelIso"),  
 leptonsRhoCorrectedRelIso = cms.InputTag("nTupleElectrons","tightElectronsPFRhoCorrectedRelIso"),  
 
-qcdLeptonsDeltaCorrectedRelIso = cms.InputTag("nTupleElectrons","tightElectronsPFDeltaCorrectedRelIso"),  
-qcdLeptonsRhoCorrectedRelIso = cms.InputTag("nTupleElectrons","tightElectronsPFRhoCorrectedRelIso"),  
+qcdLeptonsDeltaCorrectedRelIso = cms.InputTag("nTupleQCDElectrons","QCDElectronsPFDeltaCorrectedRelIso"),  
+qcdLeptonsRhoCorrectedRelIso = cms.InputTag("nTupleQCDElectrons","QCDElectronsPFRhoCorrectedRelIso"),  
 
 #leptonsDB = cms.InputTag("nTupleElectrons","tightElectronsAbsoluteDB"),  
 leptonsDB = cms.InputTag("nTupleElectrons","tightElectronsPVDxy"),  
 leptonsDZ = cms.InputTag("nTupleTightMuons","tightMuonsPVDz"),  
 
-leptonsID = cms.InputTag("nTupleElectrons","tightElectronsSimpleEleId70cIso"),  
+#leptonsID = cms.InputTag("nTupleElectrons","tightElectronsSimpleEleId70cIso"),  
+leptonsID = cms.InputTag("nTupleElectrons","tightElectronsPassesTightID"),  
 leptonsMVAID = cms.InputTag("nTupleElectrons","tightElectronsMvaTrigV0"),  
+
+#qcdLeptonsEta = cms.InputTag("nTupleQCDElectrons","QCDElectronsPFEta"),  
+#qcdLeptonsPt = cms.InputTag("nTupleQCDElectrons","QCDElectronsPFPt"),  
+#qcdLeptonsPhi = cms.InputTag("nTupleQCDElectrons","QCDElectronsPFPhi"),  
+#qcdLeptonsEnergy = cms.InputTag("nTupleQCDElectrons","QCDElectronsPFE"),  
 
 qcdLeptonsEta = cms.InputTag("nTupleQCDElectrons","QCDElectronsEta"),  
 qcdLeptonsPt = cms.InputTag("nTupleQCDElectrons","QCDElectronsPt"),  
@@ -74,14 +87,15 @@ qcdLeptonsCharge = cms.InputTag("nTupleQCDElectrons","QCDElectronsCharge"),
 qcdLeptonsDB = cms.InputTag("nTupleQCDElectrons","QCDElectronsPVDxy"),  
 qcdLeptonsDZ = cms.InputTag("nTupleQCDMuons","QCDMuonsPVDz"),  
 
-qcdLeptonsID = cms.InputTag("nTupleQCDElectrons","QCDElectronsSimpleEleId70cIso"),  
+#qcdLeptonsID = cms.InputTag("nTupleQCDElectrons","QCDElectronsSimpleEleId70cIso"),
+qcdLeptonsID = cms.InputTag("nTupleQCDElectrons","QCDElectronsPassesTightID"),  
 
 
-looseElectronsDeltaCorrectedRelIso = cms.InputTag("nTupleLooseElectronsEle","looseElectronsElePFDeltaCorrectedRelIso"),  
-looseElectronsRhoCorrectedRelIso = cms.InputTag("nTupleLooseElectronsEle","looseElectronsElePFRhoCorrectedRelIso"),  
+looseElectronsDeltaCorrectedRelIso = cms.InputTag("nTupleVetoElectrons","vetoElectronsPFDeltaCorrectedRelIso"),  
+looseElectronsRhoCorrectedRelIso = cms.InputTag("nTupleVetoElectrons","vetoElectronsPFRhoCorrectedRelIso"),  
 
-looseMuonsDeltaCorrectedRelIso = cms.InputTag("nTupleLooseMuons","looseMuonsPFDeltaCorrectedRelIso"),  
-looseMuonsRhoCorrectedRelIso = cms.InputTag("nTupleLooseMuons","looseMuonsPFRhoCorrectedRelIso"),  
+looseMuonsDeltaCorrectedRelIso = cms.InputTag("nTupleVetoMuons","vetoMuonsPFDeltaCorrectedRelIso"),  
+looseMuonsRhoCorrectedRelIso = cms.InputTag("nTupleVetoMuons","vetoMuonsPFRhoCorrectedRelIso"),  
 
 leptonsFlavour = cms.untracked.string("electron"),
 
@@ -250,14 +264,14 @@ qcdLeptonsRhoCorrectedRelIso = cms.InputTag("nTupleQCDMuons","QCDMuonsPFRhoCorre
 
 #qcdLeptonsID = cms.InputTag("nTupleMuons","tightMuonsSimpleEleId70cIso"),  
 
-looseElectronsDeltaCorrectedRelIso = cms.InputTag("nTupleLooseElectrons","looseElectronsPFDeltaCorrectedRelIso"),  
-looseElectronsRhoCorrectedRelIso = cms.InputTag("nTupleLooseElectrons","looseElectronsPFRhoCorrectedRelIso"),  
+looseElectronsDeltaCorrectedRelIso = cms.InputTag("nTupleVetoElectrons","vetoElectronsPFDeltaCorrectedRelIso"),  
+looseElectronsRhoCorrectedRelIso = cms.InputTag("nTupleVetoElectrons","vetoElectronsPFRhoCorrectedRelIso"),  
 
-#looseElectronsDeltaCorrectedRelIso = cms.InputTag("nTupleLooseElectronsEle","looseElectronsElePFDeltaCorrectedRelIso"),  
+#looseElectronsDeltaCorrectedRelIso = cms.InputTag("nTupleVetoElectrons","vetoElectronsPFDeltaCorrectedRelIso"),  
 
 
-looseMuonsDeltaCorrectedRelIso = cms.InputTag("nTupleLooseMuons","looseMuonsPFDeltaCorrectedRelIso"),  
-looseMuonsRhoCorrectedRelIso = cms.InputTag("nTupleLooseMuons","looseMuonsPFRhoCorrectedRelIso"),  
+looseMuonsDeltaCorrectedRelIso = cms.InputTag("nTupleVetoMuons","vetoMuonsPFDeltaCorrectedRelIso"),  
+looseMuonsRhoCorrectedRelIso = cms.InputTag("nTupleVetoMuons","vetoMuonsPFRhoCorrectedRelIso"),  
 
 leptonsFlavour = cms.untracked.string("muon"),
 

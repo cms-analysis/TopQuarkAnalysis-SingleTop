@@ -3,42 +3,22 @@ import FWCore.ParameterSet.Config as cms
 
 #muon skim part
 
-looseMuons = cms.EDProducer("SingleTopMuonProducer",
+vetoMuons = cms.EDProducer("SingleTopMuonProducer",
   src = cms.InputTag("selectedPatMuons"),
   cut = cms.string('pt >  20 & abs(eta) < 2.4'),
- # rho = cms.InputTag("kt6PFJetsCentralNeutral:rho"),
- rho = cms.InputTag("kt6PFJetsForIsolation","rho"),
-                              
+  rho = cms.InputTag("kt6PFJets","rho"),
 )
 
-#electron skim part
-#looseElectrons = cms.EDFilter("PATElectronSelector",
-#  src = cms.InputTag("selectedPatElectrons"),
-#  cut = cms.string('pt >  20 & abs(eta) < 2.4'),
-#)
-
-looseElectrons = cms.EDProducer("SingleTopElectronProducer",
+vetoElectrons = cms.EDProducer("SingleTopElectronProducer",
   src = cms.InputTag("selectedPatElectrons"),
   cut = cms.string('pt >  20 & abs(eta) < 2.4'),
-# rho = cms.InputTag("kt6PFJetsCentralNeutral:rho"),
-  rho = cms.InputTag("kt6PFJetsForIsolation","rho"),
-  category = cms.untracked.string("veto"),
+  rho = cms.InputTag("kt6PFJets","rho"),
 )
 
-looseElectronsEle = cms.EDProducer("SingleTopElectronProducer",
+vetoElectronsMVA = cms.EDProducer("SingleTopElectronProducer",
   src = cms.InputTag("selectedPatElectrons"),
   cut = cms.string('pt >  20 & abs(eta) < 2.4'),
-  rho = cms.InputTag("kt6PFJetsForIsolation","rho"),
-#  rho = cms.InputTag("kt6PFJetsCentralNeutral:rho"),
-  category = cms.untracked.string("veto"),
-)
-
-
-
-#electrons for z veto part
-zVetoElectrons = cms.EDFilter("PATElectronSelector",
-  src = cms.InputTag("selectedPatElectrons"),
-  cut = cms.string('pt >  20 & abs(eta) < 2.4'),
+  rho = cms.InputTag("kt6PFJets","rho"),
 )
 
 preselectedJets = cms.EDFilter("PATJetSelector",
@@ -68,7 +48,6 @@ genJetsPF = cms.EDProducer("SingleTopGenJetPtEtaProducer",
                                                     )
 
 
-
 #PDF Info
 NVertices = cms.EDProducer("SingleTopPileUpProducer")
 
@@ -78,18 +57,7 @@ NGenParticles = cms.EDProducer("SingleTopNGenParticlesProducer")
 #PDF Info
 PDFInfo = cms.EDProducer("PDFInfoDumper",
                          )
-
-#topJetsPF = cms.EDFilter("PATJetSelector",
-##                         preselection = cms.string(''),
-#                         src = cms.InputTag("selectedPatJets"),
-#                         cut = cms.string('pt >  20 & abs(eta) < 5.'),
-#                         checkOverlaps = cms.PSet(),
-#                           )
-
-
-
 topJetsPF = cms.EDProducer("SingleTopJetsProducer",
-#                        preselection = cms.string(''),
                          electronsSrc = cms.InputTag("selectedPatElectrons"),
                          src = cms.InputTag("selectedPatJets"),
                          cut = cms.string('pt >  20 & abs(eta) < 5.'),
@@ -97,37 +65,27 @@ topJetsPF = cms.EDProducer("SingleTopJetsProducer",
                          puFullID  = cms.InputTag("puJetMva","fullId"),
                          puChargedDiscriminant = cms.InputTag("puJetMvaChs","fullDiscriminant"),
                          puChargedID  = cms.InputTag("puJetMvaChs","fullId"),
-                           puIDVariables  = cms.InputTag("puJetId"),
-                           removeOverlap = cms.untracked.bool(False),
-                         #                         checkOverlaps  cms.PSet(),
+                         puIDVariables  = cms.InputTag("puJetId"),
+                         removeOverlap = cms.untracked.bool(False),
                            )
-
-
 
 tightElectrons = cms.EDProducer("SingleTopElectronProducer",
   src = cms.InputTag("selectedPatElectrons"),
   cut = cms.string('pt >  20 & abs(eta) < 2.4'),
-#  rho = cms.InputTag("kt6PFJetsCentralNeutral:rho"),
-  rho = cms.InputTag("kt6PFJetsForIsolation","rho"),
-  category = cms.untracked.string("tight"),
+  rho = cms.InputTag("kt6PFJets","rho"),
 )
 
 tightElectronsZeroIso = cms.EDProducer("SingleTopElectronProducer",
   src = cms.InputTag("patElectronsZeroIso"),
   cut = cms.string('pt >  20 & abs(eta) < 2.4'),
-#  rho = cms.InputTag("kt6PFJetsCentralNeutral:rho"),
-  rho = cms.InputTag("kt6PFJetsForIsolation","rho"),
-  category = cms.untracked.string("qcd"),
+  rho = cms.InputTag("kt6PFJets","rho"),
   isData = cms.untracked.bool(False),
  )
-
-
 
 tightMuons = cms.EDProducer("SingleTopMuonProducer",
   src = cms.InputTag("selectedPatMuonsTriggerMatch"),
   cut = cms.string('pt >  20 & abs(eta) < 2.4'),
-#  rho = cms.InputTag("kt6PFJetsCentralNeutral:rho"),
-  rho = cms.InputTag("kt6PFJetsForIsolation","rho"),
+  rho = cms.InputTag("kt6PFJets","rho"),
 )
 
 tightMuonsTest = cms.EDFilter("PATMuonSelector",
@@ -139,7 +97,7 @@ tightMuonsZeroIso = cms.EDProducer("SingleTopMuonProducer",
   src = cms.InputTag("patMuonsZeroIso"),
   cut = cms.string('pt >  20 & abs(eta) < 2.4'),
 #  rho = cms.InputTag("kt6PFJetsCentralNeutral:rho"),
-  rho = cms.InputTag("kt6PFJetsForIsolation","rho"),
+  rho = cms.InputTag("kt6PFJets","rho"),
 )
 
 #Met skim part
@@ -151,9 +109,6 @@ preselectedMETs = cms.EDFilter("PATMETSelector",
 
 
 #Part of MC Truth particles production
-#MCTruthParticles = cms.EDProducer("SingleTopTChannelMCProducer",
-#                                          genParticlesSource = cms.InputTag("genParticles")
-#                                          )
 
 MCTruthParticles = cms.EDProducer("SingleTopMCProducer",
                                   genParticlesSource = cms.InputTag("genParticles")
