@@ -122,7 +122,7 @@ process.ZeroIsoLeptonSequence = cms.Sequence(
          )
 
 #Set max number of events:
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(50) )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 #Input file:
@@ -172,6 +172,7 @@ savePatTupleSkimLoose = cms.untracked.vstring(
     'keep patJets_topJetsPF_*_*',
     'keep patMuons_vetoMuons_*_*',
     'keep *_vetoElectrons_*_*',
+    'keep *_vetoElectronsMVA_*_*',
     'keep patMuons_tightMuons_*_*',
     'keep patMuons_tightMuonsTest_*_*',
     'keep *_tightElectrons_*_*',

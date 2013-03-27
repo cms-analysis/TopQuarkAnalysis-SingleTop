@@ -146,19 +146,19 @@ nTupleElectrons = cms.EDProducer(
     #4-momentum
     cms.PSet(
     tag = cms.untracked.string("Pt"),
-    quantity = cms.untracked.string("pt")
+    quantity = cms.untracked.string("ecalDrivenMomentum.pt")
     ),
     cms.PSet(
     tag = cms.untracked.string("Eta"),
-    quantity = cms.untracked.string("eta")
+    quantity = cms.untracked.string("ecalDrivenMomentum.eta")
     ),
     cms.PSet(
     tag = cms.untracked.string("Phi"),
-    quantity = cms.untracked.string("phi")
+    quantity = cms.untracked.string("ecalDrivenMomentum.phi")
     ),
     cms.PSet(
     tag = cms.untracked.string("E"),
-    quantity = cms.untracked.string("energy")
+    quantity = cms.untracked.string("ecalDrivenMomentum.energy")
     ),
     #Charge
     cms.PSet(
@@ -342,19 +342,19 @@ nTupleVetoElectrons = nTupleElectrons.clone(
     #4-momentum
     cms.PSet(
     tag = cms.untracked.string("Pt"),
-    quantity = cms.untracked.string("pt")
+    quantity = cms.untracked.string("ecalDrivenMomentum.pt")
     ),
     cms.PSet(
     tag = cms.untracked.string("Eta"),
-    quantity = cms.untracked.string("eta")
+    quantity = cms.untracked.string("ecalDrivenMomentum.eta")
     ),
     cms.PSet(
     tag = cms.untracked.string("Phi"),
-    quantity = cms.untracked.string("phi")
+    quantity = cms.untracked.string("ecalDrivenMomentum.phi")
     ),
     cms.PSet(
     tag = cms.untracked.string("E"),
-    quantity = cms.untracked.string("energy")
+    quantity = cms.untracked.string("ecalDrivenMomentum.energy")
     ),
     #Charge
     cms.PSet(

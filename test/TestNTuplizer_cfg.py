@@ -36,12 +36,13 @@ process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
 #'file:/tmp/oiorio/edmntuple_TTBar.root',
 'file:edmntuple_TChannel.root',
+#'file:edmntuple_TChannel_4_1_px5.root',
 ),
 duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
 #eventsToProcess = cms.untracked.VEventRange('1:19517967-1:19517969'),
 )
 
-process.TFileService = cms.Service("TFileService", fileName = cms.string("/tmp/oiorio/TChannel_test_ele.root"))
+process.TFileService = cms.Service("TFileService", fileName = cms.string("TChannel_test.root"))
 
 
 #process.load("SingleTopAnalyzers_cfi")

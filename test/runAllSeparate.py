@@ -12,32 +12,89 @@ fileName = "SingleTopSystematicsWithTrigger_cfg.py"
 
 #Channels to include
 channels = [
+"TTBar_MassUp"
+#"TToBTauNu_unphys_part_1","TToBTauNu_unphys_part_2","TToBTauNu_unphys_part_3",
+#"TToBTauNu_0100_part_1","TToBTauNu_0100_part_2","TToBTauNu_0100_part_3",
+#"TToBMuNu_unphys_part_1","TToBMuNu_unphys_part_2","TToBMuNu_unphys_part_3",
+#"TToBMuNu_0100_part_1","TToBMuNu_0100_part_2","TToBMuNu_0100_part_3",
+#"TToBTauNu_0100",
+#"TToBMuNu_unphys",
+#"TToBMuNu_0100",
+#"TToBTauNu_part_1","TToBTauNu_part_2","TToBTauNu_part_3",
+#"TToBMuNu_part_1","TToBMuNu_part_2","TToBMuNu_part_3",
+#"TToBENu_unphys",
+#"TToBENu_0100",
+#"TToBTauNu",
+#"TToBENu",
+
+#"TbarWChannelTlepWhad_MassUp",
+#"TbarWChannelThadWlep_MassDown",
+#"TWChannelTlepWhad_MassUp",
+#"TWChannelTlepWhad_MassDown",#
+#
+#"TbarWChannelThadWlep_MassUp",
+#"TbarWChannelTlepWhad_MassDown",
+#"TWChannelThadWlep_MassUp",
+#"TWChannelThadWlep_MassDown",
+#
+#"TbarWChannelFullLep_MassDown",
+#"TbarWChannelFullLep_MassUp",
+#"TWChannelFullLep_MassDown",
+#"TWChannelFullLep_MassUp",
+
+#"TBMuNuChannel_Comphep",
+#"TBTauNuChannel_Comphep",
+#"TBENuChannel_Comphep",
+#"QCD_Pt_30to80_EMEnriched","QCD_Pt_30to80_BCtoE","QCD_Pt_80to170_BCtoE",
 #"TbarChannel",
+
 #"TChannel_part_1","TChannel_part_2","TChannel_part_3",
 #"TbarChannel_part_1","TbarChannel_part_2","TbarChannel_part_3",
-#"TChannel",
-#"ZJets",
-"ZJets_part_1", "ZJets_part_2", "ZJets_part_3", "ZJets_part_4", "ZJets_part_5",
+#"TWChannel", "TbarWChannel",
+
 #"SChannel_part_1", "SChannel_part_2", "SChannel_part_3", "SChannel_part_4", "SChannel_part_5",
 #"SbarChannel_part_1", "SbarChannel_part_2", "SbarChannel_part_3", "SbarChannel_part_4", "SbarChannel_part_5",
 #"ZZ_part_1", "ZZ_part_2", "ZZ_part_3", "ZZ_part_4", "ZZ_part_5",
 #"WZ_part_1", "WZ_part_2", "WZ_part_3", "WZ_part_4", "WZ_part_5",
 #"WW_part_1", "WW_part_2", "WW_part_3", "WW_part_4", "WW_part_5",
-#"QCDMuBig",
+
+#"QCDMuBig",#"TChannel_part_1","TChannel_part_2","TChannel_part_3","TChannel_part_4","TChannel_part_5",
+#"TbarChannel_part_1","TbarChannel_part_2","TbarChannel_part_3","TbarChannel_part_4","TbarChannel_part_5",
+#"TChannel",
+#"ZJets",
+#"ZJets_part_1", "ZJets_part_2", "ZJets_part_3", "ZJets_part_4", "ZJets_part_5","ZJets_part_6","ZJets_part_7","ZJets_part_8","ZJets_part_9","ZJets_part_10",
+
+#"QCDMuBig_part_1","QCDMuBig_part_2","QCDMuBig_part_3","QCDMuBig_part_4","QCDMuBig_part_5",#"QCDMuBig_part_6",
 #"WJetsBig_part_1","WJetsBig_part_2","WJetsBig_part_3","WJetsBig_part_4","WJetsBig_part_5","WJetsBig_part_6","WJetsBig_part_7","WJetsBig_part_8","WJetsBig_part_9","WJetsBig_part_10",
 #"WJetsBig_part_11","WJetsBig_part_12","WJetsBig_part_13","WJetsBig_part_14","WJetsBig_part_15","WJetsBig_part_16","WJetsBig_part_17","WJetsBig_part_18","WJetsBig_part_19","WJetsBig_part_20",
 #"WJetsBig_part_21","WJetsBig_part_22",
 #"WJets_part_1","WJets_part_2","WJets_part_3","WJets_part_4","WJets_part_5","WJets_part_6","WJets_part_7","WJets_part_8","WJets_part_9","WJets_part_10","WJets_part_11",
 #"Mu_A13Jul_part_1","Mu_A13Jul_part_2","Mu_A13Jul_part_3","Mu_A13Jul_part_4","Mu_A13Jul_part_5","Mu_A13Jul_part_6","Mu_A13Jul_part_7","Mu_A13Jul_part_8","Mu_A13Jul_part_9","Mu_A13Jul_part_10","Mu_A13Jul_part_11","Mu_A13Jul_part_12","Mu_A13Jul_part_13","Mu_A13Jul_part_14","Mu_A13Jul_part_15","Mu_A13Jul_part_16","Mu_A13Jul_part_17","Mu_A13Jul_part_18","Mu_A13Jul_part_19","Mu_A13Jul_part_20","Mu_A13Jul_part_21","Mu_A13Jul_part_22",
+
 #"Mu_B13Jul_part_1","Mu_B13Jul_part_2","Mu_B13Jul_part_3","Mu_B13Jul_part_4","Mu_B13Jul_part_5","Mu_B13Jul_part_6","Mu_B13Jul_part_7","Mu_B13Jul_part_8","Mu_B13Jul_part_9","Mu_B13Jul_part_10","Mu_B13Jul_part_11","Mu_B13Jul_part_12","Mu_B13Jul_part_13","Mu_B13Jul_part_14","Mu_B13Jul_part_15","Mu_B13Jul_part_16","Mu_B13Jul_part_17","Mu_B13Jul_part_18","Mu_B13Jul_part_19","Mu_B13Jul_part_20","Mu_B13Jul_part_21","Mu_B13Jul_part_22",
+
+#"Mu_C2_part_1","Mu_C2_part_2","Mu_C2_part_3","Mu_C2_part_4","Mu_C2_part_5","Mu_C2_part_6","Mu_C2_part_7","Mu_C2_part_8","Mu_C2_part_9","Mu_C2_part_10","Mu_C2_part_11","Mu_C2_part_12","Mu_C2_part_13","Mu_C2_part_14","Mu_C2_part_15","Mu_C2_part_16","Mu_C2_part_17","Mu_C2_part_18","Mu_C2_part_19","Mu_C2_part_20","Mu_C2_part_21","Mu_C2_part_22",
+
+#"Mu_C1_part_1","Mu_C1_part_2","Mu_C1_part_3","Mu_C1_part_4","Mu_C1_part_5","Mu_C1_part_6","Mu_C1_part_7","Mu_C1_part_8"
+
+
 #"Mu_A06Aug_part_1","Mu_A06Aug_part_2","Mu_A06Aug_part_3",
+
+#"Ele_B13Jul_part_1","Ele_B13Jul_part_2","Ele_B13Jul_part_3","Ele_B13Jul_part_4","Ele_B13Jul_part_5","Ele_B13Jul_part_6","Ele_B13Jul_part_7","Ele_B13Jul_part_8","Ele_B13Jul_part_9","Ele_B13Jul_part_10","Ele_B13Jul_part_11","Ele_B13Jul_part_12","Ele_B13Jul_part_13","Ele_B13Jul_part_14","Ele_B13Jul_part_15","Ele_B13Jul_part_16","Ele_B13Jul_part_17","Ele_B13Jul_part_18","Ele_B13Jul_part_19","Ele_B13Jul_part_20","Ele_B13Jul_part_21","Ele_B13Jul_part_22",    
+
+#"Ele_A13Jul_part_1","Ele_A13Jul_part_2","Ele_A13Jul_part_3","Ele_A13Jul_part_4","Ele_A13Jul_part_5","Ele_A13Jul_part_6","Ele_A13Jul_part_7","Ele_A13Jul_part_8",
+
+#"Ele_C2_part_1","Ele_C2_part_2","Ele_C2_part_3","Ele_C2_part_4","Ele_C2_part_5","Ele_C2_part_6","Ele_C2_part_7","Ele_C2_part_8","Ele_C2_part_9","Ele_C2_part_10","Ele_C2_part_11","Ele_C2_part_12","Ele_C2_part_13","Ele_C2_part_14","Ele_C2_part_15","Ele_C2_part_16","Ele_C2_part_17","Ele_C2_part_18","Ele_C2_part_19","Ele_C2_part_20","Ele_C2_part_21","Ele_C2_part_22",
+
+#"Ele_C1_part_1","Ele_C1_part_2","Ele_C1_part_3","Ele_C1_part_4","Ele_C1_part_5","Ele_C1_part_6","Ele_C1_part_7","Ele_C1_part_8",
+
 #"TChannel", "TbarChannel",
 #"SChannel", "SbarChannel",
-## "TTBar_Q2Up",# "TTBar_Q2Down",
+# "TTBar_MatchingUp", "TTBar_MatchingDown",
 #"WW_part_1","WW_part_2","WW_part_3",
 #"WW",
 #"WZ","ZZ",
-#"TWChannel", "TbarWChannel",
+
 #"TTBar_part_1", "TTBar_part_2","TTBar_part_3","TTBar_part_4", "TTBar_part_5", "TTBar_part_6", "TTBar_part_7", "TTBar_part_11", "TTBar_part_10", "TTBar_part_8", "TTBar_part_9",
 #"Mu_v1_A_part_1", "Mu_v1_A_part_2", "Mu_v1_A_part_3", "Mu_v1_A_part_4", "Mu_v1_A_part_5", "Mu_v1_A_part_6", "Mu_v1_A_part_7",
 
@@ -47,8 +104,27 @@ channels = [
 # "Mu_v1_B2_part_1", "Mu_v1_B2_part_2", "Mu_v1_B2_part_3", "Mu_v1_B2_part_4", "Mu_v1_B2_part_5", "Mu_v1_B2_part_6", "Mu_v1_B2_part_7", "Mu_v1_B2_part_8", "Mu_v1_B2_part_9","Mu_v1_B2_part_10","Mu_v1_B2_part_11",
 
 # "Ele_v1_B2_part_1", "Ele_v1_B2_part_2", "Ele_v1_B2_part_3", "Ele_v1_B2_part_4", "Ele_v1_B2_part_5", "Ele_v1_B2_part_6", "Ele_v1_B2_part_7", "Ele_v1_B2_part_8", "Ele_v1_B2_part_9",
+
 # "TbarWChannel", "TWChannel",
-# "TbarChannel_Q2Up", "TbarChannel_Q2Down",
+#"TTBar_Q2Up", "TTBar_Q2Down",
+#"TbarChannel_Q2Up", "TbarChannel_Q2Down",
+#"TChannel_Q2Up", "TChannel_Q2Down",
+#"TbarWChannelFullLep_Q2Up",
+#"TbarWChannelFullLep_Q2Down",
+#"TWChannelFullLep_Q2Up",
+#"TWChannelFullLep_Q2Down",
+#"TWChannelTlepWhad_Q2Down",
+#"TWChannelTlepWhad_Q2Up",
+#"TbarWChannelTlepWhad_Q2Down",
+#"TbarWChannelTlepWhad_Q2Up",
+#"TWChannelThadWlep_Q2Down",
+#"TWChannelThadWlep_Q2Up",
+#"TbarWChannelThadWlep_Q2Down",
+#"TbarWChannelThadWlep_Q2Up",
+#"WJets_Q2Down_part_1","WJets_Q2Down_part_2","WJets_Q2Down_part_3","WJets_Q2Down_part_4","WJets_Q2Down_part_5",
+#"WJets_Q2Up_part_1","WJets_Q2Up_part_2","WJets_Q2Up_part_3","WJets_Q2Up_part_4","WJets_Q2Up_part_5",
+#"WJets_MatchingDown_part_1","WJets_MatchingDown_part_2","WJets_MatchingDown_part_3","WJets_MatchingDown_part_4","WJets_MatchingDown_part_5",
+#"WJets_MatchingUp_part_1","WJets_MatchingUp_part_2","WJets_MatchingUp_part_3","WJets_MatchingUp_part_4","WJets_MatchingUp_part_5",
 # "WW", "ZZ", "WZ",
 #"ZJets",
  ]
@@ -74,7 +150,7 @@ def changeChannel(fileName,channelOld,channelNew,switch,isMC):
     channelToReplaceInTree = channelNew
     if "Data" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
         channelToReplace = "Data"
-    if ("Mu" in channelNew or "Ele" in channelNew) and not "QCDMu" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
+    if ("Mu" in channelNew or "Ele" in channelNew) and not "QCDMu" in channelNew and not "Channel" in channelNew and not "TTo" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
         channelToReplace = "Data"
     if "WJets_wlight" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
         channelToReplace = "WJets_wlight"
@@ -92,24 +168,44 @@ def changeChannel(fileName,channelOld,channelNew,switch,isMC):
     #        channelToReplace = "TTBar"
     if "QCDMu" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
         channelToReplace = "QCDMu"
-    if "WJets" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
+    if "WJets" in channelNew and not ("Q2" in channelNew) and not ("Matching" in channelNew):# == "DataMu" or channelNew == "DataMuQCD":
         channelToReplace = "WJets"
     if "ZJets" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
         channelToReplace = "ZJets"
-    if "TTBar" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
+    if "TTBar" in channelNew and not ("Q2" in channelNew) and not ("Matching" in channelNew):# == "DataMu" or channelNew == "DataMuQCD":
         channelToReplace = "TTBar"
-    if "TChannel" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
+    if "TChannel" in channelNew and not ("Q2" in channelNew) and not ("Matching" in channelNew):# == "DataMu" or channelNew == "DataMuQCD":
         channelToReplace = "TChannel"
-    if "TbarChannel" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
+    if "TbarChannel" in channelNew and not ("Q2" in channelNew) and not ("Matching" in channelNew):# == "DataMu" or channelNew == "DataMuQCD":
         channelToReplace = "TbarChannel"
     if "SChannel" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
         channelToReplace = "SChannel"
     if "SbarChannel" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
         channelToReplace = "SbarChannel"
+    if "ToBMuNu" in channelNew and not ("unphys" in channelNew) and not ("0100" in channelNew):# == "DataMu" or channelNew == "DataMuQCD":
+        channelToReplace = "TToBMuNu"
+    if "ToBMuNu_unphys" in channelNew:
+        channelToReplace = "TToBMuNu_unphys"
+    if "ToBMuNu_0100" in channelNew:
+        channelToReplace = "TToBMuNu_0100"
+    if "ToBTauNu" in channelNew and not ("unphys" in channelNew) and not ("0100" in channelNew):# == "DataTau" or channelNew == "DataTauQCD":
+        channelToReplace = "TToBTauNu"
+    if "ToBTauNu_unphys" in channelNew:
+        channelToReplace = "TToBTauNu_unphys"
+    if "ToBTauNu_0100" in channelNew:
+        channelToReplace = "TToBTauNu_0100"
     if "TTBarFullLep" in channelNew:
         channelToReplace = "TTBarFullLep"
     if "TTBarSemiLep" in channelNew:
         channelToReplace = "TTBarSemiLep"
+    if "WJets_Q2Up" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
+        channelToReplace = "WJets_Q2Up"
+    if "WJets_Q2Down" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
+        channelToReplace = "WJets_Q2Down"
+    if "WJets_MatchingUp" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
+        channelToReplace = "WJets_MatchingUp"
+    if "WJets_MatchingDown" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
+        channelToReplace = "WJets_MatchingDown"
     if "WW" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
         channelToReplace = "WW"
     if "WZ" in channelNew:#=="DataMu" or channelNew == "DataEle" or channelNew == "DataMuQCD" or channelNew =="DataEleQCD":
@@ -147,19 +243,43 @@ def changeChannel(fileName,channelOld,channelNew,switch,isMC):
         #        line = "process.source.fileNames = cms.untracked.vstring('"+dataPath+"DataMuMerged.root','"+dataPath+"DataEleMerged.root',)"
         #        line = "process.source.fileNames = cms.untracked.vstring('"+dataPath+"DataMuMerged.root',)"
         #       line = "process.source.fileNames = cms.untracked.vstring('"+dataPath+"Mu_v1Merged.root','"+dataPath+"Mu_v2Merged.root','"+dataPath+"Ele_v1Merged.root','"+dataPath+"Ele_v2Merged.root',)"
-    if "WJets" in channelNew:# == "DataMu" or channelNew == "DataMuQCD":
+    if "WJets" in channelNew and not ("Q2" in channelNew) and not ("Matching" in channelNew):# == "DataMu" or channelNew == "DataMuQCD":
         inputs = "process.source.fileNames = cms.untracked.vstring("
         inputs = inputs +"'"+dataPath+channel+"Merged.root',"
         inputs = inputs.replace(channelToReplace,"WJets")
         inputs = inputs +")"
         o.write(inputs)
-    if "TChannel" in channelNew:# == "DataMu" or channelNew == "DataMuQCD":
+    if "WJets_Q2Down" in channelNew:
+        inputs = "process.source.fileNames = cms.untracked.vstring("
+        inputs = inputs +"'"+dataPath+channel+"Merged.root',"
+        inputs = inputs.replace(channelToReplace,"WJets_Q2Down")
+        inputs = inputs +")"
+        o.write(inputs)
+    if "WJets_Q2Up" in channelNew:
+        inputs = "process.source.fileNames = cms.untracked.vstring("
+        inputs = inputs +"'"+dataPath+channel+"Merged.root',"
+        inputs = inputs.replace(channelToReplace,"WJets_Q2Up")
+        inputs = inputs +")"
+        o.write(inputs)
+    if "WJets_MatchingDown" in channelNew:
+        inputs = "process.source.fileNames = cms.untracked.vstring("
+        inputs = inputs +"'"+dataPath+channel+"Merged.root',"
+        inputs = inputs.replace(channelToReplace,"WJets_MatchingDown")
+        inputs = inputs +")"
+        o.write(inputs)
+    if "WJets_MatchingUp" in channelNew:
+        inputs = "process.source.fileNames = cms.untracked.vstring("
+        inputs = inputs +"'"+dataPath+channel+"Merged.root',"
+        inputs = inputs.replace(channelToReplace,"WJets_MatchingUp")
+        inputs = inputs +")"
+        o.write(inputs)
+    if "TChannel" in channelNew and not ("Q2" in channelNew) and not ("Matching" in channelNew):# == "DataMu" or channelNew == "DataMuQCD":
         inputs = "process.source.fileNames = cms.untracked.vstring("
         inputs = inputs +"'"+dataPath+channel+"Merged.root',"
         inputs = inputs.replace(channelToReplace,"TChannel")
         inputs = inputs +")"
         o.write(inputs)
-    if "TbarChannel" in channelNew:# == "DataMu" or channelNew == "DataMuQCD":
+    if "TbarChannel" in channelNew and not ("Q2" in channelNew) and not ("Matching" in channelNew):# == "DataMu" or channelNew == "DataMuQCD":
         inputs = "process.source.fileNames = cms.untracked.vstring("
         inputs = inputs +"'"+dataPath+channel+"Merged.root',"
         inputs = inputs.replace(channelToReplace,"TbarChannel")
@@ -183,7 +303,7 @@ def changeChannel(fileName,channelOld,channelNew,switch,isMC):
         inputs = inputs.replace(channelToReplace,"ZJets")
         inputs = inputs +")"
         o.write(inputs)
-    if "TTBar" in channelNew:# == "DataMu" or channelNew == "DataMuQCD":
+    if "TTBar" in channelNew and not ("Q2" in channelNew) and not ("Matching" in channelNew):# == "DataMu" or channelNew == "DataMuQCD":
         inputs = "process.source.fileNames = cms.untracked.vstring("
         inputs = inputs +"'"+dataPath+channel+"Merged.root',"
         inputs = inputs.replace(channelToReplace,"TTBar")
@@ -207,7 +327,43 @@ def changeChannel(fileName,channelOld,channelNew,switch,isMC):
         inputs = inputs.replace(channelToReplace,"ZZ")
         inputs = inputs +")"
         o.write(inputs)
-    if "Mu" in channelNew or "Ele" in channelNew:# == "DataMu" or channelNew == "DataMuQCD":
+    if "TToBMuNu" in channelNew and not ("unphys" in channelNew or "0100" in channelNew ):# == "DataMu" or channelNew == "DataMuQCD":
+        inputs = "process.source.fileNames = cms.untracked.vstring("
+        inputs = inputs +"'"+dataPath+channel+"Merged.root',"
+        inputs = inputs.replace(channelToReplace,"TToBMuNu")
+        inputs = inputs +")"
+        o.write(inputs)
+    if "TToBMuNu_0100" in channelNew:
+        inputs = "process.source.fileNames = cms.untracked.vstring("
+        inputs = inputs +"'"+dataPath+channel+"Merged.root',"
+        inputs = inputs.replace(channelToReplace,"TToBMuNu_0100")
+        inputs = inputs +")"
+        o.write(inputs)
+    if "TToBMuNu_unphys" in channelNew:
+        inputs = "process.source.fileNames = cms.untracked.vstring("
+        inputs = inputs +"'"+dataPath+channel+"Merged.root',"
+        inputs = inputs.replace(channelToReplace,"TToBMuNu_unphys")
+        inputs = inputs +")"
+        o.write(inputs)
+    if "TToBTauNu" in channelNew and not ("unphys" in channelNew or "0100" in channelNew ):# == "DataTau" or channelNew == "DataTauQCD":
+        inputs = "process.source.fileNames = cms.untracked.vstring("
+        inputs = inputs +"'"+dataPath+channel+"Merged.root',"
+        inputs = inputs.replace(channelToReplace,"TToBTauNu")
+        inputs = inputs +")"
+        o.write(inputs)
+    if "TToBTauNu_0100" in channelNew:
+        inputs = "process.source.fileNames = cms.untracked.vstring("
+        inputs = inputs +"'"+dataPath+channel+"Merged.root',"
+        inputs = inputs.replace(channelToReplace,"TToBTauNu_0100")
+        inputs = inputs +")"
+        o.write(inputs)
+    if "TToBTauNu_unphys" in channelNew:
+        inputs = "process.source.fileNames = cms.untracked.vstring("
+        inputs = inputs +"'"+dataPath+channel+"Merged.root',"
+        inputs = inputs.replace(channelToReplace,"TToBTauNu_unphys")
+        inputs = inputs +")"
+        o.write(inputs)
+    if ("Mu" in channelNew or "Ele" in channelNew) and not "TTo" in channelNew:# == "DataMu" or channelNew == "DataMuQCD":
         inputs = "process.source.fileNames = cms.untracked.vstring("
         inputs = inputs +"'"+dataPath+channel+"Merged.root',"
 #        inputs = inputs +"'"+dataPath+"Mu_v4p1Merged.root',"
@@ -247,15 +403,15 @@ shutil.copy(fileName,tmpName)
 for channel in channels:
 
     isMC = "False"
-    if "Mu" in channel and not "QCD" in channel:
+    if "Mu" in channel and not "QCD" in channel and not "TTo" in channel:
         channel_instruction = "mu"
-    elif "Ele" in channel and not "QCD" in channel:
+    elif "Ele" in channel and not "QCD" in channel and not "TTo" in channel:
         channel_instruction = "ele"
-    elif "Ele" in channel and not "QCD" in channel:
+    elif "Ele" in channel and not "QCD" in channel and not "TTo" in channel:
         channel_instruction = "ele"
-    elif "Mu" in channel and ("QCD" in channel or "Had" in channel) and not "QCDMu" in channel:
+    elif "Mu" in channel and ("QCD" in channel or "Had" in channel) and not "QCDMu" in channel and not "TTo" in channel:
         channel_instruction = "muqcd"
-    elif "Ele" in channel and "QCD" in channel:
+    elif "Ele" in channel and "QCD" in channel and not "TTo" in channel:
         channel_instruction = "eleqcd"
     else : 
         channel_instruction = "allmc"   
