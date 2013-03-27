@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.16.2.1 2012/11/26 10:26:01 oiorio Exp $
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.16.2.2 2013/03/22 00:22:50 oiorio Exp $
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file
 //
@@ -1018,9 +1018,9 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
     JEC_PATH = "./";
 
     jecUnc  = new JetCorrectionUncertainty(*(new JetCorrectorParameters("Summer12_V2_DATA_AK5PF_UncertaintySources.txt", "Total")));
-    JES_SW = 0.015;
-    JES_b_cut = 0.02;
-    JES_b_overCut = 0.03;
+    JES_SW = 0.0;
+    JES_b_cut = 0.0;
+    JES_b_overCut = 0.0;
 
 
     //JetResolution part
@@ -3555,19 +3555,7 @@ double SingleTopSystematicsTreesDumper::jetUncertainty(double eta, double ptCorr
 {
     jecUnc->setJetEta(eta);
     jecUnc->setJetPt(ptCorr);
-    double JetCorrection = jecUnc->getUncertainty(true); // In principle, boolean controls if uncertainty on +ve or -ve side is returned (asymmetric errors) but not yet implemented.
-    bool cut = ptCorr > 50 && ptCorr < 200 && fabs(eta) < 2.0;
-    // JES_SW = 0.015;
-    //  double JES_PU=0.75*0.8*2.2/ptCorr;
-    double JES_PU = 0.; //We are using pfNoPU must understand what value to put there
-    double JES_b = 0;
-    if (abs(flavour) == 5)
-    {
-        if (cut) JES_b = JES_b_cut;
-        else JES_b = JES_b_overCut;
-    }
-    //    float JESUncertaintyTmp = sqrt(JESUncertainty*JESUncertainty + JetCorrection*JetCorrection);
-    return sqrt(JES_b * JES_b + JES_PU * JES_PU + JES_SW * JES_SW + JetCorrection * JetCorrection);
+    double JetCorrection = jecUnc->getUncertainty(true);
     return JetCorrection;
 }
 
