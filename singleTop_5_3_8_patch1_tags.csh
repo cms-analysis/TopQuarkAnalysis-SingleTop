@@ -12,7 +12,7 @@ cvs co -r V00-00-08      RecoMET/METAnalyzers
 cvs co -r V00-00-13      RecoMET/METFilters                               
 cvs co -r V03-03-12-02   RecoMET/METProducers                             
 cvs co -r V15-02-06      RecoParticleFlow/PFProducer     
-cvs co -r V00-00-30      -d EGamma/EGammaAnalysisTools UserCode/EGamma/EGammaAnalysisTools
+cvs co -r V00-00-30-01   -d EGamma/EGammaAnalysisTools UserCode/EGamma/EGammaAnalysisTools
 cd EGamma/EGammaAnalysisTools/data
 cat download.url | xargs wget                      
 
