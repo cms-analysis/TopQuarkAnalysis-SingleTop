@@ -124,10 +124,6 @@ patElectrons.electronIDSources = electronIDSources
 
 #makeNewPatElectrons = cms.Sequence(patElectronIDs * patElectronIsolation * patElectrons)
 
-patElectrons.usePV = cms.bool(False)
-patMuons.usePV = cms.bool(False)
-
-
 #In those paths the customized collections are produced
 
 basePath = cms.Sequence(
