@@ -137,6 +137,7 @@ basePath = cms.Sequence(
           UnclusteredMETPF +
        #   UnclusteredType1METPF +
           genJetsPF +
+          genAllJetsPF +
           NVertices +
           NGenParticles +
           tightMuonsZeroIso +

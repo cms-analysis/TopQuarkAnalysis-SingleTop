@@ -47,6 +47,10 @@ genJetsPF = cms.EDProducer("SingleTopGenJetPtEtaProducer",
                                                     jetsSource = cms.InputTag("topJetsPF"),
                                                     )
 
+genAllJetsPF = cms.EDProducer("SingleTopGenJetPtEtaProducer",
+                              jetsSource = cms.InputTag("selectedPatJets"),
+                              )
+
 
 #PDF Info
 NVertices = cms.EDProducer("SingleTopPileUpProducer")
