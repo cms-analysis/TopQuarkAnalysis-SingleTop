@@ -27,20 +27,7 @@ preselectedJets = cms.EDFilter("PATJetSelector",
   filter = cms.bool(False)                                
 )
 
-#UnclusteredMET
-UnclusteredMETPF = cms.EDProducer("SingleTopUnclusteredMETProducer",
-                                  metSource = cms.InputTag("patMETs"),
-                                  jetsSource = cms.InputTag("selectedPatJets"),
-                                  electronsSource = cms.InputTag("selectedPatElectrons"),
-                                  muonsSource = cms.InputTag("selectedPatMuons"),
-                                  )
 
-UnclusteredType1METPF = cms.EDProducer("SingleTopUnclusteredMETProducer",
-                                                                         metSource = cms.InputTag("patType1CorrectedPFMet"),
-                                                                         jetsSource = cms.InputTag("selectedPatJets"),
-                                                                         electronsSource = cms.InputTag("patElectrons"),
-                                                                         muonsSource = cms.InputTag("patMuons"),
-                                                                         )
 
 #genJets:
 genJetsPF = cms.EDProducer("SingleTopGenJetPtEtaProducer",
@@ -71,7 +58,17 @@ topJetsPF = cms.EDProducer("SingleTopJetsProducer",
                          puChargedID  = cms.InputTag("puJetMvaChs","fullId"),
                          puIDVariables  = cms.InputTag("puJetId"),
                          removeOverlap = cms.untracked.bool(False),
+                         isData = cms.untracked.bool(False),
+                         JESUncertaintiesPath = cms.FileInPath("TopQuarkAnalysis/SingleTop/test/Fall12_V7_DATA_UncertaintySources_AK5PFchs.txt")
                            )
+
+UnclusteredMETPF = cms.EDProducer("SingleTopUnclusteredMETProducer",
+                                  metSource = cms.InputTag("patMETs"),
+                                  jetsSource = cms.InputTag("selectedPatJets"),
+                                  electronsSource = cms.InputTag("selectedPatElectrons"),
+                                  muonsSource = cms.InputTag("selectedPatMuons"),
+                                  )
+
 
 tightElectrons = cms.EDProducer("SingleTopElectronProducer",
   src = cms.InputTag("selectedPatElectrons"),
@@ -105,15 +102,18 @@ tightMuonsZeroIso = cms.EDProducer("SingleTopMuonProducer",
 )
 
 #Met skim part
-preselectedMETs = cms.EDFilter("PATMETSelector",
-  src = cms.InputTag("patMETs"),
-  cut = cms.string('pt >   0'),
-  filter = cms.bool(False)                                
-)
-
+topMETsPF = cms.EDProducer("SingleTopMETsProducer",
+                         electronsSrc = cms.InputTag("selectedPatElectrons"),
+                         metsSrc = cms.InputTag("patType1CorrectedPFMet"),
+                         metsUnclUpSrc = cms.InputTag("patType1CorrectedPFMetUnclusteredEnUp"),
+                         metsUnclDownSrc = cms.InputTag("patType1CorrectedPFMetUnclusteredEnDown"),
+                         jetsSrc = cms.InputTag("selectedPatJets"),
+                         muonsSrc = cms.InputTag("selectedPatMuons"),
+                         isData = cms.untracked.bool(False),
+                         JESUncertaintiesPath = cms.FileInPath("TopQuarkAnalysis/SingleTop/test/Fall12_V7_DATA_UncertaintySources_AK5PFchs.txt")
+                         )
 
 #Part of MC Truth particles production
-
 MCTruthParticles = cms.EDProducer("SingleTopMCProducer",
                                   genParticlesSource = cms.InputTag("genParticles")
                                   )

@@ -88,6 +88,10 @@ process.patseq = cms.Sequence(
     getattr(process,"patPF2PATSequence"+postfix) #+process.triggerMatchingSequence
     )
 
+process.topMETsPF.metsSrc = cms.InputTag("patMETs")
+process.topMETsPF.isData = isData
+process.topJetsPF.isData = isData
+
 #Define anti-isolated muons/electrons:
 
 #Muons:
@@ -114,8 +118,8 @@ process.ZeroIsoLeptonSequence = cms.Sequence(
          )
 
 #Set max number of events:
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(300) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 #Input file:
 process.source = cms.Source ("PoolSource",

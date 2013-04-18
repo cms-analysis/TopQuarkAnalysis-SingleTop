@@ -109,6 +109,64 @@ nTupleTopJetsPF = cms.EDProducer(
     tag = cms.untracked.string("JetCorrTotal"),
     quantity = cms.untracked.string("jecFactor('Uncorrected')")
     ),
+    #Smearing factor: by default the jet pt is smeared 
+    cms.PSet(
+    tag = cms.untracked.string("Smear"),
+    quantity = cms.untracked.string("userFloat('jer_smear')")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("SmearUp"),
+    quantity = cms.untracked.string("userFloat('jer_smear_up')")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("SmearDown"),
+    quantity = cms.untracked.string("userFloat('jer_smear_down')")
+    ),
+    #Total uncertainty
+    cms.PSet(
+    tag = cms.untracked.string("TotalUncertainty"),
+    quantity = cms.untracked.string("userFloat('JESUncertaintyTotalShift')")
+    ),
+    #Systematics momenta:
+    cms.PSet(
+    tag = cms.untracked.string("PtJESUp"),
+    quantity = cms.untracked.string("userFloat('pt_jes_up')")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("PtJESDown"),
+    quantity = cms.untracked.string("userFloat('pt_jes_down')")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("EJESUp"),
+    quantity = cms.untracked.string("userFloat('e_jes_up')")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("EJESDown"),
+    quantity = cms.untracked.string("userFloat('e_jes_down')")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("PtJERUp"),
+    quantity = cms.untracked.string("userFloat('pt_jer_up')")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("PtJERDown"),
+    quantity = cms.untracked.string("userFloat('pt_jer_down')")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("EJERUp"),
+    quantity = cms.untracked.string("userFloat('e_jer_up')")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("EJERDown"),
+    quantity = cms.untracked.string("userFloat('e_jer_down')")
+    ),
+    #no Jer Pt
+    cms.PSet(
+    tag = cms.untracked.string("PtNoJER"),
+    quantity = cms.untracked.string("userFloat('pt_no_jer')")
+    ),
+
+
     )
 )
 
@@ -119,20 +177,84 @@ nTupleVertices = cms.EDProducer(
 
 nTuplePatMETsPF = cms.EDProducer(
     "CandViewNtpProducer",
-    src = cms.InputTag("patMETsPF"),
+    src = cms.InputTag("topMETsPF"),
     lazyParser = cms.untracked.bool(True),
     prefix = cms.untracked.string("patMETsPF"),
     variables = cms.VPSet(
-
+    
     cms.PSet(
     tag = cms.untracked.string("Pt"),
     quantity = cms.untracked.string("pt")
     ),
-
     cms.PSet(
     tag = cms.untracked.string("Phi"),
     quantity = cms.untracked.string("phi")
     ),
+
+    cms.PSet(
+    tag = cms.untracked.string("PtNoJER"),
+    quantity = cms.untracked.string("userFloat(\"pt_no_jer\")")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("PhiNoJER"),
+    quantity = cms.untracked.string("userFloat(\"phi_no_jer\")")
+    ),
+
+    cms.PSet(
+    tag = cms.untracked.string("PtUnclusteredUp"),
+    quantity = cms.untracked.string("userFloat('pt_uncl_up')")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("PhiUnclusteredUp"),
+    quantity = cms.untracked.string("userFloat('phi_uncl_up')")
+    ),
+
+    cms.PSet(
+    tag = cms.untracked.string("PtJESUp"),
+    quantity = cms.untracked.string("userFloat('pt_jes_up')")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("PhiJESUp"),
+    quantity = cms.untracked.string("userFloat('phi_jes_up')")
+    ),
+
+    cms.PSet(
+    tag = cms.untracked.string("PtJERUp"),
+    quantity = cms.untracked.string("userFloat('pt_jer_up')")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("PhiJERUp"),
+    quantity = cms.untracked.string("userFloat('phi_jer_up')")
+    ),
+    
+    cms.PSet(
+    tag = cms.untracked.string("PtUnclusteredDown"),
+    quantity = cms.untracked.string("userFloat('pt_uncl_down')")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("PhiUnclusteredDown"),
+    quantity = cms.untracked.string("userFloat('phi_uncl_down')")
+    ),
+
+    cms.PSet(
+    tag = cms.untracked.string("PtJESDown"),
+    quantity = cms.untracked.string("userFloat('pt_jes_down')")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("PhiJESDown"),
+    quantity = cms.untracked.string("userFloat('phi_jes_down')")
+    ),
+
+    cms.PSet(
+    tag = cms.untracked.string("PtJERDown"),
+    quantity = cms.untracked.string("userFloat('pt_jer_down')")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("PhiJERDown"),
+    quantity = cms.untracked.string("userFloat('phi_jer_down')")
+    ),
+    
+
     
     )
     )
@@ -175,6 +297,10 @@ nTupleElectrons = cms.EDProducer(
     quantity = cms.untracked.string('(chargedHadronIso+ neutralHadronIso + photonIso)/pt'),
     ),
     #ID
+    cms.PSet(
+    tag = cms.untracked.string("PassesTrigTightID"),
+    quantity = cms.untracked.string("userFloat(\"PassesTriggerTightID\")"),
+    ),
     cms.PSet(
     tag = cms.untracked.string("PassesTightID"),
     quantity = cms.untracked.string("userFloat(\"PassesTightID\")"),
@@ -642,7 +768,6 @@ saveNTuplesSkim = cms.untracked.vstring(
     'keep floats_nTupleAllJets_*_*',
     'keep floats_nTuplePatMETsPF_*_*',
     'keep floats_nTupleTopJetsPF_*_*',
-    'keep *_UnclusteredMETPF_*_*',
     'keep *_NVertices_*_*',
     'keep *_NGenParticles_*_*',
     'keep floats_nTuplePatType1METsPF_*_*',

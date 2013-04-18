@@ -12,7 +12,7 @@ fileName = "SingleTopSystematicsWithTrigger_cfg.py"
 
 #Channels to include
 channels = [
-"TTBar_MassUp"
+#"TTBar_MassUp"
 #"TToBTauNu_unphys_part_1","TToBTauNu_unphys_part_2","TToBTauNu_unphys_part_3",
 #"TToBTauNu_0100_part_1","TToBTauNu_0100_part_2","TToBTauNu_0100_part_3",
 #"TToBMuNu_unphys_part_1","TToBMuNu_unphys_part_2","TToBMuNu_unphys_part_3",
@@ -48,8 +48,8 @@ channels = [
 #"QCD_Pt_30to80_EMEnriched","QCD_Pt_30to80_BCtoE","QCD_Pt_80to170_BCtoE",
 #"TbarChannel",
 
-#"TChannel_part_1","TChannel_part_2","TChannel_part_3",
-#"TbarChannel_part_1","TbarChannel_part_2","TbarChannel_part_3",
+"TChannel_part_1","TChannel_part_2","TChannel_part_3","TChannel_part_4","TChannel_part_5",
+"TbarChannel_part_1","TbarChannel_part_2","TbarChannel_part_3","TbarChannel_part_4","TbarChannel_part_5",
 #"TWChannel", "TbarWChannel",
 
 #"SChannel_part_1", "SChannel_part_2", "SChannel_part_3", "SChannel_part_4", "SChannel_part_5",

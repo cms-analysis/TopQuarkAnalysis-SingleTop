@@ -14,8 +14,6 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff") ### real data
 process.GlobalTag.globaltag = cms.string("START52_V9::All")
 
-
-
 #Load B-Tag
 #MC measurements from 36X
 #process.load ("RecoBTag.PerformanceDB.PoolBTagPerformanceDBMC36X")
@@ -35,8 +33,9 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
 #'file:/tmp/oiorio/edmntuple_TTBar.root',
-'file:edmntuple_TChannel.root',
-#'file:edmntuple_TChannel_4_1_px5.root',
+#'file:edmntuple_TChannel.root',
+'file:singleTopEdmNtuple_TChannel_GSF.root'
+#'edmntuple_TChannel_4_1_px5.root',
 ),
 duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
 #eventsToProcess = cms.untracked.VEventRange('1:19517967-1:19517969'),

@@ -3,8 +3,9 @@ import FWCore.ParameterSet.Config as cms
 TreesEle = cms.EDAnalyzer('SingleTopSystematicsTreesDumper',                              
 #General Info
 #systematics = cms.untracked.vstring("BTagUp","BTagDown","MisTagUp","MisTagDown","JESUp","JESDown","UnclusteredMETUp","UnclusteredMETDown","PUUp","PUDown"),
-systematics = cms.untracked.vstring("JESUp","JESDown","UnclusteredMETUp","UnclusteredMETDown","JERUp","JERDown"),
-#systematics = cms.untracked.vstring("JESUp","JESDown","UnclusteredMETUp","UnclusteredMETDown"),
+#systematics = cms.untracked.vstring("JESUp","JESDown","UnclusteredMETUp","UnclusteredMETDown","JERUp","JERDown"),
+#systematics = cms.untracked.vstring("JESUp","JESDown","JERUp","JERDown"),
+systematics = cms.untracked.vstring("JESUp","JESDown","UnclusteredMETUp","UnclusteredMETDown"),
 #systematics = cms.untracked.vstring(""),
 doBScan = cms.untracked.bool(True),
 #rateSystematics = cms.untracked.vstring("WLightRateUp",                                        "WLightRateDown",                                        "TTBarRateUp",                                        "Ttbarratedown ",                                        "WHFRateUp",                                        "WHFRateDown"),
@@ -103,10 +104,20 @@ leptonsFlavour = cms.untracked.string("electron"),
 
 genJetsPt =cms.InputTag("genJetsPF","genJetsPt"),  
 genJetsEta =cms.InputTag("genJetsPF","genJetsEta"),  
+
+#genAllJetsPt =cms.InputTag("genAllJetsPF","genJetsPt"),  
+#genAllJetsEta =cms.InputTag("genAllJetsPF","genJetsEta"),  
 #genJetsPt =cms.InputTag("nTupleTopJetsPF","topJetsPFPt"),  
 #genJetsEta =cms.InputTag("nTupleTopJetsPF","topJetsPFEta"),  
 
+allJetsPt = cms.InputTag("nTupleAllJets","allJetsPt"),  
+allJetsPhi = cms.InputTag("nTupleAllJets","allJetsPhi"),  
+allJetsEta = cms.InputTag("nTupleAllJets","allJetsEta"),  
+allJetsFlavour = cms.InputTag("nTupleAllJets","allJetsFlavour"),  
+
+
 jetsPt = cms.InputTag("nTupleTopJetsPF","topJetsPFPt"),  
+#jetsPt = cms.InputTag("nTupleTopJetsPF","topJetsPFPtNoJER"),  
 jetsPhi = cms.InputTag("nTupleTopJetsPF","topJetsPFPhi"),  
 jetsEta = cms.InputTag("nTupleTopJetsPF","topJetsPFEta"),  
 jetsEnergy = cms.InputTag("nTupleTopJetsPF","topJetsPFE"),  
@@ -133,7 +144,12 @@ jetsCorrTotal = cms.InputTag("nTupleTopJetsPF","topJetsPFJetCorrTotal"),
 #MET 
 
 METPhi = cms.InputTag("nTuplePatMETsPF","patMETsPFPhi"),
+#METPhi = cms.InputTag("nTuplePatMETsPF","patMETsPFPhiNoJER"),
 METPt = cms.InputTag("nTuplePatMETsPF","patMETsPFPt"),
+#METPt = cms.InputTag("nTuplePatMETsPF","patMETsPFPtNoJER"),
+
+#UnclusteredMETPx = cms.InputTag("nTuplePatMETsPF","patMETsPFPtUnclusteredUp"),
+#UnclusteredMETPy = cms.InputTag("nTuplePatMETsPF","patMETsPFPtUnclusteredUp"),
 
 UnclusteredMETPx = cms.InputTag("UnclusteredMETPF","UnclusteredMETPx"),
 UnclusteredMETPy = cms.InputTag("UnclusteredMETPF","UnclusteredMETPy"),

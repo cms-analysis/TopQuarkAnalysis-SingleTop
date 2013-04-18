@@ -93,8 +93,6 @@ goodVertices = cms.EDFilter( "VertexSelector" ,
                                cut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.rho < 2")
                              )
 
-nTuplePatMETsPF.src = cms.InputTag('patMETs')
-
 
 from RecoEgamma.ElectronIdentification.electronIdSequence_cff import *
 from EGamma.EGammaAnalysisTools.electronIdMVAProducer_cfi import *
@@ -127,15 +125,14 @@ patElectrons.electronIDSources = electronIDSources
 #In those paths the customized collections are produced
 
 basePath = cms.Sequence(
-    preselectedMETs +
           vetoMuons +
           PVFilterProducer +
           vetoElectrons +
           vetoElectronsMVA +
        #   zVetoElectrons +
           topJetsPF +
+          topMETsPF +
           UnclusteredMETPF +
-       #   UnclusteredType1METPF +
           genJetsPF +
           genAllJetsPF +
           NVertices +
@@ -148,20 +145,19 @@ basePath = cms.Sequence(
           )
 
 basePathData = cms.Sequence(
-       preselectedMETs +
           vetoMuons +
           PVFilterProducer +
           vetoElectrons +
           vetoElectronsMVA +
-          topJetsPF +
           UnclusteredMETPF +
+          topJetsPF +
+          topMETsPF +
           tightMuonsZeroIso +
           tightElectronsZeroIso +
           tightMuons +
           tightElectrons 
           #  SingleTopMCProducer +
          )
-
 
 #PV Filter
 pvfilters = cms.Sequence(

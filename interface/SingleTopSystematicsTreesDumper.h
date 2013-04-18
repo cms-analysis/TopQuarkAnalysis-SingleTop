@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  *
  * Produces systematics histograms out of a standard Single Top n-tuple
- * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.14.2.1 2012/11/26 10:26:00 oiorio Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.14.2.2 2013/03/22 00:22:47 oiorio Exp $
  */
 
 
@@ -296,6 +296,10 @@ private:
     MCTopWsMotherId_,
     MCTopWsDauOneId_,
 
+    allJetsPt_,
+    allJetsPhi_,
+    allJetsEta_,
+    allJetsFlavour_,
     
     genJetsPt_,
     genJetsEta_,
@@ -364,7 +368,11 @@ private:
     looseMuonsDeltaCorrectedRelIso,
     looseMuonsRhoCorrectedRelIso,
     
-    
+    allJetsPt,
+    allJetsPhi,
+    allJetsEta,
+    allJetsFlavour,    
+
     jetsEta,
     jetsPt,
     jetsPhi,
@@ -727,7 +735,7 @@ float    MCTopsPtVec[2],
         jetprobs_b3down ;
 
     double leptonRelIsoQCDCutUpper, leptonRelIsoQCDCutLower;
-  bool gotLeptons, gotJets, gotMets, gotLooseLeptons, gotPU, gotQCDLeptons, gotPV,gotPDFs;
+  bool gotLeptons, gotJets, gotAllJets, gotMets, gotLooseLeptons, gotPU, gotQCDLeptons, gotPV,gotPDFs;
 
   int nb, nc, nudsg, ntchpt_tags, ncsvm_tags, ncsvt_tags,ncsvl_tags,
         nbNoSyst, ncNoSyst, nudsgNoSyst,

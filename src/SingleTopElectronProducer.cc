@@ -2,7 +2,7 @@
  *\Author: A. Orso M. Iorio 
  *
  *
- *\version  $Id: SingleTopElectronProducer.cc,v 1.7.12.4.4.2 2013/03/22 00:22:48 oiorio Exp $ 
+ *\version  $Id: SingleTopElectronProducer.cc,v 1.7.12.4.4.3 2013/04/05 09:09:13 fabozzi Exp $ 
  */
 
 // Single Top producer: produces a top candidate made out of a Lepton, a B jet and a MET
@@ -128,6 +128,7 @@ void SingleTopElectronProducer::produce(edm::Event & iEvent, const edm::EventSet
   for(size_t i = 0; i < initialElectrons->size(); ++i){
     
     bool passes = true;
+    bool passesTriggerTight = true;    
     bool passesTight = true;    
     bool passesVeto = true; 
     bool passesLoose = true;
@@ -162,9 +163,13 @@ void SingleTopElectronProducer::produce(edm::Event & iEvent, const edm::EventSet
     double iso_ch = el.chargedHadronIso();
     double iso_em = el.photonIso();
     double iso_nh =  el.neutralHadronIso();
+
+    float trackIso      = el.dr03TkSumPt();
+    float ecalIso       = el.dr03EcalRecHitSumEt();
+    float hcalIso       = el.dr03HcalTowerSumEt();
     
     bool isEB           = el.isEB() ? true : false;
-    float pt            = el.pt();
+    float pt            = el.ecalDrivenMomentum().pt();
     float eta           = el.superCluster()->eta();
     
     // id variables                                                                                                                                                    
@@ -183,7 +188,10 @@ void SingleTopElectronProducer::produce(edm::Event & iEvent, const edm::EventSet
     //  " vtxFitConversion " << vtxFitConversion << " mHits " << mHits << " rhoD " <<rhoD <<  std::endl;
     
     
-    bool id = EgammaCutBasedEleId::PassWP(EgammaCutBasedEleId::TIGHT, isEB, pt, eta, dEtaIn, dPhiIn, sigmaIEtaIEta, hoe, ooemoop, dxy, dz, iso_ch, iso_em, iso_nh, vtxFitConversion, mHits, rhoD);
+    bool id = EgammaCutBasedEleId::PassTriggerCuts(EgammaCutBasedEleId::TRIGGERTIGHT, isEB, pt, dEtaIn, dPhiIn, sigmaIEtaIEta, hoe, trackIso, ecalIso, hcalIso);
+    passesTriggerTight = passesTriggerTight && id; 
+    
+    id = EgammaCutBasedEleId::PassWP(EgammaCutBasedEleId::TIGHT, isEB, pt, eta, dEtaIn, dPhiIn, sigmaIEtaIEta, hoe, ooemoop, dxy, dz, iso_ch, iso_em, iso_nh, vtxFitConversion, mHits, rhoD);
     passesTight = passesTight && id;
     
     id = EgammaCutBasedEleId::PassWP(EgammaCutBasedEleId::LOOSE, isEB, pt, eta, dEtaIn, dPhiIn, sigmaIEtaIEta, hoe, ooemoop, dxy, dz, iso_ch, iso_em, iso_nh, vtxFitConversion, mHits, rhoD);
@@ -191,7 +199,9 @@ void SingleTopElectronProducer::produce(edm::Event & iEvent, const edm::EventSet
     
     id = EgammaCutBasedEleId::PassWP(EgammaCutBasedEleId::VETO, isEB, pt, eta, dEtaIn, dPhiIn, sigmaIEtaIEta, hoe, ooemoop, dxy, dz, iso_ch, iso_em, iso_nh, vtxFitConversion, mHits, rhoD);
     passesVeto = passesVeto && id;
+
     
+    el.addUserFloat("PassesTriggerTightID",(float)passesTriggerTight);
     el.addUserFloat("PassesTightID",(float)passesTight);
     el.addUserFloat("PassesVetoID",(float)passesVeto);
     el.addUserFloat("PassesLooseID",(float)passesLoose);

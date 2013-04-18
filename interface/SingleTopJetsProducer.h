@@ -9,7 +9,7 @@
  * \Author A. Orso M. Iorio
  * 
  *
- *\version  $Id: SingleTopJetsProducer.h,v 1.2.12.2 2012/07/30 14:43:08 oiorio Exp $
+ *\version  $Id: SingleTopJetsProducer.h,v 1.2.12.3 2012/08/15 09:36:37 oiorio Exp $
  *
  *
 */
@@ -57,13 +57,17 @@
 #include "CommonTools/Utils/interface/StringObjectFunction.h"
 #include "CommonTools/Utils/interface/StringCutObjectSelector.h"
 
+#include "CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h"
+#include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
+
+#include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
+
 
 //#include "TLorentzVector.h"
 #include "TopQuarkAnalysis/SingleTop/interface/EquationSolver.h"
 
 #include "CMGTools/External/interface/PileupJetIdentifier.h"
-
-//class JetFlavourIdentifier;
+#include "FWCore/ParameterSet/interface/FileInPath.h"
 
 
 //namespace pat {
@@ -82,10 +86,12 @@
   
     edm::InputTag src_,PUFullDiscriminant_,PUFullID_,PUChargedDiscriminant_,PUChargedID_,PUIDVariables_,electronsSrc_;
     std::string cut_;
-      
+    JetCorrectionUncertainty *jecUnc;
+    
+  
     typedef StringCutObjectSelector<pat::Jet> Selector;
 
-    bool removeOverlap_;
+    bool removeOverlap_, isData_;
 
     edm::Handle<std::vector<pat::Jet> > jets;
     edm::Handle<edm::View<pat::Jet> > vjets;
@@ -97,6 +103,9 @@
     edm::Handle<edm::ValueMap<int> > puFullJetIdFlag;
     edm::Handle<edm::ValueMap<float> > puChargedJetIdMVA;
     edm::Handle<edm::ValueMap<int> > puChargedJetIdFlag;
+    edm::FileInPath JESUncertaintiesPath_;
+    double resolSF(double eta, std::string syst);
+    
   };
 //}
 

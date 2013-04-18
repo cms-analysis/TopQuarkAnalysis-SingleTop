@@ -36,8 +36,8 @@ import HLTrigger.HLTfilters.triggerResultsFilter_cfi as triggerFilter
 
 process.HLTFilterMu2012  = triggerFilter.triggerResultsFilter.clone(
     hltResults = cms.InputTag( "TriggerResults","","HLT" ),
-    triggerConditions = ["HLT_*"],#All trigger paths are included in the skim
-#    triggerConditions = ["HLT_IsoMu24_eta2p1_v*"],
+#    triggerConditions = ["HLT_*"],#All trigger paths are included in the skim
+    triggerConditions = ["HLT_IsoMu24_eta2p1_v*"],
 #    triggerConditions = ["HLT_Ele27_WP80_v*"],
     l1tResults = '',
     throw = False
@@ -64,8 +64,10 @@ from PhysicsTools.PatUtils.tools.metUncertaintyTools import *
 Postfix = ""
 runOnMC = True
 jetAlgoName = "AK5"
-usePF2PAT(process, runPF2PAT=True, jetAlgo=jetAlgoName, runOnMC=runOnMC, postfix=Postfix, jetCorrections=('AK5PFchs',['L1FastJet','L2Relative','L3Absolute']), pvCollection=cms.InputTag('goodOfflinePrimaryVertices'),  typeIMetCorrections=True)
+usePF2PAT(process, runPF2PAT=True, jetAlgo=jetAlgoName, runOnMC=runOnMC, postfix=Postfix, jetCorrections=('AK5PFchs',['L1FastJet','L2Relative','L3Absolute']), pvCollection=cms.InputTag('goodOfflinePrimaryVertices'),  typeIMetCorrections=False)
 
+from PhysicsTools.PatUtils.tools.metUncertaintyTools import runMEtUncertainties
+runMEtUncertainties(process,electronCollection = "selectedPatElectrons", doSmearJets= False, muonCollection = "selectedPatMuons", tauCollection="selectedPatTaus", jetCollection = "selectedPatJets")
 
 #Trigger matching:
 switchOnTriggerMatchEmbedding(process,triggerMatchers = ['PatMuonTriggerMatchHLTIsoMu24','PatJetTriggerMatchHLTIsoMuBTagIP'])
@@ -73,7 +75,6 @@ switchOnTriggerMatchEmbedding(process,triggerMatchers = ['PatMuonTriggerMatchHLT
 #PF no Pileup:
 process.pfPileUp.Enable = True
 process.load("CMGTools.External.pujetidsequence_cff")
-
 process.pfPileUp.checkClosestZVertex = cms.bool(False)
 
 #Use DR = 0.3 for electrons:
@@ -122,7 +123,7 @@ process.ZeroIsoLeptonSequence = cms.Sequence(
          )
 
 #Set max number of events:
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(50) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 #Input file:
@@ -163,12 +164,12 @@ savePatTupleSkimLoose = cms.untracked.vstring(
     'keep patMuons_selectedPatMuons_*_*',
     'keep patMuons_selectedPatMuonsTriggerMatch_*_*',
     'keep patJets_selectedPatJetsTriggerMatch_*_*',
-
+    
     'keep patElectrons_selectedPatElectrons_*_*',
     'keep patJets_selectedPatJets_*_*',
     'keep patMETs_patMETs_*_*',
     'keep *_kt6PFJets_rho_*',
-
+    
     'keep patJets_topJetsPF_*_*',
     'keep patMuons_vetoMuons_*_*',
     'keep *_vetoElectrons_*_*',
@@ -176,12 +177,13 @@ savePatTupleSkimLoose = cms.untracked.vstring(
     'keep patMuons_tightMuons_*_*',
     'keep patMuons_tightMuonsTest_*_*',
     'keep *_tightElectrons_*_*',
-
+    'keep *_topMETsPF_*_*',
+    
     "keep *_TriggerResults_*_*",#Trigger results
     "keep *_PatMuonTriggerMatchHLTIsoMu24_*_*",#Trigger matches
-
+    
     'keep *_PDFInfo_*_*',
-
+    
     'keep *_patElectronsZeroIso_*_*',
     'keep *_patMuonsZeroIso_*_*',
 #    'keep *_kt6PFJetsCentral_*_*',
