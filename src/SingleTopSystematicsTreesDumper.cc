@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumperLight.cc,v 1.12.2.18.2.16.2.3 2013/03/27 14:23:51 oiorio Exp $
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.16.2.3 2013/03/27 14:23:51 oiorio Exp $
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file
 //
@@ -14,7 +14,7 @@
 #define MC_DEBUG 0 // 0=false   else -> dont process preselection
 #define C_DEBUG  0 // currently debuging
 
-#include "TopQuarkAnalysis/SingleTop/interface/SingleTopSystematicsTreesDumperLight.h"
+#include "TopQuarkAnalysis/SingleTop/interface/SingleTopSystematicsTreesDumper.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "FWCore/Common/interface/TriggerNames.h"
 //#include "PhysicsTools/UtilAlgos/interface/TFileService.h"
@@ -46,7 +46,7 @@ double getQ2max(int nset, int member);
 void extrapolate(bool extrapolate = true);
 }
 
-SingleTopSystematicsTreesDumperLight::SingleTopSystematicsTreesDumperLight(const edm::ParameterSet &iConfig)
+SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::ParameterSet &iConfig)
 {
     //MCLightQuarkProducer   = iConfig.getParameter<InputTag>("MCLightQuarkProducer");
     systematics = iConfig.getUntrackedParameter<std::vector<std::string> >("systematics");
@@ -1057,7 +1057,7 @@ SingleTopSystematicsTreesDumperLight::SingleTopSystematicsTreesDumperLight(const
     isFirstEvent = true;
 }
 
-void SingleTopSystematicsTreesDumperLight::initBranchVars()
+void SingleTopSystematicsTreesDumper::initBranchVars()
 {
 #define INT_NAN 9999
 #define FLOAT_NAN 9999.0
@@ -1227,7 +1227,7 @@ void SingleTopSystematicsTreesDumperLight::initBranchVars()
 
 }
 
-void SingleTopSystematicsTreesDumperLight::analyze(const Event &iEvent, const EventSetup &iSetup)
+void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSetup &iSetup)
 {
 
     initBranchVars();
@@ -1732,17 +1732,17 @@ void SingleTopSystematicsTreesDumperLight::analyze(const Event &iEvent, const Ev
 
         if (syst_name == "UnclusteredMETUp")
         {
-	  iEvent.getByLabel(UnclMETPx_, UnclMETPx);
-	  iEvent.getByLabel(UnclMETPy_, UnclMETPy);
-	  metPx += (*UnclMETPx) * 0.1;
-	  metPy += (*UnclMETPy) * 0.1;
+            iEvent.getByLabel(UnclMETPx_, UnclMETPx);
+            iEvent.getByLabel(UnclMETPy_, UnclMETPy);
+            metPx += (*UnclMETPx) * 0.1;
+            metPy += (*UnclMETPy) * 0.1;
         }
         if (syst_name == "UnclusteredMETDown")
         {
-	  iEvent.getByLabel(UnclMETPx_, UnclMETPx);
-	  iEvent.getByLabel(UnclMETPy_, UnclMETPy);
-	  metPx -= (*UnclMETPx) * 0.1;
-	  metPy -= (*UnclMETPy) * 0.1;
+            iEvent.getByLabel(UnclMETPx_, UnclMETPx);
+            iEvent.getByLabel(UnclMETPy_, UnclMETPy);
+            metPx -= (*UnclMETPx) * 0.1;
+            metPy -= (*UnclMETPy) * 0.1;
         }
 
 
@@ -2015,15 +2015,15 @@ void SingleTopSystematicsTreesDumperLight::analyze(const Event &iEvent, const Ev
 
         if (syst_name == "UnclusteredMETUp")
         {
-	  iEvent.getByLabel(UnclMETPx_, UnclMETPx);
-	  iEvent.getByLabel(UnclMETPy_, UnclMETPy);
+            iEvent.getByLabel(UnclMETPx_, UnclMETPx);
+            iEvent.getByLabel(UnclMETPy_, UnclMETPy);
             metPx += (*UnclMETPx) * 0.1;
             metPy += (*UnclMETPy) * 0.1;
         }
         if (syst_name == "UnclusteredMETDown")
         {
-	  iEvent.getByLabel(UnclMETPx_, UnclMETPx);
-	  iEvent.getByLabel(UnclMETPy_, UnclMETPy);
+            iEvent.getByLabel(UnclMETPx_, UnclMETPx);
+            iEvent.getByLabel(UnclMETPy_, UnclMETPy);
             metPx -= (*UnclMETPx) * 0.1;
             metPy -= (*UnclMETPy) * 0.1;
         }
@@ -2046,9 +2046,9 @@ void SingleTopSystematicsTreesDumperLight::analyze(const Event &iEvent, const Ev
 
             iEvent.getByLabel(jetsFlavour_, jetsFlavour);
             iEvent.getByLabel(jetsCorrTotal_, jetsCorrTotal);
-	    if (doResol_)iEvent.getByLabel(genJetsPt_, genJetsPt);
-	    
-	    gotJets = true;
+            if (doResol_)iEvent.getByLabel(genJetsPt_, genJetsPt);
+
+            gotJets = true;
         }
 
         if (syst == "noSyst"
@@ -3341,7 +3341,7 @@ void SingleTopSystematicsTreesDumperLight::analyze(const Event &iEvent, const Ev
 }
 
 //CosThetalj given top quark, lepton and light jet
-float SingleTopSystematicsTreesDumperLight::cosThetaLJ(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, math::PtEtaPhiELorentzVector top)
+float SingleTopSystematicsTreesDumper::cosThetaLJ(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, math::PtEtaPhiELorentzVector top)
 {
 
     math::PtEtaPhiELorentzVector boostedLepton = ROOT::Math::VectorUtil::boost(lepton, top.BoostToCM());
@@ -3351,7 +3351,7 @@ float SingleTopSystematicsTreesDumperLight::cosThetaLJ(math::PtEtaPhiELorentzVec
 
 }
 //CosTheta-lepton-beam-line, implementation by Joosep Pata
-float SingleTopSystematicsTreesDumperLight::cosTheta_eta_bl(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, math::PtEtaPhiELorentzVector top)
+float SingleTopSystematicsTreesDumper::cosTheta_eta_bl(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, math::PtEtaPhiELorentzVector top)
 {
 
     double eta = jet.eta();
@@ -3373,7 +3373,7 @@ float SingleTopSystematicsTreesDumperLight::cosTheta_eta_bl(math::PtEtaPhiELoren
 }
 
 
-double SingleTopSystematicsTreesDumperLight::topMtw(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, float metPx, float metPy)
+double SingleTopSystematicsTreesDumper::topMtw(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, float metPx, float metPy)
 {
     math::PtEtaPhiELorentzVector lb = lepton + jet;
     double mlb2 = lb.mass() * lb.mass();
@@ -3384,13 +3384,13 @@ double SingleTopSystematicsTreesDumperLight::topMtw(math::PtEtaPhiELorentzVector
 }
 
 //top quark 4-momentum given lepton, met and b-jet
-math::PtEtaPhiELorentzVector SingleTopSystematicsTreesDumperLight::top4Momentum(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, float metPx, float metPy)
+math::PtEtaPhiELorentzVector SingleTopSystematicsTreesDumper::top4Momentum(math::PtEtaPhiELorentzVector lepton, math::PtEtaPhiELorentzVector jet, float metPx, float metPy)
 {
     return top4Momentum(lepton.px(), lepton.py(), lepton.pz(), lepton.energy(), jet.px(), jet.py(), jet.pz(), jet.energy(), metPx, metPy);
 }
 
 //top quark 4-momentum original function given the necessary parameters
-math::PtEtaPhiELorentzVector SingleTopSystematicsTreesDumperLight::top4Momentum(float leptonPx, float leptonPy, float leptonPz, float leptonE, float jetPx, float jetPy, float jetPz, float jetE, float metPx, float metPy)
+math::PtEtaPhiELorentzVector SingleTopSystematicsTreesDumper::top4Momentum(float leptonPx, float leptonPy, float leptonPz, float leptonE, float jetPx, float jetPy, float jetPz, float jetE, float metPx, float metPy)
 {
     float lepton_Pt = sqrt( (leptonPx * leptonPx) +  (leptonPy * leptonPy) );
 
@@ -3425,7 +3425,7 @@ math::PtEtaPhiELorentzVector SingleTopSystematicsTreesDumperLight::top4Momentum(
 //and much patience. Here we exploit such analytical minimization
 /////
 //More detailed inline description: work in progress!
-math::XYZTLorentzVector SingleTopSystematicsTreesDumperLight::NuMomentum(float leptonPx, float leptonPy, float leptonPz, float leptonPt, float leptonE, float metPx, float metPy )
+math::XYZTLorentzVector SingleTopSystematicsTreesDumper::NuMomentum(float leptonPx, float leptonPy, float leptonPz, float leptonPt, float leptonE, float metPx, float metPy )
 {
 
     double  mW = 80.399;
@@ -3586,7 +3586,7 @@ math::XYZTLorentzVector SingleTopSystematicsTreesDumperLight::NuMomentum(float l
 }
 
 //JES uncertainty as a function of pt, eta and jet flavour
-double SingleTopSystematicsTreesDumperLight::jetUncertainty(double eta, double ptCorr, int flavour)
+double SingleTopSystematicsTreesDumper::jetUncertainty(double eta, double ptCorr, int flavour)
 {
     jecUnc->setJetEta(eta);
     jecUnc->setJetPt(ptCorr);
@@ -3596,7 +3596,7 @@ double SingleTopSystematicsTreesDumperLight::jetUncertainty(double eta, double p
 
 
 
-float SingleTopSystematicsTreesDumperLight::muonHLTEff(float eta, string period)
+float SingleTopSystematicsTreesDumper::muonHLTEff(float eta, string period)
 {
     float eff = 0.87;
 
@@ -3669,7 +3669,7 @@ float SingleTopSystematicsTreesDumperLight::muonHLTEff(float eta, string period)
 }
 
 //EndJob filling rate systematics trees
-void SingleTopSystematicsTreesDumperLight::endJob()
+void SingleTopSystematicsTreesDumper::endJob()
 {
 
     //part for rate systematics
@@ -3727,7 +3727,7 @@ void SingleTopSystematicsTreesDumperLight::endJob()
 
 //B-C weight as function of jet flavour, systematics and scale factors:
 //WILL BE CHANGED VERY SOON ACCORDING TO NEW PRESCRIPTIONS
-double SingleTopSystematicsTreesDumperLight::BTagSFNew(double pt, string algo)
+double SingleTopSystematicsTreesDumper::BTagSFNew(double pt, string algo)
 {
     if (algo == "CSVM")return 0.6981 * ((1. + (0.414063 * pt)) / (1. + (0.300155 * pt)));
     if (algo == "CSVT")return 0.901615 * ((1. + (0.552628 * pt)) / (1. + (0.547195 * pt)));
@@ -3740,7 +3740,7 @@ double SingleTopSystematicsTreesDumperLight::BTagSFNew(double pt, string algo)
 }
 
 
-double SingleTopSystematicsTreesDumperLight::BTagSFErrNew(double pt, string algo)
+double SingleTopSystematicsTreesDumper::BTagSFErrNew(double pt, string algo)
 {
     if (algo == "TCHPT")
     {
@@ -3839,7 +3839,7 @@ double SingleTopSystematicsTreesDumperLight::BTagSFErrNew(double pt, string algo
 
 }
 
-double SingleTopSystematicsTreesDumperLight::MisTagSFNew(double pt, double eta, string algo)
+double SingleTopSystematicsTreesDumper::MisTagSFNew(double pt, double eta, string algo)
 {
   if (algo == "TCHPT")return ((1.1676+(0.00136673*pt))+(-3.51053e-06*(pt*pt)))+(2.4966e-09*(pt*(pt*pt)));
   if (algo == "CSVM")return ((1.20711 + (0.000681067 * pt)) + (-1.57062e-06 * (pt * pt))) + (2.83138e-10 * (pt * (pt * pt))) * (1.10422 + -0.000523856 * pt + 1.14251e-06 * pt * pt);
@@ -3850,7 +3850,7 @@ double SingleTopSystematicsTreesDumperLight::MisTagSFNew(double pt, double eta, 
     return 0;
 }
 
-double SingleTopSystematicsTreesDumperLight::MisTagSFErrNewUp(double pt, double eta, string algo)
+double SingleTopSystematicsTreesDumper::MisTagSFErrNewUp(double pt, double eta, string algo)
 {
     double x = pt;
 
@@ -3863,7 +3863,7 @@ double SingleTopSystematicsTreesDumperLight::MisTagSFErrNewUp(double pt, double 
     return 0;
 }
 
-double SingleTopSystematicsTreesDumperLight::MisTagSFErrNewDown(double pt, double eta, string algo)
+double SingleTopSystematicsTreesDumper::MisTagSFErrNewDown(double pt, double eta, string algo)
 {
     double x = pt;
     if (algo == "TCHPT")return ((0.988346+(0.000914722*pt))+(-2.37077e-06*(pt*pt)))+(1.72082e-09*(pt*(pt*pt)));
@@ -3876,7 +3876,7 @@ double SingleTopSystematicsTreesDumperLight::MisTagSFErrNewDown(double pt, doubl
 }
 
 
-double SingleTopSystematicsTreesDumperLight::EFFMapNew(double btag, string algo)
+double SingleTopSystematicsTreesDumper::EFFMapNew(double btag, string algo)
 {
     if (algo == "TCHP_B")return 1.26119661124e-05 * btag * btag * btag * btag +  -0.000683198597977 * btag * btag * btag +  0.0145106168149 * btag * btag +  -0.159575511553 * btag +  0.887707865272;
     if (algo == "TCHP_C")
@@ -3897,7 +3897,7 @@ double SingleTopSystematicsTreesDumperLight::EFFMapNew(double btag, string algo)
     return 1;
 }
 
-double SingleTopSystematicsTreesDumperLight::EFFMap(string algo )
+double SingleTopSystematicsTreesDumper::EFFMap(string algo )
 {
     if (algo == "TCHPT_B")return 0.365 * 1.;
     if (algo == "TCHPT_C")return 0.0365;
@@ -3918,7 +3918,7 @@ double SingleTopSystematicsTreesDumperLight::EFFMap(string algo )
     return 0.36;
 }
 
-double SingleTopSystematicsTreesDumperLight::EFFMap(string algo, string channel )
+double SingleTopSystematicsTreesDumper::EFFMap(string algo, string channel )
 {
 
     if (channel == "TChannel" || channel == "TbarChannel" || channel == "SChannel" || channel == "SbarChannel" || channel == "TWChannel" || channel == "TbarWChannel")
@@ -3980,7 +3980,7 @@ double SingleTopSystematicsTreesDumperLight::EFFMap(string algo, string channel 
 
 }
 
-double SingleTopSystematicsTreesDumperLight::EFFErrMap(string algo )
+double SingleTopSystematicsTreesDumper::EFFErrMap(string algo )
 {
     if (algo == "TCHPT_B")return 0.05;
     if (algo == "TCHPT_C")return 0.05;
@@ -3997,7 +3997,7 @@ double SingleTopSystematicsTreesDumperLight::EFFErrMap(string algo )
     return 0.05;
 }
 
-double SingleTopSystematicsTreesDumperLight::turnOnWeight (std::vector<double> probabilities, int njets_req = 1)
+double SingleTopSystematicsTreesDumper::turnOnWeight (std::vector<double> probabilities, int njets_req = 1)
 {
     double prob = 0;
     for (unsigned int i = 0; i < pow(2, probabilities.size()); ++i)
@@ -4021,7 +4021,7 @@ double SingleTopSystematicsTreesDumperLight::turnOnWeight (std::vector<double> p
 }
 
 
-int SingleTopSystematicsTreesDumperLight::eventFlavour(string ch, int nb, int nc, int nl)
+int SingleTopSystematicsTreesDumper::eventFlavour(string ch, int nb, int nc, int nl)
 {
     if (ch !=  "WJets" && ch != "ZJets") return 0;
     else
@@ -4033,7 +4033,7 @@ int SingleTopSystematicsTreesDumperLight::eventFlavour(string ch, int nb, int nc
     return 0;
 }
 
-bool SingleTopSystematicsTreesDumperLight::flavourFilter(string ch, int nb, int nc, int nl)
+bool SingleTopSystematicsTreesDumper::flavourFilter(string ch, int nb, int nc, int nl)
 {
 
     if (ch == "WJets_wbb" || ch == "ZJets_wbb") return (nb > 0 );
@@ -4043,13 +4043,13 @@ bool SingleTopSystematicsTreesDumperLight::flavourFilter(string ch, int nb, int 
     return true;
 }
 
-/*double SingleTopSystematicsTreesDumperLight::jetprob(double pt, double btag){
+/*double SingleTopSystematicsTreesDumper::jetprob(double pt, double btag){
   double prob=0.993*(exp(-51.0*exp(-0.160*pt)));
   prob*=0.902*exp((-5.995*exp(-0.604*btag)));
   return prob;
   }*/
 
-double SingleTopSystematicsTreesDumperLight::jetprob(double pt, double btag)
+double SingleTopSystematicsTreesDumper::jetprob(double pt, double btag)
 {
     double prob = 0.982 * exp(-30.6 * exp(-0.151 * pt)); //PT turnOn
     prob *= 0.844 * exp((-6.72 * exp(-0.720 * btag))); //BTag turnOn
@@ -4057,19 +4057,19 @@ double SingleTopSystematicsTreesDumperLight::jetprob(double pt, double btag)
 }
 
 
-double SingleTopSystematicsTreesDumperLight::jetprobpt(double pt)
+double SingleTopSystematicsTreesDumper::jetprobpt(double pt)
 {
     double prob = 0.982 * exp(-30.6 * exp(-0.151 * pt)); //PT turnOn
     return prob;
 }
 
-double SingleTopSystematicsTreesDumperLight::jetprobbtag(double btag)
+double SingleTopSystematicsTreesDumper::jetprobbtag(double btag)
 {
     double prob = 0.844 * exp((-6.72 * exp(-0.720 * btag))); //BTag turnOn
     return prob;
 }
 
-double SingleTopSystematicsTreesDumperLight::turnOnProbs(string syst, int n)
+double SingleTopSystematicsTreesDumper::turnOnProbs(string syst, int n)
 {
 
   if(doTurnOn_)return 1.0;
@@ -4142,7 +4142,7 @@ double SingleTopSystematicsTreesDumperLight::turnOnProbs(string syst, int n)
 
 }
 
-void SingleTopSystematicsTreesDumperLight::pushJetProbs(double pt, double btag, double eta)
+void SingleTopSystematicsTreesDumper::pushJetProbs(double pt, double btag, double eta)
 {
 
     jetprobs.push_back(jetprob(pt, btag, eta, "noSyst"));
@@ -4171,7 +4171,7 @@ void SingleTopSystematicsTreesDumperLight::pushJetProbs(double pt, double btag, 
 
 }
 
-void SingleTopSystematicsTreesDumperLight::InitializeTurnOnReWeight(string rootFile = "CentralJet30BTagIP_2ndSF_mu.root")
+void SingleTopSystematicsTreesDumper::InitializeTurnOnReWeight(string rootFile = "CentralJet30BTagIP_2ndSF_mu.root")
 {
 
     TFile f("CentralJet30BTagIP_2ndSF_mu.root");
@@ -4189,7 +4189,7 @@ void SingleTopSystematicsTreesDumperLight::InitializeTurnOnReWeight(string rootF
     ;
 }
 
-double SingleTopSystematicsTreesDumperLight::turnOnReWeight (double preWeight, double pt, double tchpt)
+double SingleTopSystematicsTreesDumper::turnOnReWeight (double preWeight, double pt, double tchpt)
 {
   //    cout << "reweight pt" <<  pt << " tchpt " << tchpt << endl;
   //  cout << " bin " << histoSFs.FindFixBin(pt, tchpt) << " sf ";
@@ -4200,7 +4200,7 @@ double SingleTopSystematicsTreesDumperLight::turnOnReWeight (double preWeight, d
 }
 
 
-double SingleTopSystematicsTreesDumperLight::jetprob(double pt, double btag, double eta, string syst)
+double SingleTopSystematicsTreesDumper::jetprob(double pt, double btag, double eta, string syst)
 {
     double prob = 1.;
     if (fabs(eta) > 2.6) return 0.;
@@ -4866,7 +4866,7 @@ double SingleTopSystematicsTreesDumperLight::jetprob(double pt, double btag, dou
     return prob;
 }
 
-double SingleTopSystematicsTreesDumperLight::jetprobold(double pt, double btag, double eta, string syst)
+double SingleTopSystematicsTreesDumper::jetprobold(double pt, double btag, double eta, string syst)
 {
     double prob = 1.;
 
@@ -4959,7 +4959,7 @@ double SingleTopSystematicsTreesDumperLight::jetprobold(double pt, double btag, 
 
 }
 
-double SingleTopSystematicsTreesDumperLight::bTagSF(int B)
+double SingleTopSystematicsTreesDumper::bTagSF(int B)
 {
   if (doBTagSF_ == false )return 1.0;
 
@@ -4999,7 +4999,7 @@ double SingleTopSystematicsTreesDumperLight::bTagSF(int B)
     return 1.;
 }
 
-double SingleTopSystematicsTreesDumperLight::bTagSF(int B, string syst)
+double SingleTopSystematicsTreesDumper::bTagSF(int B, string syst)
 {
   if (doBTagSF_ == false )return 1.0;
 
@@ -5089,14 +5089,14 @@ double SingleTopSystematicsTreesDumperLight::bTagSF(int B, string syst)
 }
 
 
-double SingleTopSystematicsTreesDumperLight::pileUpSF(string syst)
+double SingleTopSystematicsTreesDumper::pileUpSF(string syst)
 {
     if (syst == "PUUp" )return LumiWeightsUp_.weight( *n0);
     if (syst == "PUDown" )return LumiWeightsDown_.weight( *n0);
     return LumiWeights_.weight( *n0);
 }
 
-double SingleTopSystematicsTreesDumperLight::resolSF(double eta, string syst)
+double SingleTopSystematicsTreesDumper::resolSF(double eta, string syst)
 {
     double fac = 0.;
     if (syst == "JERUp")fac = 1.;
@@ -5110,12 +5110,12 @@ double SingleTopSystematicsTreesDumperLight::resolSF(double eta, string syst)
 }
 
 //BTag weighter
-bool SingleTopSystematicsTreesDumperLight::BTagWeight::filter(int t)
+bool SingleTopSystematicsTreesDumper::BTagWeight::filter(int t)
 {
     return (t >= minTags && t <= maxTags);
 }
 
-float SingleTopSystematicsTreesDumperLight::BTagWeight::weight(vector<JetInfo> jets, int tags)
+float SingleTopSystematicsTreesDumper::BTagWeight::weight(vector<JetInfo> jets, int tags)
 {
     if (!filter(tags))
     {
@@ -5159,7 +5159,7 @@ float SingleTopSystematicsTreesDumperLight::BTagWeight::weight(vector<JetInfo> j
     return pData / pMC;
 }
 
-float SingleTopSystematicsTreesDumperLight::BTagWeight::weightWithVeto(vector<JetInfo> jetsTags, int tags, vector<JetInfo> jetsVetoes, int vetoes)
+float SingleTopSystematicsTreesDumper::BTagWeight::weightWithVeto(vector<JetInfo> jetsTags, int tags, vector<JetInfo> jetsVetoes, int vetoes)
 {//This function takes into account cases where you have n b-tags and m vetoes, but they have different thresholds. 
     if (!filter(tags))
     {
@@ -5205,7 +5205,7 @@ float SingleTopSystematicsTreesDumperLight::BTagWeight::weightWithVeto(vector<Je
 }
 
 
-void SingleTopSystematicsTreesDumperLight::muonHLTSF(float etaMu, float ptMu){
+void SingleTopSystematicsTreesDumper::muonHLTSF(float etaMu, float ptMu){
 
   sfID=1;sfIDup=1;sfIDdown=1;  
   sfIso=1;sfIsoup=1;sfIsodown=1;  
@@ -5516,4 +5516,4 @@ if(fabs(etaMu)<2.1&& fabs(etaMu)>1.2) {  if (ptMu > 10 && ptMu <  20){sfID = 1.0
 
 
 //define this as a plug-in
-DEFINE_FWK_MODULE(SingleTopSystematicsTreesDumperLight);
+DEFINE_FWK_MODULE(SingleTopSystematicsTreesDumper);

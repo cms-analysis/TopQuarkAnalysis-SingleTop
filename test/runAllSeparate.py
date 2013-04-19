@@ -48,8 +48,8 @@ channels = [
 #"QCD_Pt_30to80_EMEnriched","QCD_Pt_30to80_BCtoE","QCD_Pt_80to170_BCtoE",
 #"TbarChannel",
 
-"TChannel_part_1","TChannel_part_2","TChannel_part_3","TChannel_part_4","TChannel_part_5",
-"TbarChannel_part_1","TbarChannel_part_2","TbarChannel_part_3","TbarChannel_part_4","TbarChannel_part_5",
+#"TChannel_part_1","TChannel_part_2","TChannel_part_3","TChannel_part_4","TChannel_part_5",
+#"TbarChannel_part_1","TbarChannel_part_2","TbarChannel_part_3","TbarChannel_part_4","TbarChannel_part_5",
 #"TWChannel", "TbarWChannel",
 
 #"SChannel_part_1", "SChannel_part_2", "SChannel_part_3", "SChannel_part_4", "SChannel_part_5",
@@ -68,7 +68,7 @@ channels = [
 #"WJetsBig_part_1","WJetsBig_part_2","WJetsBig_part_3","WJetsBig_part_4","WJetsBig_part_5","WJetsBig_part_6","WJetsBig_part_7","WJetsBig_part_8","WJetsBig_part_9","WJetsBig_part_10",
 #"WJetsBig_part_11","WJetsBig_part_12","WJetsBig_part_13","WJetsBig_part_14","WJetsBig_part_15","WJetsBig_part_16","WJetsBig_part_17","WJetsBig_part_18","WJetsBig_part_19","WJetsBig_part_20",
 #"WJetsBig_part_21","WJetsBig_part_22",
-#"WJets_part_1","WJets_part_2","WJets_part_3","WJets_part_4","WJets_part_5","WJets_part_6","WJets_part_7","WJets_part_8","WJets_part_9","WJets_part_10","WJets_part_11",
+"WJets_part_1","WJets_part_2","WJets_part_3","WJets_part_4","WJets_part_5","WJets_part_6","WJets_part_7","WJets_part_8","WJets_part_9","WJets_part_10","WJets_part_11",
 #"Mu_A13Jul_part_1","Mu_A13Jul_part_2","Mu_A13Jul_part_3","Mu_A13Jul_part_4","Mu_A13Jul_part_5","Mu_A13Jul_part_6","Mu_A13Jul_part_7","Mu_A13Jul_part_8","Mu_A13Jul_part_9","Mu_A13Jul_part_10","Mu_A13Jul_part_11","Mu_A13Jul_part_12","Mu_A13Jul_part_13","Mu_A13Jul_part_14","Mu_A13Jul_part_15","Mu_A13Jul_part_16","Mu_A13Jul_part_17","Mu_A13Jul_part_18","Mu_A13Jul_part_19","Mu_A13Jul_part_20","Mu_A13Jul_part_21","Mu_A13Jul_part_22",
 
 #"Mu_B13Jul_part_1","Mu_B13Jul_part_2","Mu_B13Jul_part_3","Mu_B13Jul_part_4","Mu_B13Jul_part_5","Mu_B13Jul_part_6","Mu_B13Jul_part_7","Mu_B13Jul_part_8","Mu_B13Jul_part_9","Mu_B13Jul_part_10","Mu_B13Jul_part_11","Mu_B13Jul_part_12","Mu_B13Jul_part_13","Mu_B13Jul_part_14","Mu_B13Jul_part_15","Mu_B13Jul_part_16","Mu_B13Jul_part_17","Mu_B13Jul_part_18","Mu_B13Jul_part_19","Mu_B13Jul_part_20","Mu_B13Jul_part_21","Mu_B13Jul_part_22",

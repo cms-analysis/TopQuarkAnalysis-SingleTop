@@ -29,20 +29,20 @@ process.GlobalTag.globaltag = cms.string('START52_V9::All')
 
 process.counter = cms.EDFilter("SingleTopDoubleCounter",
                                src = cms.InputTag("nTupleTopJetsPF","topJetsPFPt"), 
-                               min = cms.untracked.int32(0),
+                               min = cms.untracked.int32(2),
                                max = cms.untracked.int32(999),
                                )
 
 switch = "switch_instruction" #SWITCH_INSTRUCTION
 
-#process.TwoJetsCut = cms.Path(
-#    process.counter
-#    )
+process.TwoJetsCut = cms.Path(
+    process.counter
+    )
     
 process.skimwall = cms.OutputModule("PoolOutputModule",
                                         fileName = cms.untracked.string('/tmp/oiorio/TChannelMerged.root'),
                                         outputCommands = cms.untracked.vstring(    'keep *',   ),
- #                                       SelectEvents = cms.untracked.PSet( SelectEvents = cms.vstring('TwoJetsCut')),
+                                    SelectEvents = cms.untracked.PSet( SelectEvents = cms.vstring('TwoJetsCut')),
                                         )
 process.outpath = cms.EndPath( process.skimwall)
     #process.skimwall.fileName = "/tmp/oiorio//tmp/oiorio/TChannelMerged.root"
