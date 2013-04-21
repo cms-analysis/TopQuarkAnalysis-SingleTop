@@ -35,8 +35,9 @@ isData = False
 #Gsf electron or PF electron
 doGsfElectrons = True
 
-#Name to be used in the output files:
-#ChannelName = "TChannel"
+#Add nJ >= 2 cut:
+addJetsCut = True 
+
 
 #Geometry:
 process.load("Configuration.Geometry.GeometryIdeal_cff")
@@ -301,6 +302,9 @@ process.HLTFilterMu2012  = triggerFilter.triggerResultsFilter.clone(
     throw = False
     )
 
+from PhysicsTools.PatAlgos.selectionLayer1.jetCountFilter_cfi import *
+process.jetsCut = countPatJets.clone(src = 'topJetsPF', minNumber = 2)
+
 # Overall skim path
 process.singleTopSkimPath = cms.Path(
     process.HLTFilterMu2012 *
@@ -336,6 +340,9 @@ process.preselection = cms.Path(
     ~process.logErrorTooManyClusters *
     process.countLeptons
     )
+
+if addJetsCut:
+    process.preselection += process.jetsCut
 
 process.fullPath = cms.Schedule(
     process.singleTopSkimPath,
