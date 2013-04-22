@@ -33,7 +33,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 10
 isData = True
 
 #Gsf electron or PF electron
-doGsfElectrons = True
+doGsfElectrons = False
 
 #Add nJ >= 2 cut:
 addJetsCut = True 
