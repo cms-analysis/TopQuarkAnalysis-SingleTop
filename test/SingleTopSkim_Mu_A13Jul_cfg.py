@@ -424,42 +424,6 @@ process.MCTruthParticles = cms.EDProducer(
 ######### EdmNtuples production ##############
 process.load("TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff")
 
-########################### just load the all in one shot #####################################
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleTopJetsPF
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleVertices
-
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTuplePatMETsPF
-#
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleMuons
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleVetoMuons
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleAllMuons
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleQCDMuons
-#
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleElectrons
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleVetoElectrons
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleAllElectrons
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleVetoElectronsMVA
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleZVetoElectrons
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleQCDElectrons
-#
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTupleAllJets
-#
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCNeutrinos
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCLeptons
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCQuarks
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCBQuarks
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCTops
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCTopsW
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCTopsBQuark
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCTopsQuark
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCTopsQuarkBar
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCTopsLepton
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import singleTopMCTopsNeutrino
-#
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTuplesSkim
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import nTuplesSkimMCTruth
-#############################################################################################
-
 # Ntuple sequence
 process.genPath = cms.Sequence(
     process.genJetsPF +
@@ -484,15 +448,11 @@ if isData:
     doMCTruth = False
 
 if doMCTruth:
-    process.MCTruth = cms.Path (
+    process.MCTruth = cms.Sequence(
         process.MCTruthParticles +
         process.nTuplesSkimMCTruth
     )
-    process.fullPath = cms.Schedule(
-        process.singleTopSkimPath,
-        process.preselection,
-        process.MCTruth
-        )
+    process.singleTopSkimPath += process.MCTruth
 
     saveNTuplesSkimLoose.append('keep  floats_MCTruthParticles_*_*')
     saveNTuplesSkimLoose.append('keep  ints_MCTruthParticles_*_*')
@@ -509,13 +469,6 @@ if doMCTruth:
     saveNTuplesSkimLoose.append('keep  floats_singleTopMCTopsQuarkBar_*_*')
                                                             
 
-###################################################################################
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import saveNTuplesSkimLoose
-####### needed???? ########
-#from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import saveNTuplesSkimMu
-###################################################################################
-
-  
 ## Output module configuration
 process.singleTopNTupleOut = cms.OutputModule(
     "PoolOutputModule",
