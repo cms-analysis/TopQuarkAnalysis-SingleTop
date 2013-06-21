@@ -2,7 +2,7 @@
  *\Author: A. Orso M. Iorio 
  *
  *
- *\version  $Id: SingleTopElectronProducer.cc,v 1.7.12.4.4.4 2013/04/18 10:29:54 oiorio Exp $ 
+ *\version  $Id: SingleTopElectronProducer.cc,v 1.7.12.4.4.5 2013/06/21 20:40:25 oiorio Exp $ 
  */
 
 // Single Top producer: produces a top candidate made out of a Lepton, a B jet and a MET
@@ -144,11 +144,8 @@ void SingleTopElectronProducer::produce(edm::Event & iEvent, const edm::EventSet
     
     el.addUserFloat("RhoCorrectedIso",(el.chargedHadronIso() + std::max(0., el.neutralHadronIso() + el.photonIso() -energy_))/el.et());
 
-    cout << "electron rho is "<<  *rho << " earea is "<< ElectronEffectiveArea::GetElectronEffectiveArea(ElectronEffectiveArea::kEleGammaAndNeutralHadronIso03, el.superCluster()->eta(), ElectronEffectiveArea::kEleEAData2012) << " iso is part is "<< el.neutralHadronIso() + el.photonIso()
+    //    cout << "electron rho is "<<  *rho << " earea is "<< ElectronEffectiveArea::GetElectronEffectiveArea(ElectronEffectiveArea::kEleGammaAndNeutralHadronIso03, el.superCluster()->eta(), ElectronEffectiveArea::kEleEAData2012) << " iso is part is "<< el.neutralHadronIso() + el.photonIso()
 
-      cd ..tecrab
-      tail testn
- <<" rho iso is "<< (el.chargedHadronIso() + std::max(0., el.neutralHadronIso() + el.photonIso() -energy_)/el.et())<< endl;
     
     double dxy= 9900;
     double dz= 9900;
