@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.16.2.3 2013/03/27 14:23:51 oiorio Exp $
+*\version  $Id: SingleTopSystematicsTreesDumper.cc,v 1.12.2.18.2.16.2.5 2013/04/19 15:09:54 oiorio Exp $
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file
 //
@@ -86,6 +86,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
     leptonsDZ_ =  iConfig.getParameter< edm::InputTag >("leptonsDZ");
     leptonsID_ =  iConfig.getParameter< edm::InputTag >("leptonsID");
     leptonsMVAID_ =  iConfig.getParameter< edm::InputTag >("leptonsMVAID");
+    leptonsNHits_ =  iConfig.getParameter< edm::InputTag >("leptonsNHits");
     
     //qcd leptons
     
@@ -108,6 +109,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
 
     looseElectronsDeltaCorrectedRelIso_ =  iConfig.getParameter< edm::InputTag >("looseElectronsDeltaCorrectedRelIso");
     looseElectronsRhoCorrectedRelIso_ =  iConfig.getParameter< edm::InputTag >("looseElectronsRhoCorrectedRelIso");
+
 
     //Jets
 
@@ -136,6 +138,9 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
     genJetsPt_  = iConfig.getParameter< edm::InputTag >("genJetsPt");
     genJetsEta_  = iConfig.getParameter< edm::InputTag >("genJetsEta");
 
+    genAllJetsPt_  = iConfig.getParameter< edm::InputTag >("genAllJetsPt");
+    genAllJetsEta_  = iConfig.getParameter< edm::InputTag >("genAllJetsEta");
+
 
     METPhi_ =  iConfig.getParameter< edm::InputTag >("METPhi");
     METPt_ =  iConfig.getParameter< edm::InputTag >("METPt");
@@ -152,7 +157,15 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
     doPDF_  =  iConfig.getUntrackedParameter< bool >("doPDF", true);
     doBTagSF_  =  iConfig.getUntrackedParameter< bool >("doBTagSF", true);
 
+    useMVAID_  =  iConfig.getUntrackedParameter< bool >("useMVAID", false);
+    useCutBasedID_  =  iConfig.getUntrackedParameter< bool >("useCutBasedID", true);
+    
+    cout << " mva id " << useMVAID_ << " cutbased " << useCutBasedID_ << endl;
 
+    if(useCutBasedID_ == useMVAID_){
+      cout << " can't use cutBasedID and MVAID together! Choose one!"<<endl;
+    }
+    
     //Q2 part
     x1_ = iConfig.getParameter<edm::InputTag>("x1") ;
     x2_ = iConfig.getParameter<edm::InputTag>("x2") ;
@@ -359,8 +372,10 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             treesNJets[syst]->Branch("leptonSF", &lepSF);
             treesNJets[syst]->Branch("leptonSFB", &lepSFB);
             treesNJets[syst]->Branch("leptonSFC", &lepSFC);
+            treesNJets[syst]->Branch("leptonSFD", &lepSFD);
             treesNJets[syst]->Branch("ID", &electronID);
             treesNJets[syst]->Branch("MVAID", &leptonMVAID);
+	    //            treesNJets[syst]->Branch("lepNH", &leptonNHits);
             treesNJets[syst]->Branch("mtwMass", &mtwMassTree);
             treesNJets[syst]->Branch("metPt", &metPt);
             treesNJets[syst]->Branch("metPhi", &metPhi);
@@ -499,30 +514,37 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             trees2J[bj][syst]->Branch("leptonSF", &lepSF);
             trees2J[bj][syst]->Branch("leptonSFB", &lepSFB);
             trees2J[bj][syst]->Branch("leptonSFC", &lepSFC);
+            trees2J[bj][syst]->Branch("leptonSFD", &lepSFD);
 	    //
             trees2J[bj][syst]->Branch("leptonSFIDUp", &lepSFIDUp);
             trees2J[bj][syst]->Branch("leptonSFIDUpB", &lepSFIDUpB);
             trees2J[bj][syst]->Branch("leptonSFIDUpC", &lepSFIDUpC);
+            trees2J[bj][syst]->Branch("leptonSFIDUpD", &lepSFIDUpD);
 
             trees2J[bj][syst]->Branch("leptonSFIDDown", &lepSFIDDown);
             trees2J[bj][syst]->Branch("leptonSFIDDownB", &lepSFIDDownB);
             trees2J[bj][syst]->Branch("leptonSFIDDownC", &lepSFIDDownC);
+            trees2J[bj][syst]->Branch("leptonSFIDDownD", &lepSFIDDownD);
 	    //
 	    trees2J[bj][syst]->Branch("leptonSFIsoUp", &lepSFIsoUp);
             trees2J[bj][syst]->Branch("leptonSFIsoUpB", &lepSFIsoUpB);
             trees2J[bj][syst]->Branch("leptonSFIsoUpC", &lepSFIsoUpC);
+            trees2J[bj][syst]->Branch("leptonSFIsoUpD", &lepSFIsoUpD);
 
             trees2J[bj][syst]->Branch("leptonSFIsoDown", &lepSFIsoDown);
             trees2J[bj][syst]->Branch("leptonSFIsoDownB", &lepSFIsoDownB);
             trees2J[bj][syst]->Branch("leptonSFIsoDownC", &lepSFIsoDownC);
+            trees2J[bj][syst]->Branch("leptonSFIsoDownD", &lepSFIsoDownD);
 	    //
             trees2J[bj][syst]->Branch("leptonSFTrigUp", &lepSFTrigUp);
             trees2J[bj][syst]->Branch("leptonSFTrigUpB", &lepSFTrigUpB);
             trees2J[bj][syst]->Branch("leptonSFTrigUpC", &lepSFTrigUpC);
+            trees2J[bj][syst]->Branch("leptonSFTrigUpD", &lepSFTrigUpD);
 
             trees2J[bj][syst]->Branch("leptonSFTrigDown", &lepSFTrigDown);
             trees2J[bj][syst]->Branch("leptonSFTrigDownB", &lepSFTrigDownB);
             trees2J[bj][syst]->Branch("leptonSFTrigDownC", &lepSFTrigDownC);
+            trees2J[bj][syst]->Branch("leptonSFTrigDownD", &lepSFTrigDownD);
 	    //
 
             trees2J[bj][syst]->Branch("fJetPt", &fJetPt);
@@ -582,6 +604,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
 
             trees2J[bj][syst]->Branch("ID", &electronID);
             trees2J[bj][syst]->Branch("MVAID", &leptonMVAID);
+	    //            trees2J[bj][syst]->Branch("lepNH", &leptonNHits);
             trees2J[bj][syst]->Branch("nVertices", &nVertices);
             trees2J[bj][syst]->Branch("nGoodVertices", &npv);
 
@@ -752,6 +775,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
             trees3J[bj][syst]->Branch("leptonSF", &lepSF);
             trees3J[bj][syst]->Branch("leptonSFB", &lepSFB);
             trees3J[bj][syst]->Branch("leptonSFC", &lepSFC);
+	    //            trees3J[bj][syst]->Branch("leptonSFD", &lepSFD);
 
 
             trees3J[bj][syst]->Branch("fJetPt", &fJetPt);
@@ -813,6 +837,7 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
 	    
             trees3J[bj][syst]->Branch("ID", &electronID);
             trees3J[bj][syst]->Branch("MVAID", &leptonMVAID);
+	    //            trees3J[bj][syst]->Branch("lepNH", &leptonNHits);
             trees3J[bj][syst]->Branch("nVertices", &nVertices);
             trees3J[bj][syst]->Branch("nGoodVertices", &npv);
 
@@ -1022,7 +1047,8 @@ SingleTopSystematicsTreesDumper::SingleTopSystematicsTreesDumper(const edm::Para
 
     JEC_PATH = "./";
 
-    jecUnc  = new JetCorrectionUncertainty(*(new JetCorrectorParameters("Summer12_V2_DATA_AK5PF_UncertaintySources.txt", "Total")));
+    //    jecUnc  = new JetCorrectionUncertainty(*(new JetCorrectorParameters("Summer12_V2_DATA_AK5PF_UncertaintySources.txt", "Total")));
+    jecUnc  = new JetCorrectionUncertainty(*(new JetCorrectorParameters("Fall12_V7_DATA_UncertaintySources_AK5PFchs.txt", "Total")));
     JES_SW = 0.0;
     JES_b_cut = 0.0;
     JES_b_overCut = 0.0;
@@ -1756,42 +1782,44 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
 
 
         //cout << " before leptons "<<endl;
-
+	
         //Lepton loop
-        if (!didLeptonLoop)
+	if (!didLeptonLoop)
         {
             for (size_t i = 0; i < leptonsDeltaCorrectedRelIso->size(); ++i)
             {
-
+	      float leptonRelIsoDeltaCorr = 9999.,leptonRelIsoRhoCorr=9999.;
+	      float leptonMVAIDTemp = -1.1,leptonNHitsTemp=10.; 
                 if (leptonsFlavour_ == "muon")
                 {
-                    float leptonRelIsoDeltaCorr = leptonsDeltaCorrectedRelIso->at(i);
-                    lepDeltaCorrectedRelIso = leptonRelIsoDeltaCorr;
-                    if (leptonRelIsoDeltaCorr > RelIsoCut)continue;
-                }
+		  leptonRelIsoDeltaCorr = leptonsDeltaCorrectedRelIso->at(i);
+		  if (leptonRelIsoDeltaCorr > RelIsoCut)continue;
+                    
+		}
 
                 if (leptonsFlavour_ == "electron")
                 {
                     iEvent.getByLabel(leptonsRhoCorrectedRelIso_, leptonsRhoCorrectedRelIso);
-                    float leptonRelIsoRhoCorr = leptonsRhoCorrectedRelIso->at(i);
-                    lepRhoCorrectedRelIso = leptonRelIsoRhoCorr;
-                    if (leptonRelIsoRhoCorr > RelIsoCut)continue;
-                }
+		    leptonRelIsoRhoCorr = leptonsRhoCorrectedRelIso->at(i);
+		    if (leptonRelIsoRhoCorr > RelIsoCut)continue;
+		    //		    cout << " inside lepton loop: lepton n "<< i +1 << " reliso " <<  leptonsRhoCorrectedRelIso->at(i) <<" nLeptons before: "<<nLeptons<<endl;                 
 
+                }
+		
                 float leptonPt = 0.;
 		//		cout << "lep " << i <<endl;
-
+	    		
                 iEvent.getByLabel(leptonsPt_, leptonsPt);
                 leptonPt = leptonsPt->at(i)*1.;
                 if ( leptonPt < 26.) continue;
                 //Apply isolation cut
                 if (!gotLeptons)
                 {
-
-                    if (leptonsFlavour_ == "muon")
+		  
+		  if (leptonsFlavour_ == "muon")
                     {
-                        iEvent.getByLabel(leptonsRhoCorrectedRelIso_, leptonsRhoCorrectedRelIso);
-                        lepRhoCorrectedRelIso = leptonsRhoCorrectedRelIso->at(i);
+		      iEvent.getByLabel(leptonsRhoCorrectedRelIso_, leptonsRhoCorrectedRelIso);
+		      lepRhoCorrectedRelIso = leptonsRhoCorrectedRelIso->at(i);
                     }
 
                     iEvent.getByLabel(leptonsEta_, leptonsEta);
@@ -1809,14 +1837,24 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
 
                     float leptonRelIsoRhoCorr = leptonsRhoCorrectedRelIso->at(i);
                     lepRhoCorrectedRelIso = leptonRelIsoRhoCorr;
-
+		    
                     iEvent.getByLabel(leptonsMVAID_, leptonsMVAID);
+                    iEvent.getByLabel(leptonsNHits_, leptonsNHits);
 		    
                     float leptonID = leptonsID->at(i);
-		    leptonMVAID = leptonsMVAID->at(i);
+		    leptonMVAIDTemp = leptonsMVAID->at(i);
+		    leptonNHitsTemp = leptonsNHits->at(i);
 		    
+
                     electronID = leptonID;
-		    if(!(leptonID>0.0))continue; 
+		    
+		    if(useCutBasedID_>0){
+		      if(!(leptonID>0.0))continue; 
+		    }
+		    if(useMVAID_>0){
+		      if(!(leptonMVAIDTemp>0.90))continue; 
+		      if(!(leptonNHitsTemp<=0.00001))continue; 
+		    }
                 }
                 if (leptonsFlavour_ == "muon"  )
                 {
@@ -1825,20 +1863,24 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                 }
                 float leptonDB = leptonsDB->at(i);
                 if ( fabs(leptonDB) > 0.02) continue;
-
+		
+		lepDeltaCorrectedRelIso = leptonRelIsoDeltaCorr;
+		lepRhoCorrectedRelIso = leptonRelIsoRhoCorr;
+		leptonMVAID = leptonMVAIDTemp;
+		leptonNHits = leptonNHitsTemp;
                 float leptonPhi = leptonsPhi->at(i);
                 float leptonEta = leptonsEta->at(i);
                 float leptonE = leptonsEnergy->at(i);
                 //Build the lepton 4-momentum
                 ++nLeptons;
-
-                leptons[nLeptons - 1] = math::PtEtaPhiELorentzVector(leptonPt, leptonEta, leptonPhi, leptonE);
+		//if( lepRhoCorrectedRelIso > RelIsoCut )cout << " lepton n "<< nLeptons<< " syst "<<syst<< " " << lepRhoCorrectedRelIso<< " relisocut "<<RelIsoCut<< endl;
+	
+		leptons[nLeptons - 1] = math::PtEtaPhiELorentzVector(leptonPt, leptonEta, leptonPhi, leptonE);
                 //  Leptons.push_back(math::PtEtaPhiELorentzVector(leptonPt,leptonEta,leptonPhi,leptonE));
                 if (nLeptons >= 3) break;
 		
                 //  cout<< " lepton number " << nLeptons << " pt "<< leptonPt << " eta " << fabs(leptonEta)<< endl;
             }
-
             bool passesLeptons = (nLeptons == 1);
             bool passesOneLepton = (nLeptons == 1);
             if (passesLeptons)
@@ -1914,7 +1956,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                         float beamspot  = abs(qcdLeptonsDB->at(i));
                         bool isid = (leptonID ==  1 || leptonID == 3 || leptonID == 5 || leptonID == 7);
 			QCDCondition = (!(lepRhoCorrectedRelIso < 0.1) );
-
+			
                         //if (!QCDCondition) continue;
                         electronID = leptonID;
                         if (!gotQCDLeptons)
@@ -1935,7 +1977,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                     float qcdLeptonE = qcdLeptonsEnergy->at(i);
                     //Create the lepton
                     ++nQCDLeptons;
-
+		    
                     qcdLeptons[nQCDLeptons - 1] = math::PtEtaPhiELorentzVector(qcdLeptonPt, qcdLeptonEta, qcdLeptonPhi, qcdLeptonE);
                     //   leptonsQCD.push_back(math::PtEtaPhiELorentzVector(leptonPt,leptonEta,leptonPhi,leptonE));
                     if (nQCDLeptons == 3) break;
@@ -2060,7 +2102,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
         {
             for (size_t i = 0; i < jetsPt->size(); ++i)
             {
-
+	      
                 eta = jetsEta->at(i);
                 if (fabs(eta ) > 4.7)continue;
                 ptCorr = jetsPt->at(i);
@@ -2078,15 +2120,15 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
 		  {
                     resolScale = resolSF(fabs(eta), syst_name);
 		    smear = std::max((double)(0.0), (double)(ptCorr + (ptCorr - genpt) * resolScale) / ptCorr);
-		
-                
+		    
+		    
 		  }
 		energyCorr = energyCorr * smear;
 		ptCorr = ptCorr * smear;	
-
-		metPx -= (jetsPt->at(i) * cos(jetsPhi->at(i))) * (smear-1);
-		metPy -= (jetsPt->at(i) * sin(jetsPhi->at(i))) * (smear-1);
-
+		
+		//		metPx -= (jetsPt->at(i) * cos(jetsPhi->at(i))) * (smear-1);
+		//metPy -= (jetsPt->at(i) * sin(jetsPhi->at(i))) * (smear-1);
+		
                 if (syst_name == "JESUp")
                 {
                     unc = jetUncertainty( eta,  ptCorr, flavour);
@@ -2101,7 +2143,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                     energyCorr = energyCorr * (1 - unc);
                 }
 
-
+		
 		HT+= (math::PtEtaPhiELorentzVector(ptCorr, jetsEta->at(i), jetsPhi->at(i), energyCorr)).Et();
 
 		//		cout << "jet i " <<  i << endl;
@@ -2271,13 +2313,13 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                             hptSF = BTagSFNew(ptCorr, "TCHPT");
                             csvtSF = BTagSFNew(ptCorr, "CSVT");
                             csvmSF = BTagSFNew(ptCorr, "CSVL");
-
+			    
                             hptSFErr = BTagSFErrNew(ptCorr, "TCHPT") ;
                             csvtSFErr = BTagSFErrNew(ptCorr, "CSVT") ;
                             csvmSFErr = BTagSFErrNew(ptCorr, "CSVL") ;
-
+			    
                         }
-
+			
                         jsfshpt.push_back(BTagWeight::JetInfo(hpteff, hptSF));
                         jsfshpt_mis_tag_up.push_back(BTagWeight::JetInfo(hpteff, hptSF));
                         jsfshpt_mis_tag_down.push_back(BTagWeight::JetInfo(hpteff, hptSF));
@@ -2504,24 +2546,63 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
 
         eventFlavourTree = eventFlavour(channel, nb, nc, nudsg);
         //if( !flavourFilter(channel,nb,nc,nudsg) ) continue;
-
-	if ( syst_name == "JESUp" || syst_name == "JESDown" ){
+    
+	if ( syst_name == "JESUp" || syst_name == "JESDown" || syst_name == "JERDown" || syst_name == "JERUp" || syst_name == "noSyst"){
 	  
           if(!gotAllJets){
             iEvent.getByLabel(allJetsPt_, allJetsPt);
             iEvent.getByLabel(allJetsPhi_, allJetsPhi);
             iEvent.getByLabel(allJetsEta_, allJetsEta);
             iEvent.getByLabel(allJetsFlavour_, allJetsFlavour);
+            if (doResol_)iEvent.getByLabel(genAllJetsPt_, genAllJetsPt);
 	    gotAllJets = true ;
           }
 	  for (size_t i = 0; i < allJetsPt->size(); ++i) {
-	    if(ptCorr < 10) continue;
 	    
             double ptCorr = allJetsPt->at(i);
             double eta = allJetsEta->at(i);	
 	    double flavour = allJetsFlavour->at(i);
             double jphi = allJetsPhi->at(i);
+
+	    if(ptCorr < 10) continue;
 	      
+	    /*	    if (syst_name == "JERUp" || syst_name == "JERDown"){
+	      
+	      if(ptCorr > 40) continue;
+	      
+	      metPx -= (ptCorr * cos(jphi)) * unc;
+	      metPy -= (ptCorr * sin(jphi)) * unc;
+	      }*/
+	    
+	    double energyCorr =1.;
+	    double smear = 1.;//TMath::QuietNaN();
+	    double resolScale =0.;
+	    double unc=0.;
+
+	    float genpt = -1.;
+	    if (doResol_)genpt = genAllJetsPt->at(i);
+	    float rndm = 0.1;
+
+	    cout << " genpt = "<< genpt<<endl;
+
+	    if (doResol_ && genpt > 0.0)
+	      {
+		resolScale = resolSF(fabs(eta), syst_name);
+		smear = std::max((double)(0.0), (double)(ptCorr + (ptCorr - genpt) * resolScale) / ptCorr);
+		
+		
+	      }
+	    
+	    metPx -= (ptCorr * cos(jphi)) * (smear-1);
+	    metPy -= (ptCorr * sin(jphi)) * (smear-1);
+
+	    	    
+	    cout << " correction x" <<  (ptCorr * cos(jphi)) * (smear-1)  <<" met " << metPx <<endl;
+
+	    energyCorr = energyCorr * smear;
+	    ptCorr = ptCorr * smear;	
+	    
+
 	    if (syst_name == "JESUp")
               {
                 unc = jetUncertainty( eta,  ptCorr, flavour);
@@ -2692,7 +2773,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
                 if (leptonsFlavour_ == "muon" )lepEff = muonHLTEff(leptons[0].eta(),"Mu2012A");
                 if (leptonsFlavour_ == "muon" )lepEffB = muonHLTEff(leptons[0].eta(),"Mu2012B");
 		if (leptonsFlavour_ == "muon" ) muonHLTSF(leptons[0].eta(),leptons[0].pt());
-		if (leptonsFlavour_ == "electron" )lepEff = 1;
+		if (leptonsFlavour_ == "electron" ) electronHLTSF(leptons[0].eta(),leptons[0].pt());
 
                 lepPt = leptons[0].pt();
 		
@@ -2710,7 +2791,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
 
                 nJCentralNoPU = nJetsCentralNoPU;
                 nJCentral = nJetsCentral;
-
+		
                 nJForwardNoPU = nJetsForwardNoPU;
                 nJForward = nJetsForward;
 
@@ -2781,8 +2862,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
         //    2T = 2;
         //    0T_QCD=3;
         //    1T_QCD=4;
-        //    2T_QCD=5;
-
+	//    2T_QCD=5;
         if (nJets == 2 || nJets == 3)
         {
 
@@ -2792,7 +2872,10 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
             else if (ntight_tags == 2)B = 2;
             else continue;
 
-
+	    if(lepRhoCorrectedRelIso>0.1){
+	      cout<< "rho corr rel iso is: " <<lepRhoCorrectedRelIso<< " leptons size "<<nLeptons<< " B is " << B << " nJets is "  << nJets << " is qcd? "<< isQCD << " passes lepton? "<< passesLeptonStep <<endl;
+	    }
+	    
 
             if (isQCD)
             {
@@ -3003,6 +3086,7 @@ void SingleTopSystematicsTreesDumper::analyze(const Event &iEvent, const EventSe
 	    if (leptonsFlavour_ == "muon" )lepEffB = muonHLTEff(lepEta,"Mu2012B");
 
 	    if (leptonsFlavour_ == "muon" )muonHLTSF(leptons[0].eta(),leptons[0].pt());
+	    if (leptonsFlavour_ == "electron" )electronHLTSF(leptons[0].eta(),leptons[0].pt());
 
 	    if (leptonsFlavour_ == "electron" )lepEff = 1;
 
@@ -5207,98 +5291,144 @@ float SingleTopSystematicsTreesDumper::BTagWeight::weightWithVeto(vector<JetInfo
 
 void SingleTopSystematicsTreesDumper::muonHLTSF(float etaMu, float ptMu){
 
+  double pt = ptMu;
+  double eta = etaMu;
   sfID=1;sfIDup=1;sfIDdown=1;  
   sfIso=1;sfIsoup=1;sfIsodown=1;  
   sfTrig=1;sfTrigup=1;sfTrigdown=1;  
 
-//Run C
-if(fabs(etaMu)<=0.9) {  if (ptMu > 10 && ptMu <  20){sfID = 0.988164; sfIDup = 0.997706; sfIDdown = 0.978738 ; } 
- if (ptMu > 20 && ptMu <  25){sfID = 0.991657; sfIDup = 0.99439; sfIDdown = 0.988918 ; } 
- if (ptMu > 25 && ptMu <  30){sfID = 0.993626; sfIDup = 0.994733; sfIDdown = 0.992514 ; } 
- if (ptMu > 30 && ptMu <  35){sfID = 0.995009; sfIDup = 0.995743; sfIDdown = 0.994272 ; } 
- if (ptMu > 35 && ptMu <  40){sfID = 0.994813; sfIDup = 0.995366; sfIDdown = 0.994258 ; } 
- if (ptMu > 40 && ptMu <  50){sfID = 0.993125; sfIDup = 0.993481; sfIDdown = 0.99277 ; } 
- if (ptMu > 50 && ptMu <  60){sfID = 0.990789; sfIDup = 0.991688; sfIDdown = 0.989886 ; } 
- if (ptMu > 60 && ptMu <  90){sfID = 0.991305; sfIDup = 0.992793; sfIDdown = 0.989809 ; } 
- if (ptMu > 90 && ptMu <  140){sfID = 1.00039; sfIDup = 1.00514; sfIDdown = 0.995601 ; } 
- if (ptMu > 140 && ptMu <  500){sfID = 1.00427; sfIDup = 1.03642; sfIDdown = 0.973299 ; } 
- if (ptMu > 10 && ptMu <  20){sfIso = 0.947299; sfIsoup = 0.951256; sfIsodown = 0.943334 ; } 
- if (ptMu > 20 && ptMu <  25){sfIso = 0.977444; sfIsoup = 0.979411; sfIsodown = 0.975473 ; } 
- if (ptMu > 25 && ptMu <  30){sfIso = 1.00096; sfIsoup = 1.00208; sfIsodown = 0.999835 ; } 
- if (ptMu > 30 && ptMu <  35){sfIso = 0.995691; sfIsoup = 0.996418; sfIsodown = 0.994961 ; } 
- if (ptMu > 35 && ptMu <  40){sfIso = 0.994869; sfIsoup = 0.995362; sfIsodown = 0.994374 ; } 
- if (ptMu > 40 && ptMu <  50){sfIso = 0.994939; sfIsoup = 0.995186; sfIsodown = 0.994691 ; } 
- if (ptMu > 50 && ptMu <  60){sfIso = 0.996389; sfIsoup = 0.99684; sfIsodown = 0.995935 ; } 
- if (ptMu > 60 && ptMu <  90){sfIso = 0.998467; sfIsoup = 0.998994; sfIsodown = 0.997932 ; } 
- if (ptMu > 90 && ptMu <  140){sfIso = 1.00057; sfIsoup = 1.00158; sfIsodown = 0.999525 ; } 
- if (ptMu > 140 && ptMu <  500){sfIso = 1.0023; sfIsoup = 1.00437; sfIsodown = 0.999925 ; } 
- if (ptMu > 25 && ptMu <  30){sfTrig = 0.986052; sfTrigup = 0.987446; sfTrigdown = 0.98465 ; } 
- if (ptMu > 30 && ptMu <  35){sfTrig = 0.985515; sfTrigup = 0.98642; sfTrigdown = 0.984605 ; } 
- if (ptMu > 35 && ptMu <  40){sfTrig = 0.984947; sfTrigup = 0.985592; sfTrigdown = 0.984298 ; } 
- if (ptMu > 40 && ptMu <  50){sfTrig = 0.983213; sfTrigup = 0.983753; sfTrigdown = 0.982674 ; } 
- if (ptMu > 50 && ptMu <  60){sfTrig = 0.983801; sfTrigup = 0.984719; sfTrigdown = 0.982878 ; } 
- if (ptMu > 60 && ptMu <  90){sfTrig = 0.983397; sfTrigup = 0.984783; sfTrigdown = 0.982 ; } 
- if (ptMu > 90 && ptMu <  140){sfTrig = 0.977086; sfTrigup = 0.981907; sfTrigdown = 0.972136 ; } 
- if (ptMu > 140 && ptMu <  500){sfTrig = 0.983315; sfTrigup = 0.995474; sfTrigdown = 0.970149 ; } 
+//ID Iso SF for ABCD
+if(fabs(eta)<=0.9) {  if (pt > 10 && pt <  20){sfID = 0.984868; sfIDup = 0.990827; sfIDdown = 0.978922 ; } 
+ if (pt > 20 && pt <  25){sfID = 0.988681; sfIDup = 0.990443; sfIDdown = 0.986914 ; } 
+ if (pt > 25 && pt <  30){sfID = 0.993889; sfIDup = 0.994673; sfIDdown = 0.9931 ; } 
+ if (pt > 30 && pt <  35){sfID = 0.994164; sfIDup = 0.994709; sfIDdown = 0.993617 ; } 
+ if (pt > 35 && pt <  40){sfID = 0.994084; sfIDup = 0.994505; sfIDdown = 0.993662 ; } 
+ if (pt > 40 && pt <  50){sfID = 0.99247; sfIDup = 0.992741; sfIDdown = 0.992199 ; } 
+ if (pt > 50 && pt <  60){sfID = 0.990978; sfIDup = 0.991644; sfIDdown = 0.990308 ; } 
+ if (pt > 60 && pt <  90){sfID = 0.990444; sfIDup = 0.991505; sfIDdown = 0.989377 ; } 
+ if (pt > 90 && pt <  140){sfID = 1.00385; sfIDup = 1.00714; sfIDdown = 1.00055 ; } 
+ if (pt > 140 && pt <  300){sfID = 1.02798; sfIDup = 1.04694; sfIDdown = 1.00922 ; } 
+ if (pt > 300 && pt <  500){sfID = 1; sfIDup = 1; sfIDdown = 0.67606 ; } 
+ if (pt > 10 && pt <  20){sfIso = 0.94705; sfIsoup = 0.949803; sfIsodown = 0.944293 ; } 
+ if (pt > 20 && pt <  25){sfIso = 0.974978; sfIsoup = 0.976512; sfIsodown = 0.97344 ; } 
+ if (pt > 25 && pt <  30){sfIso = 0.997129; sfIsoup = 0.998065; sfIsodown = 0.99619 ; } 
+ if (pt > 30 && pt <  35){sfIso = 0.993863; sfIsoup = 0.994484; sfIsodown = 0.993242 ; } 
+ if (pt > 35 && pt <  40){sfIso = 0.993442; sfIsoup = 0.993872; sfIsodown = 0.993009 ; } 
+ if (pt > 40 && pt <  50){sfIso = 0.994101; sfIsoup = 0.994322; sfIsodown = 0.993878 ; } 
+ if (pt > 50 && pt <  60){sfIso = 0.995544; sfIsoup = 0.995948; sfIsodown = 0.995137 ; } 
+ if (pt > 60 && pt <  90){sfIso = 0.999036; sfIsoup = 0.999501; sfIsodown = 0.998565 ; } 
+ if (pt > 90 && pt <  140){sfIso = 1.00104; sfIsoup = 1.00192; sfIsodown = 1.00013 ; } 
+ if (pt > 140 && pt <  300){sfIso = 1.0003; sfIsoup = 1.00201; sfIsodown = 0.998474 ; } 
+ if (pt > 300 && pt <  500){sfIso = 1.01977; sfIsoup = 1.02914; sfIsodown = 1.00747 ; } 
  }
-if(fabs(etaMu)<=1.2&& fabs(etaMu)>0.9) {  if (ptMu > 10 && ptMu <  20){sfID = 0.990385; sfIDup = 1.00175; sfIDdown = 0.979122 ; } 
- if (ptMu > 20 && ptMu <  25){sfID = 0.991006; sfIDup = 0.995019; sfIDdown = 0.986979 ; } 
- if (ptMu > 25 && ptMu <  30){sfID = 0.992512; sfIDup = 0.994523; sfIDdown = 0.990484 ; } 
- if (ptMu > 30 && ptMu <  35){sfID = 0.990182; sfIDup = 0.99166; sfIDdown = 0.988693 ; } 
- if (ptMu > 35 && ptMu <  40){sfID = 0.989602; sfIDup = 0.990664; sfIDdown = 0.988532 ; } 
- if (ptMu > 40 && ptMu <  50){sfID = 0.989993; sfIDup = 0.99065; sfIDdown = 0.989333 ; } 
- if (ptMu > 50 && ptMu <  60){sfID = 0.9904; sfIDup = 0.992127; sfIDdown = 0.988658 ; } 
- if (ptMu > 60 && ptMu <  90){sfID = 0.985321; sfIDup = 0.988181; sfIDdown = 0.982433 ; } 
- if (ptMu > 90 && ptMu <  140){sfID = 1.01878; sfIDup = 1.02818; sfIDdown = 1.00927 ; } 
- if (ptMu > 140 && ptMu <  500){sfID = 1.03629; sfIDup = 1.04875; sfIDdown = 0.988624 ; } 
- if (ptMu > 10 && ptMu <  20){sfIso = 0.954459; sfIsoup = 0.958655; sfIsodown = 0.950247 ; } 
- if (ptMu > 20 && ptMu <  25){sfIso = 0.991168; sfIsoup = 0.993913; sfIsodown = 0.988413 ; } 
- if (ptMu > 25 && ptMu <  30){sfIso = 1.00115; sfIsoup = 1.003; sfIsodown = 0.999287 ; } 
- if (ptMu > 30 && ptMu <  35){sfIso = 1.00012; sfIsoup = 1.00143; sfIsodown = 0.9988 ; } 
- if (ptMu > 35 && ptMu <  40){sfIso = 0.998824; sfIsoup = 0.999671; sfIsodown = 0.99797 ; } 
- if (ptMu > 40 && ptMu <  50){sfIso = 0.998772; sfIsoup = 0.999168; sfIsodown = 0.998374 ; } 
- if (ptMu > 50 && ptMu <  60){sfIso = 0.997179; sfIsoup = 0.997904; sfIsodown = 0.996444 ; } 
- if (ptMu > 60 && ptMu <  90){sfIso = 0.99856; sfIsoup = 0.999443; sfIsodown = 0.997655 ; } 
- if (ptMu > 90 && ptMu <  140){sfIso = 0.997776; sfIsoup = 0.999401; sfIsodown = 0.99602 ; } 
- if (ptMu > 140 && ptMu <  500){sfIso = 0.997745; sfIsoup = 1.00132; sfIsodown = 0.993048 ; } 
- if (ptMu > 25 && ptMu <  30){sfTrig = 0.9761; sfTrigup = 0.979632; sfTrigdown = 0.97255 ; } 
- if (ptMu > 30 && ptMu <  35){sfTrig = 0.969575; sfTrigup = 0.972217; sfTrigdown = 0.966921 ; } 
- if (ptMu > 35 && ptMu <  40){sfTrig = 0.971727; sfTrigup = 0.973774; sfTrigdown = 0.969673 ; } 
- if (ptMu > 40 && ptMu <  50){sfTrig = 0.968551; sfTrigup = 0.969478; sfTrigdown = 0.967617 ; } 
- if (ptMu > 50 && ptMu <  60){sfTrig = 0.966893; sfTrigup = 0.969728; sfTrigdown = 0.964041 ; } 
- if (ptMu > 60 && ptMu <  90){sfTrig = 0.959999; sfTrigup = 0.964271; sfTrigdown = 0.955696 ; } 
- if (ptMu > 90 && ptMu <  140){sfTrig = 0.959322; sfTrigup = 0.973596; sfTrigdown = 0.944637 ; } 
- if (ptMu > 140 && ptMu <  500){sfTrig = 1.0146; sfTrigup = 1.05261; sfTrigdown = 0.97273 ; } 
+if(fabs(eta)<=1.2&& fabs(eta)>0.9) {  if (pt > 10 && pt <  20){sfID = 0.986855; sfIDup = 0.993819; sfIDdown = 0.979939 ; } 
+ if (pt > 20 && pt <  25){sfID = 0.987375; sfIDup = 0.989974; sfIDdown = 0.984765 ; } 
+ if (pt > 25 && pt <  30){sfID = 0.994212; sfIDup = 0.995638; sfIDdown = 0.992776 ; } 
+ if (pt > 30 && pt <  35){sfID = 0.990593; sfIDup = 0.991663; sfIDdown = 0.989516 ; } 
+ if (pt > 35 && pt <  40){sfID = 0.990353; sfIDup = 0.991142; sfIDdown = 0.989559 ; } 
+ if (pt > 40 && pt <  50){sfID = 0.989641; sfIDup = 0.990134; sfIDdown = 0.989147 ; } 
+ if (pt > 50 && pt <  60){sfID = 0.991311; sfIDup = 0.992578; sfIDdown = 0.990035 ; } 
+ if (pt > 60 && pt <  90){sfID = 0.98631; sfIDup = 0.988322; sfIDdown = 0.98428 ; } 
+ if (pt > 90 && pt <  140){sfID = 1.01191; sfIDup = 1.01838; sfIDdown = 1.00536 ; } 
+ if (pt > 140 && pt <  300){sfID = 0.955563; sfIDup = 0.990509; sfIDdown = 0.921661 ; } 
+ if (pt > 300 && pt <  500){sfID = 1; sfIDup = 1; sfIDdown = 0.489937 ; } 
+ if (pt > 10 && pt <  20){sfIso = 0.951836; sfIsoup = 0.954998; sfIsodown = 0.948665 ; } 
+ if (pt > 20 && pt <  25){sfIso = 0.988368; sfIsoup = 0.99068; sfIsodown = 0.986047 ; } 
+ if (pt > 25 && pt <  30){sfIso = 1.00083; sfIsoup = 1.00248; sfIsodown = 0.999185 ; } 
+ if (pt > 30 && pt <  35){sfIso = 0.998546; sfIsoup = 0.999708; sfIsodown = 0.997378 ; } 
+ if (pt > 35 && pt <  40){sfIso = 0.99914; sfIsoup = 0.999886; sfIsodown = 0.998392 ; } 
+ if (pt > 40 && pt <  50){sfIso = 0.998176; sfIsoup = 0.998528; sfIsodown = 0.997824 ; } 
+ if (pt > 50 && pt <  60){sfIso = 0.998696; sfIsoup = 0.999342; sfIsodown = 0.99804 ; } 
+ if (pt > 60 && pt <  90){sfIso = 0.999132; sfIsoup = 0.999902; sfIsodown = 0.998346 ; } 
+ if (pt > 90 && pt <  140){sfIso = 0.999559; sfIsoup = 1.00095; sfIsodown = 0.998088 ; } 
+ if (pt > 140 && pt <  300){sfIso = 0.996767; sfIsoup = 0.999567; sfIsodown = 0.993535 ; } 
+ if (pt > 300 && pt <  500){sfIso = 1.00784; sfIsoup = 1.02465; sfIsodown = 0.981759 ; } 
 }
-if(fabs(etaMu)<2.1&& fabs(etaMu)>1.2) {  if (ptMu > 10 && ptMu <  20){sfID = 1.0043; sfIDup = 1.01062; sfIDdown = 0.997973 ; } 
- if (ptMu > 20 && ptMu <  25){sfID = 1.00105; sfIDup = 1.00331; sfIDdown = 0.998773 ; } 
- if (ptMu > 25 && ptMu <  30){sfID = 1.00013; sfIDup = 1.00136; sfIDdown = 0.998899 ; } 
- if (ptMu > 30 && ptMu <  35){sfID = 0.99898; sfIDup = 0.999949; sfIDdown = 0.998006 ; } 
- if (ptMu > 35 && ptMu <  40){sfID = 0.997324; sfIDup = 0.998114; sfIDdown = 0.99653 ; } 
- if (ptMu > 40 && ptMu <  50){sfID = 0.998192; sfIDup = 0.99868; sfIDdown = 0.997702 ; } 
- if (ptMu > 50 && ptMu <  60){sfID = 0.997411; sfIDup = 0.998677; sfIDdown = 0.996139 ; } 
- if (ptMu > 60 && ptMu <  90){sfID = 0.996805; sfIDup = 0.999062; sfIDdown = 0.994537 ; } 
- if (ptMu > 90 && ptMu <  140){sfID = 1.01162; sfIDup = 1.02002; sfIDdown = 1.0032 ; } 
- if (ptMu > 140 && ptMu <  500){sfID = 1.04441; sfIDup = 1.05706; sfIDdown = 0.990617 ; } 
- if (ptMu > 10 && ptMu <  20){sfIso = 0.982438; sfIsoup = 0.984454; sfIsodown = 0.980417 ; } 
- if (ptMu > 20 && ptMu <  25){sfIso = 0.993843; sfIsoup = 0.995219; sfIsodown = 0.992463 ; } 
- if (ptMu > 25 && ptMu <  30){sfIso = 1.00835; sfIsoup = 1.00931; sfIsodown = 1.0074 ; } 
- if (ptMu > 30 && ptMu <  35){sfIso = 1.00613; sfIsoup = 1.00686; sfIsodown = 1.0054 ; } 
- if (ptMu > 35 && ptMu <  40){sfIso = 1.00341; sfIsoup = 1.00393; sfIsodown = 1.0029 ; } 
- if (ptMu > 40 && ptMu <  50){sfIso = 1.00195; sfIsoup = 1.00219; sfIsodown = 1.00172 ; } 
- if (ptMu > 50 && ptMu <  60){sfIso = 1.00059; sfIsoup = 1.00103; sfIsodown = 1.00014 ; } 
- if (ptMu > 60 && ptMu <  90){sfIso = 1.00128; sfIsoup = 1.00183; sfIsodown = 1.00073 ; } 
- if (ptMu > 90 && ptMu <  140){sfIso = 0.999173; sfIsoup = 1.00028; sfIsodown = 0.998003 ; } 
- if (ptMu > 140 && ptMu <  500){sfIso = 0.994603; sfIsoup = 0.997095; sfIsodown = 0.991367 ; } 
- if (ptMu > 25 && ptMu <  30){sfTrig = 1.00919; sfTrigup = 1.0116; sfTrigdown = 1.00678 ; } 
- if (ptMu > 30 && ptMu <  35){sfTrig = 1.00518; sfTrigup = 1.00706; sfTrigdown = 1.00329 ; } 
- if (ptMu > 35 && ptMu <  40){sfTrig = 1.00242; sfTrigup = 1.00397; sfTrigdown = 1.00086 ; } 
- if (ptMu > 40 && ptMu <  50){sfTrig = 1.0017; sfTrigup = 1.00267; sfTrigdown = 1.00077 ; } 
- if (ptMu > 50 && ptMu <  60){sfTrig = 0.999244; sfTrigup = 1.00154; sfTrigdown = 0.996944 ; } 
- if (ptMu > 60 && ptMu <  90){sfTrig = 0.994159; sfTrigup = 0.997647; sfTrigdown = 0.990654 ; } 
- if (ptMu > 90 && ptMu <  140){sfTrig = 1.00186; sfTrigup = 1.01351; sfTrigdown = 0.990019 ; } 
- if (ptMu > 140 && ptMu <  500){sfTrig = 0.998055; sfTrigup = 1.03416; sfTrigdown = 0.957639 ; } 
+if(fabs(eta)<2.1&& fabs(eta)>1.2) {  if (pt > 10 && pt <  20){sfID = 1.01235; sfIDup = 1.01633; sfIDdown = 1.00839 ; } 
+ if (pt > 20 && pt <  25){sfID = 1.00155; sfIDup = 1.00304; sfIDdown = 1.00006 ; } 
+ if (pt > 25 && pt <  30){sfID = 0.999149; sfIDup = 1.00003; sfIDdown = 0.998262 ; } 
+ if (pt > 30 && pt <  35){sfID = 0.997573; sfIDup = 0.998294; sfIDdown = 0.99685 ; } 
+ if (pt > 35 && pt <  40){sfID = 0.996585; sfIDup = 0.997183; sfIDdown = 0.995984 ; } 
+ if (pt > 40 && pt <  50){sfID = 0.997431; sfIDup = 0.997804; sfIDdown = 0.997056 ; } 
+ if (pt > 50 && pt <  60){sfID = 0.997521; sfIDup = 0.998468; sfIDdown = 0.996571 ; } 
+ if (pt > 60 && pt <  90){sfID = 0.993942; sfIDup = 0.995548; sfIDdown = 0.992327 ; } 
+ if (pt > 90 && pt <  140){sfID = 1.01922; sfIDup = 1.02491; sfIDdown = 1.0135 ; } 
+ if (pt > 140 && pt <  300){sfID = 1.01648; sfIDup = 1.04966; sfIDdown = 0.982238 ; } 
+ if (pt > 300 && pt <  500){sfID = 0.608799; sfIDup = 1; sfIDdown = 0.169285 ; } 
+ if (pt > 10 && pt <  20){sfIso = 0.980045; sfIsoup = 0.981666; sfIsodown = 0.978421 ; } 
+ if (pt > 20 && pt <  25){sfIso = 0.997342; sfIsoup = 0.998548; sfIsodown = 0.996133 ; } 
+ if (pt > 25 && pt <  30){sfIso = 1.00784; sfIsoup = 1.00871; sfIsodown = 1.00696 ; } 
+ if (pt > 30 && pt <  35){sfIso = 1.00685; sfIsoup = 1.00752; sfIsodown = 1.00618 ; } 
+ if (pt > 35 && pt <  40){sfIso = 1.0037; sfIsoup = 1.00416; sfIsodown = 1.00323 ; } 
+ if (pt > 40 && pt <  50){sfIso = 1.00209; sfIsoup = 1.0023; sfIsodown = 1.00188 ; } 
+ if (pt > 50 && pt <  60){sfIso = 1.00125; sfIsoup = 1.00163; sfIsodown = 1.00086 ; } 
+ if (pt > 60 && pt <  90){sfIso = 1.00065; sfIsoup = 1.00112; sfIsodown = 1.00018 ; } 
+ if (pt > 90 && pt <  140){sfIso = 0.999878; sfIsoup = 1.00081; sfIsodown = 0.998902 ; } 
+ if (pt > 140 && pt <  300){sfIso = 0.99989; sfIsoup = 1.00205; sfIsodown = 0.997507 ; } 
+ if (pt > 300 && pt <  500){sfIso = 1.01392; sfIsoup = 1.02575; sfIsodown = 0.995749 ; } 
+ }
+//ABCD
+
+//Trigger Run D
+if(fabs(eta)<=0.9) {  if (pt > 25 && pt <  30){sfTrig = 0.979145; sfTrigup = 0.980946; sfTrigdown = 0.977338 ; } 
+ if (pt > 30 && pt <  35){sfTrig = 0.980195; sfTrigup = 0.981314; sfTrigdown = 0.979072 ; } 
+ if (pt > 35 && pt <  40){sfTrig = 0.981218; sfTrigup = 0.981981; sfTrigdown = 0.980454 ; } 
+ if (pt > 40 && pt <  50){sfTrig = 0.982317; sfTrigup = 1.06112; sfTrigdown = 0.981954 ; } 
+ if (pt > 50 && pt <  60){sfTrig = 0.981793; sfTrigup = 0.982783; sfTrigdown = 0.980797 ; } 
+ if (pt > 60 && pt <  90){sfTrig = 0.985262; sfTrigup = 0.98673; sfTrigdown = 0.983781 ; } 
+ if (pt > 90 && pt <  140){sfTrig = 0.985298; sfTrigup = 0.990194; sfTrigdown = 0.980271 ; } 
+ if (pt > 140 && pt <  500){sfTrig = 0.986012; sfTrigup = 0.999074; sfTrigdown = 0.971938 ; } 
 }
+if(fabs(eta)<=1.2&& fabs(eta)>0.9) {  if (pt > 25 && pt <  30){sfTrig = 0.962613; sfTrigup = 0.966528; sfTrigdown = 0.958684 ; } 
+ if (pt > 30 && pt <  35){sfTrig = 0.959007; sfTrigup = 0.961889; sfTrigdown = 0.956115 ; } 
+ if (pt > 35 && pt <  40){sfTrig = 0.9618; sfTrigup = 0.963988; sfTrigdown = 0.959605 ; } 
+ if (pt > 40 && pt <  50){sfTrig = 0.962938; sfTrigup = 0.964187; sfTrigdown = 0.961686 ; } 
+ if (pt > 50 && pt <  60){sfTrig = 0.960298; sfTrigup = 0.96326; sfTrigdown = 0.95732 ; } 
+ if (pt > 60 && pt <  90){sfTrig = 0.956722; sfTrigup = 0.961223; sfTrigdown = 0.952188 ; } 
+ if (pt > 90 && pt <  140){sfTrig = 0.962339; sfTrigup = 0.976841; sfTrigdown = 0.947468 ; } 
+ if (pt > 140 && pt <  500){sfTrig = 0.99289; sfTrigup = 1.02694; sfTrigdown = 0.955269 ; } 
+}
+if(fabs(eta)<2.1&& fabs(eta)>1.2) {  if (pt > 25 && pt <  30){sfTrig = 1.00472; sfTrigup = 1.00727; sfTrigdown = 1.00218 ; } 
+ if (pt > 30 && pt <  35){sfTrig = 1.00194; sfTrigup = 1.00392; sfTrigdown = 0.999953 ; } 
+ if (pt > 35 && pt <  40){sfTrig = 0.998212; sfTrigup = 0.999835; sfTrigdown = 0.996586 ; } 
+ if (pt > 40 && pt <  50){sfTrig = 0.996583; sfTrigup = 0.997588; sfTrigdown = 0.995575 ; } 
+ if (pt > 50 && pt <  60){sfTrig = 0.991098; sfTrigup = 0.993481; sfTrigdown = 0.988707 ; } 
+ if (pt > 60 && pt <  90){sfTrig = 0.983799; sfTrigup = 0.987389; sfTrigdown = 0.980192 ; } 
+ if (pt > 90 && pt <  140){sfTrig = 0.983428; sfTrigup = 0.995422; sfTrigdown = 0.971255 ; } 
+ if (pt > 140 && pt <  500){sfTrig = 0.944096; sfTrigup = 0.983253; sfTrigdown = 0.903315 ; } 
+}
+
+ lepSFD=sfTrig*sfIso*sfID;
+ lepSFIDUpD=sfTrig*sfIso*sfIDup;
+ lepSFIDDownD=sfTrig*sfIso*sfIDdown;
+
+ lepSFIsoUpD=sfTrig*sfID*sfIsoup;
+ lepSFIsoDownD=sfTrig*sfID*sfIsodown;
+
+ lepSFTrigUpD=sfID*sfIso*sfTrigup;
+ lepSFTrigDownD=sfID*sfIso*sfTrigdown;
+
+
+//Trigger Run C
+if(fabs(eta)<=0.9) {  if (pt > 25 && pt <  30){sfTrig = 0.986052; sfTrigup = 0.987446; sfTrigdown = 0.98465 ; } 
+ if (pt > 30 && pt <  35){sfTrig = 0.985515; sfTrigup = 0.98642; sfTrigdown = 0.984605 ; } 
+ if (pt > 35 && pt <  40){sfTrig = 0.984947; sfTrigup = 0.985592; sfTrigdown = 0.984298 ; } 
+ if (pt > 40 && pt <  50){sfTrig = 0.983213; sfTrigup = 0.983753; sfTrigdown = 0.982674 ; } 
+ if (pt > 50 && pt <  60){sfTrig = 0.983801; sfTrigup = 0.984719; sfTrigdown = 0.982878 ; } 
+ if (pt > 60 && pt <  90){sfTrig = 0.983397; sfTrigup = 0.984783; sfTrigdown = 0.982 ; } 
+ if (pt > 90 && pt <  140){sfTrig = 0.977086; sfTrigup = 0.981907; sfTrigdown = 0.972136 ; } 
+ if (pt > 140 && pt <  500){sfTrig = 0.983315; sfTrigup = 0.995474; sfTrigdown = 0.970149 ; } 
+}
+if(fabs(eta)<=1.2&& fabs(eta)>0.9) {  if (pt > 25 && pt <  30){sfTrig = 0.9761; sfTrigup = 0.979632; sfTrigdown = 0.97255 ; } 
+ if (pt > 30 && pt <  35){sfTrig = 0.969575; sfTrigup = 0.972217; sfTrigdown = 0.966921 ; } 
+ if (pt > 35 && pt <  40){sfTrig = 0.971727; sfTrigup = 0.973774; sfTrigdown = 0.969673 ; } 
+ if (pt > 40 && pt <  50){sfTrig = 0.968551; sfTrigup = 0.969478; sfTrigdown = 0.967617 ; } 
+ if (pt > 50 && pt <  60){sfTrig = 0.966893; sfTrigup = 0.969728; sfTrigdown = 0.964041 ; } 
+ if (pt > 60 && pt <  90){sfTrig = 0.959999; sfTrigup = 0.964271; sfTrigdown = 0.955696 ; } 
+ if (pt > 90 && pt <  140){sfTrig = 0.959322; sfTrigup = 0.973596; sfTrigdown = 0.944637 ; } 
+ if (pt > 140 && pt <  500){sfTrig = 1.0146; sfTrigup = 1.05261; sfTrigdown = 0.97273 ; } 
+ }
+
 
  lepSFC=sfTrig*sfIso*sfID;
  lepSFIDUpC=sfTrig*sfIso*sfIDup;
@@ -5310,195 +5440,33 @@ if(fabs(etaMu)<2.1&& fabs(etaMu)>1.2) {  if (ptMu > 10 && ptMu <  20){sfID = 1.0
  lepSFTrigUpC=sfID*sfIso*sfTrigup;
  lepSFTrigDownC=sfID*sfIso*sfTrigdown;
 
-//Run A
-if(fabs(etaMu)<=0.9) {  if (ptMu > 10 && ptMu <  20){sfID = 0.981239; sfIDup = 0.992429; sfIDdown = 0.970245 ; } 
- if (ptMu > 20 && ptMu <  25){sfID = 0.98043; sfIDup = 0.983688; sfIDdown = 0.977172 ; } 
- if (ptMu > 25 && ptMu <  30){sfID = 0.991182; sfIDup = 0.992461; sfIDdown = 0.9899 ; } 
- if (ptMu > 30 && ptMu <  35){sfID = 0.988984; sfIDup = 0.989802; sfIDdown = 0.988163 ; } 
- if (ptMu > 35 && ptMu <  40){sfID = 0.990422; sfIDup = 0.991035; sfIDdown = 0.989808 ; } 
- if (ptMu > 40 && ptMu <  50){sfID = 0.988821; sfIDup = 0.989219; sfIDdown = 0.988422 ; } 
- if (ptMu > 50 && ptMu <  60){sfID = 0.989954; sfIDup = 0.990955; sfIDdown = 0.988948 ; } 
- if (ptMu > 60 && ptMu <  90){sfID = 0.989478; sfIDup = 0.99106; sfIDdown = 0.987889 ; } 
- if (ptMu > 90 && ptMu <  140){sfID = 1.00023; sfIDup = 1.00465; sfIDdown = 0.995779 ; } 
- if (ptMu > 140 && ptMu <  500){sfID = 0.985242; sfIDup = 1.00128; sfIDdown = 0.96937 ; } 
- if (ptMu > 10 && ptMu <  20){sfIso = 0.900744; sfIsoup = 0.904232; sfIsodown = 0.89725 ; } 
- if (ptMu > 20 && ptMu <  25){sfIso = 0.961462; sfIsoup = 0.963358; sfIsodown = 0.959562 ; } 
- if (ptMu > 25 && ptMu <  30){sfIso = 0.991942; sfIsoup = 0.993046; sfIsodown = 0.990836 ; } 
- if (ptMu > 30 && ptMu <  35){sfIso = 0.992135; sfIsoup = 0.992857; sfIsodown = 0.991412 ; } 
- if (ptMu > 35 && ptMu <  40){sfIso = 0.993092; sfIsoup = 0.993585; sfIsodown = 0.992597 ; } 
- if (ptMu > 40 && ptMu <  50){sfIso = 0.994311; sfIsoup = 0.994558; sfIsodown = 0.994062 ; } 
- if (ptMu > 50 && ptMu <  60){sfIso = 0.995082; sfIsoup = 0.995536; sfIsodown = 0.994624 ; } 
- if (ptMu > 60 && ptMu <  90){sfIso = 0.99797; sfIsoup = 0.998498; sfIsodown = 0.997435 ; } 
- if (ptMu > 90 && ptMu <  140){sfIso = 0.999642; sfIsoup = 1.00065; sfIsodown = 0.998591 ; } 
- if (ptMu > 140 && ptMu <  500){sfIso = 0.995084; sfIsoup = 0.997178; sfIsodown = 0.992712 ; } 
-
- if (ptMu > 25 && ptMu <  30){sfTrig = 0.938137; sfTrigup = 0.94254; sfTrigdown = 0.933702 ; } 
- if (ptMu > 30 && ptMu <  35){sfTrig = 0.942347; sfTrigup = 0.945148; sfTrigdown = 0.939526 ; } 
- if (ptMu > 35 && ptMu <  40){sfTrig = 0.951167; sfTrigup = 0.953089; sfTrigdown = 0.949232 ; } 
- if (ptMu > 40 && ptMu <  50){sfTrig = 0.960094; sfTrigup = 0.961208; sfTrigdown = 0.958976 ; } 
- if (ptMu > 50 && ptMu <  60){sfTrig = 0.97344; sfTrigup = 0.975881; sfTrigdown = 0.970964 ; } 
- if (ptMu > 60 && ptMu <  90){sfTrig = 0.975737; sfTrigup = 0.979319; sfTrigdown = 0.972082 ; } 
- if (ptMu > 90 && ptMu <  140){sfTrig = 0.980291; sfTrigup = 0.992657; sfTrigdown = 0.96703 ; } 
- if (ptMu > 140 && ptMu <  500){sfTrig = 1.00399; sfTrigup = 1.02648; sfTrigdown = 0.97399 ; } 
+//Trigger Run B
+if(fabs(eta)<=0.9) {  if (pt > 25 && pt <  30){sfTrig = 0.978858; sfTrigup = 0.980843; sfTrigdown = 0.976865 ; } 
+ if (pt > 30 && pt <  35){sfTrig = 0.979803; sfTrigup = 0.981049; sfTrigdown = 0.978553 ; } 
+ if (pt > 35 && pt <  40){sfTrig = 0.979755; sfTrigup = 0.980612; sfTrigdown = 0.978895 ; } 
+ if (pt > 40 && pt <  50){sfTrig = 0.979681; sfTrigup = 0.980176; sfTrigdown = 0.979433 ; } 
+ if (pt > 50 && pt <  60){sfTrig = 0.978707; sfTrigup = 0.979846; sfTrigdown = 0.97756 ; } 
+ if (pt > 60 && pt <  90){sfTrig = 0.981103; sfTrigup = 0.982791; sfTrigdown = 0.9794 ; } 
+ if (pt > 90 && pt <  140){sfTrig = 0.98042; sfTrigup = 0.986075; sfTrigdown = 0.9746 ; } 
+ if (pt > 140 && pt <  500){sfTrig = 0.974405; sfTrigup = 0.988661; sfTrigdown = 0.959129 ; } 
 }
-if(fabs(etaMu)<=1.2&& fabs(etaMu)>0.9) {  if (ptMu > 10 && ptMu <  20){sfID = 0.936552; sfIDup = 0.949846; sfIDdown = 0.92343 ; } 
- if (ptMu > 20 && ptMu <  25){sfID = 0.995381; sfIDup = 1.00058; sfIDdown = 0.990187 ; } 
- if (ptMu > 25 && ptMu <  30){sfID = 0.991899; sfIDup = 0.994396; sfIDdown = 0.98939 ; } 
- if (ptMu > 30 && ptMu <  35){sfID = 0.990177; sfIDup = 0.991845; sfIDdown = 0.988498 ; } 
- if (ptMu > 35 && ptMu <  40){sfID = 0.990865; sfIDup = 0.992029; sfIDdown = 0.989695 ; } 
- if (ptMu > 40 && ptMu <  50){sfID = 0.986703; sfIDup = 0.987414; sfIDdown = 0.985989 ; } 
- if (ptMu > 50 && ptMu <  60){sfID = 0.990343; sfIDup = 0.992186; sfIDdown = 0.988485 ; } 
- if (ptMu > 60 && ptMu <  90){sfID = 0.985462; sfIDup = 0.98842; sfIDdown = 0.982481 ; } 
- if (ptMu > 90 && ptMu <  140){sfID = 0.999933; sfIDup = 1.00854; sfIDdown = 0.991266 ; } 
- if (ptMu > 140 && ptMu <  500){sfID = 0.922726; sfIDup = 0.955863; sfIDdown = 0.890637 ; } 
- if (ptMu > 10 && ptMu <  20){sfIso = 0.932195; sfIsoup = 0.936144; sfIsodown = 0.928235 ; } 
- if (ptMu > 20 && ptMu <  25){sfIso = 0.975611; sfIsoup = 0.978329; sfIsodown = 0.972879 ; } 
- if (ptMu > 25 && ptMu <  30){sfIso = 0.994169; sfIsoup = 0.99603; sfIsodown = 0.992298 ; } 
- if (ptMu > 30 && ptMu <  35){sfIso = 0.996335; sfIsoup = 0.997654; sfIsodown = 0.995009 ; } 
- if (ptMu > 35 && ptMu <  40){sfIso = 0.997334; sfIsoup = 0.998181; sfIsodown = 0.996483 ; } 
- if (ptMu > 40 && ptMu <  50){sfIso = 0.997841; sfIsoup = 0.99824; sfIsodown = 0.997446 ; } 
- if (ptMu > 50 && ptMu <  60){sfIso = 0.997124; sfIsoup = 0.997849; sfIsodown = 0.996388 ; } 
- if (ptMu > 60 && ptMu <  90){sfIso = 0.996625; sfIsoup = 0.99751; sfIsodown = 0.995718 ; } 
- if (ptMu > 90 && ptMu <  140){sfIso = 0.998533; sfIsoup = 1.00012; sfIsodown = 0.996817 ; } 
- if (ptMu > 140 && ptMu <  500){sfIso = 0.997349; sfIsoup = 1.00074; sfIsodown = 0.992891 ; } 
- if (ptMu > 25 && ptMu <  30){sfTrig = 0.940447; sfTrigup = 0.949624; sfTrigdown = 0.931184 ; } 
- if (ptMu > 30 && ptMu <  35){sfTrig = 0.941756; sfTrigup = 0.948636; sfTrigdown = 0.93482 ; } 
- if (ptMu > 35 && ptMu <  40){sfTrig = 0.961844; sfTrigup = 0.96685; sfTrigdown = 0.956797 ; } 
- if (ptMu > 40 && ptMu <  50){sfTrig = 0.958809; sfTrigup = 0.961669; sfTrigdown = 0.955932 ; } 
- if (ptMu > 50 && ptMu <  60){sfTrig = 0.943967; sfTrigup = 0.950932; sfTrigdown = 0.936907 ; } 
- if (ptMu > 60 && ptMu <  90){sfTrig = 0.944023; sfTrigup = 0.954631; sfTrigdown = 0.933205 ; } 
- if (ptMu > 90 && ptMu <  140){sfTrig = 0.985552; sfTrigup = 1.01463; sfTrigdown = 0.954264 ; } 
- if (ptMu > 140 && ptMu <  500){sfTrig = 0.879259; sfTrigup = 0.975855; sfTrigdown = 0.763416 ; } 
+if(fabs(eta)<=1.2&& fabs(eta)>0.9) {  if (pt > 25 && pt <  30){sfTrig = 0.97007; sfTrigup = 0.974442; sfTrigdown = 0.965677 ; } 
+ if (pt > 30 && pt <  35){sfTrig = 0.962694; sfTrigup = 0.965879; sfTrigdown = 0.959495 ; } 
+ if (pt > 35 && pt <  40){sfTrig = 0.960235; sfTrigup = 0.962675; sfTrigdown = 0.957787 ; } 
+ if (pt > 40 && pt <  50){sfTrig = 0.962149; sfTrigup = 0.963544; sfTrigdown = 0.960747 ; } 
+ if (pt > 50 && pt <  60){sfTrig = 0.959086; sfTrigup = 0.962429; sfTrigdown = 0.955723 ; } 
+ if (pt > 60 && pt <  90){sfTrig = 0.952173; sfTrigup = 0.957241; sfTrigdown = 0.94706 ; } 
+ if (pt > 90 && pt <  140){sfTrig = 0.949186; sfTrigup = 0.965981; sfTrigdown = 0.931917 ; } 
+ if (pt > 140 && pt <  500){sfTrig = 0.953607; sfTrigup = 0.999454; sfTrigdown = 0.903591 ; } 
 }
-if(fabs(etaMu)<2.1&& fabs(etaMu)>1.2) {  if (ptMu > 10 && ptMu <  20){sfID = 1.00304; sfIDup = 1.01133; sfIDdown = 0.994855 ; } 
- if (ptMu > 20 && ptMu <  25){sfID = 0.998942; sfIDup = 1.00186; sfIDdown = 0.996024 ; } 
- if (ptMu > 25 && ptMu <  30){sfID = 0.996901; sfIDup = 0.998397; sfIDdown = 0.995401 ; } 
- if (ptMu > 30 && ptMu <  35){sfID = 0.997486; sfIDup = 0.998608; sfIDdown = 0.996359 ; } 
- if (ptMu > 35 && ptMu <  40){sfID = 0.994566; sfIDup = 0.995429; sfIDdown = 0.993699 ; } 
- if (ptMu > 40 && ptMu <  50){sfID = 0.996159; sfIDup = 0.996672; sfIDdown = 0.995645 ; } 
- if (ptMu > 50 && ptMu <  60){sfID = 0.997451; sfIDup = 0.998767; sfIDdown = 0.996129 ; } 
- if (ptMu > 60 && ptMu <  90){sfID = 0.996516; sfIDup = 0.998767; sfIDdown = 0.994255 ; } 
- if (ptMu > 90 && ptMu <  140){sfID = 1.03286; sfIDup = 1.04025; sfIDdown = 1.02546 ; } 
- if (ptMu > 140 && ptMu <  500){sfID = 1.05323; sfIDup = 1.06656; sfIDdown = 1.02048 ; } 
- if (ptMu > 10 && ptMu <  20){sfIso = 0.960227; sfIsoup = 0.962202; sfIsodown = 0.958243 ; } 
- if (ptMu > 20 && ptMu <  25){sfIso = 0.985559; sfIsoup = 0.986948; sfIsodown = 0.984164 ; } 
- if (ptMu > 25 && ptMu <  30){sfIso = 0.999086; sfIsoup = 1.00005; sfIsodown = 0.998118 ; } 
- if (ptMu > 30 && ptMu <  35){sfIso = 1.00067; sfIsoup = 1.00141; sfIsodown = 0.99993 ; } 
- if (ptMu > 35 && ptMu <  40){sfIso = 1.00016; sfIsoup = 1.00068; sfIsodown = 0.999642 ; } 
- if (ptMu > 40 && ptMu <  50){sfIso = 0.999862; sfIsoup = 1.0001; sfIsodown = 0.999624 ; } 
- if (ptMu > 50 && ptMu <  60){sfIso = 1.00041; sfIsoup = 1.00085; sfIsodown = 0.99997 ; } 
- if (ptMu > 60 && ptMu <  90){sfIso = 0.999234; sfIsoup = 0.999781; sfIsodown = 0.998677 ; } 
- if (ptMu > 90 && ptMu <  140){sfIso = 0.99744; sfIsoup = 0.998533; sfIsodown = 0.996284 ; } 
- if (ptMu > 140 && ptMu <  500){sfIso = 0.99648; sfIsoup = 0.998402; sfIsodown = 0.993631 ; } 
- if (ptMu > 25 && ptMu <  30){sfTrig = 0.980088; sfTrigup = 0.985963; sfTrigdown = 0.974184 ; } 
- if (ptMu > 30 && ptMu <  35){sfTrig = 0.989347; sfTrigup = 0.993926; sfTrigdown = 0.984746 ; } 
- if (ptMu > 35 && ptMu <  40){sfTrig = 0.98464; sfTrigup = 0.988287; sfTrigdown = 0.980976 ; } 
- if (ptMu > 40 && ptMu <  50){sfTrig = 0.979771; sfTrigup = 0.982028; sfTrigdown = 0.977509 ; } 
- if (ptMu > 50 && ptMu <  60){sfTrig = 0.982233; sfTrigup = 0.987606; sfTrigdown = 0.976813 ; } 
- if (ptMu > 60 && ptMu <  90){sfTrig = 0.965242; sfTrigup = 0.973585; sfTrigdown = 0.956801 ; } 
- if (ptMu > 90 && ptMu <  140){sfTrig = 0.977609; sfTrigup = 1.00735; sfTrigdown = 0.946395 ; } 
- if (ptMu > 140 && ptMu <  500){sfTrig = 1.02767; sfTrigup = 1.08628; sfTrigdown = 0.956645 ; } 
-}
-
- lepSF=sfTrig*sfIso*sfID;
- lepSFIDUp=sfTrig*sfIso*sfIDup;
- lepSFIDDown=sfTrig*sfIso*sfIDdown;
-
- lepSFIsoUp=sfTrig*sfID*sfIsoup;
- lepSFIsoDown=sfTrig*sfID*sfIsodown;
-
- lepSFTrigUp=sfID*sfIso*sfTrigup;
- lepSFTrigDown=sfID*sfIso*sfTrigdown;
-
-
-
-//Run B
-if(fabs(etaMu)<=0.9) {  if (ptMu > 10 && ptMu <  20){sfID = 0.981239; sfIDup = 0.992429; sfIDdown = 0.970245 ; } 
- if (ptMu > 20 && ptMu <  25){sfID = 0.98043; sfIDup = 0.983688; sfIDdown = 0.977172 ; } 
- if (ptMu > 25 && ptMu <  30){sfID = 0.991182; sfIDup = 0.992461; sfIDdown = 0.9899 ; } 
- if (ptMu > 30 && ptMu <  35){sfID = 0.988984; sfIDup = 0.989802; sfIDdown = 0.988163 ; } 
- if (ptMu > 35 && ptMu <  40){sfID = 0.990422; sfIDup = 0.991035; sfIDdown = 0.989808 ; } 
- if (ptMu > 40 && ptMu <  50){sfID = 0.988821; sfIDup = 0.989219; sfIDdown = 0.988422 ; } 
- if (ptMu > 50 && ptMu <  60){sfID = 0.989954; sfIDup = 0.990955; sfIDdown = 0.988948 ; } 
- if (ptMu > 60 && ptMu <  90){sfID = 0.989478; sfIDup = 0.99106; sfIDdown = 0.987889 ; } 
- if (ptMu > 90 && ptMu <  140){sfID = 1.00023; sfIDup = 1.00465; sfIDdown = 0.995779 ; } 
- if (ptMu > 140 && ptMu <  500){sfID = 0.985242; sfIDup = 1.00128; sfIDdown = 0.96937 ; } 
- if (ptMu > 10 && ptMu <  20){sfIso = 0.900744; sfIsoup = 0.904232; sfIsodown = 0.89725 ; } 
- if (ptMu > 20 && ptMu <  25){sfIso = 0.961462; sfIsoup = 0.963358; sfIsodown = 0.959562 ; } 
- if (ptMu > 25 && ptMu <  30){sfIso = 0.991942; sfIsoup = 0.993046; sfIsodown = 0.990836 ; } 
- if (ptMu > 30 && ptMu <  35){sfIso = 0.992135; sfIsoup = 0.992857; sfIsodown = 0.991412 ; } 
- if (ptMu > 35 && ptMu <  40){sfIso = 0.993092; sfIsoup = 0.993585; sfIsodown = 0.992597 ; } 
- if (ptMu > 40 && ptMu <  50){sfIso = 0.994311; sfIsoup = 0.994558; sfIsodown = 0.994062 ; } 
- if (ptMu > 50 && ptMu <  60){sfIso = 0.995082; sfIsoup = 0.995536; sfIsodown = 0.994624 ; } 
- if (ptMu > 60 && ptMu <  90){sfIso = 0.99797; sfIsoup = 0.998498; sfIsodown = 0.997435 ; } 
- if (ptMu > 90 && ptMu <  140){sfIso = 0.999642; sfIsoup = 1.00065; sfIsodown = 0.998591 ; } 
- if (ptMu > 140 && ptMu <  500){sfIso = 0.995084; sfIsoup = 0.997178; sfIsodown = 0.992712 ; } 
- if (ptMu > 25 && ptMu <  30){sfTrig = 0.978858; sfTrigup = 0.980843; sfTrigdown = 0.976865 ; } 
- if (ptMu > 30 && ptMu <  35){sfTrig = 0.979803; sfTrigup = 0.981049; sfTrigdown = 0.978553 ; } 
- if (ptMu > 35 && ptMu <  40){sfTrig = 0.979755; sfTrigup = 0.980612; sfTrigdown = 0.978895 ; } 
- if (ptMu > 40 && ptMu <  50){sfTrig = 0.979681; sfTrigup = 0.980176; sfTrigdown = 0.979433 ; } 
- if (ptMu > 50 && ptMu <  60){sfTrig = 0.978707; sfTrigup = 0.979846; sfTrigdown = 0.97756 ; } 
- if (ptMu > 60 && ptMu <  90){sfTrig = 0.981103; sfTrigup = 0.982791; sfTrigdown = 0.9794 ; } 
- if (ptMu > 90 && ptMu <  140){sfTrig = 0.98042; sfTrigup = 0.986075; sfTrigdown = 0.9746 ; } 
- if (ptMu > 140 && ptMu <  500){sfTrig = 0.974405; sfTrigup = 0.988661; sfTrigdown = 0.959129 ; } 
-}
-if(fabs(etaMu)<=1.2&& fabs(etaMu)>0.9) {  if (ptMu > 10 && ptMu <  20){sfID = 0.936552; sfIDup = 0.949846; sfIDdown = 0.92343 ; } 
- if (ptMu > 20 && ptMu <  25){sfID = 0.995381; sfIDup = 1.00058; sfIDdown = 0.990187 ; } 
- if (ptMu > 25 && ptMu <  30){sfID = 0.991899; sfIDup = 0.994396; sfIDdown = 0.98939 ; } 
- if (ptMu > 30 && ptMu <  35){sfID = 0.990177; sfIDup = 0.991845; sfIDdown = 0.988498 ; } 
- if (ptMu > 35 && ptMu <  40){sfID = 0.990865; sfIDup = 0.992029; sfIDdown = 0.989695 ; } 
- if (ptMu > 40 && ptMu <  50){sfID = 0.986703; sfIDup = 0.987414; sfIDdown = 0.985989 ; } 
- if (ptMu > 50 && ptMu <  60){sfID = 0.990343; sfIDup = 0.992186; sfIDdown = 0.988485 ; } 
- if (ptMu > 60 && ptMu <  90){sfID = 0.985462; sfIDup = 0.98842; sfIDdown = 0.982481 ; } 
- if (ptMu > 90 && ptMu <  140){sfID = 0.999933; sfIDup = 1.00854; sfIDdown = 0.991266 ; } 
- if (ptMu > 140 && ptMu <  500){sfID = 0.922726; sfIDup = 0.955863; sfIDdown = 0.890637 ; } 
- if (ptMu > 10 && ptMu <  20){sfIso = 0.932195; sfIsoup = 0.936144; sfIsodown = 0.928235 ; } 
- if (ptMu > 20 && ptMu <  25){sfIso = 0.975611; sfIsoup = 0.978329; sfIsodown = 0.972879 ; } 
- if (ptMu > 25 && ptMu <  30){sfIso = 0.994169; sfIsoup = 0.99603; sfIsodown = 0.992298 ; } 
- if (ptMu > 30 && ptMu <  35){sfIso = 0.996335; sfIsoup = 0.997654; sfIsodown = 0.995009 ; } 
- if (ptMu > 35 && ptMu <  40){sfIso = 0.997334; sfIsoup = 0.998181; sfIsodown = 0.996483 ; } 
- if (ptMu > 40 && ptMu <  50){sfIso = 0.997841; sfIsoup = 0.99824; sfIsodown = 0.997446 ; } 
- if (ptMu > 50 && ptMu <  60){sfIso = 0.997124; sfIsoup = 0.997849; sfIsodown = 0.996388 ; } 
- if (ptMu > 60 && ptMu <  90){sfIso = 0.996625; sfIsoup = 0.99751; sfIsodown = 0.995718 ; } 
- if (ptMu > 90 && ptMu <  140){sfIso = 0.998533; sfIsoup = 1.00012; sfIsodown = 0.996817 ; } 
- if (ptMu > 140 && ptMu <  500){sfIso = 0.997349; sfIsoup = 1.00074; sfIsodown = 0.992891 ; } 
- if (ptMu > 25 && ptMu <  30){sfTrig = 0.97007; sfTrigup = 0.974442; sfTrigdown = 0.965677 ; } 
- if (ptMu > 30 && ptMu <  35){sfTrig = 0.962694; sfTrigup = 0.965879; sfTrigdown = 0.959495 ; } 
- if (ptMu > 35 && ptMu <  40){sfTrig = 0.960235; sfTrigup = 0.962675; sfTrigdown = 0.957787 ; } 
- if (ptMu > 40 && ptMu <  50){sfTrig = 0.962149; sfTrigup = 0.963544; sfTrigdown = 0.960747 ; } 
- if (ptMu > 50 && ptMu <  60){sfTrig = 0.959086; sfTrigup = 0.962429; sfTrigdown = 0.955723 ; } 
- if (ptMu > 60 && ptMu <  90){sfTrig = 0.952173; sfTrigup = 0.957241; sfTrigdown = 0.94706 ; } 
- if (ptMu > 90 && ptMu <  140){sfTrig = 0.949186; sfTrigup = 0.965981; sfTrigdown = 0.931917 ; } 
- if (ptMu > 140 && ptMu <  500){sfTrig = 0.953607; sfTrigup = 0.999454; sfTrigdown = 0.903591 ; } 
-}
-if(fabs(etaMu)<2.1&& fabs(etaMu)>1.2) {  if (ptMu > 10 && ptMu <  20){sfID = 1.00304; sfIDup = 1.01133; sfIDdown = 0.994855 ; } 
- if (ptMu > 20 && ptMu <  25){sfID = 0.998942; sfIDup = 1.00186; sfIDdown = 0.996024 ; } 
- if (ptMu > 25 && ptMu <  30){sfID = 0.996901; sfIDup = 0.998397; sfIDdown = 0.995401 ; } 
- if (ptMu > 30 && ptMu <  35){sfID = 0.997486; sfIDup = 0.998608; sfIDdown = 0.996359 ; } 
- if (ptMu > 35 && ptMu <  40){sfID = 0.994566; sfIDup = 0.995429; sfIDdown = 0.993699 ; } 
- if (ptMu > 40 && ptMu <  50){sfID = 0.996159; sfIDup = 0.996672; sfIDdown = 0.995645 ; } 
- if (ptMu > 50 && ptMu <  60){sfID = 0.997451; sfIDup = 0.998767; sfIDdown = 0.996129 ; } 
- if (ptMu > 60 && ptMu <  90){sfID = 0.996516; sfIDup = 0.998767; sfIDdown = 0.994255 ; } 
- if (ptMu > 90 && ptMu <  140){sfID = 1.03286; sfIDup = 1.04025; sfIDdown = 1.02546 ; } 
- if (ptMu > 140 && ptMu <  500){sfID = 1.05323; sfIDup = 1.06656; sfIDdown = 1.02048 ; } 
- if (ptMu > 10 && ptMu <  20){sfIso = 0.960227; sfIsoup = 0.962202; sfIsodown = 0.958243 ; } 
- if (ptMu > 20 && ptMu <  25){sfIso = 0.985559; sfIsoup = 0.986948; sfIsodown = 0.984164 ; } 
- if (ptMu > 25 && ptMu <  30){sfIso = 0.999086; sfIsoup = 1.00005; sfIsodown = 0.998118 ; } 
- if (ptMu > 30 && ptMu <  35){sfIso = 1.00067; sfIsoup = 1.00141; sfIsodown = 0.99993 ; } 
- if (ptMu > 35 && ptMu <  40){sfIso = 1.00016; sfIsoup = 1.00068; sfIsodown = 0.999642 ; } 
- if (ptMu > 40 && ptMu <  50){sfIso = 0.999862; sfIsoup = 1.0001; sfIsodown = 0.999624 ; } 
- if (ptMu > 50 && ptMu <  60){sfIso = 1.00041; sfIsoup = 1.00085; sfIsodown = 0.99997 ; } 
- if (ptMu > 60 && ptMu <  90){sfIso = 0.999234; sfIsoup = 0.999781; sfIsodown = 0.998677 ; } 
- if (ptMu > 90 && ptMu <  140){sfIso = 0.99744; sfIsoup = 0.998533; sfIsodown = 0.996284 ; } 
- if (ptMu > 140 && ptMu <  500){sfIso = 0.99648; sfIsoup = 0.998402; sfIsodown = 0.993631 ; } 
- if (ptMu > 25 && ptMu <  30){sfTrig = 0.995013; sfTrigup = 0.997841; sfTrigdown = 0.992179 ; } 
- if (ptMu > 30 && ptMu <  35){sfTrig = 0.986493; sfTrigup = 0.988727; sfTrigdown = 0.984256 ; } 
- if (ptMu > 35 && ptMu <  40){sfTrig = 0.9815; sfTrigup = 0.983319; sfTrigdown = 0.979677 ; } 
- if (ptMu > 40 && ptMu <  50){sfTrig = 0.978702; sfTrigup = 0.979837; sfTrigdown = 0.977566 ; } 
- if (ptMu > 50 && ptMu <  60){sfTrig = 0.97745; sfTrigup = 0.980154; sfTrigdown = 0.974737 ; } 
- if (ptMu > 60 && ptMu <  90){sfTrig = 0.975728; sfTrigup = 0.979825; sfTrigdown = 0.971608 ; } 
- if (ptMu > 90 && ptMu <  140){sfTrig = 0.955204; sfTrigup = 0.968591; sfTrigdown = 0.941583 ; } 
- if (ptMu > 140 && ptMu <  500){sfTrig = 0.982866; sfTrigup = 1.02659; sfTrigdown = 0.936749 ; } 
+if(fabs(eta)<2.1&& fabs(eta)>1.2) {  if (pt > 25 && pt <  30){sfTrig = 0.995013; sfTrigup = 0.997841; sfTrigdown = 0.992179 ; } 
+ if (pt > 30 && pt <  35){sfTrig = 0.986493; sfTrigup = 0.988727; sfTrigdown = 0.984256 ; } 
+ if (pt > 35 && pt <  40){sfTrig = 0.9815; sfTrigup = 0.983319; sfTrigdown = 0.979677 ; } 
+ if (pt > 40 && pt <  50){sfTrig = 0.978702; sfTrigup = 0.979837; sfTrigdown = 0.977566 ; } 
+ if (pt > 50 && pt <  60){sfTrig = 0.97745; sfTrigup = 0.980154; sfTrigdown = 0.974737 ; } 
+ if (pt > 60 && pt <  90){sfTrig = 0.975728; sfTrigup = 0.979825; sfTrigdown = 0.971608 ; } 
+ if (pt > 90 && pt <  140){sfTrig = 0.955204; sfTrigup = 0.968591; sfTrigdown = 0.941583 ; } 
+ if (pt > 140 && pt <  500){sfTrig = 0.982866; sfTrigup = 1.02659; sfTrigdown = 0.936749 ; } 
 }
 
  lepSFB=sfTrig*sfIso*sfID;
@@ -5511,9 +5479,267 @@ if(fabs(etaMu)<2.1&& fabs(etaMu)>1.2) {  if (ptMu > 10 && ptMu <  20){sfID = 1.0
  lepSFTrigUpB=sfID*sfIso*sfTrigup;
  lepSFTrigDownB=sfID*sfIso*sfTrigdown;
 
+//Trigger Run A
+
+if(fabs(eta)<=0.9) {  if (pt > 25 && pt <  30){sfTrig = 0.938137; sfTrigup = 0.94254; sfTrigdown = 0.933702 ; } 
+ if (pt > 30 && pt <  35){sfTrig = 0.942347; sfTrigup = 0.945148; sfTrigdown = 0.939526 ; } 
+ if (pt > 35 && pt <  40){sfTrig = 0.951167; sfTrigup = 0.953089; sfTrigdown = 0.949232 ; } 
+ if (pt > 40 && pt <  50){sfTrig = 0.960094; sfTrigup = 0.961208; sfTrigdown = 0.958976 ; } 
+ if (pt > 50 && pt <  60){sfTrig = 0.97344; sfTrigup = 0.975881; sfTrigdown = 0.970964 ; } 
+ if (pt > 60 && pt <  90){sfTrig = 0.975737; sfTrigup = 0.979319; sfTrigdown = 0.972082 ; } 
+ if (pt > 90 && pt <  140){sfTrig = 0.980291; sfTrigup = 0.992657; sfTrigdown = 0.96703 ; } 
+ if (pt > 140 && pt <  500){sfTrig = 1.00399; sfTrigup = 1.02648; sfTrigdown = 0.97399 ; } 
+ }
+if(fabs(eta)<=1.2&& fabs(eta)>0.9) {  if (pt > 25 && pt <  30){sfTrig = 0.940447; sfTrigup = 0.949624; sfTrigdown = 0.931184 ; } 
+ if (pt > 30 && pt <  35){sfTrig = 0.941756; sfTrigup = 0.948636; sfTrigdown = 0.93482 ; } 
+ if (pt > 35 && pt <  40){sfTrig = 0.961844; sfTrigup = 0.96685; sfTrigdown = 0.956797 ; } 
+ if (pt > 40 && pt <  50){sfTrig = 0.958809; sfTrigup = 0.961669; sfTrigdown = 0.955932 ; } 
+ if (pt > 50 && pt <  60){sfTrig = 0.943967; sfTrigup = 0.950932; sfTrigdown = 0.936907 ; } 
+ if (pt > 60 && pt <  90){sfTrig = 0.944023; sfTrigup = 0.954631; sfTrigdown = 0.933205 ; } 
+ if (pt > 90 && pt <  140){sfTrig = 0.985552; sfTrigup = 1.01463; sfTrigdown = 0.954264 ; } 
+ if (pt > 140 && pt <  500){sfTrig = 0.879259; sfTrigup = 0.975855; sfTrigdown = 0.763416 ; } 
+}
+if(fabs(eta)<2.1&& fabs(eta)>1.2) {  if (pt > 25 && pt <  30){sfTrig = 0.980088; sfTrigup = 0.985963; sfTrigdown = 0.974184 ; } 
+ if (pt > 30 && pt <  35){sfTrig = 0.989347; sfTrigup = 0.993926; sfTrigdown = 0.984746 ; } 
+ if (pt > 35 && pt <  40){sfTrig = 0.98464; sfTrigup = 0.988287; sfTrigdown = 0.980976 ; } 
+ if (pt > 40 && pt <  50){sfTrig = 0.979771; sfTrigup = 0.982028; sfTrigdown = 0.977509 ; } 
+ if (pt > 50 && pt <  60){sfTrig = 0.982233; sfTrigup = 0.987606; sfTrigdown = 0.976813 ; } 
+ if (pt > 60 && pt <  90){sfTrig = 0.965242; sfTrigup = 0.973585; sfTrigdown = 0.956801 ; } 
+ if (pt > 90 && pt <  140){sfTrig = 0.977609; sfTrigup = 1.00735; sfTrigdown = 0.946395 ; } 
+ if (pt > 140 && pt <  500){sfTrig = 1.02767; sfTrigup = 1.08628; sfTrigdown = 0.956645 ; } 
+}
+
+ lepSF=sfTrig*sfIso*sfID;
+ lepSFIDUp=sfTrig*sfIso*sfIDup;
+ lepSFIDDown=sfTrig*sfIso*sfIDdown;
+
+ lepSFIsoUp=sfTrig*sfID*sfIsoup;
+ lepSFIsoDown=sfTrig*sfID*sfIsodown;
+
+ lepSFTrigUp=sfID*sfIso*sfTrigup;
+ lepSFTrigDown=sfID*sfIso*sfTrigdown;
+
 ////
 }
 
+void SingleTopSystematicsTreesDumper::electronHLTSF(float etaEle, float ptEle){
 
+  double pt = ptEle;
+  double eta = etaEle;
+  sfID=1;sfIDup=1;sfIDdown=1;  
+  sfIso=1;sfIsoup=1;sfIsodown=1;  
+  sfTrig=1;sfTrigup=1;sfTrigdown=1;  
+  
+  cout << " cutbased "<< useCutBasedID_<< " mnva "<< useMVAID_<<endl; 
+  if(useMVAID_>0){
+    if(fabs(eta)<0.8){
+      if(pt>30 && pt <40 ){sfID=0.939;
+	sfIDdown=sfID-0.003;sfIDup=sfID+0.003;
+      }
+      if(pt>40 && pt <50 ){sfID=0.950;
+	sfTrigdown=sfTrig-0.001;sfTrigup=sfTrig+0.001;
+      }
+      if(pt>50 ){sfID=0.957;
+	sfIDdown=sfID-0.001;sfIDup=sfID+0.001;
+      }
+    }
+    if(fabs(eta)>0.8&&fabs(eta)<1.478){
+      if(pt>30 && pt <40 ){sfID=0.920;
+	sfIDdown=sfID-0.001;sfIDup=sfID+0.002;
+      }
+      if(pt>40 && pt <50 ){sfID=0.949;
+	sfIDdown=sfID-0.002;sfIDup=sfID+0.002;
+      }
+      if(pt>50 ){sfID=0.959;
+	sfIDdown=sfID-0.003;sfIDup=sfID+0.003;
+      }
+    }
+    if(fabs(eta)>1.478){
+      if(pt>30 && pt <40 ){sfID=0.907;
+	sfIDdown=sfID-0.005;sfIDup=sfID+0.005;
+      }
+      if(pt>40 && pt <50 ){sfID=0.937;
+	sfIDdown=sfID-0.008;sfIDup=sfID+0.008;
+      }
+      if(pt>50 ){sfID=0.954;
+	sfIDdown=sfID-0.010;sfIDup=sfID+0.011;
+      }
+    }
+  }
+  cout << "tccc"<<endl;
+  if(useCutBasedID_>0) {
+    cout << " using cutbased, eta "<<eta << " pt "<<pt<<" sfID "<< sfID <<endl; 
+    if(fabs(eta)<0.8){
+      if(pt>30 && pt <40 ){
+	sfID=0.976;
+	sfIDdown=sfID-0.001;sfIDup=sfID+0.001;
+      } 
+      if(pt>40 && pt <50 ){
+	sfID=0.983;
+	sfIDdown=sfID-0.001;sfIDup=sfID+0.001;
+      } 
+      if(pt>50){
+	sfID=0.980;
+	sfIDdown=sfID-0.001;sfIDup=sfID+0.001;
+      } 
+    }	
+    if(fabs(eta)>0.8&&fabs(eta)<1.442){
+      if(pt>30 && pt <40 ){
+	sfID=0.967;
+	sfIDdown=sfID-0.001;sfIDup=sfID+0.001;
+      } 
+      if(pt>40 && pt <50 ){
+	sfID=0.981;
+	sfIDdown=sfID-0.001;sfIDup=sfID+0.001;
+      } 
+      if(pt>50){
+	sfID=0.980;
+	sfIDdown=sfID-0.001;sfIDup=sfID+0.001;
+      } 
+    }	
+    
+    if(fabs(eta)>1.442&&fabs(eta)<1.556){
+      if(pt>30 && pt <40 ){
+	sfID=0.966;
+	sfIDdown=sfID-0.008;sfIDup=sfID+0.008;
+      } 
+      if(pt>40 && pt <50 ){
+	sfID=0.951;
+	sfIDdown=sfID-0.006;sfIDup=sfID+0.006;
+      } 
+      if(pt>50){
+	sfID=0.942;
+	sfIDdown=sfID-0.017;sfIDup=sfID+0.017;
+      } 
+    }	
+    if(fabs(eta)>1.556&&fabs(eta)<2.0){
+      if(pt>30 && pt <40 ){
+	sfID=0.961;
+	sfIDdown=sfID-0.001;sfIDup=sfID+0.003;
+      } 
+      if(pt>40 && pt <50 ){
+	sfID=0.982;
+	sfIDdown=sfID-0.002;sfIDup=sfID+0.002;
+      } 
+      if(pt>50){
+	sfID=0.986;
+	sfIDdown=sfID-0.001;sfIDup=sfID+0.001;
+      } 
+    }	
+    
+    if(fabs(eta)>2.0&&fabs(eta)<2.5){
+      if(pt>30 && pt <40 ){
+	sfID=1.006;
+	sfIDdown=sfID-0.001;sfIDup=sfID+0.003;
+      } 
+      if(pt>40 && pt <50 ){
+	sfID=1.012;
+	sfIDdown=sfID-0.001;sfIDup=sfID+0.001;
+      } 
+      if(pt>50){
+	sfID=1.016;
+	sfIDdown=sfID-0.002;sfIDup=sfID+0.002;
+      } 
+    }	
+  }
+  cout << " after cutbased, eta "<<eta << " pt "<<pt<<" sfID after "<< sfID <<endl; 
+  
+  if(fabs(eta)<0.8){
+    if(pt>30 && pt <40 ){sfTrig=0.987;
+      sfTrigdown=sfTrig-0.003;sfTrigup=sfTrig+0.003;
+    }
+    if(pt>40 && pt <50 ){sfTrig=0.997;
+      sfTrigdown=sfTrig-0.001;sfTrigup=sfTrig+0.001;
+    }
+    if(pt>50 ){sfTrig=0.998;
+      sfTrigdown=sfTrig-0.002;sfTrigup=sfTrig+0.002;
+    }
+  }
+  if(fabs(eta)>0.8&&fabs(eta)<1.478){
+    if(pt>30 && pt <40 ){sfTrig=0.964;
+      sfTrigdown=sfTrig-0.001;sfTrigup=sfTrig+0.002;
+    }
+    if(pt>40 && pt <50 ){sfTrig=0.980;
+      sfTrigdown=sfTrig-0.001;sfTrigup=sfTrig+0.001;
+    }
+    if(pt>50 ){sfTrig=0.988;
+      sfTrigdown=sfTrig-0.002;sfTrigup=sfTrig+0.002;
+    }
+  }
+  if(fabs(eta)>1.478){
+    if(pt>30 && pt <40 ){sfTrig=1.004;
+      sfTrigdown=sfTrig-0.006;sfTrigup=sfTrig+0.006;
+    }
+    if(pt>40 && pt <50 ){sfTrig=1.033;
+      sfTrigdown=sfTrig-0.007;sfTrigup=sfTrig+0.007;
+    }
+    if(pt>50 ){sfTrig=0.976;
+      sfTrigdown=sfTrig-0.012;sfTrigup=sfTrig+0.015;
+    }
+  }
+
+
+
+ 
+  lepSF=sfTrig*sfIso*sfID;
+  lepSFIDUp=sfTrig*sfIso*sfIDup;
+  lepSFIDDown=sfTrig*sfIso*sfIDdown;
+  
+  lepSFIsoUp=sfTrig*sfID*sfIsoup;
+  lepSFIsoDown=sfTrig*sfID*sfIsodown;
+  
+  lepSFTrigUp=sfID*sfIso*sfTrigup;
+  lepSFTrigDown=sfID*sfIso*sfTrigdown;
+
+}
 //define this as a plug-in
 DEFINE_FWK_MODULE(SingleTopSystematicsTreesDumper);
+
+
+/*
+  if(fabs(eta)<0.8){
+    if(pt>30 && pt <40 ){sfID=0.939;sfTrig=0.987;
+      sfIDdown=sfID-0.003;sfIDup=sfID+0.003;
+      sfTrigdown=sfTrig-0.003;sfTrigup=sfTrig+0.003;
+    }
+  if(pt>40 && pt <50 ){sfID=0.950;sfTrig=0.997;
+      sfIDdown=sfID-0.001;sfIDup=sfID+0.001;
+      sfTrigdown=sfTrig-0.001;sfTrigup=sfTrig+0.001;
+    }
+  if(pt>50 ){sfID=0.957;sfTrig=0.998;
+      sfIDdown=sfID-0.001;sfIDup=sfID+0.001;
+      sfTrigdown=sfTrig-0.002;sfTrigup=sfTrig+0.002;
+    }
+  }
+
+  if(fabs(eta)>0.8&&fabs(eta)<1.478){
+    if(pt>30 && pt <40 ){sfID=0.920;sfTrig=0.964;
+      sfIDdown=sfID-0.001;sfIDup=sfID+0.002;
+      sfTrigdown=sfTrig-0.001;sfTrigup=sfTrig+0.002;
+    }
+  if(pt>40 && pt <50 ){sfID=0.949;sfTrig=0.980;
+      sfIDdown=sfID-0.002;sfIDup=sfID+0.002;
+      sfTrigdown=sfTrig-0.001;sfTrigup=sfTrig+0.001;
+    }
+  if(pt>50 ){sfID=0.959;sfTrig=0.988;
+      sfIDdown=sfID-0.003;sfIDup=sfID+0.003;
+      sfTrigdown=sfTrig-0.002;sfTrigup=sfTrig+0.002;
+    }
+  }
+
+  if(fabs(eta)>1.478){
+    if(pt>30 && pt <40 ){sfID=0.907;sfTrig=1.004;
+      sfIDdown=sfID-0.005;sfIDup=sfID+0.005;
+      sfTrigdown=sfTrig-0.006;sfTrigup=sfTrig+0.006;
+    }
+  if(pt>40 && pt <50 ){sfID=0.937;sfTrig=1.033;
+      sfIDdown=sfID-0.008;sfIDup=sfID+0.008;
+      sfTrigdown=sfTrig-0.007;sfTrigup=sfTrig+0.007;
+    }
+  if(pt>50 ){sfID=0.954;sfTrig=0.976;
+      sfIDdown=sfID-0.010;sfIDup=sfID+0.011;
+      sfTrigdown=sfTrig-0.012;sfTrigup=sfTrig+0.015;
+    }
+  }
+
+*/

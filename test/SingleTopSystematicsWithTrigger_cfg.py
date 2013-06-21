@@ -108,11 +108,11 @@ process.HLTFilterMuOrEleMC.isMC = MC_instruction
 #)
 
 if channel_instruction == "allmc":
-    #    process.TreesMu.doResol = cms.untracked.bool(True)
-    #    process.TreesEle.doResol = cms.untracked.bool(True)
+    process.TreesMu.doResol = cms.untracked.bool(True)
+    process.TreesEle.doResol = cms.untracked.bool(True)
     #    process.TreesEle.doTurnOn = cms.untracked.bool(True) 
     process.PathSysMu = cms.Path(
-#    process.HLTFilterMu2012 *
+    process.HLTFilterMu2012 *
     process.TreesMu
     )
     process.PathSysEle = cms.Path(

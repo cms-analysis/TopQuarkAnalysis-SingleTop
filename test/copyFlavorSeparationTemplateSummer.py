@@ -29,7 +29,7 @@ process.GlobalTag.globaltag = cms.string('START52_V9::All')
 
 process.counter = cms.EDFilter("SingleTopDoubleCounter",
                                src = cms.InputTag("nTupleTopJetsPF","topJetsPFPt"), 
-                               min = cms.untracked.int32(2),
+                               min = cms.untracked.int32(0),
                                max = cms.untracked.int32(999),
                                )
 

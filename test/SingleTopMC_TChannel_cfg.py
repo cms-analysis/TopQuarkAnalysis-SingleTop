@@ -24,7 +24,7 @@ isData = False
 #isData = True
 
 #Tag:
-process.GlobalTag.globaltag = cms.string('START53_V7G::All')
+process.GlobalTag.globaltag = cms.string('START53_V22::All')
 
 #Single top and pat sequences:
 process.load("TopQuarkAnalysis.SingleTop.SingleTopSequences_cff") 
@@ -36,8 +36,8 @@ import HLTrigger.HLTfilters.triggerResultsFilter_cfi as triggerFilter
 
 process.HLTFilterMu2012  = triggerFilter.triggerResultsFilter.clone(
     hltResults = cms.InputTag( "TriggerResults","","HLT" ),
-#    triggerConditions = ["HLT_*"],#All trigger paths are included in the skim
-    triggerConditions = ["HLT_IsoMu24_eta2p1_v*"],
+    triggerConditions = ["HLT_*"],#All trigger paths are included in the skim
+#    triggerConditions = ["HLT_IsoMu24_eta2p1_v*"],
 #    triggerConditions = ["HLT_Ele27_WP80_v*"],
     l1tResults = '',
     throw = False
@@ -64,10 +64,12 @@ from PhysicsTools.PatUtils.tools.metUncertaintyTools import *
 Postfix = ""
 runOnMC = True
 jetAlgoName = "AK5"
-usePF2PAT(process, runPF2PAT=True, jetAlgo=jetAlgoName, runOnMC=runOnMC, postfix=Postfix, jetCorrections=('AK5PFchs',['L1FastJet','L2Relative','L3Absolute']), pvCollection=cms.InputTag('goodOfflinePrimaryVertices'),  typeIMetCorrections=False)
+usePF2PAT(process, runPF2PAT=True, jetAlgo=jetAlgoName, runOnMC=runOnMC, postfix=Postfix, jetCorrections=('AK5PFchs',['L1FastJet','L2Relative','L3Absolute']), pvCollection=cms.InputTag('goodOfflinePrimaryVertices'),  typeIMetCorrections=isData)
 
-from PhysicsTools.PatUtils.tools.metUncertaintyTools import runMEtUncertainties
-runMEtUncertainties(process,electronCollection = "selectedPatElectrons", doSmearJets= False, muonCollection = "selectedPatMuons", tauCollection="selectedPatTaus", jetCollection = "selectedPatJets")
+if (not(isData)):
+    from PhysicsTools.PatUtils.tools.metUncertaintyTools import runMEtUncertainties
+    runMEtUncertainties(process,electronCollection = "selectedPatElectrons", doSmearJets= False, muonCollection = "selectedPatMuons", tauCollection="selectedPatTaus", jetCollection = "selectedPatJets")
+#Note: we run the MET uncertainty tools if it is MC. If it is data, the type 1 corrected METs
 
 #Trigger matching:
 switchOnTriggerMatchEmbedding(process,triggerMatchers = ['PatMuonTriggerMatchHLTIsoMu24','PatJetTriggerMatchHLTIsoMuBTagIP'])
@@ -75,6 +77,7 @@ switchOnTriggerMatchEmbedding(process,triggerMatchers = ['PatMuonTriggerMatchHLT
 #PF no Pileup:
 process.pfPileUp.Enable = True
 process.load("CMGTools.External.pujetidsequence_cff")
+
 process.pfPileUp.checkClosestZVertex = cms.bool(False)
 
 #Use DR = 0.3 for electrons:
@@ -123,16 +126,23 @@ process.ZeroIsoLeptonSequence = cms.Sequence(
          )
 
 #Set max number of events:
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 #Input file:
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
 "file:/afs/cern.ch/work/o/oiorio/public/xFrancescoFab/T_t-channel_Synch.root"
+#"file:/afs/cern.ch/work/o/oiorio/test_instr/CMSSW_5_3_7/src/showering_CMSSW/Hadronizer_8TeV_aMCatNLO_herwig6_tauola_cff_py_FASTSIM_HLT_PU_14TeV.root"
+#),
 ),
 duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 )
+
+
+#TMP: to change with the new n-tuples!!!
+#process.basePath += process.UnclusteredMETPF
+
 
 # path for preselection:
 process.pathPreselection = cms.Path (
@@ -153,9 +163,14 @@ process.pathSelection = cms.Path(
 #Add MC Truth information: 
 doMCTruth = True 
 if isData: doMCTruth = False  
+#TMP: to change with the new n-tuples!!!
+
+#process.topMETsPF.isData = cms.untracked.bool(True)
+#process.topJetsPF.isData = cms.untracked.bool(True)
 
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import saveNTuplesSkimLoose
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_cff import saveNTuplesSkimMu
+
 
 #Objects included in the pat-tuples
 savePatTupleSkimLoose = cms.untracked.vstring(
@@ -164,7 +179,7 @@ savePatTupleSkimLoose = cms.untracked.vstring(
     'keep patMuons_selectedPatMuons_*_*',
     'keep patMuons_selectedPatMuonsTriggerMatch_*_*',
     'keep patJets_selectedPatJetsTriggerMatch_*_*',
-    
+
     'keep patElectrons_selectedPatElectrons_*_*',
     'keep patJets_selectedPatJets_*_*',
     'keep patMETs_patMETs_*_*',
@@ -173,17 +188,15 @@ savePatTupleSkimLoose = cms.untracked.vstring(
     'keep patJets_topJetsPF_*_*',
     'keep patMuons_vetoMuons_*_*',
     'keep *_vetoElectrons_*_*',
-    'keep *_vetoElectronsMVA_*_*',
     'keep patMuons_tightMuons_*_*',
     'keep patMuons_tightMuonsTest_*_*',
     'keep *_tightElectrons_*_*',
-    'keep *_topMETsPF_*_*',
-    
+
     "keep *_TriggerResults_*_*",#Trigger results
     "keep *_PatMuonTriggerMatchHLTIsoMu24_*_*",#Trigger matches
-    
+
     'keep *_PDFInfo_*_*',
-    
+
     'keep *_patElectronsZeroIso_*_*',
     'keep *_patMuonsZeroIso_*_*',
 #    'keep *_kt6PFJetsCentral_*_*',
@@ -211,6 +224,7 @@ savePatTupleSkimLoose = cms.untracked.vstring(
 
 #doMCTruth= False
 if doMCTruth:
+    #process.MCTruthParticles.isSingleTopCompHEP = cms.untracked.bool(True) 
     process.MCTruth = cms.Path (
         process.HLTFilterMu2012 *
         process.MCTruthParticles
@@ -252,7 +266,6 @@ process.singleTopNTuple.dropMetaData = cms.untracked.string("ALL")
 process.singleTopPatTuple.dropMetaData = cms.untracked.string("ALL")
 
 process.outpath = cms.EndPath(
-    process.singleTopNTuple +
-    process.singleTopPatTuple 
+    process.singleTopNTuple #+    process.singleTopPatTuple 
     )
 

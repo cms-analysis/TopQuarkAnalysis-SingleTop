@@ -2,12 +2,10 @@
  *\Authors:A.Giammanco, A. Orso M. Iorio 
  *
  *
- *\version  $Id: SingleTopTChannelMCProducer.cc,v 1.2 2010/03/26 15:41:27 oiorio Exp $ 
+ *\version  $Id: SingleTopMCProducer.cc,v 1.1.2.1 2012/11/26 10:26:01 oiorio Exp $ 
  */
 
-// Single Top MC producer: 
-// Orignial Author: A.Giammanco
-// Adapted by: O. Iorio    
+// Single Top MC producer 
 
 
 #define DEBUG    0 // 0=false
@@ -65,6 +63,7 @@ SingleTopMCProducer::SingleTopMCProducer(const edm::ParameterSet& iConfig)
   // initialize the configurables
 
   isSingleTopTChan_ =  iConfig.getUntrackedParameter<bool>("isSingleTopTChan",true);  
+  isSingleTopCompHEP_ =  iConfig.getUntrackedParameter<bool>("isSingleTopCompHEP",false);  
   
   genParticlesSrc_ = iConfig.getParameter<edm::InputTag>( "genParticlesSource" );
   //GenJets for matching
@@ -440,9 +439,9 @@ iEvent.getByLabel(genParticlesSrc_, genParticles);
 	    {
 	      isNewPhysics_ = true;
 	    }
-	  if ((abs (t->pdgId ()) == 11 || abs (t->pdgId ()) == 13 || abs (t->pdgId ()) == 15) &&
-	      ((abs (t->mother ()->pdgId ()) > 22 && abs (t->mother ()->pdgId ()) < 40) || (abs (t->mother ()->pdgId ()) > 999999 && abs (t->mother ()->pdgId ()) < 2999999)))
-	    {	
+	  
+	  if(isSingleTopCompHEP_){
+	    if (abs (t->pdgId ()) == 11 || abs (t->pdgId ()) == 13 || abs (t->pdgId ()) == 15){
 	      MCleptons->push_back ( (*t));
 	      if(t->mother()) MCleptonsMotherID->push_back( t->mother()->pdgId());
 	      if(t->mother() && t->mother()->mother())MCleptonsGrannyID->push_back(t->mother()->mother()->pdgId());
@@ -463,12 +462,47 @@ iEvent.getByLabel(genParticlesSrc_, genParticles);
 	      MCleptonsDauTwoID->push_back(dauTwoId);
 	      MCleptonsDauThreeID->push_back(dauThreeId);
 	      MCleptonsDauFourID->push_back(dauFourId);
+	      
+	      bool isSingleTopDaughter = true;
+	      if(t->mother()){
+		bool condNeu= false;
+		bool condB= false;
+		for (reco::GenParticle::const_iterator td = t->mother()->begin (); td != t->mother()->end (); ++td){
+		  if(abs(td->pdgId())==12 || abs(td->pdgId())==14 || abs(td->pdgId())==16 )condNeu = true;
+		  if(abs(td->pdgId())==5 && ( td->pdgId()*t->pdgId() < 0 ) )condB = true;
+		}
+		isSingleTopDaughter = isSingleTopDaughter && condNeu && condB;
+	      }
+	      				  
+	      if(isSingleTopDaughter) {
+		MCtopsLepton->push_back( *(dynamic_cast< const reco::GenParticle *> (&(*t))) );
+		
+		if(t->mother()) MCtopsLeptonMotherID->push_back( t->mother()->pdgId());
+		if(t->mother() && t->mother()->mother())MCtopsLeptonGrannyID->push_back(t->mother()->mother()->pdgId());
+		MCtopsLeptonVertexX->push_back(t->vertex().x());
+		MCtopsLeptonVertexY->push_back(t->vertex().y());
+		MCtopsLeptonVertexZ->push_back(t->vertex().z());
+		nDau =0;
+		dauOneId=-9999, dauTwoId =-9999, dauThreeId=-9999,dauFourId=-9999 ;
+		for (reco::GenParticle::const_iterator td = t->begin (); td != t->end (); ++td){
+		  nDau++;
+		  if(nDau==1) dauOneId = td->pdgId();
+		  if(nDau==2) dauTwoId = td->pdgId();
+		  if(nDau==3) dauThreeId = td->pdgId();
+		  if(nDau==4) dauFourId = td->pdgId();
+		}
+		MCtopsLeptonNDau->push_back(nDau);
+		MCtopsLeptonDauOneID->push_back(dauOneId);
+		MCtopsLeptonDauTwoID->push_back(dauTwoId);
+		MCtopsLeptonDauThreeID->push_back(dauThreeId);
+		MCtopsLeptonDauFourID->push_back(dauFourId);
+		//		  isLeptonic_ = true;
+	      }
 
 	    }
-	      if ((abs (t->pdgId ()) == 12 || abs (t->pdgId ()) == 14 || abs (t->pdgId ()) == 16) &&
-	      ((abs (t->mother ()->pdgId ()) > 22 && abs (t->mother ()->pdgId ()) < 40) || (abs (t->mother ()->pdgId ()) > 999999 && abs (t->mother ()->pdgId ()) < 2999999)))
-		{
-		  MCneutrinos->push_back( (*t));
+	  
+	    if (abs (t->pdgId ()) == 12 || abs (t->pdgId ()) == 14 || abs (t->pdgId ()) == 16){
+MCneutrinos->push_back( (*t));
 	      if(t->mother()) MCneutrinosMotherID->push_back( t->mother()->pdgId());
 	      if(t->mother() && t->mother()->mother())MCneutrinosGrannyID->push_back(t->mother()->mother()->pdgId());
 	      MCneutrinosVertexX->push_back(t->vertex().x());
@@ -488,46 +522,218 @@ iEvent.getByLabel(genParticlesSrc_, genParticles);
 	      MCneutrinosDauTwoID->push_back(dauTwoId);
 	      MCneutrinosDauThreeID->push_back(dauThreeId);
 	      MCneutrinosDauFourID->push_back(dauFourId);
-
+	    
+	      bool isSingleTopDaughter = true;
+	      if(t->mother()){
+		bool condNeu= false;
+		bool condB= false;
+		for (reco::GenParticle::const_iterator td = t->mother()->begin (); td != t->mother()->end (); ++td){
+		  if(abs(td->pdgId())==11 || abs(td->pdgId())==13 || abs(td->pdgId())==15 )condNeu = true;
+		  if(abs(td->pdgId())==5 && ( td->pdgId()*t->pdgId() > 0 ) )condB = true;
 		}
-	  if (abs (abs (t->pdgId ())) == 1000022 || abs (abs (t->pdgId ())) == 1000023 || abs (abs (t->pdgId ())) == 1000025 || abs (abs (t->pdgId ())) == 1000035)
-	    {
-	      int nofd = 0;
-	      for (reco::GenParticle::const_iterator td = t->begin (); td != t->end (); ++td)
-		nofd++;
-	      if (nofd < 2)
-		;		//		invisibleParticles_.push_back (ConvertMCPart(t));
+		isSingleTopDaughter = isSingleTopDaughter && condNeu && condB;
+	      }
+	      				  
+	      if(isSingleTopDaughter) {
+		MCtopsNeutrino->push_back( *(dynamic_cast< const reco::GenParticle *> (&(*t))) );
+		
+		if(t->mother()) MCtopsNeutrinoMotherID->push_back( t->mother()->pdgId());
+		if(t->mother() && t->mother()->mother())MCtopsNeutrinoGrannyID->push_back(t->mother()->mother()->pdgId());
+		MCtopsNeutrinoVertexX->push_back(t->vertex().x());
+		MCtopsNeutrinoVertexY->push_back(t->vertex().y());
+		MCtopsNeutrinoVertexZ->push_back(t->vertex().z());
+		nDau =0;
+		dauOneId=-9999, dauTwoId =-9999, dauThreeId=-9999,dauFourId=-9999 ;
+		for (reco::GenParticle::const_iterator td = t->begin (); td != t->end (); ++td){
+		  nDau++;
+		  if(nDau==1) dauOneId = td->pdgId();
+		  if(nDau==2) dauTwoId = td->pdgId();
+		  if(nDau==3) dauThreeId = td->pdgId();
+		  if(nDau==4) dauFourId = td->pdgId();
+		}
+		MCtopsNeutrinoNDau->push_back(nDau);
+		MCtopsNeutrinoDauOneID->push_back(dauOneId);
+		MCtopsNeutrinoDauTwoID->push_back(dauTwoId);
+		MCtopsNeutrinoDauThreeID->push_back(dauThreeId);
+		MCtopsNeutrinoDauFourID->push_back(dauFourId);
+		//		  isLeptonic_ = true;
+	      }
+  
 	    }
-	  if (abs (t->pdgId ()) < 6){
-	    MCquarks->push_back (*t);
-	    if(t->mother()) MCquarksMotherID->push_back( t->mother()->pdgId());
-	    if(t->mother() && t->mother()->mother())MCquarksGrannyID->push_back(t->mother()->mother()->pdgId());
-	    MCquarksVertexX->push_back(t->vertex().x());
-	    MCquarksVertexY->push_back(t->vertex().y());
-	    MCquarksVertexZ->push_back(t->vertex().z());
-	    nDau =0;
-	    dauOneId=-9999, dauTwoId =-9999, dauThreeId=-9999,dauFourId=-9999 ;
-	    for (reco::GenParticle::const_iterator td = t->begin (); td != t->end (); ++td){
-	      nDau++;
-	      if(nDau==1) dauOneId = td->pdgId();
-	      if(nDau==2) dauTwoId = td->pdgId();
-	      if(nDau==3) dauThreeId = td->pdgId();
-	      if(nDau==4) dauFourId = td->pdgId();
+	    
+	    if (abs (t->pdgId ()) < 6){
+	      MCquarks->push_back (*t);
+	      if(t->mother()) MCquarksMotherID->push_back( t->mother()->pdgId());
+	      if(t->mother() && t->mother()->mother())MCquarksGrannyID->push_back(t->mother()->mother()->pdgId());
+	      MCquarksVertexX->push_back(t->vertex().x());
+	      MCquarksVertexY->push_back(t->vertex().y());
+	      MCquarksVertexZ->push_back(t->vertex().z());
+	      nDau =0;
+	      dauOneId=-9999, dauTwoId =-9999, dauThreeId=-9999,dauFourId=-9999 ;
+	      for (reco::GenParticle::const_iterator td = t->begin (); td != t->end (); ++td){
+		nDau++;
+		if(nDau==1) dauOneId = td->pdgId();
+		if(nDau==2) dauTwoId = td->pdgId();
+		if(nDau==3) dauThreeId = td->pdgId();
+		if(nDau==4) dauFourId = td->pdgId();
+	      }
+	      MCquarksNDau->push_back(nDau);
+	      MCquarksDauOneID->push_back(dauOneId);
+	      MCquarksDauTwoID->push_back(dauTwoId);
+	      MCquarksDauThreeID->push_back(dauThreeId);
+	      MCquarksDauFourID->push_back(dauFourId);
 	    }
-	    MCquarksNDau->push_back(nDau);
-	    MCquarksDauOneID->push_back(dauOneId);
-	    MCquarksDauTwoID->push_back(dauTwoId);
-	    MCquarksDauThreeID->push_back(dauThreeId);
-	    MCquarksDauFourID->push_back(dauFourId);
+	    if (abs (t->pdgId ()) == 5){
+	      MCbquarks->push_back (*t);
+	      if(t->mother()) MCbquarksMotherID->push_back( t->mother()->pdgId());
+	      if(t->mother() && t->mother()->mother())MCbquarksGrannyID->push_back(t->mother()->mother()->pdgId());
+	      MCbquarksVertexX->push_back(t->vertex().x());
+	      MCbquarksVertexY->push_back(t->vertex().y());
+	      MCbquarksVertexZ->push_back(t->vertex().z());
+	      nDau =0;
+	      dauOneId=-9999, dauTwoId =-9999, dauThreeId=-9999,dauFourId=-9999 ;
+	      for (reco::GenParticle::const_iterator td = t->begin (); td != t->end (); ++td){
+		nDau++;
+		if(nDau==1) dauOneId = td->pdgId();
+		if(nDau==2) dauTwoId = td->pdgId();
+		if(nDau==3) dauThreeId = td->pdgId();
+		if(nDau==4) dauFourId = td->pdgId();
+	      }
+	      MCbquarksNDau->push_back(nDau);
+	      MCbquarksDauOneID->push_back(dauOneId);
+	      MCbquarksDauTwoID->push_back(dauTwoId);
+	      MCbquarksDauThreeID->push_back(dauThreeId);
+	      MCbquarksDauFourID->push_back(dauFourId);
+	    
+	      bool isSingleTopDaughter = true;
+	      if(t->mother()){
+		bool condNeu= false;
+		bool condB= false;
+		for (reco::GenParticle::const_iterator td = t->mother()->begin (); td != t->mother()->end (); ++td){
+		  if(abs(td->pdgId())==12 || abs(td->pdgId())==14 || abs(td->pdgId())==16 )condNeu = true;
+		  if((abs(td->pdgId())==11 || abs(td->pdgId())==13 || abs(td->pdgId())==15) && ( td->pdgId()*t->pdgId() < 0 ) )condB = true;
+		}
+		isSingleTopDaughter = isSingleTopDaughter && condNeu && condB;
+	      }
+	      				  
+	      if(isSingleTopDaughter) {
+		MCtopsBQuark->push_back( *(dynamic_cast< const reco::GenParticle *> (&(*t))) );
+		
+		if(t->mother()) MCtopsBQuarkMotherID->push_back( t->mother()->pdgId());
+		if(t->mother() && t->mother()->mother())MCtopsBQuarkGrannyID->push_back(t->mother()->mother()->pdgId());
+		MCtopsBQuarkVertexX->push_back(t->vertex().x());
+		MCtopsBQuarkVertexY->push_back(t->vertex().y());
+		MCtopsBQuarkVertexZ->push_back(t->vertex().z());
+		nDau =0;
+		dauOneId=-9999, dauTwoId =-9999, dauThreeId=-9999,dauFourId=-9999 ;
+		for (reco::GenParticle::const_iterator td = t->begin (); td != t->end (); ++td){
+		  nDau++;
+		  if(nDau==1) dauOneId = td->pdgId();
+		  if(nDau==2) dauTwoId = td->pdgId();
+		  if(nDau==3) dauThreeId = td->pdgId();
+		  if(nDau==4) dauFourId = td->pdgId();
+		}
+		MCtopsBQuarkNDau->push_back(nDau);
+		MCtopsBQuarkDauOneID->push_back(dauOneId);
+		MCtopsBQuarkDauTwoID->push_back(dauTwoId);
+		MCtopsBQuarkDauThreeID->push_back(dauThreeId);
+		MCtopsBQuarkDauFourID->push_back(dauFourId);
+		//		  isLeptonic_ = true;
+	      }
+	      
+
+	    }
+	    //CompHEP End
 	  }
-	  if (abs (t->pdgId ()) == 5){
-	    MCbquarks->push_back (*t);
-	    if(t->mother()) MCbquarksMotherID->push_back( t->mother()->pdgId());
-	    if(t->mother() && t->mother()->mother())MCbquarksGrannyID->push_back(t->mother()->mother()->pdgId());
-	    MCbquarksVertexX->push_back(t->vertex().x());
-	    MCbquarksVertexY->push_back(t->vertex().y());
-	    MCbquarksVertexZ->push_back(t->vertex().z());
-	    nDau =0;
+	  else {
+	    if ((abs (t->pdgId ()) == 11 || abs (t->pdgId ()) == 13 || abs (t->pdgId ()) == 15) &&
+		((abs (t->mother ()->pdgId ()) > 22 && abs (t->mother ()->pdgId ()) < 40) || (abs (t->mother ()->pdgId ()) > 999999 && abs (t->mother ()->pdgId ()) < 2999999)))
+	      {	
+		MCleptons->push_back ( (*t));
+		if(t->mother()) MCleptonsMotherID->push_back( t->mother()->pdgId());
+		if(t->mother() && t->mother()->mother())MCleptonsGrannyID->push_back(t->mother()->mother()->pdgId());
+		MCleptonsVertexX->push_back(t->vertex().x());
+		MCleptonsVertexY->push_back(t->vertex().y());
+		MCleptonsVertexZ->push_back(t->vertex().z());
+		nDau =0;
+		dauOneId=-9999, dauTwoId =-9999, dauThreeId=-9999,dauFourId=-9999 ;
+		for (reco::GenParticle::const_iterator td = t->begin (); td != t->end (); ++td){
+		  nDau++;
+		  if(nDau==1) dauOneId = td->pdgId();
+		  if(nDau==2) dauTwoId = td->pdgId();
+		  if(nDau==3) dauThreeId = td->pdgId();
+		  if(nDau==4) dauFourId = td->pdgId();
+		}
+		MCleptonsNDau->push_back(nDau);
+		MCleptonsDauOneID->push_back(dauOneId);
+		MCleptonsDauTwoID->push_back(dauTwoId);
+		MCleptonsDauThreeID->push_back(dauThreeId);
+		MCleptonsDauFourID->push_back(dauFourId);
+		
+	      }
+	    if ((abs (t->pdgId ()) == 12 || abs (t->pdgId ()) == 14 || abs (t->pdgId ()) == 16) &&
+		((abs (t->mother ()->pdgId ()) > 22 && abs (t->mother ()->pdgId ()) < 40) || (abs (t->mother ()->pdgId ()) > 999999 && abs (t->mother ()->pdgId ()) < 2999999)))
+	      {
+		MCneutrinos->push_back( (*t));
+		if(t->mother()) MCneutrinosMotherID->push_back( t->mother()->pdgId());
+		if(t->mother() && t->mother()->mother())MCneutrinosGrannyID->push_back(t->mother()->mother()->pdgId());
+		MCneutrinosVertexX->push_back(t->vertex().x());
+		MCneutrinosVertexY->push_back(t->vertex().y());
+		MCneutrinosVertexZ->push_back(t->vertex().z());
+		nDau =0;
+		dauOneId=-9999, dauTwoId =-9999, dauThreeId=-9999,dauFourId=-9999 ;
+		for (reco::GenParticle::const_iterator td = t->begin (); td != t->end (); ++td){
+		  nDau++;
+		  if(nDau==1) dauOneId = td->pdgId();
+		  if(nDau==2) dauTwoId = td->pdgId();
+		  if(nDau==3) dauThreeId = td->pdgId();
+		  if(nDau==4) dauFourId = td->pdgId();
+		}
+		MCneutrinosNDau->push_back(nDau);
+		MCneutrinosDauOneID->push_back(dauOneId);
+		MCneutrinosDauTwoID->push_back(dauTwoId);
+		MCneutrinosDauThreeID->push_back(dauThreeId);
+		MCneutrinosDauFourID->push_back(dauFourId);
+		
+	      }
+	    if (abs (abs (t->pdgId ())) == 1000022 || abs (abs (t->pdgId ())) == 1000023 || abs (abs (t->pdgId ())) == 1000025 || abs (abs (t->pdgId ())) == 1000035)
+	      {
+		int nofd = 0;
+		for (reco::GenParticle::const_iterator td = t->begin (); td != t->end (); ++td)
+		  nofd++;
+		if (nofd < 2)
+		  ;		//		invisibleParticles_.push_back (ConvertMCPart(t));
+	      }
+	    if (abs (t->pdgId ()) < 6){
+	      MCquarks->push_back (*t);
+	      if(t->mother()) MCquarksMotherID->push_back( t->mother()->pdgId());
+	      if(t->mother() && t->mother()->mother())MCquarksGrannyID->push_back(t->mother()->mother()->pdgId());
+	      MCquarksVertexX->push_back(t->vertex().x());
+	      MCquarksVertexY->push_back(t->vertex().y());
+	      MCquarksVertexZ->push_back(t->vertex().z());
+	      nDau =0;
+	      dauOneId=-9999, dauTwoId =-9999, dauThreeId=-9999,dauFourId=-9999 ;
+	      for (reco::GenParticle::const_iterator td = t->begin (); td != t->end (); ++td){
+		nDau++;
+		if(nDau==1) dauOneId = td->pdgId();
+		if(nDau==2) dauTwoId = td->pdgId();
+		if(nDau==3) dauThreeId = td->pdgId();
+		if(nDau==4) dauFourId = td->pdgId();
+	      }
+	      MCquarksNDau->push_back(nDau);
+	      MCquarksDauOneID->push_back(dauOneId);
+	      MCquarksDauTwoID->push_back(dauTwoId);
+	      MCquarksDauThreeID->push_back(dauThreeId);
+	      MCquarksDauFourID->push_back(dauFourId);
+	    }
+	    if (abs (t->pdgId ()) == 5){
+	      MCbquarks->push_back (*t);
+	      if(t->mother()) MCbquarksMotherID->push_back( t->mother()->pdgId());
+	      if(t->mother() && t->mother()->mother())MCbquarksGrannyID->push_back(t->mother()->mother()->pdgId());
+	      MCbquarksVertexX->push_back(t->vertex().x());
+	      MCbquarksVertexY->push_back(t->vertex().y());
+	      MCbquarksVertexZ->push_back(t->vertex().z());
+	      nDau =0;
 	    dauOneId=-9999, dauTwoId =-9999, dauThreeId=-9999,dauFourId=-9999 ;
 	    for (reco::GenParticle::const_iterator td = t->begin (); td != t->end (); ++td){
 	      nDau++;
@@ -764,6 +970,7 @@ iEvent.getByLabel(genParticlesSrc_, genParticles);
 	      //cout<<"End TopGenPart"<<endl;
 	    }
 	}
+    }
   }
   //cout<<"AT THE END"<<endl;
 

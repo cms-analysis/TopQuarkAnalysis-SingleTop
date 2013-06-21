@@ -2,7 +2,7 @@
  *\Author: A. Orso M. Iorio 
  *
  *
- *\version  $Id: SingleTopJetsProducer.cc,v 1.5.12.3 2012/08/15 09:36:38 oiorio Exp $ 
+ *\version  $Id: SingleTopJetsProducer.cc,v 1.5.12.3.4.1 2013/04/18 10:29:54 oiorio Exp $ 
  */
 
 // Single Top producer: produces a top candidate made out of a Lepton, a B jet and a MET
@@ -119,7 +119,7 @@ void SingleTopJetsProducer::produce(edm::Event & iEvent, const edm::EventSetup &
     bool isOverlapped = false;
     if(removeOverlap_){
       for(size_t e = 0; e < electrons->size(); ++e){
-	if(deltaR(jets->at(i),electrons->at(e))<0.3) {
+	if(deltaR(jets->at(i),electrons->at(e))<0.1) {
 	  isOverlapped = true;
 	  break;
 	}
@@ -193,6 +193,9 @@ void SingleTopJetsProducer::produce(edm::Event & iEvent, const edm::EventSetup &
       jet.addUserFloat("jer_smear",smear);
       jet.addUserFloat("jer_smear_up",smearUp);
       jet.addUserFloat("jer_smear_down",smearDown);
+      if(isData_) smear=1;
+      if(isData_) smearUp=1;
+      if(isData_) smearDown=1;
       
       jet.addUserFloat("pt_no_jer",(jet.p4()).pt());
       jet.addUserFloat("eta_no_jer",(jet.p4()).eta());

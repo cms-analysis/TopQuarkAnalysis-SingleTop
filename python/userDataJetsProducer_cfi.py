@@ -12,6 +12,7 @@ topJetsPF = cms.EDProducer(
     puIDVariables  = cms.InputTag("puJetId"),
     removeOverlap = cms.untracked.bool(False),
     isData = cms.untracked.bool(False),
-    JESUncertaintiesPath = cms.FileInPath("TopQuarkAnalysis/SingleTop/test/Fall12_V7_DATA_UncertaintySources_AK5PFchs.txt")
+#    JESUncertaintiesPath = cms.FileInPath("TopQuarkAnalysis/SingleTop/data/Fall12_V7_DATA_UncertaintySources_AK5PFchs.txt")
+    JESUncertaintiesPath = cms.FileInPath("TopQuarkAnalysis/SingleTop/data/START53_V22_Uncertainty_AK5PFchs.txt")
 )
 

@@ -2,7 +2,7 @@
  *\Author: A. Orso M. Iorio 
  *
  *
- *\version  $Id: SingleTopJetsProducer.cc,v 1.5.12.3 2012/08/15 09:36:38 oiorio Exp $ 
+ *\version  $Id: SingleTopMETsProducer.cc,v 1.1.2.1 2013/04/19 15:30:09 oiorio Exp $ 
  */
 
 // Single Top producer: produces a top candidate made out of a Lepton, a B jet and a MET
@@ -133,13 +133,17 @@ void SingleTopMETsProducer::produce(edm::Event & iEvent, const edm::EventSetup &
       
       float ptCorr = jet.pt(), genpt=-1;
       if(ptCorr<10)continue;
-      
+
+            
+
       if(jet.genJet()==0) {
 	genpt = ptCorr;
+	//	std::cout<<" no jet... ptCorr "<< ptCorr<<" j index "<< j<< std::endl;
       }
       else genpt = jet.genJet()->pt();
       
-      
+      //      std::cout << " genpt = "<< genpt<<std::endl;
+
       float resolScale = resolSF(fabs(jet.eta()),"");
       float smear = 1-std::max((float)(0.0), (float)(ptCorr + (ptCorr - genpt) * resolScale) / ptCorr);
       float resolScaleUp = resolSF(fabs(jet.eta()),"up");
@@ -147,10 +151,12 @@ void SingleTopMETsProducer::produce(edm::Event & iEvent, const edm::EventSetup &
       float resolScaleDown = resolSF(fabs(jet.eta()),"down");
       float smearDown = 1-std::max((float)(0.0), (float)(ptCorr + (ptCorr - genpt) * resolScaleDown) / ptCorr);
       
-      if(jet.genJet()==0) {smear=1;smearUp =1;smearDown=1;}
+      //      if(jet.genJet()==0) {smear=1;smearUp =1;smearDown=1;}
      
       jer_metx += (smear*jet.p4()).px();
       jer_mety += (smear*jet.p4()).py();
+
+      //      std::cout << "metPt "<< met.pt() << " corr x "<< (smear*jet.p4()).px() << std::endl; 
       
       uncl_up_metx += (smear*jet.p4()).px();
       uncl_up_mety += (smear*jet.p4()).py();
@@ -175,7 +181,7 @@ void SingleTopMETsProducer::produce(edm::Event & iEvent, const edm::EventSetup &
       
       jes_up_metx -= (ptCorr * cos(jphi)) * unc; 
       jes_down_metx -= -(ptCorr * cos(jphi)) * unc; 
-    
+      
     }
     
 
@@ -218,6 +224,8 @@ void SingleTopMETsProducer::produce(edm::Event & iEvent, const edm::EventSetup &
     met.addUserFloat("phi_uncl_down",UnclDownP4.phi());
     
     met.setP4(jerP4);
+
+    //    std::cout<< " met "  << met.pt()<<std::endl;
     finalMETs->push_back(met);
   } 
   

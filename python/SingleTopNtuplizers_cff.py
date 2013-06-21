@@ -113,8 +113,8 @@ nTupleTopJetsPF = cms.EDProducer(
     cms.PSet(
     tag = cms.untracked.string("Smear"),
     quantity = cms.untracked.string("userFloat('jer_smear')")
-    ),
-    cms.PSet(
+    ), 
+   cms.PSet(
     tag = cms.untracked.string("SmearUp"),
     quantity = cms.untracked.string("userFloat('jer_smear_up')")
     ),
@@ -776,6 +776,7 @@ saveNTuplesSkim = cms.untracked.vstring(
     'keep *_genAllJetsPF_*_*',
     'keep *_nTupleVertices_*_*',
     'keep *_kt6PFJetsForIsolation_rho_*',
+     'keep *_UnclusteredMETPF_*_*'
          )
 
 

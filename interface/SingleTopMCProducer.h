@@ -5,7 +5,7 @@
  *
  * \Authors: A. Giammanco, A. Orso M. Iorio
  * 
- * \ version $Id: SingleTopMCProducer.h,v 1.2 2010/09/07 14:32:43 oiorio Exp $
+ * \ version $Id: SingleTopMCProducer.h,v 1.1.2.1 2012/11/26 10:26:00 oiorio Exp $
  */
 
 //Single Top MC Producer
@@ -73,7 +73,7 @@
     //cuts for genJets Matching
     double genJetsDeltarMatching_;
 
-    bool isSingleTopTChan_;
+    bool isSingleTopTChan_, isSingleTopCompHEP_;
   };
 
 

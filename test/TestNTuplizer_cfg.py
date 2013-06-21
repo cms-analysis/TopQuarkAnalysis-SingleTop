@@ -34,15 +34,15 @@ process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring (
 #'file:/tmp/oiorio/edmntuple_TTBar.root',
 #'file:edmntuple_TChannel.root',
-'file:singleTopEdmNtuple_TChannel_GSF.root'
+#'file:singleTopEdmNtuple_TChannel_GSF.root'
+'file:/afs/cern.ch/work/o/oiorio/test_instr/CMSSW_5_3_7/src/showering_CMSSW/Hadronizer_8TeV_single_top_t-channel_aMCatNLO_herwig6_tauola_cff_py_GEN__FASTSIM_HLT_PU_big.root'
 #'edmntuple_TChannel_4_1_px5.root',
 ),
 duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
 #eventsToProcess = cms.untracked.VEventRange('1:19517967-1:19517969'),
 )
 
-process.TFileService = cms.Service("TFileService", fileName = cms.string("TChannel_test.root"))
-
+process.TFileService = cms.Service("TFileService", fileName = cms.string("TChannel_test_aMCatNLO.root"))
 
 #process.load("SingleTopAnalyzers_cfi")
 

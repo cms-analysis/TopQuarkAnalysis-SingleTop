@@ -166,7 +166,6 @@ pvfilters = cms.Sequence(
 
 #Selection step: require 1 high pt muon/electron
 preselection = cms.Sequence(
-#    PVFilter +
     HBHENoiseFilter *
     scrapingVeto *
     CSCTightHaloFilter *
@@ -180,6 +179,12 @@ preselection = cms.Sequence(
     ~manystripclus53X *
     ~toomanystripclus53X *
     ~logErrorTooManyClusters *
+    countLeptons
+    )
+
+preselectionNoMETFilters = cms.Sequence(
+#    PVFilter +
+    goodVertices *
     countLeptons
     )
 

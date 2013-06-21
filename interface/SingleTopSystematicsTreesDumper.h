@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  *
  * Produces systematics histograms out of a standard Single Top n-tuple
- * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.14.2.2 2013/03/22 00:22:47 oiorio Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper.h,v 1.11.2.13.2.14.2.3 2013/04/18 10:29:50 oiorio Exp $
  */
 
 
@@ -120,6 +120,7 @@ private:
 
   float muonHLTEff(float etaMu,string period);
   void muonHLTSF(float etaMu, float ptMu);
+  void electronHLTSF(float etaEle, float ptEle);
 
   //B-weight generating functions
   double resolSF(double eta, string syst);
@@ -187,6 +188,7 @@ private:
     leptonsDB_,
     leptonsDZ_,
     leptonsMVAID_,
+    leptonsNHits_,
     
     vertexZ_,
     
@@ -303,6 +305,9 @@ private:
     
     genJetsPt_,
     genJetsEta_,
+
+    genAllJetsPt_,
+    genAllJetsEta_,
     jetsPt_,
     jetsPhi_,
     jetsEta_,
@@ -344,6 +349,7 @@ private:
     leptonsRhoCorrectedRelIso,
     leptonsID,
     leptonsMVAID,
+    leptonsNHits,
     leptonsDB,
     leptonsDZ,
     vertexZ,
@@ -486,7 +492,7 @@ private:
 
     //Unclustered MET to take from the event
     edm::Handle< double > UnclMETPx, UnclMETPy, preWeights;
-    edm::Handle< std::vector<double> > genJetsPt;
+    edm::Handle< std::vector<double> > genJetsPt,genAllJetsPt;
     edm::Handle< float > x1h, x2h, scalePDFh;
     edm::Handle< int > id1h, id2h;
     std::string leptonsFlavour_, mode_;
@@ -660,7 +666,7 @@ float    MCTopsPtVec[2],
     //Variables to use as trees references
 
     //Variables to use as trees references
-  double etaTree, etaTree2, cosTree, cosBLTree, topMassTree, totalWeightTree, weightTree, mtwMassTree, lowBTagTree, highBTagTree, maxPtTree, minPtTree, topMassLowBTagTree, topMassBestTopTree, topMassMeas, bWeightTree, PUWeightTree, turnOnWeightTree, limuWeightTree, turnOnReWeightTree, miscWeightTree, lepEff, lepEffB,lepSF,lepSFB,lepSFC , topMtwTree, HT ,
+  double etaTree, etaTree2, cosTree, cosBLTree, topMassTree, totalWeightTree, weightTree, mtwMassTree, lowBTagTree, highBTagTree, maxPtTree, minPtTree, topMassLowBTagTree, topMassBestTopTree, topMassMeas, bWeightTree, PUWeightTree, turnOnWeightTree, limuWeightTree, turnOnReWeightTree, miscWeightTree, lepEff, lepEffB,lepSF,lepSFB,lepSFC , lepSFD, topMtwTree, HT ,
     lepSFIDUp,
     lepSFIDDown,
     lepSFIsoUp,
@@ -680,6 +686,13 @@ float    MCTopsPtVec[2],
     lepSFIsoDownC,
     lepSFTrigUpC,
     lepSFTrigDownC,
+
+    lepSFIDUpD,
+    lepSFIDDownD,
+    lepSFIsoUpD,
+    lepSFIsoDownD,
+    lepSFTrigUpD,
+    lepSFTrigDownD,
     
     sfID,sfIDup,sfIDdown,  
     sfIso,sfIsoup,sfIsodown,  
@@ -710,7 +723,7 @@ float    MCTopsPtVec[2],
 
   int runTree, eventTree, lumiTree, chargeTree, electronID, bJetFlavourTree, fJetFlavourTree, eventFlavourTree, puZero, firstJetFlavourTree, secondJetFlavourTree, thirdJetFlavourTree, isQCDTree;
 
-  double lepPt, lepEta, lepPhi, lepRelIso, lepDeltaCorrectedRelIso, lepRhoCorrectedRelIso, fJetPhi, fJetPt, fJetEta, fJetE, bJetPt, bJetEta, bJetPhi, bJetE, metPt, metPhi, topPt, topPhi, topEta, topE, totalEnergy, totalMomentum, fJetBTag, bJetBTag, vtxZ, fJetPUID, fJetPUWP, bJetPUID, bJetPUWP, firstJetPt, firstJetEta, firstJetPhi, firstJetE, secondJetPt, secondJetEta, secondJetPhi, secondJetE, thirdJetPt, thirdJetEta, thirdJetPhi, thirdJetE,fJetBeta,fJetDZ,fJetRMS,bJetBeta,bJetDZ,bJetRMS, leptonMVAID;
+  double lepPt, lepEta, lepPhi, lepRelIso, lepDeltaCorrectedRelIso, lepRhoCorrectedRelIso, fJetPhi, fJetPt, fJetEta, fJetE, bJetPt, bJetEta, bJetPhi, bJetE, metPt, metPhi, topPt, topPhi, topEta, topE, totalEnergy, totalMomentum, fJetBTag, bJetBTag, vtxZ, fJetPUID, fJetPUWP, bJetPUID, bJetPUWP, firstJetPt, firstJetEta, firstJetPhi, firstJetE, secondJetPt, secondJetEta, secondJetPhi, secondJetE, thirdJetPt, thirdJetEta, thirdJetPhi, thirdJetE,fJetBeta,fJetDZ,fJetRMS,bJetBeta,bJetDZ,bJetRMS, leptonMVAID,leptonNHits;
 
 
     //Not used anymore:
@@ -742,7 +755,7 @@ float    MCTopsPtVec[2],
         ntchpt_antitags, ntchpm_tags, ntchel_tags, ntche_antitags, ntight_tags;
 
     string algo_;
-
+  
     double TCHPM_LMisTagUp,  TCHPM_BBTagUp, TCHPM_CBTagUp, TCHPM_LMisTagDown, TCHPM_BBTagDown, TCHPM_CBTagDown;
     double TCHPM_LAntiMisTagUp,  TCHPM_BAntiBTagUp, TCHPM_CAntiBTagUp, TCHPM_LAntiMisTagDown, TCHPM_BAntiBTagDown, TCHPM_CAntiBTagDown;
     double TCHPM_C,  TCHPM_B, TCHPM_L;
@@ -760,7 +773,7 @@ float    MCTopsPtVec[2],
     double TCHEL_CAnti,  TCHEL_BAnti, TCHEL_LAnti;
 
     double facBTagErr;
-
+    bool useMVAID_, useCutBasedID_;
     class BTagWeight
     {
     public:
