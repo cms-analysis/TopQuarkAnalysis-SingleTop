@@ -115,7 +115,8 @@ if not channelPicked:
     eeChan = True
 
 if not versionPicked:
-    vFolder = 'v5_MET50'
+#    vFolder = 'v11_MET50'
+    vFolder = 'TestDir_v3'
 #     versionList = glob.glob("tmvaFiles/v*")
 #     versionList.sort(key=lambda a:int(a.split('/v')[-1]))
 #     vFolder = versionList[-1].split('/')[-1]    
@@ -130,18 +131,25 @@ if RunC:
 
 TotalLumi = TotalLumi/1000.
 
-labelcms = TPaveText(0.1,0.88,0.6,0.92,"NDCBR")
+labelcms = TPaveText(0.12,0.88,0.6,0.92,"NDCBR")
 labelcms.SetTextAlign(12);
 labelcms.SetTextSize(0.045);
 labelcms.SetFillColor(kWhite);
+labelcms.SetFillStyle(0);
 labelcms.AddText("CMS Preliminary, #sqrt{s} = 8 TeV");
 labelcms.SetBorderSize(0);
 
+#gStyle.SetLabelSize(0.045,"y")
+gStyle.SetLabelSize(0.035,"xy")
 
 
 doChannel = [emuChan, mumuChan, eeChan]
     
-plotInfo = [['met', 60, 0, 300,'MET [GeV]']
+plotInfo = [['met', 60, 0, 300,'E_{T}^{miss} [GeV]'],
+            ['mll', 20, 81, 101,'m_{ll} [GeV]'],
+            ['ptlep0',28,20,300, 'P_{T} lepton-0 [GeV]','Events / 10 GeV'],
+            ['ptlep1',28,20,300, 'P_{T} lepton-1 [GeV]','Events / 10 GeV'],
+
             ]
 
 fileList = ['TWChannel.root',
@@ -241,7 +249,11 @@ for mode in range(1,3):
 
 
 
-            _met                       = event.met                     
+            _met                       = event.met
+            _mll                       = event.mll
+            _ptlep0                    = event.ptlep0
+            _ptlep1                    = event.ptlep1 
+
             
             _weightA                    = event.weightA
             _weightB                    = event.weightB
@@ -250,6 +262,8 @@ for mode in range(1,3):
             _weight = 0            
 
 
+#             if _met < 50:
+#                 continue
 
             if RunA:
                 _weight = _weight + _weightA
@@ -264,7 +278,10 @@ for mode in range(1,3):
             if 'ZJets.ro' in fileList[i]:
                 _weight *= ZjetSF(_met, mode)
 
-            HistoLists[i]['met'].Fill(                      _met                      , _weight )
+            HistoLists[i]['met'].Fill(    _met    , _weight )
+            HistoLists[i]['mll'].Fill(    _mll    , _weight )
+            HistoLists[i]['ptlep0'].Fill( _ptlep0 , _weight )
+            HistoLists[i]['ptlep1'].Fill( _ptlep1 , _weight )
 
         print
 
@@ -272,8 +289,8 @@ for mode in range(1,3):
     errorHistTemp.SetFillColor(kBlack)
     errorHistTemp.SetFillStyle(3003)
     
-    leg = TLegend(0.66,0.66,0.94,0.94)
-    leg.SetFillStyle(1)
+    leg = TLegend(0.7,0.66,0.94,0.94)
+#    leg.SetFillStyle(1)
     leg.SetFillColor(kWhite)
     leg.SetBorderSize(1)
     leg.AddEntry(HistoLists[-1]['met'], "Data", "p")
@@ -299,17 +316,19 @@ for mode in range(1,3):
     if noPlots:
         continue
 
-    labelcms2 = TPaveText(0.1,0.82,0.6,0.88,"NDCBR");
+    labelcms2 = TPaveText(0.12,0.82,0.6,0.88,"NDCBR");
     labelcms2.SetTextAlign(12);
     labelcms2.SetTextSize(0.045);
     labelcms2.SetFillColor(kWhite);
+    labelcms2.SetFillStyle(0);
     labelcms2.AddText(lumiLabel + ChanLabels[mode])
     labelcms2.SetBorderSize(0);
 
-    labelcms3 = TPaveText(0.1,0.74,0.6,0.82,"NDCBR");
+    labelcms3 = TPaveText(0.12,0.74,0.6,0.82,"NDCBR");
     labelcms3.SetTextAlign(12);
     labelcms3.SetTextSize(0.045);
     labelcms3.SetFillColor(kWhite);
+    labelcms3.SetFillStyle(0);
     labelcms3.AddText(region)
     labelcms3.SetBorderSize(0);
 
@@ -352,6 +371,7 @@ for mode in range(1,3):
         hStack.Add(HistoLists[0][plot[0]])
         
         c1 = TCanvas()
+        gPad.SetLeftMargin(0.12)
         max_ = max(hStack.GetMaximum(),HistoLists[-1][plot[0]].GetMaximum())
         hStack.Draw("histo")
         hStack.SetMaximum(max_*1.5)
@@ -359,7 +379,10 @@ for mode in range(1,3):
         errorBand.Draw("e2 same")
         hStack.GetYaxis().SetTitle("Events")
         hStack.GetYaxis().CenterTitle()
+        hStack.GetYaxis().SetTitleOffset(1.28)
+        hStack.GetYaxis().SetTitleSize(0.05)
         hStack.GetXaxis().SetTitle(plot[4])
+        hStack.GetXaxis().SetTitleSize(0.05)
         HistoLists[-1][plot[0]].Draw("e x0, same")
         leg.Draw()        
         labelcms.Draw()
@@ -375,9 +398,11 @@ for mode in range(1,3):
             
         
         c1.SaveAs("VariablePlots/"+specialName+region+"/ClosureTest_"+plot[0]+"_"+region+"_"+ChanName[mode]+".pdf")
+        c1.SaveAs("VariablePlots/"+specialName+region+"/ClosureTest_"+plot[0]+"_"+region+"_"+ChanName[mode]+".png")
         c1.SetLogy()
         hStack.SetMaximum(max_*150.)
-        hStack.SetMinimum(0.1)
+        hStack.SetMinimum(1.)
         
         c1.SaveAs("VariablePlots/"+specialName+region+"/ClosureTest_"+plot[0]+"_"+region+"_"+ChanName[mode]+"_log.pdf")
+        c1.SaveAs("VariablePlots/"+specialName+region+"/ClosureTest_"+plot[0]+"_"+region+"_"+ChanName[mode]+"_log.png")
 

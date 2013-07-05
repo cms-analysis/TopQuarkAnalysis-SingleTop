@@ -164,7 +164,7 @@ process.load('CommonTools/RecoAlgos/HBHENoiseFilter_cfi')
 import string
 
 process.load("EventFilter.HcalRawToDigi.hcallasereventfilter2012_cfi")
-inputfilelist=["../../../EventFilter/HcalRawToDigi/data/AllBadHCALLaser.txt"]  # specify your path to the AllBadHCALLaser.txt file
+inputfilelist=["../../../../EventFilter/HcalRawToDigi/data/AllBadHCALLaser.txt"]  # specify your path to the AllBadHCALLaser.txt file
 for f in inputfilelist:
     mylist=open(f,'r').readlines()  # read all lines in the inputfile
     for j in mylist:

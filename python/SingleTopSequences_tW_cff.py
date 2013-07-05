@@ -20,6 +20,7 @@ from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_tW_cff import nTuplePatMETsP
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_tW_cff import nTuplePatType1METsPF
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_tW_cff import nTupleElectrons
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_tW_cff import nTupleMuons
+from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_tW_cff import nTupleGenParticles
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_tW_cff import nTuplesSkim
 
 from TopQuarkAnalysis.SingleTop.SingleTopNtuplizers_tW_cff import nTupleAllElectrons

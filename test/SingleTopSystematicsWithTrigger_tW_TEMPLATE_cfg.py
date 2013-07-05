@@ -112,3 +112,12 @@ if channel_instruction == "data":
     process.TreesDileptontW
     )
 
+if channel_instruction == "systSample":
+    process.TreesDileptontW.doResol = cms.untracked.bool(False)
+    process.TreesDileptontW.doPU = cms.untracked.bool(False)
+    process.TreesDileptontW.systematics = cms.untracked.vstring()
+
+    process.PathSysAllTW = cms.Path(
+    process.TreesDileptontW
+    )
+

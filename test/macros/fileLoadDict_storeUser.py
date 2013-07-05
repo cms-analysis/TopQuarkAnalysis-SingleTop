@@ -233,5 +233,26 @@ fileLists = { 'TWDilepton':['TWChannelDilepton',
                                      storeUser+'ntuple_SysTrees_DoubleElectron_Run2012C-PromptReco_4_5.root',
                                      storeUser+'ntuple_SysTrees_DoubleElectron_Run2012C-PromptReco_5_5.root'],
                                     'Data_DoubleElectron_Run2012C.root'],              
-              
+
+              'TTbarSpin':['TTBarSpin',
+                           ['~/storeUser/tW_8TeV/Ntuples/v5/ntuple_SysTrees_TTBarSpin_1_10.root',
+                            '~/storeUser/tW_8TeV/Ntuples/v5/ntuple_SysTrees_TTBarSpin_2_10.root',
+                            '~/storeUser/tW_8TeV/Ntuples/v5/ntuple_SysTrees_TTBarSpin_3_10.root',
+                            '~/storeUser/tW_8TeV/Ntuples/v5/ntuple_SysTrees_TTBarSpin_4_10.root',
+                            '~/storeUser/tW_8TeV/Ntuples/v5/ntuple_SysTrees_TTBarSpin_5_10.root',
+                            '~/storeUser/tW_8TeV/Ntuples/v5/ntuple_SysTrees_TTBarSpin_6_10.root',
+                            '~/storeUser/tW_8TeV/Ntuples/v5/ntuple_SysTrees_TTBarSpin_7_10.root',
+                            '~/storeUser/tW_8TeV/Ntuples/v5/ntuple_SysTrees_TTBarSpin_8_10.root',
+                            '~/storeUser/tW_8TeV/Ntuples/v5/ntuple_SysTrees_TTBarSpin_9_10.root',
+                            '~/storeUser/tW_8TeV/Ntuples/v5/ntuple_SysTrees_TTBarSpin_10_10.root'],
+                           'TTbarSpin.root'],
+
+              'TTbarPowheg':['TTBarPowheg',
+                             [storeUser+'ntuple_SysTrees_TTBarPowheg_1_5.root',
+                              storeUser+'ntuple_SysTrees_TTBarPowheg_2_5.root',
+                              storeUser+'ntuple_SysTrees_TTBarPowheg_3_5.root',
+                              storeUser+'ntuple_SysTrees_TTBarPowheg_4_5.root',
+                              storeUser+'ntuple_SysTrees_TTBarPowheg_5_5.root'],
+                              'TTbarPowheg.root'],
+
               }

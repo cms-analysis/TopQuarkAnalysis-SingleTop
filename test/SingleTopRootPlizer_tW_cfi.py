@@ -3,7 +3,7 @@ import FWCore.ParameterSet.Config as cms
 TreesDileptontW = cms.EDAnalyzer('SingleTopSystematicsTreesDumper_tW',
 #General Info
 #systematics = cms.untracked.vstring("BTagUp","BTagDown","MisTagUp","MisTagDown","JESUp","JESDown","UnclusteredMETUp","UnclusteredMETDown","PUUp","PUDown"),
-systematics = cms.untracked.vstring("JESUp","JESDown","UnclusteredMETUp","UnclusteredMETDown","JERUp","JERDown"),
+systematics = cms.untracked.vstring("JESUp","JESDown","UnclusteredMETUp","UnclusteredMETDown","JERUp","JERDown","LESUp","LESDown","PUUp","PUDown"),
 #systematics = cms.untracked.vstring("JESUp","JESDown","UnclusteredMETUp","UnclusteredMETDown"),
 #systematics = cms.untracked.vstring(""),
 #rateSystematics = cms.untracked.vstring("WLightRateUp",                                        "WLightRateDown",                                        "TTBarRateUp",                                        "Ttbarratedown ",                                        "WHFRateUp",                                        "WHFRateDown"),
@@ -119,6 +119,12 @@ vertexIsFake = cms.InputTag("nTupleVertices","isFake"),
 nVerticesPlus = cms.InputTag("NVertices","PileUpP1"),
 nVerticesMinus = cms.InputTag("NVertices","PileUpM1"),
 nVertices = cms.InputTag("NVertices","PileUpTrue"),
+
+#generated Particles
+genPartPt = cms.InputTag("nTupleGenParticles","genParticlespt"),
+genPartPdgId = cms.InputTag("nTupleGenParticles","genParticlespdgId"),
+
+
 
 #Jets
 

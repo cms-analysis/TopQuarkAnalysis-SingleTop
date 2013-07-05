@@ -55,7 +55,28 @@ TbarWChannel = cms.PSet(
 TTBar = cms.PSet(
     crossSection = ttbar_XSec,
     channel = cms.untracked.string("TTBar"),
-    originalEvents = cms.untracked.double(6923750),
+#    originalEvents = cms.untracked.double(6923750),
+    originalEvents = cms.untracked.double(6823750),
+    finalLumi = cms.untracked.double(1.),
+    finalLumiA = lumiA, finalLumiB = lumiB, finalLumiCrereco = lumiCrereco, finalLumiCprompt = lumiCprompt,
+    Season = cms.untracked.string(PileUpSeason53X),
+    )
+
+TTBarSpin = cms.PSet(
+    crossSection = ttbar_XSecDilep,
+    channel = cms.untracked.string("TTBarSpin"),
+#    originalEvents = cms.untracked.double(12019013),
+    originalEvents = cms.untracked.double(11936428),
+    finalLumi = cms.untracked.double(1.),
+    finalLumiA = lumiA, finalLumiB = lumiB, finalLumiCrereco = lumiCrereco, finalLumiCprompt = lumiCprompt,
+    Season = cms.untracked.string(PileUpSeason53X),
+    )
+
+TTBarPowheg = cms.PSet(
+    crossSection = ttbar_XSec,
+    channel = cms.untracked.string("TTBarPowheg"),
+#    originalEvents = cms.untracked.double(6474753),
+    originalEvents = cms.untracked.double(6299753),
     finalLumi = cms.untracked.double(1.),
     finalLumiA = lumiA, finalLumiB = lumiB, finalLumiCrereco = lumiCrereco, finalLumiCprompt = lumiCprompt,
     Season = cms.untracked.string(PileUpSeason53X),
@@ -141,7 +162,7 @@ WJets = cms.PSet(
     finalLumi = cms.untracked.double(1.),
     finalLumiA = lumiA, finalLumiB = lumiB, finalLumiCrereco = lumiCrereco, finalLumiCprompt = lumiCprompt,
     Season = cms.untracked.string(PileUpSeason53X),
-    originalEvents = cms.untracked.double(57709905),
+    originalEvents = cms.untracked.double(57509905),
     )
 
   
@@ -163,7 +184,7 @@ ZZ = cms.PSet(
     finalLumi = cms.untracked.double(1.),
     finalLumiA = lumiA, finalLumiB = lumiB, finalLumiCrereco = lumiCrereco, finalLumiCprompt = lumiCprompt,
     Season = cms.untracked.string(PileUpSeason53X),
-    originalEvents = cms.untracked.double(9799908),
+    originalEvents = cms.untracked.double(9699908),
     )
 
 
@@ -203,7 +224,7 @@ TbarWChannelDilepton = cms.PSet(
 TTBarDilepton = cms.PSet(
     crossSection = ttbar_XSecDilep,
     channel = cms.untracked.string("TTBarDilepton"),
-    originalEvents = cms.untracked.double(10783509),
+    originalEvents = cms.untracked.double(10733509),
     finalLumi = cms.untracked.double(1.),
     finalLumiA = lumiA, finalLumiB = lumiB, finalLumiCrereco = lumiCrereco, finalLumiCprompt = lumiCprompt,
     Season = cms.untracked.string(PileUpSeason53X),
@@ -289,7 +310,7 @@ TTBar_Q2Up = cms.PSet(
 TTBar_Q2Down = cms.PSet(
     crossSection = ttbar_XSec,
     channel = cms.untracked.string("TTBar_Q2Down"),
-    originalEvents = cms.untracked.double(5009488),
+    originalEvents = cms.untracked.double(5387181),
     finalLumi = cms.untracked.double(1.),
     finalLumiA = lumiA, finalLumiB = lumiB, finalLumiCrereco = lumiCrereco, finalLumiCprompt = lumiCprompt,
     Season = cms.untracked.string(PileUpSeason53X),
@@ -298,7 +319,7 @@ TTBar_Q2Down = cms.PSet(
 TTBar_MatchingUp = cms.PSet(
     crossSection = ttbar_XSec,
     channel = cms.untracked.string("TTBar_MatchingUp"),
-    originalEvents = cms.untracked.double(5415010),
+    originalEvents = cms.untracked.double(5365010),
     finalLumi = cms.untracked.double(1.),
     finalLumiA = lumiA, finalLumiB = lumiB, finalLumiCrereco = lumiCrereco, finalLumiCprompt = lumiCprompt,
     Season = cms.untracked.string(PileUpSeason53X),
@@ -313,54 +334,54 @@ TTBar_MatchingDown = cms.PSet(
     Season = cms.untracked.string(PileUpSeason53X),
     )
 
-TTBar_Mass166_5 = cms.PSet(
+TTBar_TopMassDown = cms.PSet(
     crossSection = ttbar_XSec,
-    channel = cms.untracked.string("TTBar_Mass166_5"),
+    channel = cms.untracked.string("TTBar_TopMassDown"),
     originalEvents = cms.untracked.double(4469095),
     finalLumi = cms.untracked.double(1.),
     finalLumiA = lumiA, finalLumiB = lumiB, finalLumiCrereco = lumiCrereco, finalLumiCprompt = lumiCprompt,
     Season = cms.untracked.string(PileUpSeason53X),
     )
 
-TTBar_Mass178_5 = cms.PSet(
+TTBar_TopMassUp = cms.PSet(
     crossSection = ttbar_XSec,
-    channel = cms.untracked.string("TTBar_Mass178_5"),
+    channel = cms.untracked.string("TTBar_TopMassUp"),
     originalEvents = cms.untracked.double(4733483),
     finalLumi = cms.untracked.double(1.),
     finalLumiA = lumiA, finalLumiB = lumiB, finalLumiCrereco = lumiCrereco, finalLumiCprompt = lumiCprompt,
     Season = cms.untracked.string(PileUpSeason53X),
     )
 
-TW_Mass166_5 = cms.PSet(
+TWChannel_TopMassDown = cms.PSet(
     crossSection = tW_XSecDilep,
-    channel = cms.untracked.string("TW_Mass166_5"),
+    channel = cms.untracked.string("TWChannel_TopMassDown"),
     originalEvents = cms.untracked.double(1489880),
     finalLumi = cms.untracked.double(1.),
     finalLumiA = lumiA, finalLumiB = lumiB, finalLumiCrereco = lumiCrereco, finalLumiCprompt = lumiCprompt,
     Season = cms.untracked.string(PileUpSeason53X),
     )
 
-TbarW_Mass166_5 = cms.PSet(
+TbarWChannel_TopMassDown = cms.PSet(
     crossSection = tbarW_XSecDilep,
-    channel = cms.untracked.string("TW_Mass166_5"),
+    channel = cms.untracked.string("TWChannel_TopMassDown"),
     originalEvents = cms.untracked.double(1478200),
     finalLumi = cms.untracked.double(1.),
     finalLumiA = lumiA, finalLumiB = lumiB, finalLumiCrereco = lumiCrereco, finalLumiCprompt = lumiCprompt,
     Season = cms.untracked.string(PileUpSeason53X),
     )
 
-TW_Mass178_5 = cms.PSet(
+TWChannel_TopMassUp = cms.PSet(
     crossSection = tW_XSecDilep,
-    channel = cms.untracked.string("TW_Mass178_5"),
+    channel = cms.untracked.string("TWChannel_TopMassUp"),
     originalEvents = cms.untracked.double(1493428),
     finalLumi = cms.untracked.double(1.),
     finalLumiA = lumiA, finalLumiB = lumiB, finalLumiCrereco = lumiCrereco, finalLumiCprompt = lumiCprompt,
     Season = cms.untracked.string(PileUpSeason53X),
     )
 
-TbarW_Mass178_5 = cms.PSet(
+TbarWChannel_TopMassUp = cms.PSet(
     crossSection = tbarW_XSecDilep,
-    channel = cms.untracked.string("TW_Mass178_5"),
+    channel = cms.untracked.string("TWChannel_TopMassUp"),
     originalEvents = cms.untracked.double(1493389),
     finalLumi = cms.untracked.double(1.),
     finalLumiA = lumiA, finalLumiB = lumiB, finalLumiCrereco = lumiCrereco, finalLumiCprompt = lumiCprompt,

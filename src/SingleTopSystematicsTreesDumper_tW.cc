@@ -3,7 +3,7 @@
 *
 *
 *
-*\version  $Id: SingleTopSystematicsTreesDumper_tW.cc,v 1.1.2.4 2012/11/14 03:30:29 dnoonan Exp $
+*\version  $Id: SingleTopSystematicsTreesDumper_tW.cc,v 1.1.2.5 2012/11/21 17:43:50 dnoonan Exp $
 */
 // This analyzer dumps the histograms for all systematics listed in the cfg file
 //
@@ -32,6 +32,8 @@
 #include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
 #include "TopQuarkAnalysis/SingleTop/interface/EquationSolver.h"
 
+
+
 #include "../interface/ReWeighting.h"
 
 namespace LHAPDF
@@ -59,7 +61,10 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
     channel = channelInfo.getUntrackedParameter<string>("channel");
     crossSection = channelInfo.getUntrackedParameter<double>("crossSection");
     originalEvents = channelInfo.getUntrackedParameter<double>("originalEvents");
-    finalLumi = channelInfo.getUntrackedParameter<double>("finalLumi");
+    finalLumiA = channelInfo.getUntrackedParameter<double>("finalLumiA");
+    finalLumiB = channelInfo.getUntrackedParameter<double>("finalLumiB");
+    finalLumiCrereco = channelInfo.getUntrackedParameter<double>("finalLumiCrereco");
+    finalLumiCprompt = channelInfo.getUntrackedParameter<double>("finalLumiCprompt");
 
     //  dataPUFile_ =  iConfig.getUntrackedParameter< std::string >("dataPUFile","pileUpDistr.root");
     //  mcPUFile_ =  iConfig.getUntrackedParameter< std::string >("mcPUFile","pileupdistr_TChannel.root");
@@ -157,6 +162,9 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
     genjetsPt_ =  iConfig.getParameter< edm::InputTag >("genjetsPt");
     genjetsEta_ =  iConfig.getParameter< edm::InputTag >("genjetsEta");
 
+    genPartPt_ = iConfig.getParameter< edm::InputTag >("genPartPt");
+    genPartPdgId_ = iConfig.getParameter< edm::InputTag >("genPartPdgId");
+
     ktJetsForIsoRho_ =  iConfig.getParameter< edm::InputTag >("ktJetsForIsoRho");
 
     METPhi_ =  iConfig.getParameter< edm::InputTag >("METPhi");
@@ -204,18 +212,59 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
     if (doPU_)
     {
         //    //cout << " before lumIweightse "<<endl;
-        LumiWeights_ = edm::LumiReWeighting(distr,
-                                            "pileUpData.root",
-                                            std::string("pileup"),
-                                            std::string("pileup"));
-        LumiWeightsUp_ = edm::LumiReWeighting(distr,
-                                              "pileUpDataUp.root",
-                                              std::string("pileup"),
-                                              std::string("pileup"));
-        LumiWeightsDown_ = edm::LumiReWeighting(distr,
-                                                "pileUpDataDown.root",
-                                                std::string("pileup"),
-                                                std::string("pileup"));
+      LumiWeightsA_ = edm::LumiReWeighting("PileUpHistos/pileup_MC_Summer12.root",
+					   "PileUpHistos/run2012A_13Jul.root",
+					   std::string("pileup"),
+					   std::string("pileup"));
+      LumiWeightsB_ = edm::LumiReWeighting("PileUpHistos/pileup_MC_Summer12.root",
+					   "PileUpHistos/run2012B_13Jul.root",
+					   std::string("pileup"),
+					   std::string("pileup"));
+      LumiWeightsCrereco_ = edm::LumiReWeighting("PileUpHistos/pileup_MC_Summer12.root",
+						 "PileUpHistos/run2012C_ReReco.root",
+						 std::string("pileup"),
+						 std::string("pileup"));
+      LumiWeightsCprompt_ = edm::LumiReWeighting("PileUpHistos/pileup_MC_Summer12.root",
+						 "PileUpHistos/run2012C_v2.root",
+						  std::string("pileup"),
+						  std::string("pileup"));
+
+
+      LumiWeightsAUp_ = edm::LumiReWeighting("PileUpHistos/pileup_MC_Summer12.root",
+					     "PileUpHistos/run2012A_13Jul_Up.root",
+					     std::string("pileup"),
+					     std::string("pileup"));
+      LumiWeightsBUp_ = edm::LumiReWeighting("PileUpHistos/pileup_MC_Summer12.root",
+					     "PileUpHistos/run2012B_13Jul_Up.root",
+					     std::string("pileup"),
+					     std::string("pileup"));
+      LumiWeightsCrerecoUp_ = edm::LumiReWeighting("PileUpHistos/pileup_MC_Summer12.root",
+						   "PileUpHistos/run2012C_ReReco_Up.root",
+						   std::string("pileup"),
+						   std::string("pileup"));
+      LumiWeightsCpromptUp_ = edm::LumiReWeighting("PileUpHistos/pileup_MC_Summer12.root",
+						   "PileUpHistos/run2012C_v2_Up.root",
+						   std::string("pileup"),
+						   std::string("pileup"));
+
+
+      LumiWeightsADown_ = edm::LumiReWeighting("PileUpHistos/pileup_MC_Summer12.root",
+					       "PileUpHistos/run2012A_13Jul_Down.root",
+					       std::string("pileup"),
+					       std::string("pileup"));
+      LumiWeightsBDown_ = edm::LumiReWeighting("PileUpHistos/pileup_MC_Summer12.root",
+					       "PileUpHistos/run2012B_13Jul_Down.root",
+					       std::string("pileup"),
+					       std::string("pileup"));
+      LumiWeightsCrerecoDown_ = edm::LumiReWeighting("PileUpHistos/pileup_MC_Summer12.root",
+						     "PileUpHistos/run2012C_ReReco_Down.root",
+						     std::string("pileup"),
+						     std::string("pileup"));
+      LumiWeightsCpromptDown_ = edm::LumiReWeighting("PileUpHistos/pileup_MC_Summer12.root",
+						     "PileUpHistos/run2012C_v2_Down.root",
+						     std::string("pileup"),
+						     std::string("pileup"));
+      
         //    LumiWeightsUp_.weight3D_init(1.080);
         //LumiWeightsDown_.weight3D_init(0.961);
         //    LumiWeights_.weight3D_init(1.044);
@@ -223,10 +272,10 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
 
         //    //cout << " built lumiWeights "<<endl;
         
-        NewPUWeights_ = edm::ReWeighting(PUFileNew_+".root",
-            PUFileNew_+"Data.root",
-            std::string("c1"),
-            std::string("c1"));
+//         NewPUWeights_ = edm::ReWeighting(PUFileNew_+".root",
+//             PUFileNew_+"Data.root",
+//             std::string("c1"),
+//             std::string("c1"));
     }
     
     
@@ -377,9 +426,16 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
 	trees[syst]->Branch("runNum", &_runNum_);
 	trees[syst]->Branch("lumiNum", &_lumiNum_);
 	trees[syst]->Branch("eventNum", &_eventNum_);
-	trees[syst]->Branch("weight", &_weight_);
-	trees[syst]->Branch("PUWeight", &_PUWeight_);
-	trees[syst]->Branch("PUWeightNew", &_PUWeightNew_);
+	trees[syst]->Branch("weightA", &_weightA_);
+	trees[syst]->Branch("weightB", &_weightB_);
+	trees[syst]->Branch("weightCrereco", &_weightCrereco_);
+	trees[syst]->Branch("weightCprompt", &_weightCprompt_);
+	trees[syst]->Branch("PUWeightA", &_PUWeightA_);
+	trees[syst]->Branch("PUWeightB", &_PUWeightB_);
+	trees[syst]->Branch("PUWeightCrereco", &_PUWeightCrereco_);
+	trees[syst]->Branch("PUWeightCprompt", &_PUWeightCprompt_);
+	//	trees[syst]->Branch("PUWeightNew", &_PUWeightNew_);
+	trees[syst]->Branch("TopPtweight", &_TopPtweight_);
 	trees[syst]->Branch("scalePDF", &_scalePDF_);
 	trees[syst]->Branch("PDF_x1", &_PDF_x1_);
 	trees[syst]->Branch("PDF_x2", &_PDF_x2_);
@@ -427,7 +483,11 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
     //jecUnc  = new JetCorrectionUncertainty(JEC_PATH+"GR_R_42_V19_AK5PF_Uncertainty.txt");
     //  jecUnc  = new JetCorrectionUncertainty(JEC_PATH+"JEC11_V12_AK5PF_UncertaintySources.txt");
     //    jecUnc  = new JetCorrectionUncertainty(*(new JetCorrectorParameters("JEC11_V12_AK5PF_UncertaintySources.txt", "Total")));
-    jecUnc  = new JetCorrectionUncertainty(*(new JetCorrectorParameters("Summer12_V2_DATA_AK5PF_UncertaintySources.txt", "Total")));
+    //jecUnc  = new JetCorrectionUncertainty(*(new JetCorrectorParameters("Summer12_V2_DATA_AK5PF_UncertaintySources.txt", "Total")));
+
+    //Latest JEC uncertainties from Dec 5
+    jecUnc  = new JetCorrectionUncertainty(*(new JetCorrectorParameters("Fall12_V6_DATA_UncertaintySources_AK5PFchs.txt", "Total")));
+
     JES_SW = 0.015;
     JES_b_cut = 0.02;
     JES_b_overCut = 0.03;
@@ -480,12 +540,12 @@ SingleTopSystematicsTreesDumper_tW::SingleTopSystematicsTreesDumper_tW(const edm
     }
     InitializeEventScaleFactorMap();
     InitializeTurnOnReWeight("CentralJet30BTagIP_2ndSF_mu.root");
-    //   LHAPDF::initPDFSet(1, "cteq66.LHgrid");
-    LHAPDF::initPDFSet(1, "CT10.LHgrid");
+
+    LHAPDF::initPDFSet(1, "cteq66.LHgrid"); //This is the one listed on the TopRefSyst twiki
+    //    LHAPDF::initPDFSet(1, "CT10.LHgrid");  //This is the one Orso had 
     LHAPDF::initPDFSet(2, "MSTW2008nlo68cl.LHgrid");
     LHAPDF::initPDFSet(3, "MSTW2008nlo68cl.LHgrid");
     //   LHAPDF::initPDFSet(3, "NNPDF21_100.LHgrid");
-
 
 
     //  //cout<< "I work for now but I do nothing. But again, if you gotta do nothing, you better do it right. To prove my good will I will provide you with somse numbers later."<<endl;
@@ -600,6 +660,11 @@ void SingleTopSystematicsTreesDumper_tW::initBranchVars()
     _lumiNum_ = INT_NAN;
     _eventNum_ = INT_NAN;
     _weight_ = DOUBLE_NAN;
+    _weightA_ = DOUBLE_NAN;
+    _weightB_ = DOUBLE_NAN;
+    _weightCrereco_ = DOUBLE_NAN;
+    _weightCprompt_ = DOUBLE_NAN;
+    _TopPtweight_ = DOUBLE_NAN;
     _scalePDF_ = DOUBLE_NAN;
     _PDF_x1_ = DOUBLE_NAN;
     _PDF_x2_ = DOUBLE_NAN;
@@ -838,6 +903,9 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
     iEvent.getByLabel(vertexNDOF_,vertexNDOF);
     iEvent.getByLabel(vertexIsFake_,vertexIsFake);
 
+    iEvent.getByLabel(genPartPt_,genPartPt);
+    iEvent.getByLabel(genPartPdgId_,genPartPdgId);
+
     iEvent.getByLabel(jetsPt_,		   jetsPt);		  
     iEvent.getByLabel(jetsEta_,		   jetsEta);		  
     iEvent.getByLabel(jetsPhi_,		   jetsPhi);		  
@@ -860,8 +928,9 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
     iEvent.getByLabel(jetsBetaStar_,	   jetsBetaStar);	  
     iEvent.getByLabel(jetsFlavour_,	   jetsFlavour);	  
     iEvent.getByLabel(jetsDZ_,             jetsDZ);
-    iEvent.getByLabel(genjetsPt_,	   genjetsPt);		  
-    iEvent.getByLabel(genjetsEta_,	   genjetsEta);		  
+
+    if (doResol_)iEvent.getByLabel(genjetsPt_,	   genjetsPt);		  
+    if (doResol_)iEvent.getByLabel(genjetsEta_,	   genjetsEta);		  
 
     iEvent.getByLabel(ktJetsForIsoRho_,	   ktJetsForIsoRho);
 
@@ -880,11 +949,6 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
 
     }
     else(nVertices = -1);
-
-    //iEvent.getByLabel(nm1_,nm1);
-    iEvent.getByLabel(n0_, n0);
-    //iEvent.getByLabel(np1_,np1);
-    nVertices = *n0;
 
     //if (jetsPt->size() > 25 && channel != "Data")return; //Crazy events with huge jet multiplicity in mc
 
@@ -950,6 +1014,10 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
 
 
     double PUWeight = 1;
+    double PUWeightA = 1;
+    double PUWeightB = 1;
+    double PUWeightCrereco = 1;
+    double PUWeightCprompt = 1;
     double PUWeightNoSyst = 1;
     //    double bWeightNoSyst = 1;
     //    double turnOnWeightValueNoSyst = 1;
@@ -981,7 +1049,11 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
     //  size_t nAntiBJets = 0;
 
 
-    double WeightLumi = finalLumi * crossSection / originalEvents;
+    double WeightLumiA = finalLumiA * crossSection / originalEvents;
+    double WeightLumiB = finalLumiB * crossSection / originalEvents;
+    double WeightLumiCrereco = finalLumiCrereco * crossSection / originalEvents;
+    double WeightLumiCprompt = finalLumiCprompt * crossSection / originalEvents;
+
     //double Weight = 1;
     //double MTWValue = 0;
     //    double MTWValueQCD = 0;
@@ -998,8 +1070,12 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
 
     //    bool didJetLoop = false;
 
-    if (channel == "Data")WeightLumi = 1;
-
+    if (channel == "Data"){
+      WeightLumiA = 1;
+      WeightLumiB = 1;
+      WeightLumiCrereco = 1;
+      WeightLumiCprompt = 1;
+    }
 //     int secondPtPosition = -1;
 //     int thirdPtPosition = -1;
 
@@ -1102,8 +1178,8 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
       _jetBetaStar_.push_back(jetsBetaStar->at(i));
       _jetFlavour_.push_back(jetsFlavour->at(i));
       _jetDZ_.push_back(jetsDZ->at(i));
-      _genjetPt_.push_back(genjetsPt->at(i));
-      _genjetEta_.push_back(genjetsEta->at(i));
+      if (doResol_)_genjetPt_.push_back(genjetsPt->at(i));
+      if (doResol_)_genjetEta_.push_back(genjetsEta->at(i));
     }
 
     _ktJetsForIsoRho_ = (*ktJetsForIsoRho);
@@ -1123,51 +1199,46 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
     _runNum_ = iEvent.eventAuxiliary().run();
     _lumiNum_ = iEvent.eventAuxiliary().luminosityBlock();
     _eventNum_ = iEvent.eventAuxiliary().event();
-    _weight_ = WeightLumi;
+    _weightA_ = WeightLumiA;
+    _weightB_ = WeightLumiB;
+    _weightCrereco_ = WeightLumiCrereco;
+    _weightCprompt_ = WeightLumiCprompt;
 
 
+    double ptTop = 0;
+    double ptAntiTop = 0;
 
-    if (doPDF_ ){
-      if (channel != "Data"){
-	iEvent.getByLabel(x1_, x1h);
-	iEvent.getByLabel(x2_, x2h);
-
-	iEvent.getByLabel(scalePDF_, scalePDFh);
-	iEvent.getByLabel(id1_, id1h);
-	iEvent.getByLabel(id2_, id2h);
-
-	x1 = *x1h;
-	x2 = *x2h;
-
-	scalePDF = *scalePDFh;
-	
-	id1 = *id1h;
-	id2 = *id2h;
-	
-	//Q2 = x1 * x2 * 7000*7000;
-	LHAPDF::usePDFMember(1, 0);
-	double xpdf1 = LHAPDF::xfx(1, x1, scalePDF, id1);
-	double xpdf2 = LHAPDF::xfx(1, x2, scalePDF, id2);
-	double w0 = xpdf1 * xpdf2;
-	for (int p = 1; p <= 52; ++p) {
-	  LHAPDF::usePDFMember(1, p);
-	  double xpdf1_new = LHAPDF::xfx(1, x1, scalePDF, id1);
-	  double xpdf2_new = LHAPDF::xfx(1, x2, scalePDF, id2);
-	  double pweight = xpdf1_new * xpdf2_new / w0;
-	  _PDF_weights_.push_back(pweight);
-	}
-	LHAPDF::usePDFMember(2, 0);
-	double xpdf1_new = LHAPDF::xfx(2, x1, scalePDF, id1);
-	double xpdf2_new = LHAPDF::xfx(2, x2, scalePDF, id2);
-	pdf_weights_alternate_set_1 = xpdf1_new * xpdf2_new / w0;
-	xpdf1_new = LHAPDF::xfx(3, x1, scalePDF, id1);
-	xpdf2_new = LHAPDF::xfx(3, x2, scalePDF, id2);
-	pdf_weights_alternate_set_2 = xpdf1_new * xpdf2_new / w0;
-	//    pdf_weights_alternate_set_1 =pweight1;
-	//    pdf_weights_alternate_set_2 =pweight2;
-	
+    for (size_t i = 0; i < genPartPt->size(); i++){
+      if (genPartPdgId->at(i) == 6)
+      {
+	ptTop = genPartPt->at(i);
+      }
+      if (genPartPdgId->at(i) == -6)
+      {
+	ptAntiTop = genPartPt->at(i);
       }
     }
+
+    //scale factor values from the top pt reweighting twiki for 8 TeV dilepton
+
+    double a = 0.148;
+    double b = -0.00129;
+
+    if (ptTop == 0 || ptAntiTop == 0)
+    {
+      _TopPtweight_ = 1.;
+    }
+    else if (ptTop > 400 || ptAntiTop > 400)
+    {
+      _TopPtweight_ = 1.;
+    }
+    else
+    {
+      double sfTop = exp(a + b*ptTop);
+      double sfAntiTop = exp(a + b*ptAntiTop);
+      _TopPtweight_ = sqrt(sfTop * sfAntiTop);
+    }
+
 
     //    cout << "Systematics Section" << endl;
 
@@ -1181,6 +1252,49 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
 
       string syst_name =  systematics.at(s);
       string syst = syst_name;
+
+      if (syst == "noSyst" && doPDF_ ){
+	if (channel != "Data"){
+	  iEvent.getByLabel(x1_, x1h);
+	  iEvent.getByLabel(x2_, x2h);
+	  
+	  iEvent.getByLabel(scalePDF_, scalePDFh);
+	  iEvent.getByLabel(id1_, id1h);
+	  iEvent.getByLabel(id2_, id2h);
+	  
+	  x1 = *x1h;
+	  x2 = *x2h;
+	  
+	  scalePDF = *scalePDFh;
+	  
+	  id1 = *id1h;
+	  id2 = *id2h;
+	  
+	  //Q2 = x1 * x2 * 7000*7000;
+	  LHAPDF::usePDFMember(1, 0);
+	  double xpdf1 = LHAPDF::xfx(1, x1, scalePDF, id1);
+	  double xpdf2 = LHAPDF::xfx(1, x2, scalePDF, id2);
+	  double w0 = xpdf1 * xpdf2;
+	  for (int p = 1; p <= 44; ++p) {
+	    LHAPDF::usePDFMember(1, p);
+	    double xpdf1_new = LHAPDF::xfx(1, x1, scalePDF, id1);
+	    double xpdf2_new = LHAPDF::xfx(1, x2, scalePDF, id2);
+	    double pweight = xpdf1_new * xpdf2_new / w0;
+	    _PDF_weights_.push_back(pweight);
+	  }
+	  LHAPDF::usePDFMember(2, 0);
+	  double xpdf1_new = LHAPDF::xfx(2, x1, scalePDF, id1);
+	  double xpdf2_new = LHAPDF::xfx(2, x2, scalePDF, id2);
+	  pdf_weights_alternate_set_1 = xpdf1_new * xpdf2_new / w0;
+	  xpdf1_new = LHAPDF::xfx(3, x1, scalePDF, id1);
+	  xpdf2_new = LHAPDF::xfx(3, x2, scalePDF, id2);
+	  pdf_weights_alternate_set_2 = xpdf1_new * xpdf2_new / w0;
+	  //    pdf_weights_alternate_set_1 =pweight1;
+	  //    pdf_weights_alternate_set_2 =pweight2;
+	
+	}
+      }
+
       
 //         nLeptons = 0;
 //         nQCDLeptons = 0;
@@ -1345,11 +1459,14 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
 	  double ptCorr = jetsPt->at(i);
 	  double energyCorr = jetsEnergy->at(i);
 	  double eta = jetsEta->at(i);
-	  double genpt = genjetsPt->at(i);
 	  flavour = jetsFlavour->at(i);
-	  tmpjet.SetMagPhi(ptCorr,jetsPhi->at(i));
-	  //	  cout << "MET " << met.Mod() << endl;
-	  met += tmpjet;
+	  double genpt;
+	  if (doResol_){
+	    genpt = genjetsPt->at(i);
+	    tmpjet.SetMagPhi(ptCorr,jetsPhi->at(i));
+	    //	  cout << "MET " << met.Mod() << endl;
+	    met += tmpjet;
+	  }
 	  
 	  if (doResol_ && genpt > 15.0){
 	    resolScale = resolSF(fabs(eta), syst_name);
@@ -1360,25 +1477,31 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
 	    energyCorr = energyCorr * smear;	    
 	    ptCorr = ptCorr * smear;
 	  }
-	  tmpjet.SetMagPhi(ptCorr,jetsPhi->at(i));
-	  met -= tmpjet;
 
 	  if (syst_name == "JESUp"){
-	    unc = jetUncertainty( eta,  ptCorr, flavour);
-	      //		    cout << syst << "  "<< unc << endl; 
-	    ptCorr = ptCorr * (1 + unc);
-	    energyCorr = energyCorr * (1 + unc);
-	    metPx -= (jetsPt->at(i) * cos(jetsPhi->at(i))) * unc;
-	    metPy -= (jetsPt->at(i) * sin(jetsPhi->at(i))) * unc;
+	    if (ptCorr > 15.){
+	      unc = jetUncertainty( eta,  ptCorr, flavour);
+	      //	      cout << syst << "  "<< ptCorr << "  " << eta << "  " << unc << endl; 
+	      ptCorr = ptCorr * (1 + unc);
+	      energyCorr = energyCorr * (1 + unc);
+	      //	    metPx -= (jetsPt->at(i) * cos(jetsPhi->at(i))) * unc;
+	      //	    metPy -= (jetsPt->at(i) * sin(jetsPhi->at(i))) * unc;
+	    }
 	  }
 	  if (syst_name == "JESDown"){
-	    unc = jetUncertainty( eta,  ptCorr, flavour);
-	    ptCorr = ptCorr * (1 - unc);
-	    energyCorr = energyCorr * (1 - unc);
-	    metPx -= -(jetsPt->at(i) * cos(jetsPhi->at(i))) * unc;
-	    metPy -= -(jetsPt->at(i) * sin(jetsPhi->at(i))) * unc;
+	    if (ptCorr > 15.){
+	      unc = jetUncertainty( eta,  ptCorr, flavour);
+	      ptCorr = ptCorr * (1 - unc);
+	      energyCorr = energyCorr * (1 - unc);
+	      //	    metPx -= -(jetsPt->at(i) * cos(jetsPhi->at(i))) * unc;
+	      //	    metPy -= -(jetsPt->at(i) * sin(jetsPhi->at(i))) * unc;
+	    }
 	  }
 
+	  if (doResol_){
+	    tmpjet.SetMagPhi(ptCorr,jetsPhi->at(i));
+	    met -= tmpjet;
+	  }
 	  
 	  _jetPt_.push_back(ptCorr);
 	  _jetEnergy_.push_back(energyCorr);
@@ -1386,7 +1509,72 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
 
 	}
 
+	//Do lepton energy scale correction systematics
+	if (syst_name == "LESUp" || syst_name == "LESDown"){
 
+	  TVector2 tmplep;
+	  double eleScale = 1.;
+	  double muonScale = 1.;
+	  
+	  if (syst_name == "LESUp"){
+	    muonScale = 1.002;
+	  }
+	  if (syst_name == "LESDown"){
+	    muonScale = 0.998;
+	  }
+
+	  for (size_t i = 0; i < _electronPt_.size(); i++){
+	    //WHAT IS THE ETA RANGE NEEDED FOR THIS
+	    if (abs(_electronEta_[i]) < 1.5){
+	      if (syst_name == "LESUp"){
+		eleScale = 1.005;
+	      }
+	      if (syst_name == "LESDown"){
+		eleScale = 0.995;
+	      }
+	    }	      
+	    else if (abs(_electronEta_[i]) < 2.5){
+	      if (syst_name == "LESUp"){
+		eleScale = 1.01;
+	      }
+	      if (syst_name == "LESDown"){
+		eleScale = 0.99;
+	      }
+	    }	      
+
+	    //Add on lepton vector to met (will be subtracted again after correction)
+	    tmplep.SetMagPhi(_electronPt_[i],_electronPhi_[i]);
+	    met += tmplep;
+
+	    _electronPt_[i] *= eleScale;
+	    _electronEnergy_[i] *= eleScale;
+	    _electronECALPt_[i] *= eleScale;
+	    _electronRelIso_[i] *= 1./eleScale;
+	    _electronRhoCorrectedRelIso_[i] *= 1./eleScale;
+	    _electronDeltaCorrectedRelIso_[i] *= 1./eleScale;
+	    
+	    //Subtract off lepton vector to met (to get net effect from correction)
+	    tmplep.SetMagPhi(_electronPt_[i],_electronPhi_[i]);
+	    met -= tmplep;
+	  }
+
+	  for (size_t i = 0; i < _muonPt_.size(); i++){
+	    //Add on lepton vector to met (will be subtracted again after correction)
+	    tmplep.SetMagPhi(_muonPt_[i],_muonPhi_[i]);
+	    met += tmplep;
+
+	    _muonPt_[i] *= muonScale;
+	    _muonEnergy_[i] *= muonScale;
+	    _muonRelIso_[i] *= 1./muonScale;
+	    _muonRhoCorrectedRelIso_[i] *= 1./muonScale;
+	    _muonDeltaCorrectedRelIso_[i] *=1./ muonScale;
+
+	    //Subtract off lepton vector to met (to get net effect from correction)
+	    tmplep.SetMagPhi(_muonPt_[i],_muonPhi_[i]);
+	    met -= tmplep;
+
+	  }
+	}
 
         /////////
         ///End of the standard lepton-jet loop
@@ -1398,28 +1586,41 @@ void SingleTopSystematicsTreesDumper_tW::analyze(const Event &iEvent, const Even
 
         if (doPU_)
         {
-	  PUWeightNoSyst = pileUpSF(syst); PUWeight = PUWeightNoSyst;
-	  PUWeightPUUp = pileUpSF("PUUp");
-	  PUWeightPUDown = pileUpSF("PUDown");
+	  string run = "A";
+	  PUWeightA = pileUpSF(syst,run); 
+	  run = "B";
+	  PUWeightB = pileUpSF(syst,run); 
+	  run = "Crereco";
+	  PUWeightCrereco = pileUpSF(syst,run); 
+	  run = "Cprompt";
+	  PUWeightCprompt = pileUpSF(syst,run); 
+
+	  PUWeightPUUp = pileUpSF("PUUp",run);
+	  PUWeightPUDown = pileUpSF("PUDown",run);
 	  //    cout<< "n0 " << nVertices <<   " weight = "<< PUWeightNoSyst<< " cross-check "  <<endl;
                 
-	  PUWeightNewNoSyst = pileUpSFNew(); PUWeightNew = PUWeightNewNoSyst;
+	  //	  PUWeightNewNoSyst = pileUpSFNew(); PUWeightNew = PUWeightNewNoSyst;
 	}
         else {
 	  PUWeight = 1;
+	  PUWeightA = 1;
+	  PUWeightB = 1;
+	  PUWeightCrereco = 1;
+	  PUWeightCprompt = 1;
 	  PUWeightNew = 1;
         }
 
         _PUWeight_ = PUWeight;
+        _PUWeightA_ = PUWeightA;
+        _PUWeightB_ = PUWeightB;
+        _PUWeightCrereco_ = PUWeightCrereco;
+        _PUWeightCprompt_ = PUWeightCprompt;
+
 	if (syst_name == "PUUp") _PUWeight_ = PUWeightPUUp;
 	if (syst_name == "PUDown") _PUWeight_ = PUWeightPUDown;
 
         _PUWeightNew_ = PUWeightNew;
         //Jet trees:
-
-
-	TLorentzVector metVec;
-	metVec.SetPxPyPzE(metPx, metPy, 0, sqrt(metPx*metPx+metPy*metPy));
 
 //         _MetPt_ = sqrt(metPx * metPx + metPy * metPy);
 // 	_MetPhi_ = METPhi->at(0);
@@ -1695,7 +1896,7 @@ double SingleTopSystematicsTreesDumper_tW::jetUncertainty(double eta, double ptC
         else JES_b = JES_b_overCut;
     }
     //    float JESUncertaintyTmp = sqrt(JESUncertainty*JESUncertainty + JetCorrection*JetCorrection);
-    return sqrt(JES_b * JES_b + JES_PU * JES_PU + JES_SW * JES_SW + JetCorrection * JetCorrection);
+    //    return sqrt(JES_b * JES_b + JES_PU * JES_PU + JES_SW * JES_SW + JetCorrection * JetCorrection);
     return JetCorrection;
 }
 
@@ -3600,19 +3801,35 @@ double SingleTopSystematicsTreesDumper_tW::bTagSF(int B, string syst)
 }
 
 
-double SingleTopSystematicsTreesDumper_tW::pileUpSF(string syst)
+double SingleTopSystematicsTreesDumper_tW::pileUpSF(string syst,string run)
 {
 
     //  if(syst=="PUUp" )return LumiWeightsUp_.weight3D( *nm1,*n0,*np1);
     //if(syst=="PUDown" )return LumiWeightsDown_.weight3D( *nm1,*n0,*np1);
     //return LumiWeights_.weight3D( *nm1,*n0,*np1);
 
-    if (syst == "PUUp" )return LumiWeightsUp_.weight( *n0);
-    if (syst == "PUDown" )return LumiWeightsDown_.weight( *n0);
-    return LumiWeights_.weight( *n0);
+  if (run == "A"){
+    if (syst == "PUUp" )return LumiWeightsAUp_.weight( *n0);
+    if (syst == "PUDown" )return LumiWeightsADown_.weight( *n0);
+    return LumiWeightsA_.weight( *n0);
+  }
+  if (run == "B"){
+    if (syst == "PUUp" )return LumiWeightsBUp_.weight( *n0);
+    if (syst == "PUDown" )return LumiWeightsBDown_.weight( *n0);
+    return LumiWeightsB_.weight( *n0);
+  }
+  if (run == "Crereco"){
+    if (syst == "PUUp" )return LumiWeightsCrerecoUp_.weight( *n0);
+    if (syst == "PUDown" )return LumiWeightsCrerecoDown_.weight( *n0);
+    return LumiWeightsCrereco_.weight( *n0);
+  }
+  if (run == "Cprompt"){
+    if (syst == "PUUp" )return LumiWeightsCpromptUp_.weight( *n0);
+    if (syst == "PUDown" )return LumiWeightsCpromptDown_.weight( *n0);
+    return LumiWeightsCprompt_.weight( *n0);
+  }
 
-
-
+  return 1;
 }
 
 double SingleTopSystematicsTreesDumper_tW::pileUpSFNew()

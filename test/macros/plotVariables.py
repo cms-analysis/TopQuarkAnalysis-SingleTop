@@ -7,6 +7,9 @@ if not '-b' in sys.argv:
 from ROOT import *
 from setTDRStyle import *
 from array import array
+from ZjetSF import *
+from errorLists import *
+
 
 import glob
 import os
@@ -16,7 +19,7 @@ gStyle.SetOptTitle(0)
 setTDRStyle()
 gStyle.SetErrorX(0.5)
 
-AllowedRegions = ['1j0t','1j1t','1jNoTagging','2j0t','2j1t','2j2t','2jNoTagging','3plusjNoTagging','1j1tZpeak','ZpeakLepSel']
+AllowedRegions = ['1j0t','1j1t','1jNoTagging','2j0t','2j1t','2j2t','2jNoTagging','3plusjNoTagging','1j1tZpeak','ZpeakLepSel','2plusjets1plustag','3plusjets1plustag','tree1j1tNomllMetCut']
 
 region = '1j1t'
 runPicked = False
@@ -34,9 +37,13 @@ combinedChan = False
 
 versionPicked = False
 
+useNNLOTTbar = True
+
 specialName = ''
 
 noPlots = False
+
+useZjetsSF = True
 
 totals = list()
 errors = list()
@@ -81,6 +88,9 @@ while i < len(sys.argv):
             specialName = specialName + '/'
     elif arg == 'noPlots':
         noPlots = True
+    elif arg == 'noZjetSF':
+        useZjetsSF = False
+        specialName += 'NoZjetSF'
     elif arg == 'help':
         print "------------------------"
         print "Help Menu"
@@ -116,7 +126,7 @@ if not channelPicked:
 
 if not versionPicked:
     versionList = glob.glob("tmvaFiles/v*")
-    versionList.sort(key=lambda a:int(a.split('/v')[-1]))
+    versionList.sort(key=lambda a:int(a.split('/v')[-1].split('_')[0]))
     vFolder = versionList[-1].split('/')[-1]    
     print vFolder
 
@@ -140,110 +150,119 @@ else:
     if RunC:
         runs+='C'
 
+doZpeakCuts = False
+
+if '1j1tZpeak' in region:
+    doZpeakCuts = True
+
 TotalLumi = TotalLumi/1000.
 
-labelcms = TPaveText(0.1,0.88,0.6,0.92,"NDCBR")
+labelcms = TPaveText(0.12,0.88,0.6,0.92,"NDCBR")
 labelcms.SetTextAlign(12);
 labelcms.SetTextSize(0.045);
 labelcms.SetFillColor(kWhite);
+labelcms.SetFillStyle(0);
 labelcms.AddText("CMS Preliminary, #sqrt{s} = 8 TeV");
 labelcms.SetBorderSize(0);
 
+#gStyle.SetLabelSize(0.045,"x")
+gStyle.SetLabelSize(0.035,"xy")
 
 
 doChannel = [emuChan, mumuChan, eeChan, combinedChan]
     
-plotInfo = [['ptjet',27,30,300, 'P_{T} leading jet [GeV]'],
-            ['ptlep0',28,20,300, 'P_{T} lepton-0 [GeV]'],
-            ['ptlep1',28,20,300, 'P_{T} lepton-1 [GeV]'],
-            ['jetCSV',100,0,1, 'Jet CSV'],
-            ['ht',60,0,600, 'H_{T} [GeV]'],
-            ['htNoMet',60,0,600, 'H_{T} - no MET [GeV]'],
-            ['msys',60,0,600, 'Mass-system [GeV]'],
-            ['mjll',60,0,600, 'Mass-jll [GeV]'],
-            ['mjl0',60,0,600, 'Mass-jl0 [GeV]'],
-            ['mjl1',60,0,600, 'Mass-jl1 [GeV]'],
-            ['ptsys',50,0,200, 'P_{T} system [GeV]'],
-            ['ptjll',30,0,300, 'P_{T}-jll [GeV]'],
-            ['ptjl0',30,0,300, 'P_{T}-jl_{0} [GeV]'],
-            ['ptjl1',30,0,300, 'P_{T}-jl_{1} [GeV]'],
-            ['ptjl0met',30,0,300, 'P_{T}-jl_{0}MET [GeV]'],
-            ['ptjl1met',30,0,300, 'P_{T}-jl_{1}MET [GeV]'],
-            ['ptjlmetmin',30,0,300, 'P_{T}-jlMETmin [GeV]'],
-            ['ptjlmetmax',30,0,300, 'P_{T}-jlMETmax [GeV]'],
-            ['ptjlmin',30,0,300, 'P_{T}-jlmin [GeV]'],
-            ['ptjlmax',30,0,300, 'P_{T}-jlmax [GeV]'],
-            ['mjl0met',50,0,500, 'Mass-jl_{0}MET [GeV]'],
-            ['mjl1met',50,0,500, 'Mass-jl_{1}MET [GeV]'],
-            ['mjlmetmin',50,0,500, 'Mass-jlMETmin [GeV]'],
-            ['mjlmetmax',50,0,500, 'Mass-jlMETmax [GeV]'],
-            ['mjlmin',30,0,300, 'Mass-jlmin [GeV]'],
-            ['mjlmax',30,0,300, 'Mass-jlmax [GeV]'],
-            ['ptleps',30,0,300, 'P_{T}-leptons [GeV]'],
-            ['htleps',30,0,300, 'H_{T}-leptons [GeV]'],
-            ['ptsys_ht',40,0,1, 'P_{T} system / H_{T}'],
-            ['ptjet_ht',40,0,1, 'P_{T} jet / H_{T}'],
-            ['ptlep0_ht',40,0,1, 'P_{T} l_{0} / H_{T}'],
-            ['ptlep1_ht',40,0,1, 'P_{T} l_{1} / H_{T}'],
-            ['ptleps_ht',40,0,1, 'P_{T} leptons / H_{T}'],
-            ['htleps_ht',40,0,1, 'H_{T} leptons / H_{T}'],
-            ['NlooseJet15Central',10,0,10, 'Number of loose jets, P_{T} > 15, |#eta| < 2.4'],
-            ['NlooseJet15Forward',10,0,10, 'Number of loose jets, P_{T} > 15, |#eta| > 2.4'],
-            ['NlooseJet20Central',10,0,10, 'Number of loose jets, P_{T} > 20, |#eta| < 2.4'],
-            ['NlooseJet20Forward',10,0,10, 'Number of loose jets, P_{T} > 20, |#eta| > 2.4'],
-            ['NlooseJet25Central',10,0,10, 'Number of loose jets, P_{T} > 25, |#eta| < 2.4'],
-            ['NlooseJet25Forward',10,0,10, 'Number of loose jets, P_{T} > 25, |#eta| > 2.4'],
-            ['NtightJetForward',10,0,10, 'Number of loose jets, P_{T} > 30, |#eta| > 2.4'],            
-            ['NlooseJet15',10,0,10, 'Number of loose jets, P_{T} > 15'],
-            ['NlooseJet20',10,0,10, 'Number of loose jets, P_{T} > 20'],
-            ['NlooseJet25',10,0,10, 'Number of loose jets, P_{T} > 25'],
-            ['NbtaggedlooseJet15',4,0,4, 'Number of b-tagged loose jets, P_{T} > 15'],
-            ['NbtaggedlooseJet20',4,0,4, 'Number of b-tagged loose jets, P_{T} > 20'],
-            ['NbtaggedlooseJet25',4,0,4, 'Number of b-tagged loose jets, P_{T} > 25'],
-            ['unweightedEta_Avg', 30,0,15,'unweightedEta_Avg'],
-            ['unweightedEta_Vecjll', 60,0,30,'unweightedEta_Vecjll'],
-            ['unweightedEta_Vecsys', 60,0,30,'unweightedEta_Vecsys'],
-            ['unweightedPhi_Avg', 40,0,20,'unweightedPhi_Avg'],
-            ['unweightedPhi_Vecjll', 40,0,20,'unweightedPhi_Vecjll'],
-            ['unweightedPhi_Vecsys', 40,0,20,'unweightedPhi_Vecsys'],
-            ['avgEta', 50,0,2.5,'Average #eta'],
-            ['sysEta', 40, 0,5,'#eta of system'],
-            ['jllEta', 40, 0,5,'#eta of jll'],
-            ['dRleps', 60, 0,6,'#Delta R leptons'],
-            ['dRjlmin', 60, 0,6,'#Delta R(jet,closest lepton)'],
-            ['dRjlmax', 60, 0,6,'#Delta R(jet,farthest lepton)'],
-            ['dEtaleps', 25, 0,5,'#Delta #eta leptons'],
-            ['dEtajlmin', 25, 0,5,'#Delta #eta (jet,closest lepton)'],
-            ['dEtajlmax', 25, 0,5,'#Delta #eta (jet,farthest lepton)'],
-            ['dPhileps', 25, 0,3.15,'#Delta #phi leptons'],
-            ['dPhijlmin', 25, 0,3.15,'#Delta #phi (jet,closest lepton)'],
-            ['dPhijlmax', 25, 0,3.15,'#Delta #phi (jet,farthest lepton)'],
-            ['dPhimetlmin',25,0,3.15,'#Delta #phi (MET,closest lepton)'],
-            ['dPhimetlmax',25,0,3.15,'#Delta #phi (MET,farthest lepton)'],
-            ['dPhijmet',25,0,3.15,'#Delta #phi (jet,MET)'],
-            ['met', 60, 0, 300,'MET [GeV]'],
-            ['etajet', 24, 0, 2.4, '#eta jet'],
-            ['etalep0', 25, 0, 2.5, '#eta lepton-0'],
-            ['etalep1', 25, 0, 2.5, '#eta lepton-1'],
-            ['phijet', 40, -3.15, 3.15, '#phi jet'],
-            ['philep0', 40, -3.15, 3.15, '#phi lepton-0'],
-            ['philep1', 40, -3.15, 3.15, '#phi lepton-1'],
-            ['phimet', 40, -3.15, 3.15, '#phi MET'],
-            ['sumeta2', 40, 0, 15, '#Sigma #eta^{2}'],
-            ['loosejetPt', 60, 0, 300, 'P_{T} ofvloose jet [GeV]'],
-            ['loosejetCSV', 55, -0.1, 1.0, 'CSV of loose jet'],
-            ['centralityJLL',40,0,1,'Centrality - jll'],
-            ['centralityJLLM',40,0,1,'Centrality of system'],
-            ['centralityJLLWithLoose',40,0,1,'Centrality - jll + loose jets'],
-            ['centralityJLLMWithLoose',40,0,1,'Centrality - system + loose jets'],
-            ['sphericityJLL',40,0,1,'Sphericity - jll'],
-            ['sphericityJLLM',40,0,1,'Sphericity - system'],
-            ['sphericityJLLWithLoose',40,0,1,'Sphericity - jll + loose jets'],
-            ['sphericityJLLMWithLoose',40,0,1,'Sphericity - system + loose jets'],
-            ['aplanarityJLL',40,0,.5,'Aplanarity - jll'],
-            ['aplanarityJLLM',40,0,.5,'Aplanarity - system'],
-            ['aplanarityJLLWithLoose',40,0,.5,'Aplanarity - jll + loose jets'],
-            ['aplanarityJLLMWithLoose',40,0,.5,'Aplanarity - system + loost jets'],
+plotInfo = [['ptjet',27,30,300, 'P_{T} leading jet [GeV]','Events / 10 GeV'],
+            ['ptlep0',28,20,300, 'P_{T} lepton-0 [GeV]','Events / 10 GeV'],
+            ['ptlep1',28,20,300, 'P_{T} lepton-1 [GeV]','Events / 10 GeV'],
+            ['jetCSV',100,0,1, 'Jet CSV','Events'],
+            ['ht',60,0,600, 'H_{T} [GeV]','Events / 10 GeV'],
+            ['htNoMet',60,0,600, 'H_{T} - no MET [GeV]','Events / 10 GeV'],
+            ['msys',60,0,600, 'Mass-system [GeV]','Events / 10 GeV'],
+#            ['mll',60,0,600, 'Mass-leptons [GeV]','Events / 10 GeV'],
+            ['mjll',60,0,600, 'Mass-jll [GeV]','Events / 10 GeV'],
+            ['mjl0',60,0,600, 'Mass-jl0 [GeV]','Events / 10 GeV'],
+            ['mjl1',60,0,600, 'Mass-jl1 [GeV]','Events / 10 GeV'],
+            ['ptsys',50,0,200, 'P_{T} system [GeV]','Events / 4 GeV'],
+            ['ptjll',30,0,300, 'P_{T}-jll [GeV]','Events / 10 GeV'],
+            ['ptjl0',30,0,300, 'P_{T}-jl_{0} [GeV]','Events / 10 GeV'],
+            ['ptjl1',30,0,300, 'P_{T}-jl_{1} [GeV]','Events / 10 GeV'],
+            ['ptjl0met',30,0,300, 'P_{T}-jl_{0}MET [GeV]','Events / 10 GeV'],
+            ['ptjl1met',30,0,300, 'P_{T}-jl_{1}MET [GeV]','Events / 10 GeV'],
+            ['ptjlmetmin',30,0,300, 'P_{T}-jlMETmin [GeV]','Events / 10 GeV'],
+            ['ptjlmetmax',30,0,300, 'P_{T}-jlMETmax [GeV]','Events / 10 GeV'],
+            ['ptjlmin',30,0,300, 'P_{T}-jlmin [GeV]','Events / 10 GeV'],
+            ['ptjlmax',30,0,300, 'P_{T}-jlmax [GeV]','Events / 10 GeV'],
+            ['mjl0met',50,0,500, 'Mass-jl_{0}MET [GeV]','Events / 10 GeV'],
+            ['mjl1met',50,0,500, 'Mass-jl_{1}MET [GeV]','Events / 10 GeV'],
+            ['mjlmetmin',50,0,500, 'Mass-jlMETmin [GeV]','Events / 10 GeV'],
+            ['mjlmetmax',50,0,500, 'Mass-jlMETmax [GeV]','Events / 10 GeV'],
+            ['mjlmin',30,0,300, 'Mass-jlmin [GeV]','Events / 10 GeV'],
+            ['mjlmax',30,0,300, 'Mass-jlmax [GeV]','Events / 10 GeV'],
+            ['ptleps',30,0,300, 'P_{T}-leptons [GeV]','Events / 10 GeV'],
+            ['htleps',30,0,300, 'H_{T}-leptons [GeV]','Events / 10 GeV'],
+            ['ptsys_ht',40,0,1, 'P_{T} system / H_{T}','Events'],
+            ['ptjet_ht',40,0,1, 'P_{T} jet / H_{T}','Events'],
+            ['ptlep0_ht',40,0,1, 'P_{T} l_{0} / H_{T}','Events'],
+            ['ptlep1_ht',40,0,1, 'P_{T} l_{1} / H_{T}','Events'],
+            ['ptleps_ht',40,0,1, 'P_{T} leptons / H_{T}','Events'],
+            ['htleps_ht',40,0,1, 'H_{T} leptons / H_{T}','Events'],
+            ['NlooseJet15Central',10,0,10, 'Number of loose jets, P_{T} > 15, |#eta| < 2.4','Events'],
+            ['NlooseJet15Forward',10,0,10, 'Number of loose jets, P_{T} > 15, |#eta| > 2.4','Events'],
+            ['NlooseJet20Central',10,0,10, 'Number of loose jets, P_{T} > 20, |#eta| < 2.4','Events'],
+            ['NlooseJet20Forward',10,0,10, 'Number of loose jets, P_{T} > 20, |#eta| > 2.4','Events'],
+            ['NlooseJet25Central',10,0,10, 'Number of loose jets, P_{T} > 25, |#eta| < 2.4','Events'],
+            ['NlooseJet25Forward',10,0,10, 'Number of loose jets, P_{T} > 25, |#eta| > 2.4','Events'],
+            ['NtightJetForward',10,0,10, 'Number of loose jets, P_{T} > 30, |#eta| > 2.4','Events'],            
+            ['NlooseJet15',10,0,10, 'Number of loose jets, P_{T} > 15','Events'],
+            ['NlooseJet20',10,0,10, 'Number of loose jets, P_{T} > 20','Events'],
+            ['NlooseJet25',10,0,10, 'Number of loose jets, P_{T} > 25','Events'],
+            ['NbtaggedlooseJet15',4,0,4, 'Number of b-tagged loose jets, P_{T} > 15','Events'],
+            ['NbtaggedlooseJet20',4,0,4, 'Number of b-tagged loose jets, P_{T} > 20','Events'],
+            ['NbtaggedlooseJet25',4,0,4, 'Number of b-tagged loose jets, P_{T} > 25','Events'],
+            ['unweightedEta_Avg', 30,0,15,'unweightedEta_Avg','Events'],
+            ['unweightedEta_Vecjll', 60,0,30,'unweightedEta_Vecjll','Events'],
+            ['unweightedEta_Vecsys', 60,0,30,'unweightedEta_Vecsys','Events'],
+            ['unweightedPhi_Avg', 40,0,20,'unweightedPhi_Avg','Events'],
+            ['unweightedPhi_Vecjll', 40,0,20,'unweightedPhi_Vecjll','Events'],
+            ['unweightedPhi_Vecsys', 40,0,20,'unweightedPhi_Vecsys','Events'],
+            ['avgEta', 50,0,2.5,'Average #eta','Events'],
+            ['sysEta', 40, 0,5,'#eta of system','Events'],
+            ['jllEta', 40, 0,5,'#eta of jll','Events'],
+            ['dRleps', 60, 0,6,'#Delta R leptons','Events'],
+            ['dRjlmin', 60, 0,6,'#Delta R(jet,closest lepton)','Events'],
+            ['dRjlmax', 60, 0,6,'#Delta R(jet,farthest lepton)','Events'],
+            ['dEtaleps', 25, 0,5,'#Delta #eta leptons','Events'],
+            ['dEtajlmin', 25, 0,5,'#Delta #eta (jet,closest lepton)','Events'],
+            ['dEtajlmax', 25, 0,5,'#Delta #eta (jet,farthest lepton)','Events'],
+            ['dPhileps', 25, 0,3.15,'#Delta #phi leptons','Events'],
+            ['dPhijlmin', 25, 0,3.15,'#Delta #phi (jet,closest lepton)','Events'],
+            ['dPhijlmax', 25, 0,3.15,'#Delta #phi (jet,farthest lepton)','Events'],
+            ['dPhimetlmin',25,0,3.15,'#Delta #phi (MET,closest lepton)','Events'],
+            ['dPhimetlmax',25,0,3.15,'#Delta #phi (MET,farthest lepton)','Events'],
+            ['dPhijmet',25,0,3.15,'#Delta #phi (jet,MET)','Events'],
+            ['met', 60, 0, 300,'MET [GeV]','Events / 5 GeV'],
+            ['etajet', 24, 0, 2.4, '#eta jet','Events'],
+            ['etalep0', 25, 0, 2.5, '#eta lepton-0','Events'],
+            ['etalep1', 25, 0, 2.5, '#eta lepton-1','Events'],
+            ['phijet', 40, -3.15, 3.15, '#phi jet','Events'],
+            ['philep0', 40, -3.15, 3.15, '#phi lepton-0','Events'],
+            ['philep1', 40, -3.15, 3.15, '#phi lepton-1','Events'],
+            ['phimet', 40, -3.15, 3.15, '#phi MET','Events'],
+            ['sumeta2', 40, 0, 15, '#Sigma #eta^{2}','Events'],
+            ['loosejetPt', 60, 0, 300, 'P_{T} of loose jet [GeV]','Events / 5 GeV'],
+            ['loosejetCSV', 55, -0.1, 1.0, 'CSV of loose jet','Events'],
+            ['centralityJLL',40,0,1,'Centrality - jll','Events'],
+            ['centralityJLLM',40,0,1,'Centrality of system','Events'],
+            ['centralityJLLWithLoose',40,0,1,'Centrality - jll + loose jets','Events'],
+            ['centralityJLLMWithLoose',40,0,1,'Centrality - system + loose jets','Events'],
+            ['sphericityJLL',40,0,1,'Sphericity - jll','Events'],
+            ['sphericityJLLM',40,0,1,'Sphericity - system','Events'],
+            ['sphericityJLLWithLoose',40,0,1,'Sphericity - jll + loose jets','Events'],
+            ['sphericityJLLMWithLoose',40,0,1,'Sphericity - system + loose jets','Events'],
+            ['aplanarityJLL',40,0,.5,'Aplanarity - jll','Events'],
+            ['aplanarityJLLM',40,0,.5,'Aplanarity - system','Events'],
+            ['aplanarityJLLWithLoose',40,0,.5,'Aplanarity - jll + loose jets','Events'],
+            ['aplanarityJLLMWithLoose',40,0,.5,'Aplanarity - system + loost jets','Events'],
 
             ]
 
@@ -261,7 +280,7 @@ fileList = ['TWChannel.root',
 Colors = [kWhite,
           kRed+1,
           kGreen-3,
-          kAzure-3,
+          kGreen-3,
           kAzure-2,
           kGreen-3,
           kGreen-3,
@@ -269,6 +288,15 @@ Colors = [kWhite,
           kGreen-3,
           kBlack]
 
+ChannelErrors = [tWErrors,
+                 ttErrors,
+                 otherErrors,
+                 otherErrors,
+                 otherErrors,
+                 otherErrors,
+                 otherErrors,
+                 otherErrors,
+                 otherErrors]
 
 
 DataChannel = ['MuEG','DoubleMu','DoubleElectron']
@@ -277,7 +305,9 @@ ChanName = ['emu','mumu','ee']
 ChanLabels = [', e#mu channel',', #mu#mu channel',', ee channel', 'e#mu/#mu#mu/ee channels']
 lumiLabel = "%.1f fb^{-1}" % TotalLumi
 
-# DataRun = ['Run2012A','Run2012B','Run2012C']
+if 'ZpeakLepSel' in region or '1j1tZpeak' in region:
+    ChanLabels[3] = 'ee/#mu#mu channels'
+    doChannel[0] = False
 
 HistoLists = list()
 
@@ -343,7 +373,12 @@ for mode in range(3):
 
         print fileList[i]
 
-        tree = TChain(Folder[mode]+'/'+region)
+        regiontemp = region
+
+        if '1j1tZpeak' in region:
+            regiontemp = 'tree1j1tNomllMetCut'
+
+        tree = TChain(Folder[mode]+'/'+regiontemp)
 
         if fileList[i] == 'DATA':
             if RunA:
@@ -382,6 +417,8 @@ for mode in range(3):
             _ht                        = event.ht                      
             _htNoMet                   = event.htNoMet                 
             _msys                      = event.msys                    
+            if 'TestDir_v3' in vFolder:
+                _mll                   = event.mll
             _mjll                      = event.mjll                    
             _mjl0                      = event.mjl0                    
             _mjl1                      = event.mjl1                    
@@ -493,9 +530,24 @@ for mode in range(3):
             if fileList[i] == 'DATA':
                 _weight = 1.
 
+
+            if 'ZJets' in fileList[i] and useZjetsSF:
+                _weight *= ZjetSF(_met, mode)
+
+            if useNNLOTTbar and 'TTbar' in fileList[i]:
+                _weight *= 245./234.
+
+
+
             #EXTRA CUTS
 
-            if mode > 0 and _met < 50:
+            if doZpeakCuts:
+                if mode == 0:
+                    continue
+                else:
+                    if _mll < 81 or _mll > 101:
+                        continue                    
+            elif mode > 0 and _met < 50:
                 continue
             
             #             if _met < 30:
@@ -519,6 +571,7 @@ for mode in range(3):
             HistoLists[mode][i]['ht'].Fill(                       _ht                       , _weight )
             HistoLists[mode][i]['htNoMet'].Fill(                  _htNoMet                  , _weight )
             HistoLists[mode][i]['msys'].Fill(                     _msys                     , _weight )
+#            HistoLists[mode][i]['mll'].Fill(                      _mll                      , _weight )
             HistoLists[mode][i]['mjll'].Fill(                     _mjll                     , _weight )
             HistoLists[mode][i]['mjl0'].Fill(                     _mjl0                     , _weight )
             HistoLists[mode][i]['mjl1'].Fill(                     _mjl1                     , _weight )
@@ -612,6 +665,7 @@ for mode in range(3):
             HistoLists[-1][i]['ht'].Fill(                       _ht                       , _weight )
             HistoLists[-1][i]['htNoMet'].Fill(                  _htNoMet                  , _weight )
             HistoLists[-1][i]['msys'].Fill(                     _msys                     , _weight )
+#            HistoLists[-1][i]['mll'].Fill(                      _mll                      , _weight )
             HistoLists[-1][i]['mjll'].Fill(                     _mjll                     , _weight )
             HistoLists[-1][i]['mjl0'].Fill(                     _mjl0                     , _weight )
             HistoLists[-1][i]['mjl1'].Fill(                     _mjl1                     , _weight )
@@ -704,14 +758,14 @@ for mode in range(3):
 
 
 errorHistTemp = TH1F("tempErr","tempErr",10,0,10)
-#errorHistTemp.SetFillColor(kBlack)
-#errorHistTemp.SetFillStyle(3003)
-errorHistTemp.SetFillColor(kGray)
-errorHistTemp.SetFillStyle(3140)
+errorHistTemp.SetFillColor(kBlack)
+errorHistTemp.SetFillStyle(3013)
+#errorHistTemp.SetFillColor(kGray+3)
+#errorHistTemp.SetFillStyle(3140)
 
     
-leg = TLegend(0.66,0.66,0.94,0.94)
-leg.SetFillStyle(1)
+leg = TLegend(0.7,0.66,0.94,0.94)
+#leg.SetFillStyle(1)
 leg.SetFillColor(kWhite)
 leg.SetBorderSize(1)
 leg.AddEntry(HistoLists[0][-1]['ptjet'], "Data", "p")
@@ -736,12 +790,6 @@ for mode in range(3):
     errors.append(err)
 
 
-labelcms3 = TPaveText(0.1,0.74,0.6,0.82,"NDCBR");
-labelcms3.SetTextAlign(12);
-labelcms3.SetTextSize(0.045);
-labelcms3.SetFillColor(kWhite);
-labelcms3.AddText(region)
-labelcms3.SetBorderSize(0);
 
 
 for mode in range(4):
@@ -752,14 +800,18 @@ for mode in range(4):
     if not doChannel[mode]:
         continue
 
-    labelcms2 = TPaveText(0.1,0.82,0.6,0.88,"NDCBR");
+
+    labelcms2 = TPaveText(0.12,0.82,0.6,0.88,"NDCBR");
     labelcms2.SetTextAlign(12);
     labelcms2.SetTextSize(0.045);
     labelcms2.SetFillColor(kWhite);
+    labelcms2.SetFillStyle(0);
     labelcms2.AddText(lumiLabel + ChanLabels[mode])
     labelcms2.SetBorderSize(0);
 
-    labelKStest = TPaveText(0.1,0.7,0.6,0.74,"NDCBR");
+
+
+    labelKStest = TPaveText(0.12,0.7,0.6,0.74,"NDCBR");
     labelKStest.SetTextAlign(12);
     labelKStest.SetTextSize(0.045);
     labelKStest.SetFillColor(kWhite);
@@ -772,24 +824,38 @@ for mode in range(4):
 #         for i in range(len(HistoLists)):            
 #             HistoLists[mode][i]['metBinned'] = HistoLists[mode][i]['met'].Rebin(13,'metBinned',bins)
 
+    chanNum = mode
+    if mode > 2:
+        chanNum = 0
+    
 
+
+    startSample = 1
     for plot in plotInfo:
-        errorBand = HistoLists[mode][0][plot[0]].Clone()
+        errorBand = HistoLists[mode][startSample][plot[0]].Clone()
         errorBand.SetMarkerSize(0)
-        for i in range(1,len(HistoLists[mode])-1):
+        for i in range(startSample+1,len(HistoLists[mode])-1):
             errorBand.Add(HistoLists[mode][i][plot[0]])
         for bin in range(errorBand.GetNbinsX()):
-            error2 = 0
-            for i in range(len(HistoLists[mode])-1):
-                error2 = error2 + pow(HistoLists[mode][i][plot[0]].GetBinError(bin),2)
-            error = sqrt(error2)
+            binStatError2 = 0
+            binSystError2 = 0
+            regionTemp = region
+            if region == 'tree1j1tNomllMetCut' or '1j1tZpeak' in region:
+                regionTemp = '1j1t'
+            if region == 'ZpeakLepSel':
+                regionTemp = 'NoSyst'
+            for i in range(startSample ,len(HistoLists[mode])-1):
+                binStatError2 = binStatError2 + pow(HistoLists[mode][i][plot[0]].GetBinError(bin),2)
+                binSystError2 = binSystError2 + pow(HistoLists[mode][i][plot[0]].GetBinContent(bin)*ChannelErrors[i][regionTemp][chanNum],2)
+            error = sqrt(binStatError2 + binSystError2)
             errorBand.SetBinError(bin,error)
-            
-#         errorBand.SetFillColor(kBlack)
-#         errorBand.SetFillStyle(3003)        
-        errorBand.SetFillColor(kGray)
-        errorBand.SetFillStyle(3140)        
 
+        errorBand.SetFillColor(kBlack)
+        errorBand.SetFillStyle(3013)        
+        #         errorBand.SetFillColor(kGray+3)
+        #         errorBand.SetFillStyle(3140)        
+
+        
         ksResult = errorBand.KolmogorovTest(HistoLists[mode][-1][plot[0]])
         labelKStest.Clear()
         labelKStest.AddText("Kolmogorov: %.2f" %ksResult)
@@ -817,28 +883,50 @@ for mode in range(4):
         hStack.Add(HistoLists[mode][4][plot[0]])
         hStack.Add(HistoLists[mode][1][plot[0]])
         hStack.Add(HistoLists[mode][0][plot[0]])
+
+
+#         dataVal = HistoLists[mode][-1][plot[0]].Integral()
+#         mcVal = errorBand.Integral()
+        
+
+        labelcms3 = TPaveText(0.12,0.74,0.6,0.82,"NDCBR");
+        labelcms3.SetTextAlign(12);
+        labelcms3.SetTextSize(0.045);
+        labelcms3.SetFillColor(kWhite);
+        labelcms3.SetFillStyle(0);
+#        labelcms3.AddText("%s Data: %.2f MC: %.2f" %(region, dataVal, mcVal))
+        labelcms3.AddText(region)
+        labelcms3.SetBorderSize(0);
+
         
         c1 = TCanvas()
+        gPad.SetLeftMargin(0.12)
         max_ = max(hStack.GetMaximum(),HistoLists[mode][-1][plot[0]].GetMaximum())
         hStack.Draw("histo")
         hStack.SetMaximum(max_*1.5)
         hStack.SetMinimum(0)
 
         errorBand.Draw("e2 same")
-        hStack.GetYaxis().SetTitle("Events")
+        hStack.GetYaxis().SetTitle(plot[5])
         hStack.GetYaxis().CenterTitle()
+        hStack.GetYaxis().SetTitleOffset(1.28)
+        hStack.GetYaxis().SetTitleSize(0.05)
         hStack.GetXaxis().SetTitle(plot[4])
+        hStack.GetXaxis().SetTitleSize(0.05)
         HistoLists[mode][-1][plot[0]].Draw("e x0, same")
         leg.Draw()        
         labelcms.Draw()
         labelcms2.Draw()
         labelcms3.Draw()
 #        labelKStest.Draw()
-        if not os.path.exists("VariablePlots/"+specialName):
-            command = "mkdir VariablePlots/"+specialName
+        if not os.path.exists("VariablePlots/"+vFolder):
+            command = "mkdir VariablePlots/"+vFolder
             os.system(command)
-        if not os.path.exists("VariablePlots/"+specialName + region):
-            command = "mkdir VariablePlots/"+specialName+region
+        if not os.path.exists("VariablePlots/"+vFolder+"/"+specialName):
+            command = "mkdir VariablePlots/"+vFolder+"/"+specialName
+            os.system(command)
+        if not os.path.exists("VariablePlots/"+vFolder+"/"+specialName +"/" + region):
+            command = "mkdir VariablePlots/"+vFolder+"/"+specialName+'/'+region
             os.system(command)
             
         channel = ""
@@ -846,7 +934,16 @@ for mode in range(4):
             channel = "_" + ChanName[mode]
 
         
-        c1.SaveAs("VariablePlots/"+specialName+region+"/"+plot[0]+"_"+region+channel+runs+".pdf")
+        c1.SaveAs("VariablePlots/"+vFolder+"/"+specialName+"/"+region+"/"+plot[0]+"_"+region+channel+runs+".pdf")
+        c1.SaveAs("VariablePlots/"+vFolder+"/"+specialName+"/"+region+"/"+plot[0]+"_"+region+channel+runs+".png")
+
+        c1.SetLogy()
+        hStack.SetMaximum(max_*30)
+        hStack.SetMinimum(1.)
+        
+        c1.SaveAs("VariablePlots/"+vFolder+"/"+specialName+"/"+region+"/"+plot[0]+"_"+region+channel+runs+"_log.pdf")
+        c1.SaveAs("VariablePlots/"+vFolder+"/"+specialName+"/"+region+"/"+plot[0]+"_"+region+channel+runs+"_log.png")
+
 
 signal = [0.,0.,0.]
 bkg = [0.,0.,0.]

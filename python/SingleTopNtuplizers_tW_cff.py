@@ -1,6 +1,27 @@
 import FWCore.ParameterSet.Config as cms
 
 
+nTupleGenParticles = cms.EDProducer(
+    "CandViewNtpProducer",
+    src = cms.InputTag("genParticles"),
+    lazyParser = cms.untracked.bool(True),
+    prefix = cms.untracked.string("genParticles"),
+    
+    variables = cms.VPSet(
+    cms.PSet(
+    tag = cms.untracked.string("pt"),
+    quantity = cms.untracked.string("pt"),
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("pdgId"),
+    quantity = cms.untracked.string("pdgId"),
+    ),
+
+    )
+)
+
+
+
 nTupleTopJetsPF = cms.EDProducer(
     "CandViewNtpProducer",
     src = cms.InputTag("topJetsPF"),
@@ -455,6 +476,7 @@ nTupleMuons = nTupleElectrons.clone(
     )
     )
 
+
 nTupleLooseMuons = nTupleMuons.clone(
     src = cms.InputTag("looseMuons"),
     lazyParser = cms.untracked.bool(True),
@@ -863,9 +885,11 @@ nTuplesSkim = cms.Sequence(
     nTupleLooseMuons +
     nTupleElectrons +
     nTupleMuons +
+    nTupleGenParticles +
 #     nTupleQCDElectrons +
 #     nTupleQCDMuons +
-    nTupleVertices
+    nTupleVertices 
+
     )
 
 saveNTuplesSkim = cms.untracked.vstring(
@@ -886,6 +910,7 @@ saveNTuplesSkim = cms.untracked.vstring(
     'keep *_genJetsPF_*_*',
     'keep *_nTupleVertices_*_*',
     'keep *_kt6PFJetsForIsolation_rho_*',
+#    'keep *_genParticles_*_*'
          )
 
 
@@ -902,6 +927,7 @@ saveNTuplesSkimEle.append('keep floats_nTupleElectrons_*_*')
 ##Skimmed Ntuple
 saveNTuplesSkimLoose.append('keep floats_nTupleMuons_*_*')
 saveNTuplesSkimLoose.append('keep floats_nTupleElectrons_*_*')
+saveNTuplesSkimLoose.append('keep floats_nTupleGenParticles_*_*')
 
 # saveNTuplesSkimLoose.append('keep floats_nTupleAllMuons_*_*')
 # saveNTuplesSkimLoose.append('keep floats_nTupleAllElectrons_*_*')

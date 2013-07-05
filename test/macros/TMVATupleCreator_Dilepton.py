@@ -1,17 +1,19 @@
-#!/usr/bin/env python                                                                                                                  
+#!/usr/bin/env python
+
+#Uses random numbers for btagging scale factors
 
 from ROOT import *
 
 import sys
 
-from EventShapeVariables import *        
+from EventShapeVariables import *
 from BtagSF import *
 from fileLoadDict_storeUser import fileLists
 
 import random
 import os
 
-allowedSystNames = ['JESUp','JESDown','UnclusteredMETUp','UnclusteredMETDown','JERUp','JERDown','BtagSFUp','BtagSFDown']
+allowedSystNames = ['JESUp','JESDown','UnclusteredMETUp','UnclusteredMETDown','JERUp','JERDown','BtagSFUp','BtagSFDown','LepSFUp','LepSFDown','PDFUp','PDFDown','LESUp','LESDown','PUUp','PUDown']
 
 if len(sys.argv) == 2:
     ChanName = sys.argv[1]
@@ -36,25 +38,38 @@ RunA = True
 RunB = True
 RunC = True
 
-fileVersion = 'v4_MET40'
+fileVersion = 'v11_MET50'
+#fileVersion = 'TestDir'
+
+useLeptonSF = True
 
 #Input actual luminosities for runA, B, Crereco, and Cprompt for each channel from data
+
+isData = False
 
 SFsyst = ''
 if systName == 'BtagSFUp':
     SFsyst = 'Up'
 if systName == 'BtagSFDown':
     SFsyst = 'Down'
+if 'Data' in ChanName:
+    SFsyst = 'Data'
+    isData = True
 
 
-TrueLumis = [[808.472+82.136,4429.,495.003,6383.],
-             [808.472+82.136,4429.,495.003,6383.],
-             [808.472+82.136,4429.,495.003,6383.]]
+TrueLumis = [[808.472+82.136,4398.,495.003,6397.],
+             [808.472+82.136,4411.,495.003,6397.],
+             [808.472+82.136,4446.,485.574,6397.]]
 
 
 #The values used from SingleTopPSetsSummer_tW for the luminosities of run A, B, Crereco, and Cprompt
 UsedLumis = [15000.,15000.,15000.,15000.]
 
+#Lepton Scale Factors
+#lepSF = [0.936,0.962,0.950]
+lepSFUnc = [0.011,0.012,0.014]
+
+lepSF = [0.916,0.963,0.903]
         
 ### a C/C++ structure is required, to allow memory based access
 gROOT.ProcessLine(
@@ -273,12 +288,41 @@ Vars = [['I', 'RunNum'],
 
 #Trees for TMVA input (signal/control regions)
 
+# treeList = {'tree1jNotagging':[TTree('1jNoTagging','1jNoTagging'),TTree('1jNoTagging','1jNoTagging'),TTree('1jNoTagging','1jNoTagging')],
+#             'tree1j0t':[TTree('1j0t','1j0t'),TTree('1j0t','1j0t'),TTree('1j0t','1j0t')],
+#             'tree1j1t':[TTree('1j1t','1j1t'),TTree('1j1t','1j1t'),TTree('1j1t','1j1t')],
+#             'tree2jNotagging':[TTree('2jNoTagging','2jNoTagging'),TTree('2jNoTagging','2jNoTagging'),TTree('2jNoTagging','2jNoTagging')],
+#             'tree2j0t':[TTree('2j0t','2j0t'),TTree('2j0t','2j0t'),TTree('2j0t','2j0t')],
+#             'tree2j1t':[TTree('2j1t','2j1t'),TTree('2j1t','2j1t'),TTree('2j1t','2j1t')],
+#             'tree2j2t':[TTree('2j2t','2j2t'),TTree('2j2t','2j2t'),TTree('2j2t','2j2t')],
+#             'tree3plusjNotagging':[TTree('3plusjNoTagging','3plusjNoTagging'),TTree('3plusjNoTagging','3plusjNoTagging'),TTree('3plusjNoTagging','3plusjNoTagging')],
+#             'tree1j1tZpeak':[TTree('1j1tZpeak','1j1tZpeak'),TTree('1j1tZpeak','1j1tZpeak'),TTree('1j1tZpeak','1j1tZpeak')],
+#             'treeZpeakLepSel':[TTree('ZpeakLepSel','ZpeakLepSel'),TTree('ZpeakLepSel','ZpeakLepSel'),TTree('ZpeakLepSel','ZpeakLepSel')],
+#             }
 
-
-treeList = {'tree1jNotagging':[TTree('1jNoTagging','1jNoTagging'),TTree('1jNoTagging','1jNoTagging'),TTree('1jNoTagging','1jNoTagging')],
+treeList = {#'tree1jNotagging':[TTree('1jNoTagging','1jNoTagging'),TTree('1jNoTagging','1jNoTagging'),TTree('1jNoTagging','1jNoTagging')],
+            #'tree1j0t':[TTree('1j0t','1j0t'),TTree('1j0t','1j0t'),TTree('1j0t','1j0t')],
             'tree1j1t':[TTree('1j1t','1j1t'),TTree('1j1t','1j1t'),TTree('1j1t','1j1t')],
+            #'tree2jNotagging':[TTree('2jNoTagging','2jNoTagging'),TTree('2jNoTagging','2jNoTagging'),TTree('2jNoTagging','2jNoTagging')],
+            #'tree2j0t':[TTree('2j0t','2j0t'),TTree('2j0t','2j0t'),TTree('2j0t','2j0t')],
+            'tree2j1t':[TTree('2j1t','2j1t'),TTree('2j1t','2j1t'),TTree('2j1t','2j1t')],
+            'tree2j2t':[TTree('2j2t','2j2t'),TTree('2j2t','2j2t'),TTree('2j2t','2j2t')],
+            #'tree3plusjNotagging':[TTree('3plusjNoTagging','3plusjNoTagging'),TTree('3plusjNoTagging','3plusjNoTagging'),TTree('3plusjNoTagging','3plusjNoTagging')],
+            #'tree1j1tZpeak':[TTree('1j1tZpeak','1j1tZpeak'),TTree('1j1tZpeak','1j1tZpeak'),TTree('1j1tZpeak','1j1tZpeak')],
+            #'treeZpeakLepSel':[TTree('ZpeakLepSel','ZpeakLepSel'),TTree('ZpeakLepSel','ZpeakLepSel'),TTree('ZpeakLepSel','ZpeakLepSel')],
             }
 
+treeListTest = {#'tree1jNotagging':[TTree('1jNoTagging','1jNoTagging'),TTree('1jNoTagging','1jNoTagging'),TTree('1jNoTagging','1jNoTagging')],
+                #'tree1j0t':[TTree('1j0t','1j0t'),TTree('1j0t','1j0t'),TTree('1j0t','1j0t')],
+                'tree1j1t':[TTree('1j1t','1j1t'),TTree('1j1t','1j1t'),TTree('1j1t','1j1t')],
+                #'tree2jNotagging':[TTree('2jNoTagging','2jNoTagging'),TTree('2jNoTagging','2jNoTagging'),TTree('2jNoTagging','2jNoTagging')],
+                #'tree2j0t':[TTree('2j0t','2j0t'),TTree('2j0t','2j0t'),TTree('2j0t','2j0t')],
+                'tree2j1t':[TTree('2j1t','2j1t'),TTree('2j1t','2j1t'),TTree('2j1t','2j1t')],
+                'tree2j2t':[TTree('2j2t','2j2t'),TTree('2j2t','2j2t'),TTree('2j2t','2j2t')],
+                #'tree3plusjNotagging':[TTree('3plusjNoTagging','3plusjNoTagging'),TTree('3plusjNoTagging','3plusjNoTagging'),TTree('3plusjNoTagging','3plusjNoTagging')],
+                #'tree1j1tZpeak':[TTree('1j1tZpeak','1j1tZpeak'),TTree('1j1tZpeak','1j1tZpeak'),TTree('1j1tZpeak','1j1tZpeak')],
+                #'treeZpeakLepSel':[TTree('ZpeakLepSel','ZpeakLepSel'),TTree('ZpeakLepSel','ZpeakLepSel'),TTree('ZpeakLepSel','ZpeakLepSel')],
+                }
 
 #Branch variables for TMVA tree
 
@@ -289,17 +333,32 @@ for i in treeList:
     for tree in trees:
         for var in Vars:
             tree.Branch(var[1],AddressOf(eventInfo,var[1]),var[1]+'/'+var[0])
+for i in treeListTest:
+    trees = treeListTest[i]
+    for tree in trees:
+        for var in Vars:
+            tree.Branch(var[1],AddressOf(eventInfo,var[1]),var[1]+'/'+var[0])
+
+
 
 temp = ''
 
-if 'BtagSF' in systName:
+if 'SF' in systName:
     temp = systName
     systName = 'noSyst'
+
+if 'PDF' in systName:
+    temp = systName
+    systName = 'noSyst'
+
 fchain = TChain('TreesDileptontW/'+fileLists[ChanName][0]+'_'+systName)
 
 fchain.SetCacheSize(20*1024*1024)
 
-if 'BtagSF' in temp:
+if 'SF' in temp:
+    systName = temp    
+
+if 'PDF' in temp:
     systName = temp    
 
 for file in fileLists[ChanName][1]:
@@ -324,8 +383,9 @@ for event in fchain:
         sys.stdout.flush()
         percent += 1./progSlots
 
-#     if evtCount > 3000:
+#     if evtCount > 100000:
 #         break
+
 
     runNum = event.runNum
     lumiNum = event.lumiNum
@@ -338,6 +398,8 @@ for event in fchain:
     evtPUWeightB = event.PUWeightB
     evtPUWeightCrereco = event.PUWeightCrereco
     evtPUWeightCprompt = event.PUWeightCprompt
+    PDFweights = event.PDF_weights
+
 
     #Get Muon objects
     muonPt = event.muonPt
@@ -392,18 +454,20 @@ for event in fchain:
             if electronPt[i] > 20:
                 if abs(electronEta[i]) < 2.5:
                     if abs(electronPVDxy[i]) < 0.04:
-                        if electronMVATrigV0[i] >= 0. and electronMVATrigV0[i] <= 1.0:
-#                            if electronRhoCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
-                            if electronDeltaCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
+#                        if electronMVATrigV0[i] >= 0.0 and electronMVATrigV0[i] <= 1.0:
+                        if electronMVATrigV0[i] >= 0.5 and electronMVATrigV0[i] <= 1.0:
+                            if electronRhoCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
+#                            if electronDeltaCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
                                 if electronTrackerExpectedInnerHits[i] <= 1:
                                     goodEleidx.append(i)
                                     isTightElectron = True
         if not isTightElectron:
             if electronPt[i] > 15:
                 if abs(electronEta[i]) < 2.5:
-                    if electronMVATrigV0[i] >= 0. and electronMVATrigV0[i] <= 1.0: #####ADJUSTMENT
-#                        if electronRhoCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
-                        if electronDeltaCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
+#                    if electronMVATrigV0[i] >= 0.0 and electronMVATrigV0[i] <= 1.0: #####ADJUSTMENT
+                    if electronMVATrigV0[i] >= 0.5 and electronMVATrigV0[i] <= 1.0: #####ADJUSTMENT
+                        if electronRhoCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
+#                        if electronDeltaCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
                             looseEleidx.append(i)
     nLooseLeptons = len(looseEleidx) + len(looseMuonidx)
 
@@ -456,20 +520,22 @@ for event in fchain:
         continue
 
     inZpeak = False
+
+#     if mll < 101 and mll > 81:
+#         inZpeak = True
+
     if ModeIdx > 0:
         if mll < 101 and mll > 81:
             inZpeak = True
-            continue
 
     MetPt = event.MetPt
     MetPhi = event.MetPhi
 
     passMET = False
-    if ModeIdx==0 or MetPt>40:
+#     if MetPt>50:
+#         passMET = True
+    if ModeIdx==0 or MetPt>50:
         passMET = True
-
-#     if MetPt < 30 and not ModeIdx == 0:
-#         continue
 
 
     MET = TLorentzVector()
@@ -491,7 +557,6 @@ for event in fchain:
     goodJetIdx = list()
     btaggedTightJetIdx = list()
     looseJetIdx = list()
-    btaggedLooseJetIdx = list()
     tightJetForwardIdx = list()
     looseJet25CentralIdx = list()
     looseJet25ForwardIdx = list()
@@ -508,8 +573,9 @@ for event in fchain:
 
     for i in range(len(jetPt)):
         isTightJet = False
-        jetID = False
+        jetID = False        
         btagSF_ = BtagSF(jetPt[i],SFsyst)
+#        btagSF_ = 1.
         if jetNumDaughters[i] > 1:
             if jetNeuHadEn[i] < 0.99:
                 if jetNeuEmEn[i] < 0.99:
@@ -525,62 +591,54 @@ for event in fchain:
                 if jetID:
                     tJet = TLorentzVector()
                     tJet.SetPtEtaPhiE(jetPt[i],jetEta[i],jetPhi[i],jetE[i])
-                    if min(lepton0.DeltaR(tJet),lepton1.DeltaR(tJet)) > 0.3:
+                    if min(lepton0.DeltaR(tJet),lepton1.DeltaR(tJet)) > 0.3 or ModeIdx == 1:
                         goodJetIdx.append(i)
                         isTightJet = True
                         if jetCSV[i] > 0.679:
-                            if random.random() < btagSF_:
+                            if random.random() < btagSF_ or isData:
                                 btaggedTightJetIdx.append(i)
-                        elif btagSF_>1 and random.random() < (btagSF_-1.):
-                            btaggedTightJetIdx.append(i)
+#                         elif btagSF_>1 and random.random() < (btagSF_-1.) and not isData:
+#                             btaggedTightJetIdx.append(i)
 
         if not isTightJet:
             if jetID:
                 if jetPt[i] > 15:
                     looseJet15Idx.append(i)
-                    if abs(jetEta[i]) < 2.5:
+                    if abs(jetEta[i]) < 2.4:
                         looseJet15CentralIdx.append(i)
                     else:
                         looseJet15ForwardIdx.append(i)
                     if jetCSV[i] > 0.679:
-                        if random.random() < btagSF_:
+                        if random.random() < btagSF_ or isData:
                             btaggedLooseJet15Idx.append(i)
-                    elif btagSF_>1 and random.random() < (btagSF_-1.):
-                        btaggedLooseJet15Idx.append(i)
+#                     elif btagSF_>1 and random.random() < (btagSF_-1.) and not isData:
+#                         btaggedLooseJet15Idx.append(i)
                 if jetPt[i] > 20:
                     looseJet20Idx.append(i)
-                    if abs(jetEta[i]) < 2.5:
+                    if abs(jetEta[i]) < 2.4:
                         looseJet20CentralIdx.append(i)
                     else:
                         looseJet20ForwardIdx.append(i)
                     if jetCSV[i] > 0.679:
-                        if random.random() < btagSF_:
+                        if random.random() < btagSF_ or isData:
                             btaggedLooseJet20Idx.append(i)
-                    elif btagSF_>1 and random.random() < (btagSF_-1.):
-                        btaggedLooseJet20Idx.append(i)
+#                     elif btagSF_>1 and random.random() < (btagSF_-1.) and not isData:
+#                         btaggedLooseJet20Idx.append(i)
                 if jetPt[i] > 25:
                     looseJet25Idx.append(i)
-                    if abs(jetEta[i]) < 2.5:
+                    if abs(jetEta[i]) < 2.4:
                         looseJet25CentralIdx.append(i)
                     else:
                         looseJet25ForwardIdx.append(i)
                     if jetCSV[i] > 0.679:
-                        if random.random() < btagSF_:
+                        if random.random() < btagSF_ or isData:
                             btaggedLooseJet25Idx.append(i)
-                    elif btagSF_>1 and random.random() < (btagSF_-1.):
-                        btaggedLooseJet25Idx.append(i)
+#                     elif btagSF_>1 and random.random() < (btagSF_-1.) and not isData:
+#                         btaggedLooseJet25Idx.append(i)
                 if jetPt[i] > 30:
-                    if abs(jetEta[i]) > 2.5:
+                    if abs(jetEta[i]) > 2.4:
                         tightJetForwardIdx.append(i)
 
-        if not isTightJet:
-            if jetPt[i] > 20:
-                if abs(jetEta[i]) < 2.5:
-                    if jetID:
-                        looseJetIdx.append(i)
-                        if jetCSV[i] > 0.679:
-                            btaggedLooseJetIdx.append(i)
-            
 
     if len(goodJetIdx) < 1:
         continue
@@ -689,26 +747,87 @@ for event in fchain:
     eventInfo.weightC = 0.
     eventInfo.weightNoPUC = 0.
 
+    #Apply the lepton scale factors to the weights
+    leptonSF = lepSF[ModeIdx]
+    if isData:
+        leptonSF = 1.
+    
+    if systName == 'LepSFUp':
+        leptonSF = lepSF[ModeIdx] + lepSFUnc[ModeIdx]
+    if systName == 'LepSFDown':
+            leptonSF = lepSF[ModeIdx] - lepSFUnc[ModeIdx]
 
-    eventInfo.weightA = evtWeightA*evtPUWeightA*TrueLumis[ModeIdx][0]/UsedLumis[0]
-    eventInfo.weightNoPU = evtWeightA*TrueLumis[ModeIdx][0]/UsedLumis[0]
+#     if useLeptonSF and not isData:
+#         if systName == 'LepSFUp':
+#             leptonSF = lepSF[ModeIdx] + lepSFUnc[ModeIdx]
+#         elif systName == 'LepSFDown':
+#             leptonSF = lepSF[ModeIdx] - lepSFUnc[ModeIdx]
+            
 
-    eventInfo.weightB = evtWeightB*evtPUWeightB*TrueLumis[ModeIdx][1]/UsedLumis[1]
-    eventInfo.weightNoPUB = evtWeightB*TrueLumis[ModeIdx][1]/UsedLumis[1]
+    pdfWeightMult = 1.
+    if systName == 'PDFUp':
+        temp = 0.
+        for i in PDFweights:
+            if i > temp:
+                temp = i
+        pdfWeightMult = temp
 
-    eventInfo.weightC = evtWeightCrereco*evtPUWeightCrereco*TrueLumis[ModeIdx][2]/UsedLumis[2]
-    eventInfo.weightNoPUC = evtWeightCrereco*TrueLumis[ModeIdx][2]/UsedLumis[2]
+    if systName == 'PDFDown':
+        temp = 99.
+        for i in PDFweights:
+            if i < temp:
+                temp = i
+        pdfWeightMult = temp
 
-    eventInfo.weightC += evtWeightCprompt*evtPUWeightCprompt*TrueLumis[ModeIdx][3]/UsedLumis[3]
-    eventInfo.weightNoPUC += evtWeightCprompt*TrueLumis[ModeIdx][3]/UsedLumis[3]
+
+
+            
+
+    isTrain = True
+
+    reweight = 1.
+
+    if 'TWDilepton' in ChanName:
+        ranVal = 0.6
+        if random.random() > ranVal:
+            isTrain = False
+            reweight = 1./(1.-ranVal)
+        else:
+            reweight = 1./ranVal
+    elif 'TTbarDilepton' in ChanName:
+        ranVal = 0.8
+        if random.random() > ranVal:
+            isTrain = False
+            reweight = 1./(1.-ranVal)
+        else:
+            reweight = 1./ranVal
+            
+        
+    extraMultipliers = pdfWeightMult*leptonSF*reweight
+
+
+    eventInfo.weightA      = extraMultipliers*evtWeightA*evtPUWeightA*TrueLumis[ModeIdx][0]/UsedLumis[0]
+    eventInfo.weightNoPU   = extraMultipliers*evtWeightA*TrueLumis[ModeIdx][0]/UsedLumis[0]
+
+    eventInfo.weightB      = extraMultipliers*evtWeightB*evtPUWeightB*TrueLumis[ModeIdx][1]/UsedLumis[1]
+    eventInfo.weightNoPUB  = extraMultipliers*evtWeightB*TrueLumis[ModeIdx][1]/UsedLumis[1]
+
+    eventInfo.weightC      = extraMultipliers*evtWeightCrereco*evtPUWeightCrereco*TrueLumis[ModeIdx][2]/UsedLumis[2]
+    eventInfo.weightNoPUC  = extraMultipliers*evtWeightCrereco*TrueLumis[ModeIdx][2]/UsedLumis[2]
+
+    eventInfo.weightC     += extraMultipliers*evtWeightCprompt*evtPUWeightCprompt*TrueLumis[ModeIdx][3]/UsedLumis[3]
+    eventInfo.weightNoPUC += extraMultipliers*evtWeightCprompt*TrueLumis[ModeIdx][3]/UsedLumis[3]
+            
+
 
     #Take the Btag SF weight as each btagged jet SF multiplied together
 
-    for i in btaggedTightJetIdx:        
-        btagSF_ = btagSF_ * BtagSF(jetPt[i],SFsyst)
-        
-        
-    eventInfo.weightBtagSF = btagSF_
+#     for i in btaggedTightJetIdx:        
+#         btagSF_ = btagSF_ * BtagSF(jetPt[i],SFsyst)
+                
+#    eventInfo.weightBtagSF = btagSF_
+
+    eventInfo.weightBtagSF = 1.
 
 
     eventInfo.RunNum = runNum
@@ -808,21 +927,36 @@ for event in fchain:
     eventInfo.aplanarityJLLWithLoose = aplanarity_jllWithLoose
     eventInfo.aplanarityJLLMWithLoose = aplanarity_jllmWithLoose
 
-
     if not inZpeak and passMET:
-        if len(goodJetIdx) == 1:
-            treeList['tree1jNotagging'][ModeIdx].Fill()
-            if len(btaggedTightJetIdx) == 1:
-                treeList['tree1j1t'][ModeIdx].Fill()
+        if isTrain:
+            if len(goodJetIdx) == 1:
+                if len(btaggedTightJetIdx) == 1:
+                    treeList['tree1j1t'][ModeIdx].Fill()
+            if len(goodJetIdx) == 2:
+                if len(btaggedTightJetIdx) == 1:
+                    treeList['tree2j1t'][ModeIdx].Fill()
+                if len(btaggedTightJetIdx) == 2:
+                    treeList['tree2j2t'][ModeIdx].Fill()
+        else:
+            if len(goodJetIdx) == 1:
+                if len(btaggedTightJetIdx) == 1:
+                    treeListTest['tree1j1t'][ModeIdx].Fill()
+            if len(goodJetIdx) == 2:
+                if len(btaggedTightJetIdx) == 1:
+                    treeListTest['tree2j1t'][ModeIdx].Fill()
+                if len(btaggedTightJetIdx) == 2:
+                    treeListTest['tree2j2t'][ModeIdx].Fill()
 
 
 if not os.path.exists('tmvaFiles/'+fileVersion):
     command = 'mkdir tmvaFiles/'+fileVersion
     os.system(command)
+
 outFileName = 'tmvaFiles/'+fileVersion+'/'+fileLists[ChanName][2]
 if not 'noSyst' in systName:
     outFileName = outFileName.replace(".root",'_'+systName+'.root')
 
+outFileName = outFileName.replace('.root','_TrainingSample.root')
 print
 print outFileName
 outputFile = TFile(outFileName,"RECREATE")
@@ -833,10 +967,7 @@ eeDir = outputFile.mkdir("eeChannel","ee channel");
 #combinedDir = outputFile.mkdir("combined","All Channels Combined");
 
 for i in treeList:
-    print i
     tree = treeList[i]
-    for t in tree:
-        print t.GetEntries()
     emuDir.cd()
     tree[0].Write()
     mumuDir.cd()
@@ -846,3 +977,21 @@ for i in treeList:
 #    combinedDir.cd()
 #    tree[3].Write()
 
+#outputFile.close()
+
+outFileName = outFileName.replace('_TrainingSample.root','_TestingSample.root')
+
+outputFile2 = TFile(outFileName,"RECREATE")
+
+emuDir = outputFile2.mkdir("emuChannel","emu channel");
+mumuDir = outputFile2.mkdir("mumuChannel","mumu channel");
+eeDir = outputFile2.mkdir("eeChannel","ee channel");
+
+for i in treeListTest:
+    tree = treeListTest[i]
+    emuDir.cd()
+    tree[0].Write()
+    mumuDir.cd()
+    tree[1].Write()
+    eeDir.cd()
+    tree[2].Write()

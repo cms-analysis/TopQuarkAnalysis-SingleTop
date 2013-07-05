@@ -26,6 +26,8 @@ RunC = False
 
 TotalLumi = 0.
 
+makePlots = True
+
 channelPicked = False
 emuChan = False
 mumuChan = False
@@ -113,7 +115,8 @@ if not channelPicked:
     eeChan = True
 
 if not versionPicked:
-    vFolder = 'v5_MET50'
+#    vFolder = 'v11_MET50'
+    vFolder = 'TestDir_v3'
 #     versionList = glob.glob("tmvaFiles/v*")
 #     versionList.sort(key=lambda a:int(a.split('/v')[-1]))
 #     vFolder = versionList[-1].split('/')[-1]    
@@ -128,19 +131,31 @@ if RunC:
 
 TotalLumi = TotalLumi/1000.
 
-labelcms = TPaveText(0.1,0.88,0.6,0.92,"NDCBR")
+labelcms = TPaveText(0.12,0.88,0.6,0.92,"NDCBR")
 labelcms.SetTextAlign(12);
 labelcms.SetTextSize(0.045);
 labelcms.SetFillColor(kWhite);
+labelcms.SetFillStyle(0);
 labelcms.AddText("CMS Preliminary, #sqrt{s} = 8 TeV");
 labelcms.SetBorderSize(0);
 
+#gStyle.SetLabelSize(0.045,"y")
+gStyle.SetLabelSize(0.035,"xy")
 
 
 doChannel = [emuChan, mumuChan, eeChan]
     
-plotInfo = [['met', 60, 0, 300,'MET [GeV]']
+plotInfo = [['met', 60, 0, 300,'E_{T}^{miss} [GeV]'],
+            ['mll', 20, 81, 101,'m_{ll} [GeV]'],
+            ['ptlep0',28,20,300, 'P_{T} lepton-0 [GeV]','Events / 10 GeV'],
+            ['ptlep1',28,20,300, 'P_{T} lepton-1 [GeV]','Events / 10 GeV'],
             ]
+
+# scaleFactors = [[0,0,0,0,0,0,0],
+#                 [0,0,0,0,0,0,0],
+#                 [0,0,0,0,0,0,0]]
+
+scaleFactors = [[],[],[]]
 
 fileList = ['TWChannel.root',
             'TTbar.root',
@@ -174,6 +189,14 @@ lumiLabel = "%.1f fb^{-1}" % TotalLumi
 
 # DataRun = ['Run2012A','Run2012B','Run2012C']
 
+#     bins = array('d',[0,5,10,15,20,25,30,40,50,75,100,150,200,300])
+#bins = array('d',[0,5,10,15,20,25,30,40,50,60,300])
+#     bins = array('d',[0,10,20,30,40,50,300])
+#    bins = array('d',[0,10,20,30,40,50,60,1000])
+
+bins = array('d',[0,10,20,30,40,50,60,300])
+#bins = array('d',[0,10,20,30,40,50,60,80,300])
+
 
 for mode in range(1,3):
 
@@ -193,6 +216,13 @@ for mode in range(1,3):
             Histos[plot[0]].SetLineWidth(1)
             Histos[plot[0]].SetMarkerSize(0.0001)
             Histos[plot[0]].Sumw2()
+
+        Histos['binnedMET'] = TH1F('binnedMET'+fileName+ChanName[mode]," ",len(bins)-1,bins)
+        Histos[plot[0]].SetFillColor(Colors[i])
+        Histos[plot[0]].SetLineColor(kBlack)
+        Histos[plot[0]].SetLineWidth(1)
+        Histos[plot[0]].SetMarkerSize(0.0001)
+        Histos[plot[0]].Sumw2()
         HistoLists.append(Histos)
 
     for plot in plotInfo:
@@ -249,7 +279,10 @@ for mode in range(1,3):
 
 
 
-            _met                       = event.met                     
+            _met                       = event.met
+            _mll                       = event.mll
+            _ptlep0                    = event.ptlep0
+            _ptlep1                    = event.ptlep1 
             
             _weightA                    = event.weightA
             _weightB                    = event.weightB
@@ -270,7 +303,12 @@ for mode in range(1,3):
                 _weight = 1.
 
 
-            HistoLists[i]['met'].Fill(                      _met                      , _weight )
+            HistoLists[i]['met'].Fill(    _met    , _weight )
+            HistoLists[i]['binnedMET'].Fill(    _met    , _weight )
+            HistoLists[i]['mll'].Fill(    _mll    , _weight )
+            HistoLists[i]['ptlep0'].Fill( _ptlep0 , _weight )
+            HistoLists[i]['ptlep1'].Fill( _ptlep1 , _weight )
+            HistoLists[i]['binnedMET'].Fill(    _met    , _weight )
 
         print
 
@@ -278,8 +316,8 @@ for mode in range(1,3):
     errorHistTemp.SetFillColor(kBlack)
     errorHistTemp.SetFillStyle(3003)
     
-    leg = TLegend(0.66,0.66,0.94,0.94)
-    leg.SetFillStyle(1)
+    leg = TLegend(0.7,0.66,0.94,0.94)
+#    leg.SetFillStyle(1)
     leg.SetFillColor(kWhite)
     leg.SetBorderSize(1)
     leg.AddEntry(HistoLists[-1]['met'], "Data", "p")
@@ -305,17 +343,19 @@ for mode in range(1,3):
     if noPlots:
         continue
 
-    labelcms2 = TPaveText(0.1,0.82,0.6,0.88,"NDCBR");
+    labelcms2 = TPaveText(0.12,0.82,0.6,0.88,"NDCBR");
     labelcms2.SetTextAlign(12);
     labelcms2.SetTextSize(0.045);
     labelcms2.SetFillColor(kWhite);
+    labelcms2.SetFillStyle(0);
     labelcms2.AddText(lumiLabel + ChanLabels[mode])
     labelcms2.SetBorderSize(0);
 
-    labelcms3 = TPaveText(0.1,0.74,0.6,0.82,"NDCBR");
+    labelcms3 = TPaveText(0.12,0.74,0.6,0.82,"NDCBR");
     labelcms3.SetTextAlign(12);
     labelcms3.SetTextSize(0.045);
     labelcms3.SetFillColor(kWhite);
+    labelcms3.SetFillStyle(0);
     labelcms3.AddText(region)
     labelcms3.SetBorderSize(0);
 
@@ -325,7 +365,7 @@ for mode in range(1,3):
 #     bins = array('d',[0,5,10,15,20,25,30,40,50,75,100,150,200,300])
 #     bins = array('d',[0,5,10,15,20,25,30,40,50,75,300])
 #     bins = array('d',[0,10,20,30,40,50,300])
-    bins = array('d',[0,10,20,30,40,50,60,300])
+#    bins = array('d',[0,10,20,30,40,50,60,1000])
     plotInfo.append(['metBinned',1,0,1,'MET [GeV]'])
     for i in range(len(HistoLists)):            
         HistoLists[i]['metBinned'] = HistoLists[i]['met'].Rebin(len(bins)-1,'metBinned',bins)
@@ -358,42 +398,56 @@ for mode in range(1,3):
         hStack.Add(HistoLists[1][plot[0]])
         hStack.Add(HistoLists[0][plot[0]])
         
-        c1 = TCanvas()
-        max_ = max(hStack.GetMaximum(),HistoLists[-1][plot[0]].GetMaximum())
-        hStack.Draw("histo")
-        hStack.SetMaximum(max_*1.5)
-        hStack.SetMinimum(0)
-        errorBand.Draw("e2 same")
-        hStack.GetYaxis().SetTitle("Events")
-        hStack.GetYaxis().CenterTitle()
-        hStack.GetXaxis().SetTitle(plot[4])
-        HistoLists[-1][plot[0]].Draw("e x0, same")
-        leg.Draw()        
-        labelcms.Draw()
-        labelcms2.Draw()
-        labelcms3.Draw()
-
-        if not os.path.exists("VariablePlots/"+specialName):
-            command = "mkdir VariablePlots/"+specialName
-            os.system(command)
-        if not os.path.exists("VariablePlots/"+specialName + region):
-            command = "mkdir VariablePlots/"+specialName+region
-            os.system(command)
+        if makePlots:
+            c1 = TCanvas()
+            gPad.SetLeftMargin(0.12)
+            max_ = max(hStack.GetMaximum(),HistoLists[-1][plot[0]].GetMaximum())
+            hStack.Draw("histo")
+            hStack.SetMaximum(max_*1.5)
+            hStack.SetMinimum(0)
+            errorBand.Draw("e2 same")
+            hStack.GetYaxis().SetTitle("Events")
+            hStack.GetYaxis().CenterTitle()
+            hStack.GetYaxis().SetTitleOffset(1.28)
+            hStack.GetYaxis().SetTitleSize(0.05)
+            hStack.GetXaxis().SetTitle(plot[4])
+            hStack.GetXaxis().SetTitleSize(0.05)
+            HistoLists[-1][plot[0]].Draw("e x0, same")
+            leg.Draw()        
+            labelcms.Draw()
+            labelcms2.Draw()
+            labelcms3.Draw()
             
-        
-        c1.SaveAs("VariablePlots/"+specialName+region+"/"+plot[0]+"_"+region+"_"+ChanName[mode]+".pdf")
-        c1.SetLogy()
-        hStack.SetMaximum(max_*150)
-        hStack.SetMinimum(1)        
-        c1.SaveAs("VariablePlots/"+specialName+region+"/"+plot[0]+"_"+region+"_"+ChanName[mode]+"_log.pdf")
+            if not os.path.exists("VariablePlots/"+specialName):
+                command = "mkdir VariablePlots/"+specialName
+                os.system(command)
+            if not os.path.exists("VariablePlots/"+specialName + region):
+                command = "mkdir VariablePlots/"+specialName+region
+                os.system(command)
+                
+            
+            c1.SaveAs("VariablePlots/"+specialName+region+"/"+plot[0]+"_"+region+"_"+ChanName[mode]+".pdf")
+            c1.SaveAs("VariablePlots/"+specialName+region+"/"+plot[0]+"_"+region+"_"+ChanName[mode]+".png")
+            c1.SetLogy()
+            hStack.SetMaximum(max_*50)
+            hStack.SetMinimum(1)        
+            c1.SaveAs("VariablePlots/"+specialName+region+"/"+plot[0]+"_"+region+"_"+ChanName[mode]+"_log.pdf")
+            c1.SaveAs("VariablePlots/"+specialName+region+"/"+plot[0]+"_"+region+"_"+ChanName[mode]+"_log.png")
+
+
 
 
     zjet = HistoLists[4]['metBinned']
     other = HistoLists[0]['metBinned']
     data = HistoLists[-1]['metBinned']
-    for i in range(1,len(HistoLists)-1):
-        if i != 4:
-            other.Add(HistoLists[i]['metBinned'])
+    other.Add(HistoLists[1]['metBinned'])
+    other.Add(HistoLists[2]['metBinned'])
+
+#     zjet = HistoLists[4]['binnedMET']
+#     other = HistoLists[0]['binnedMET']
+#     data = HistoLists[-1]['binnedMET']
+#     other.Add(HistoLists[1]['binnedMET'])
+#     other.Add(HistoLists[2]['binnedMET'])
 
 
     
@@ -402,19 +456,29 @@ for mode in range(1,3):
     print "-------------------------------------------------------------------"
     print
     print "Bin Content"
-    print "Bin range\t  Zjets\tOtherMC\tData"
+    print "Bin range\t  Zjets\t\tOtherMC\t\tData"
     for bin in range(1,len(bins)):
         print bins[bin-1],"-",bins[bin],"\t:","%.1f" % zjet.GetBinContent(bin),"\t","%.1f" % other.GetBinContent(bin),"\t","%.1f" % data.GetBinContent(bin)
     print
     print "-------------------------------------------------------------------"
     print "Scale Factor"
-    print "Bin range\tZjets\tOtherMC\tData"
+    print "Bin range\tSF \t\t error"
     for bin in range(1,len(bins)):
         ZjetMC = zjet.GetBinContent(bin)
+        zjetErr = zjet.GetBinError(bin)/zjet.GetBinContent(bin)
         ZjetData = data.GetBinContent(bin)-other.GetBinContent(bin)
-        print bins[bin-1],"-",bins[bin],"\t:","%.4f" % (ZjetData/ZjetMC)
+        dataErr = sqrt(pow(data.GetBinError(bin),2)+pow(other.GetBinError(bin),2))/ZjetData
+        error = sqrt(pow(zjetErr,2)+pow(dataErr,2))*ZjetData/ZjetMC
+        print bins[bin-1],"-",bins[bin],"\t:","%.4f" % (ZjetData/ZjetMC),"\t","%.4f" % (error)
+#        scaleFactors[mode][bin-1]=ZjetData/ZjetMC
+        scaleFactors[mode].append(ZjetData/ZjetMC)
     print
     print "-------------------------------------------------------------------"
     
     
-    
+for bin in range(len(bins)-1):
+#    scaleFactors[0][bin] = (scaleFactors[1][bin]+scaleFactors[2][bin])/2.
+    scaleFactors[0].append((scaleFactors[1][bin]+scaleFactors[2][bin])/2.)
+
+
+print scaleFactors

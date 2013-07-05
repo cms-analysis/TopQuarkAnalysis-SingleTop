@@ -38,7 +38,7 @@ RunA = True
 RunB = True
 RunC = True
 
-fileVersion = 'v8_MET50'
+fileVersion = 'v11_MET50'
 #fileVersion = 'TestDir'
 
 useLeptonSF = True
@@ -66,8 +66,10 @@ TrueLumis = [[808.472+82.136,4398.,495.003,6397.],
 UsedLumis = [15000.,15000.,15000.,15000.]
 
 #Lepton Scale Factors
-lepSF = [0.936,0.962,0.950]
+#lepSF = [0.936,0.962,0.950]
 lepSFUnc = [0.011,0.012,0.014]
+
+lepSF = [0.916,0.963,0.903]
         
 ### a C/C++ structure is required, to allow memory based access
 gROOT.ProcessLine(
@@ -306,8 +308,9 @@ treeList = {#'tree1jNotagging':[TTree('1jNoTagging','1jNoTagging'),TTree('1jNoTa
             'tree2j1t':[TTree('2j1t','2j1t'),TTree('2j1t','2j1t'),TTree('2j1t','2j1t')],
             'tree2j2t':[TTree('2j2t','2j2t'),TTree('2j2t','2j2t'),TTree('2j2t','2j2t')],
             #'tree3plusjNotagging':[TTree('3plusjNoTagging','3plusjNoTagging'),TTree('3plusjNoTagging','3plusjNoTagging'),TTree('3plusjNoTagging','3plusjNoTagging')],
+            #'tree3plusjets1plustag':[TTree('3plusjets1plustag','3plusjets1plustag'),TTree('3plusjets1plustag','3plusjets1plustag'),TTree('3plusjets1plustag','3plusjets1plustag')],
             #'tree1j1tZpeak':[TTree('1j1tZpeak','1j1tZpeak'),TTree('1j1tZpeak','1j1tZpeak'),TTree('1j1tZpeak','1j1tZpeak')],
-            #'treeZpeakLepSel':[TTree('ZpeakLepSel','ZpeakLepSel'),TTree('ZpeakLepSel','ZpeakLepSel'),TTree('ZpeakLepSel','ZpeakLepSel')],
+            'treeZpeakLepSel':[TTree('ZpeakLepSel','ZpeakLepSel'),TTree('ZpeakLepSel','ZpeakLepSel'),TTree('ZpeakLepSel','ZpeakLepSel')],
             }
 
 #Branch variables for TMVA tree
@@ -340,8 +343,11 @@ if 'SF' in temp:
 if 'PDF' in temp:
     systName = temp    
 
+previousCount = 0.
 for file in fileLists[ChanName][1]:
     fchain.Add(file)
+    print file, fchain.GetEntries()*1., fchain.GetEntries()*1.-previousCount
+    previousCount = fchain.GetEntries()*1.
 
 Channel = ['emu', 'mumu', 'ee']
 
@@ -432,7 +438,8 @@ for event in fchain:
             if electronPt[i] > 20:
                 if abs(electronEta[i]) < 2.5:
                     if abs(electronPVDxy[i]) < 0.04:
-                        if electronMVATrigV0[i] >= 0.0 and electronMVATrigV0[i] <= 1.0:
+#                        if electronMVATrigV0[i] >= 0.0 and electronMVATrigV0[i] <= 1.0:
+                        if electronMVATrigV0[i] >= 0.5 and electronMVATrigV0[i] <= 1.0:
                             if electronRhoCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
 #                            if electronDeltaCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
                                 if electronTrackerExpectedInnerHits[i] <= 1:
@@ -441,7 +448,8 @@ for event in fchain:
         if not isTightElectron:
             if electronPt[i] > 15:
                 if abs(electronEta[i]) < 2.5:
-                    if electronMVATrigV0[i] >= 0.0 and electronMVATrigV0[i] <= 1.0: #####ADJUSTMENT
+#                    if electronMVATrigV0[i] >= 0.0 and electronMVATrigV0[i] <= 1.0: #####ADJUSTMENT
+                    if electronMVATrigV0[i] >= 0.5 and electronMVATrigV0[i] <= 1.0: #####ADJUSTMENT
                         if electronRhoCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
 #                        if electronDeltaCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
                             looseEleidx.append(i)
@@ -555,7 +563,7 @@ for event in fchain:
         if jetNumDaughters[i] > 1:
             if jetNeuHadEn[i] < 0.99:
                 if jetNeuEmEn[i] < 0.99:
-                    if abs(jetEta[i]) > 2.5:
+                    if abs(jetEta[i]) > 2.4:
                         jetID = True
                     else:
                         if jetCHEmEn[i] < 0.99:
@@ -563,7 +571,7 @@ for event in fchain:
                                 if jetCHMult[i] > 0:
                                     jetID = True
         if jetPt[i] > 30:
-            if abs(jetEta[i]) < 2.5:
+            if abs(jetEta[i]) < 2.4:
                 if jetID:
                     tJet = TLorentzVector()
                     tJet.SetPtEtaPhiE(jetPt[i],jetEta[i],jetPhi[i],jetE[i])
@@ -580,7 +588,7 @@ for event in fchain:
             if jetID:
                 if jetPt[i] > 15:
                     looseJet15Idx.append(i)
-                    if abs(jetEta[i]) < 2.5:
+                    if abs(jetEta[i]) < 2.4:
                         looseJet15CentralIdx.append(i)
                     else:
                         looseJet15ForwardIdx.append(i)
@@ -591,7 +599,7 @@ for event in fchain:
 #                         btaggedLooseJet15Idx.append(i)
                 if jetPt[i] > 20:
                     looseJet20Idx.append(i)
-                    if abs(jetEta[i]) < 2.5:
+                    if abs(jetEta[i]) < 2.4:
                         looseJet20CentralIdx.append(i)
                     else:
                         looseJet20ForwardIdx.append(i)
@@ -602,7 +610,7 @@ for event in fchain:
 #                         btaggedLooseJet20Idx.append(i)
                 if jetPt[i] > 25:
                     looseJet25Idx.append(i)
-                    if abs(jetEta[i]) < 2.5:
+                    if abs(jetEta[i]) < 2.4:
                         looseJet25CentralIdx.append(i)
                     else:
                         looseJet25ForwardIdx.append(i)
@@ -612,7 +620,7 @@ for event in fchain:
 #                     elif btagSF_>1 and random.random() < (btagSF_-1.) and not isData:
 #                         btaggedLooseJet25Idx.append(i)
                 if jetPt[i] > 30:
-                    if abs(jetEta[i]) > 2.5:
+                    if abs(jetEta[i]) > 2.4:
                         tightJetForwardIdx.append(i)
 
 
@@ -898,8 +906,8 @@ for event in fchain:
                 treeList['tree2j2t'][ModeIdx].Fill()
 #        if len(goodJetIdx) > 2:
 #            treeList['tree3plusjNotagging'][ModeIdx].Fill()
-#     if inZpeak:
-#         treeList['treeZpeakLepSel'][ModeIdx].Fill()
+    if inZpeak:
+        treeList['treeZpeakLepSel'][ModeIdx].Fill()
 #        #No MET cut is applied to 1j1t zpeak region
 #        if len(goodJetIdx) == 1:
 #            if len(btaggedTightJetIdx) == 1:

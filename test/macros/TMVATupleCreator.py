@@ -1,4 +1,4 @@
-#!/usr/bin/env python                                                                                                                  
+#!/usr/bin/env python
 
 #Uses random numbers for btagging scale factors
 
@@ -6,7 +6,7 @@ from ROOT import *
 
 import sys
 
-from EventShapeVariables import *        
+from EventShapeVariables import *
 from BtagSF import *
 from fileLoadDict_storeUser import fileLists
 
@@ -38,8 +38,8 @@ RunA = True
 RunB = True
 RunC = True
 
-#fileVersion = 'v7_MET50'
-fileVersion = 'TestDir'
+fileVersion = 'v10_MET50'
+#fileVersion = 'TestDir'
 
 useLeptonSF = True
 
@@ -66,8 +66,10 @@ TrueLumis = [[808.472+82.136,4398.,495.003,6397.],
 UsedLumis = [15000.,15000.,15000.,15000.]
 
 #Lepton Scale Factors
-lepSF = [0.936,0.962,0.950]
+#lepSF = [0.936,0.962,0.950]
 lepSFUnc = [0.011,0.012,0.014]
+
+lepSF = [0.916,0.963,0.903]
         
 ### a C/C++ structure is required, to allow memory based access
 gROOT.ProcessLine(
@@ -307,7 +309,7 @@ treeList = {#'tree1jNotagging':[TTree('1jNoTagging','1jNoTagging'),TTree('1jNoTa
             'tree2j2t':[TTree('2j2t','2j2t'),TTree('2j2t','2j2t'),TTree('2j2t','2j2t')],
             #'tree3plusjNotagging':[TTree('3plusjNoTagging','3plusjNoTagging'),TTree('3plusjNoTagging','3plusjNoTagging'),TTree('3plusjNoTagging','3plusjNoTagging')],
             #'tree1j1tZpeak':[TTree('1j1tZpeak','1j1tZpeak'),TTree('1j1tZpeak','1j1tZpeak'),TTree('1j1tZpeak','1j1tZpeak')],
-            #'treeZpeakLepSel':[TTree('ZpeakLepSel','ZpeakLepSel'),TTree('ZpeakLepSel','ZpeakLepSel'),TTree('ZpeakLepSel','ZpeakLepSel')],
+            'treeZpeakLepSel':[TTree('ZpeakLepSel','ZpeakLepSel'),TTree('ZpeakLepSel','ZpeakLepSel'),TTree('ZpeakLepSel','ZpeakLepSel')],
             }
 
 #Branch variables for TMVA tree
@@ -432,7 +434,7 @@ for event in fchain:
             if electronPt[i] > 20:
                 if abs(electronEta[i]) < 2.5:
                     if abs(electronPVDxy[i]) < 0.04:
-                        if electronMVATrigV0[i] >= 0. and electronMVATrigV0[i] <= 1.0:
+                        if electronMVATrigV0[i] >= 0.0 and electronMVATrigV0[i] <= 1.0:
                             if electronRhoCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
 #                            if electronDeltaCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
                                 if electronTrackerExpectedInnerHits[i] <= 1:
@@ -441,7 +443,7 @@ for event in fchain:
         if not isTightElectron:
             if electronPt[i] > 15:
                 if abs(electronEta[i]) < 2.5:
-                    if electronMVATrigV0[i] >= 0. and electronMVATrigV0[i] <= 1.0: #####ADJUSTMENT
+                    if electronMVATrigV0[i] >= 0.0 and electronMVATrigV0[i] <= 1.0: #####ADJUSTMENT
                         if electronRhoCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
 #                        if electronDeltaCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
                             looseEleidx.append(i)
@@ -496,6 +498,10 @@ for event in fchain:
         continue
 
     inZpeak = False
+
+#     if mll < 101 and mll > 81:
+#         inZpeak = True
+
     if ModeIdx > 0:
         if mll < 101 and mll > 81:
             inZpeak = True
@@ -504,10 +510,10 @@ for event in fchain:
     MetPhi = event.MetPhi
 
     passMET = False
+#     if MetPt>50:
+#         passMET = True
     if ModeIdx==0 or MetPt>50:
         passMET = True
-#     if MetPt < 30 and not ModeIdx == 0:
-#         continue
 
 
     MET = TLorentzVector()
@@ -524,7 +530,7 @@ for event in fchain:
     jetCHMult = event.jetCHMult
     jetNeuEmEn = event.jetNeuEmEn
     jetNeuHadEn = event.jetNeuHadEn
-    jetFlavour = event.jetFlavour
+
 
     goodJetIdx = list()
     btaggedTightJetIdx = list()
@@ -546,6 +552,8 @@ for event in fchain:
     for i in range(len(jetPt)):
         isTightJet = False
         jetID = False        
+        btagSF_ = BtagSF(jetPt[i],SFsyst)
+#        btagSF_ = 1.
         if jetNumDaughters[i] > 1:
             if jetNeuHadEn[i] < 0.99:
                 if jetNeuEmEn[i] < 0.99:
@@ -565,7 +573,10 @@ for event in fchain:
                         goodJetIdx.append(i)
                         isTightJet = True
                         if jetCSV[i] > 0.679:
-                            btaggedTightJetIdx.append(i)
+                            if random.random() < btagSF_ or isData:
+                                btaggedTightJetIdx.append(i)
+#                         elif btagSF_>1 and random.random() < (btagSF_-1.) and not isData:
+#                             btaggedTightJetIdx.append(i)
 
         if not isTightJet:
             if jetID:
@@ -576,7 +587,10 @@ for event in fchain:
                     else:
                         looseJet15ForwardIdx.append(i)
                     if jetCSV[i] > 0.679:
-                        btaggedLooseJet15Idx.append(i)
+                        if random.random() < btagSF_ or isData:
+                            btaggedLooseJet15Idx.append(i)
+#                     elif btagSF_>1 and random.random() < (btagSF_-1.) and not isData:
+#                         btaggedLooseJet15Idx.append(i)
                 if jetPt[i] > 20:
                     looseJet20Idx.append(i)
                     if abs(jetEta[i]) < 2.4:
@@ -584,7 +598,10 @@ for event in fchain:
                     else:
                         looseJet20ForwardIdx.append(i)
                     if jetCSV[i] > 0.679:
-                        btaggedLooseJet20Idx.append(i)
+                        if random.random() < btagSF_ or isData:
+                            btaggedLooseJet20Idx.append(i)
+#                     elif btagSF_>1 and random.random() < (btagSF_-1.) and not isData:
+#                         btaggedLooseJet20Idx.append(i)
                 if jetPt[i] > 25:
                     looseJet25Idx.append(i)
                     if abs(jetEta[i]) < 2.4:
@@ -592,7 +609,10 @@ for event in fchain:
                     else:
                         looseJet25ForwardIdx.append(i)
                     if jetCSV[i] > 0.679:
-                        btaggedLooseJet25Idx.append(i)
+                        if random.random() < btagSF_ or isData:
+                            btaggedLooseJet25Idx.append(i)
+#                     elif btagSF_>1 and random.random() < (btagSF_-1.) and not isData:
+#                         btaggedLooseJet25Idx.append(i)
                 if jetPt[i] > 30:
                     if abs(jetEta[i]) > 2.4:
                         tightJetForwardIdx.append(i)
@@ -758,29 +778,6 @@ for event in fchain:
 
     #Take the Btag SF weight as each btagged jet SF multiplied together
 
-    
-    btagWeight = 1.
-    if len(goodJetIdx) == 1:
-        if len(btaggedTightJetIdx) == 1:            
-            btagWeight = BtagSF(jetPt[goodJetIdx[0]],SFsyst)
-    elif len(goodJetIdx) == 2:
-        if len(btaggedTightJetIdx) == 2:
-            btagWeight = BtagSF(jetPt[goodJetIdx[0]],SFsyst)*BtagSF(jetPt[goodJetIdx[1]],SFsyst)
-        elif len(btaggedTightJetIdx) == 1:
-            taggedIDX = -1
-            untaggedIDX = -1
-            eff = 1.
-            for i in goodJetIdx:
-                if i in btaggedTightJetIdx:
-                    taggedIDX = i
-                else:
-                    untaggedIDX = i
-            if abs(jetFlavour(untaggedIDX)) == 5:
-                eff = 0.65
-            else:
-                eff = 0.015
-                
-
 #     for i in btaggedTightJetIdx:        
 #         btagSF_ = btagSF_ * BtagSF(jetPt[i],SFsyst)
                 
@@ -903,8 +900,8 @@ for event in fchain:
                 treeList['tree2j2t'][ModeIdx].Fill()
 #        if len(goodJetIdx) > 2:
 #            treeList['tree3plusjNotagging'][ModeIdx].Fill()
-#     if inZpeak:
-#         treeList['treeZpeakLepSel'][ModeIdx].Fill()
+    if inZpeak:
+        treeList['treeZpeakLepSel'][ModeIdx].Fill()
 #        #No MET cut is applied to 1j1t zpeak region
 #        if len(goodJetIdx) == 1:
 #            if len(btaggedTightJetIdx) == 1:

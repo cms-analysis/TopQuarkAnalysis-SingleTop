@@ -16,7 +16,7 @@ rootFileName = ""
 
 appendVersion = ""
 
-currentFileVersion = "v1"
+currentFileVersion = "v5"
 
 okChannelNames = ['TChannel',
                   'TbarChannel',
@@ -34,8 +34,27 @@ okChannelNames = ['TChannel',
                   'Data',
                   'TWChannelDilepton',
                   'TbarWChannelDilepton',
-                  'TTBarDilepton',
-                  'TestSample']
+                  'TTBarDilepton',                  
+                  'TestSample',
+                  'TWChannel_DS',
+                  'TbarWChannel_DS',
+                  'TWChannel_Q2Up',
+                  'TWChannel_Q2Down',
+                  'TbarWChannel_Q2Up',
+                  'TbarWChannel_Q2Down',
+                  'TWChannel_TopMassUp',
+                  'TWChannel_TopMassDown',
+                  'TbarWChannel_TopMassUp',
+                  'TbarWChannel_TopMassDown',
+                  'TTBar_Q2Up',
+                  'TTBar_Q2Down',
+                  'TTBar_MatchingUp',
+                  'TTBar_MatchingDown',
+                  'TTBar_TopMassUp',
+                  'TTBar_TopMassDown',                
+                  'TTBarSpin',
+                  'TTBarPowheg',
+                  ]
 
 
 dataChannels = ['MuEG',
@@ -56,6 +75,9 @@ ProcessNumber = -1
 OutOf = -1
 
 isData = False
+goodOptions = False
+isSyst = False
+
 if len(sys.argv) == 7:
     if sys.argv[2] == 'Data':
         if sys.argv[3] in dataChannels:
@@ -67,6 +89,7 @@ if len(sys.argv) == 7:
                     print "Directory specified ("+directory+") does not exist"
                     exit()                
                 isData = True
+                goodOptions = True
                 ProcessNumber = int(sys.argv[5])
                 OutOf = int(sys.argv[6])
             else:
@@ -76,15 +99,8 @@ if len(sys.argv) == 7:
         else:
             print "Must specify one of the following channels for data:"
             print dataChannels
-            exit()
-                             
-if not isData and len(sys.argv) != 5:    
-    print "You need 2 arguments (directory and channel name). Something like:"
-    print "mergeAndRun.py tW_Synch T_tWChannel"
-    print "Or for data, 4 arguments must be specified (directory, data as channel name, and ) ! Something like:"
-    print "mergeAndRun.py MuEG_Run2012B-13Jul2012-v1_v1 Data MuEG Run2012B-13Jul2012"
-    exit()
-elif not isData:
+            exit()                             
+elif not isData and len(sys.argv) == 5:
     directory=storeUser+"MC/"+sys.argv[1]
     if not os.path.exists(directory):
         print "Directory specified ("+directory+") does not exist"
@@ -93,11 +109,39 @@ elif not isData:
     if sys.argv[2] in okChannelNames:
         channelName = sys.argv[2]
         rootFileName = sys.argv[2]
+        goodOptions = True
     else:
         print "Invalid channel name: " + sys.argv[2]
         exit()
     ProcessNumber = int(sys.argv[3])
     OutOf = int(sys.argv[4])
+elif not isData and len(sys.argv) == 6:
+    if sys.argv[1] == 'Syst':
+        print "Using Systematics"
+        print sys.argv[2]
+        directory=storeUser+"Systs/"+sys.argv[2]
+        if not os.path.exists(directory):
+            print "Directory specified ("+directory+") does not exist"
+            exit()                      
+        if sys.argv[3] in okChannelNames:
+            channelName = sys.argv[3]
+            rootFileName = sys.argv[3]
+            goodOptions = True
+            isSyst = True
+        else:
+            print "Invalid channel name: " + sys.argv[3]
+            print okChannelNames
+            exit()
+        ProcessNumber = int(sys.argv[4])
+        OutOf = int(sys.argv[5])
+if not goodOptions:
+    print "You need 2 argumyents (directory and channel name). Something like:"
+    print "mergeAndRun.py tW_Synch T_tWChannel"
+    print "Or for data, 4 arguments must be specified (directory, data as channel name, and ) ! Something like:"
+    print "mergeAndRun.py MuEG_Run2012B-13Jul2012-v1_v1 Data MuEG Run2012B-13Jul2012"
+    print "Or for Systematics, 4 arguments must be specified (directory, data as channel name, and ) ! Something like:"
+    print "mergeAndRun.py Syst TTBar_MatchingUp"    
+    exit()
 
 if ProcessNumber > OutOf:
     print "Asking for job", ProcessNumber, "out of only", OutOf,"jobs, please select a number in range of jobs"
@@ -112,24 +156,30 @@ edmFileListStart.sort()
 
 edmFileListFull = list()
 
+maxJobNum = -1
+
 for i in range(len(edmFileListStart)):
-    if i < len(edmFileListStart)-2:
+    file_i = edmFileListStart[i].split('/')[-1]
+    jobNum = file_i.split('_')[1]
+    if int(jobNum) > maxJobNum:
+        maxJobNum = int(jobNum)
+
+print maxJobNum
+
+def iterNumber(f):
+    return int(f.split('/')[-1].split('_')[2])
+
+for job in range(1,maxJobNum+1):
+    jobFileList = list()
+    for i in range(len(edmFileListStart)):
         file_i = edmFileListStart[i].split('/')[-1]
-        file_ip1 = edmFileListStart[i+1].split('/')[-1]
         jobNum = file_i.split('_')[1]
-        jobIter = int(file_i.split('_')[2])
-        jobIterp1 = int(file_ip1.split('_')[2])
-        if jobNum == file_ip1.split('_')[1]:                
-            if jobIter < jobIterp1:
-                continue
-            else:
-                edmFileListFull.append(edmFileListStart[i])
-        else:
-            edmFileListFull.append(edmFileListStart[i])
-    else:
-        edmFileListFull.append(edmFileListStart[i])
-        
-edmFileListFull.sort()
+        if job == int(jobNum):
+            jobFileList.append(edmFileListStart[i])
+    jobFileList.sort(key=iterNumber)
+
+    if len(jobFileList) > 0:
+        edmFileListFull.append(jobFileList[-1])
 
 if OutOf > len(edmFileListFull):
     print "More jobs than files; requesting",OutOf,"jobs from only", len(edmFileListFull),"files"
@@ -178,6 +228,8 @@ for cfgLine in TemplateCfgLines:
         newline = cfgLine.replace('True','False')
     elif channelName == 'Data' and 'channel_instruction = ' in cfgLine:
         newline = cfgLine.replace('allmc','data')
+    elif isSyst and 'channel_instruction = ' in cfgLine:
+        newline = cfgLine.replace('allmc','systSample')
     else:
         newline = cfgLine
 
@@ -189,7 +241,12 @@ command = 'cmsRun SingleTopSystematicsWithTrigger_tW_'+rootFileName+processCount
 print command
 os.system(command)
 
-command = "mv output/ntuple_SysTrees_"+rootFileName+processCount+".root "+storeUser+"Ntuples/."
+if not os.path.exists(storeUser+"Ntuples/"+currentFileVersion):
+    command = "mkdir "+storeUser+"Ntuples/"+currentFileVersion
+    print command
+    os.system(command)
+
+command = "mv output/ntuple_SysTrees_"+rootFileName+processCount+".root "+storeUser+"Ntuples/"+currentFileVersion+"/."
 print command
 os.system(command)
 

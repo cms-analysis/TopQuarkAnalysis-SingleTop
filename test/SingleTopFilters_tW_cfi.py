@@ -16,6 +16,16 @@ HLTFilterMu = cms.EDFilter('SingleTopTriggers',
                            channel = cms.untracked.int32(2),#Useless now
                            )                         
 
+HLTFiltertH = cms.EDFilter('SingleTopTriggers',
+                           HLTriggerResults = cms.InputTag("TriggerResults","",processNameData),
+                           isMC = cms.untracked.bool(False),
+                           triggerList = cms.vstring(" HLT_IsoMu17_eta2p1_TriCentralPFNoPUJet50_40_30_v1",
+                                                     ),
+                           runRangesList = cms.vint32(-1),
+                           
+                           channel = cms.untracked.int32(2),#Useless now
+                           )                         
+
 HLTFilterMu2012 = cms.EDFilter('SingleTopTriggers',
                            HLTriggerResults = cms.InputTag("TriggerResults","",processNameData),
                            isMC = cms.untracked.bool(False),
@@ -176,7 +186,7 @@ HLTFilterTWDilepton2012 = cms.EDFilter('SingleTopTriggers',
                                                                  "HLT_Mu17_TkMu8_v",
                                                                  "HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v",
                                                                  ),
-                                       runRangesList = cms.vint32(-1),
+                                       runRangesList = cms.vint32(-1,-1,-1,-1,-1),
                                        
                                        channel = cms.untracked.int32(2),#Useless now
                                        )                         

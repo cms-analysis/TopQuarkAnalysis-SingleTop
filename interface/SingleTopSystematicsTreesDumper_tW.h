@@ -6,7 +6,7 @@
  * \Authors A. Orso M. Iorio
  *
  * Produces systematics histograms out of a standard Single Top n-tuple
- * \ version $Id: SingleTopSystematicsTreesDumper_tW.h,v 1.1.2.3 2012/11/08 18:59:05 dnoonan Exp $
+ * \ version $Id: SingleTopSystematicsTreesDumper_tW.h,v 1.1.2.4 2012/11/14 03:30:28 dnoonan Exp $
  */
 
 
@@ -126,7 +126,7 @@ private:
     double AntiBScaleFactor(string algo, string syst_name);
     double AntiMisTagScaleFactor(string algo, string syst_name, double sf, double eff, double sferr);
     double resolSF(double eta, string syst);
-    double pileUpSF(string syst);
+    double pileUpSF(string syst, string run);
     double pileUpSFNew();
     double bTagSF(int B);
     double bTagSF(int B, string syst);
@@ -180,7 +180,7 @@ private:
     //Define parameterSet to change from channel to channel
     edm::ParameterSet channelInfo;
     std::string channel;
-    double crossSection, originalEvents, finalLumi, MTWCut, RelIsoCut;
+    double crossSection, originalEvents, finalLumiA, finalLumiB, finalLumiCrereco, finalLumiCprompt, MTWCut, RelIsoCut;
     edm::Event   *iEvent;
 
     //  std::vector<float> leptonsPt,leptonsPhi,leptonsPz,leptonsEta,jetsPt,jetsPx,jetsPy,jetsPz,jetsEta,jetEnergy,jetsBTagAlgo,jetsAntiBTagAlgo,METPt,METPhi;
@@ -274,6 +274,10 @@ private:
         jetsDZ_,
         genjetsPt_,
         genjetsEta_,
+
+        genPartPt_,
+        genPartPdgId_,
+
 
         ktJetsForIsoRho_,
 
@@ -381,7 +385,10 @@ private:
         vertexY,
         vertexZ,
         vertexrho,
-        vertexchi;
+        vertexchi,
+        
+        genPartPt,
+        genPartPdgId;
 
     edm::Handle<std::vector<int> > vertexNDOF;
 
@@ -392,7 +399,6 @@ private:
     
     edm::Handle<double> UnclMETPx,
       UnclMETPy, ktJetsForIsoRho;
-
 
     edm::Handle<int > n0, nm1, np1;
 
@@ -588,8 +594,17 @@ private:
     int _lumiNum_;
     int _eventNum_;
     double _weight_;
+    double _weightA_;
+    double _weightB_;
+    double _weightCrereco_;
+    double _weightCprompt_;
     double _PUWeight_;
+    double _PUWeightA_;
+    double _PUWeightB_;
+    double _PUWeightCrereco_;
+    double _PUWeightCprompt_;
     double _PUWeightNew_;
+    double _TopPtweight_;
     double _scalePDF_;
     double _PDF_x1_;
     double _PDF_x2_;
@@ -636,6 +651,9 @@ private:
     bool doPU_, doTurnOn_, doResol_ ;
 
     edm::LumiReWeighting LumiWeights_, LumiWeightsUp_, LumiWeightsDown_;
+    edm::LumiReWeighting LumiWeightsA_, LumiWeightsB_, LumiWeightsCrereco_, LumiWeightsCprompt_;
+    edm::LumiReWeighting LumiWeightsAUp_, LumiWeightsBUp_, LumiWeightsCrerecoUp_, LumiWeightsCpromptUp_;
+    edm::LumiReWeighting LumiWeightsADown_, LumiWeightsBDown_, LumiWeightsCrerecoDown_, LumiWeightsCpromptDown_;
     std::string mcPUFile_, dataPUFile_, puHistoName_;
 
     edm::ReWeighting NewPUWeights_;

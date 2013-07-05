@@ -39,9 +39,9 @@ RunC = True
 numJets = 1
 numBtags = 1
 
-METmllCutsInEMu = True
+METmllCutsInEMu = False
 
-fileVersion = 'v2'
+fileVersion = 'v11_MET50'
 
 useLeptonSF = True
 
@@ -65,7 +65,8 @@ TrueLumis = [[808.472+82.136,4398.,495.003,6397.],
 UsedLumis = [15000.,15000.,15000.,15000.]
 
 #Lepton Scale Factors
-lepSF = [0.936,0.962,0.950]
+lepSF = [0.916,0.963,0.903]
+#lepSF = [0.936,0.962,0.950]
 lepSFUnc = [0.011,0.012,0.014]
         
 
@@ -107,11 +108,11 @@ print nEvents
 
 #Bins 0-LepSel, 1-LepVeto, 2-mll, 3-MET, 4-jet, 5-bjet, 6-loosejetVeto, 7-ptsys, 8-ht
 
-CutflowHists = [[TH1F("emuCutflow1j1t","",9,0,9), TH1F("mumuCutflow1j1t","",9,0,9), TH1F("eeCutflow1j1t","",9,0,9)],
-                [TH1F("emuCutflow2j1t","",9,0,9), TH1F("mumuCutflow2j1t","",9,0,9), TH1F("eeCutflow2j1t","",9,0,9)],
-                [TH1F("emuCutflow2j2t","",9,0,9), TH1F("mumuCutflow2j2t","",9,0,9), TH1F("eeCutflow2j2t","",9,0,9)]]
+CutflowHists = [[TH1F("emuCutflow1j1t","",10,-1,9), TH1F("mumuCutflow1j1t","",10,-1,9), TH1F("eeCutflow1j1t","",10,-1,9)],
+                [TH1F("emuCutflow2j1t","",10,-1,9), TH1F("mumuCutflow2j1t","",10,-1,9), TH1F("eeCutflow2j1t","",10,-1,9)],
+                [TH1F("emuCutflow2j2t","",10,-1,9), TH1F("mumuCutflow2j2t","",10,-1,9), TH1F("eeCutflow2j2t","",10,-1,9)]]
 
-#CutflowHists = [TH1F("emuCutflow1j1t","",9,0,9), TH1F("mumuCutflow1j1t","",9,0,9), TH1F("eeCutflow1j1t","",9,0,9)]
+#CutflowHists = [TH1F("emuCutflow1j1t","",10,-1,9), TH1F("mumuCutflow1j1t","",10,-1,9), TH1F("eeCutflow1j1t","",10,-1,9)]
 
 CutflowHists[0][0].Sumw2()
 CutflowHists[0][1].Sumw2()
@@ -179,6 +180,35 @@ for event in fchain:
     looseMuonidx = list()
     looseEleidx = list()
 
+    extraMultipliers = 1
+
+    weightA      = extraMultipliers*evtWeightA*evtPUWeightA*TrueLumis[0][0]/UsedLumis[0]
+
+    weightB      = extraMultipliers*evtWeightB*evtPUWeightB*TrueLumis[0][1]/UsedLumis[1]
+
+    weightC      = extraMultipliers*evtWeightCrereco*evtPUWeightCrereco*TrueLumis[0][2]/UsedLumis[2]
+
+    weightC     += extraMultipliers*evtWeightCprompt*evtPUWeightCprompt*TrueLumis[0][3]/UsedLumis[3]
+
+    weight = weightA + weightB + weightC
+
+    if isData:
+        weight = 1.
+
+
+    CutflowHists[0][0].Fill(-0.5,weight)
+    CutflowHists[1][0].Fill(-0.5,weight)
+    CutflowHists[2][0].Fill(-0.5,weight)
+
+    CutflowHists[0][1].Fill(-0.5,weight)
+    CutflowHists[1][1].Fill(-0.5,weight)
+    CutflowHists[2][1].Fill(-0.5,weight)
+
+    CutflowHists[0][2].Fill(-0.5,weight)
+    CutflowHists[1][2].Fill(-0.5,weight)
+    CutflowHists[2][2].Fill(-0.5,weight)
+
+
     for i in range(len(muonPt)):
         isTightMuon = False
         if muonPt[i] > 20:
@@ -198,7 +228,7 @@ for event in fchain:
             if electronPt[i] > 20:
                 if abs(electronEta[i]) < 2.5:
                     if abs(electronPVDxy[i]) < 0.04:
-                        if electronMVATrigV0[i] >= 0. and electronMVATrigV0[i] <= 1.0:
+                        if electronMVATrigV0[i] >= 0.5 and electronMVATrigV0[i] <= 1.0:
                             if electronRhoCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
                                 if electronTrackerExpectedInnerHits[i] <= 1:
                                     goodEleidx.append(i)
@@ -206,7 +236,7 @@ for event in fchain:
         if not isTightElectron:
             if electronPt[i] > 15:
                 if abs(electronEta[i]) < 2.5:
-                    if electronMVATrigV0[i] >= 0. and electronMVATrigV0[i] <= 1.0: #####ADJUSTMENT
+                    if electronMVATrigV0[i] >= 0.5 and electronMVATrigV0[i] <= 1.0: #####ADJUSTMENT
                         if electronRhoCorrectedRelIso[i] < 0.15: #####ADJUSTMENT
                             looseEleidx.append(i)
     nLooseLeptons = len(looseEleidx) + len(looseMuonidx)
@@ -246,7 +276,6 @@ for event in fchain:
     if chargeMult > 0:
         continue
 
-
     extraMultipliers = lepSF[ModeIdx]
 
     weightA      = extraMultipliers*evtWeightA*evtPUWeightA*TrueLumis[ModeIdx][0]/UsedLumis[0]
@@ -258,7 +287,10 @@ for event in fchain:
     weightC     += extraMultipliers*evtWeightCprompt*evtPUWeightCprompt*TrueLumis[ModeIdx][3]/UsedLumis[3]
 
     weight = weightA + weightB + weightC
-    
+
+    if isData:
+        weight = 1.
+
 
     CutflowHists[0][ModeIdx].Fill(0.5,weight)
     CutflowHists[1][ModeIdx].Fill(0.5,weight)
@@ -343,7 +375,7 @@ for event in fchain:
         if jetNumDaughters[i] > 1:
             if jetNeuHadEn[i] < 0.99:
                 if jetNeuEmEn[i] < 0.99:
-                    if abs(jetEta[i]) > 2.5:
+                    if abs(jetEta[i]) > 2.4:
                         jetID = True
                     else:
                         if jetCHEmEn[i] < 0.99:
@@ -351,7 +383,7 @@ for event in fchain:
                                 if jetCHMult[i] > 0:
                                     jetID = True
         if jetPt[i] > 30:
-            if abs(jetEta[i]) < 2.5:
+            if abs(jetEta[i]) < 2.4:
                 if jetID:
                     tJet = TLorentzVector()
                     tJet.SetPtEtaPhiE(jetPt[i],jetEta[i],jetPhi[i],jetE[i])
@@ -365,10 +397,12 @@ for event in fchain:
         if not isTightJet:
             if jetID:
                 if jetPt[i] > 20:
-                    looseJet20Idx.append(i)
-                    if jetCSV[i] > 0.679:
-                        if random.random() < btagSF_ or isData:
-                            btaggedLooseJet20Idx.append(i)
+                    if abs(jetEta[i]) < 2.4:
+                        looseJet20Idx.append(i)
+                        if jetCSV[i] > 0.679:
+                            if random.random() < btagSF_ or isData:
+                                btaggedLooseJet20Idx.append(i)
+
 
     if len(goodJetIdx) == 1:
         CutflowHists[0][ModeIdx].Fill(4.5,weight)
@@ -397,6 +431,10 @@ for event in fchain:
     else:
         continue
 
+    if len(btaggedLooseJet20Idx) > 0.:
+        continue
+
+    CutflowHists[region][ModeIdx].Fill(6.5,weight)
 
     jetIdx = goodJetIdx[0]
 
@@ -405,6 +443,11 @@ for event in fchain:
 
     system = lepton0 + lepton1 + MET + jet 
     Ht = lepton0.Pt() + lepton1.Pt() + MET.Pt() + jet.Pt()
+
+    if ModeIdx==0 and Ht < 160:
+        continue
+
+    CutflowHists[region][ModeIdx].Fill(7.5,weight)
 
     
 
